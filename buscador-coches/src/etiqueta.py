@@ -85,30 +85,62 @@ def label_rule(fuel: Optional[str], y: Optional[int], m: Optional[int], zbe: dic
     return label_at(fuel, y, 1, crit), False
 
 
+def opciones_regla(fuel: Optional[str], y: Optional[int], m: Optional[int], zbe: dict) -> list[str]:
+    """Etiquetas posibles según la regla con CUALQUIER fecha posible: con mes, una sola; sin mes, enero y diciembre
+    del año y, si es año frontera, también la del año frontera anterior (la de label_rule). Ordenadas de peor a mejor."""
+    crit = zbe["criterios_etiqueta"]
+    if y is None:
+        return []
+    if m:
+        lab = label_at(fuel, y, m, crit)
+        return [lab] if lab else []
+    worst, _ = label_rule(fuel, y, None, zbe)
+    ops = {x for x in (worst, label_at(fuel, y, 1, crit), label_at(fuel, y, 12, crit)) if x}
+    return sorted(ops, key=rank)
+
+
 def asignar(l: Listing, zbe: dict, dgt=None) -> Listing:
-    """Rellena etiqueta_dgt (final), etiqueta_fuente, etiqueta_dudosa y etiqueta_codigo_dgt."""
+    """Rellena etiqueta_dgt (final = PEOR opción posible), etiqueta_fuente, etiqueta_dudosa, etiqueta_opciones,
+    etiqueta_incoherente y etiqueta_codigo_dgt.
+
+    - DGT (matrícula en el fichero oficial): una sola opción, confirmada.
+    - Anuncio: vale si es una de las opciones de la regla; si la contradice (p. ej. C en un gasolina de 2004),
+      se usa la regla y se marca "anuncio incoherente".
+    - Regla: todas las opciones posibles con cualquier fecha del año (y del año que diga la URL/título).
+    """
     l.etiqueta_codigo_dgt = None
+    l.etiqueta_incoherente = None
     if dgt is not None and l.matricula:
         r = dgt.lookup(l.matricula)
         if r:
             l.etiqueta_dgt, l.etiqueta_codigo_dgt = r
-            l.etiqueta_fuente, l.etiqueta_dudosa = "DGT", False
+            l.etiqueta_fuente, l.etiqueta_dudosa, l.etiqueta_dudosa_anio = "DGT", False, False
+            l.etiqueta_opciones = r[0]
             return l
     l.etiqueta_dudosa_anio = False
+    y, m = parse_fecha(l.fecha_matriculacion)
+    if y is None:
+        y, m = l.anio, None
+    ops = opciones_regla(l.combustible, y, m, zbe)
     lab = norm_label(l.etiqueta_anuncio)
+    if lab and ops and lab not in ops:
+        l.etiqueta_incoherente = lab          # el anuncio contradice la regla: se usa la regla
+        lab = None
     if lab:
         l.etiqueta_dgt, l.etiqueta_fuente, l.etiqueta_dudosa = lab, "anuncio", False
+        opciones = [lab]
     else:
-        y, m = parse_fecha(l.fecha_matriculacion)
-        if y is None:
-            y, m = l.anio, None
-        lab, dud = label_rule(l.combustible, y, m, zbe)
-        l.etiqueta_dgt, l.etiqueta_fuente, l.etiqueta_dudosa = lab, "regla" if lab else None, dud
+        rl, dud = label_rule(l.combustible, y, m, zbe)
+        l.etiqueta_dgt, l.etiqueta_fuente = rl, "regla" if rl else None
+        l.etiqueta_dudosa = dud or len(ops) > 1
+        opciones = ops or ([rl] if rl else [])
     # Año a confirmar: si el año de la URL o del título daría otra etiqueta, se toma la peor y se marca dudosa
     if l.anio_alternativo and l.etiqueta_dgt:
-        alt, _ = label_rule(l.combustible, l.anio_alternativo, None, zbe)
-        if alt and alt != l.etiqueta_dgt:
-            l.etiqueta_dgt = min((l.etiqueta_dgt, alt), key=rank)
+        alt = opciones_regla(l.combustible, l.anio_alternativo, None, zbe)
+        if alt and set(alt) - set(opciones):
+            opciones = sorted(set(opciones) | set(alt), key=rank)
+            l.etiqueta_dgt = opciones[0]
             l.etiqueta_dudosa = True
             l.etiqueta_dudosa_anio = True
+    l.etiqueta_opciones = "/".join(opciones) if opciones else None
     return l

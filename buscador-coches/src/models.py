@@ -70,6 +70,27 @@ class Listing:
     multitronic: Optional[str] = None             # "sí" detectada / "posible" (Audi automático sin tiptronic/quattro)
     prioritario: Optional[bool] = None            # modelo/motor/años de la lista de preferencia de estilo
     etiqueta_dudosa_anio: Optional[bool] = None    # dudosa porque el año de la URL/título cambia la etiqueta posible          # texto detectado (p. ej. "easytronic")        # año distinto en la URL o el título ("año a confirmar")
+    etiqueta_opciones: Optional[str] = None       # "B/C": etiquetas posibles (la final es la peor)
+    etiqueta_incoherente: Optional[str] = None    # etiqueta del anuncio que contradice la regla (se usa la regla)
+    # Estética, color y estado (src/atributos.py)
+    color_raw: Optional[str] = None               # color tal como lo publica la plataforma o el texto
+    color: Optional[str] = None                   # color normalizado (ver estetica.yaml -> colores)
+    color_fuente: Optional[str] = None
+    equipamiento: Optional[str] = None            # texto del equipamiento estructurado de la plataforma (si lo hay)
+    at_acabado: Optional[str] = None              # acabado alto/deportivo detectado (Sport, FR, S-line...)
+    at_llantas: Optional[str] = None              # "16+" | "sí" | "chapa"
+    at_faros: Optional[bool] = None               # xenón / LED
+    at_tintados: Optional[bool] = None
+    estetica_modelo: Optional[int] = None         # 1-5 (estetica.yaml)
+    estetica_ref: Optional[str] = None            # entrada de estetica.yaml aplicada
+    esp: Optional[str] = None                     # "sí" | "no" | None
+    esp_fuente: Optional[str] = None
+    ncap_estrellas: Optional[float] = None
+    ncap_ref: Optional[str] = None
+    correa_detalle: Optional[bool] = None         # la correa cambiada se acompaña de fecha o km
+    facturas: Optional[bool] = None
+    neumaticos_nuevos: Optional[bool] = None
+    itv_hasta: Optional[str] = None
     descartes: list = field(default_factory=list)
 
     @property

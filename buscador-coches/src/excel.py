@@ -89,30 +89,33 @@ def build_supuestos(wb: Workbook, p: Params, names: Names) -> None:
     header(["Criterio", "Peso", "Estado", "Fuente"])
     w = sc["pesos"]
     first = r
-    param("W_FIAB", "Fiabilidad modelo/motor", w["fiabilidad"])
-    param("W_PRECIO", "Precio frente al mercado", w["precio"])
-    param("W_KMEDAD", "Km y edad", w["km_edad"])
-    param("W_ANUNCIO", "Calidad del anuncio / mantenimiento", w["anuncio"])
-    param("W_USO", "Coste de uso en Valencia", w["coste_uso"])
-    param("W_SEGURIDAD", "Seguridad de compra (garantía, km certificados, revisión, devolución, historial)", w["seguridad"],
-          "criterio (config.yaml)", "config.yaml: añadido el 31-10-2026; los 5 pesos anteriores × 0,85 redondeados")
-    param("W_ESTILO", "Preferencia de estilo (berlinas medianas sobrias)", w.get("estilo", 0), "criterio (config.yaml)",
-          "config.yaml: añadido el 01-11-2026; los demás pesos × 0,9 redondeados")
-    param("W_ETIQUETA", "Etiqueta y ZBE", w.get("etiqueta", 0), "criterio (config.yaml)",
-          "config.yaml: añadido el 01-11-2026; sale de Coste de uso (9→5) y 1 punto de fiabilidad y de precio")
+    fuente_w = "config.yaml → scoring.pesos (reparto del 02-11-2026)"
+    param("W_FIAB", "Fiabilidad y durabilidad (modelo, motor, plataforma, caja)", w["fiabilidad"], "criterio (config.yaml)", fuente_w)
+    param("W_PRECIO", "Precio frente al mercado", w["precio"], "criterio (config.yaml)", fuente_w)
+    param("W_ESTADO", "Estado y mantenimiento (ITV, libro, propietarios, correa, facturas)", w["estado"], "criterio (config.yaml)", fuente_w)
+    param("W_ESTETICA", "Estética (modelo de estetica.yaml + atributos del anuncio)", w["estetica"], "criterio (config.yaml)", fuente_w)
+    param("W_SEGVIAL", "Seguridad (Euro NCAP de la generación + ESP/ESC)", w["seguridad_vial"], "criterio (config.yaml)", fuente_w)
+    param("W_SEGURIDAD", "Seguridad de compra (garantía, km certificados, revisión, devolución, historial)", w["seguridad_compra"],
+          "criterio (config.yaml)", fuente_w)
+    param("W_USO", "Coste de uso (consumo, seguro, mantenimiento)", w["coste_uso"], "criterio (config.yaml)", fuente_w)
+    param("W_KMEDAD", "Km y edad", w["km_edad"], "criterio (config.yaml)", fuente_w)
+    param("W_REVENTA", "Valor de reventa y liquidez (anuncios del modelo, días hasta venderse, etiqueta)", w["reventa"],
+          "criterio (config.yaml)", fuente_w)
+    param("W_COLOR", "Color", w["color"], "criterio (config.yaml)", fuente_w)
     param("W_SUMA", "Suma de pesos (control)", f"=SUM(B{first}:B{r-1})", "calculado", "", formula=True)
 
     # ---- parámetros
     section("2. Parámetros de búsqueda y de puntuación")
     header(["Parámetro", "Valor", "Estado", "Fuente"])
-    f, k, a, u = cfg["filtros"], sc["km_edad"], sc["anuncio"], sc["coste_uso"]
+    f, k, a, u = cfg["filtros"], sc["km_edad"], sc["estado"], sc["coste_uso"]
     param("ANIO_ACTUAL", "Año de referencia", fis["anio_actual"], "dato", "fiscal.yaml")
     param("ANIO_MIN", "Año mínimo", f["anio_min"])
     param("KM_MAX", "Km máximos", f["km_max"])
     param("PRECIO_MAX", "Precio anuncio máximo (€)", cfg["presupuesto"]["precio_anuncio_max_eur"])
-    param("TOTAL_MAX", "Coste total máximo (€)", cfg["presupuesto"]["total_max_eur"])
-    param("MARGEN_NEG", "Margen de negociación sobre el coste total (€): entra marcado 'negociar'",
-          cfg["presupuesto"].get("margen_negociacion_eur", 0))
+    pr = cfg["presupuesto"]
+    param("TOTAL_MAX", "Presupuesto objetivo: coste total sin penalización (€)", pr["total_max_eur"])
+    param("TECHO", "Presupuesto: techo (por encima, excluido) (€)", pr["techo_eur"])
+    param("PEN_100", "Presupuesto: puntos menos por cada 100 € sobre el objetivo (proporcional)", pr["penal_por_100_eur"])
     param("SEG_ANIO", "Tramo de años para mediana", cfg["segmentos"]["anio_tramo"])
     param("SEG_KM", "Tramo de km para mediana", cfg["segmentos"]["km_tramo"])
     param("MIN_N", "Mín. anuncios por segmento (si no, se sube de nivel)", cfg["segmentos"]["min_muestras"])
@@ -129,18 +132,17 @@ def build_supuestos(wb: Workbook, p: Params, names: Names) -> None:
     param("W_KMT", "Peso km totales dentro de Km y edad", k["peso_km_total"])
     param("W_KMA", "Peso km/año dentro de Km y edad", k["peso_km_anio"])
     param("W_EDAD", "Peso edad dentro de Km y edad", k["peso_edad"])
-    param("P_ITV", "Puntos: ITV en vigor", a["itv"])
-    param("P_LIBRO", "Puntos: libro de mantenimiento", a["libro"])
-    param("P_CORREA", "Puntos: correa/distribución cambiada", a["correa"])
-    param("P_PROP", "Puntos: un solo propietario", a["propietario_unico"])
-    param("P_GAR", "Puntos: garantía", a["garantia"])
-    param("P_FOTOS", "Puntos: fotos (proporcional)", a["fotos"])
-    param("FOTOS_OBJ", "Fotos para puntuación completa", a["fotos_objetivo"])
+    param("E_ITV", "Estado: puntos por ITV en vigor / recién pasada", a["itv"])
+    param("E_LIBRO", "Estado: puntos por libro de mantenimiento o historial", a["libro"])
+    param("E_PROP", "Estado: puntos por un solo propietario (2 propietarios = la mitad)", a["propietario_unico"])
+    param("E_CORREA", "Estado: puntos por correa cambiada con fecha o km (sin fecha/km = la mitad; motor de cadena = completo)", a["correa"])
+    param("E_FACT", "Estado: puntos por facturas", a["facturas"])
     param("W_ET", "Peso etiqueta dentro de Coste de uso", u["peso_etiqueta"])
     param("W_CONS", "Peso consumo dentro de Coste de uso", u["peso_consumo"])
     param("W_SEG", "Peso seguro dentro de Coste de uso", u["peso_seguro"])
+    param("W_MANT", "Peso mantenimiento (recambios y distribución) dentro de Coste de uso", u.get("peso_mantenimiento", 0))
     param("NEUTRO", "Puntuación neutra cuando el dato está PENDIENTE", u["neutro_si_pendiente"])
-    sg = sc["seguridad"]
+    sg = sc["seguridad_compra"]
     gl = fis["garantia_legal"]
     param("SG_GAR", "Seguridad: puntos por garantía (proporcional a meses)", sg["garantia"])
     param("SG_GAR_FULL", "Seguridad: meses de garantía para puntuación completa", sg["garantia_meses_full"])
@@ -154,6 +156,18 @@ def build_supuestos(wb: Workbook, p: Params, names: Names) -> None:
           1 if sg.get("aplicar_minimo_legal_profesional", True) else 0)
     param("GAR_LEGAL", "Garantía legal mínima en usados de vendedor profesional (meses)", gl["minimo_meses_segunda_mano"],
           gl["estado"], f"{gl['norma']} — {gl['fuente']}")
+    param("SG_PART_PEN", "Seguridad de compra: puntos menos si es particular sin garantía", sg.get("penal_particular_sin_garantia", 0))
+    sv = sc["seguridad_vial"]
+    param("SV_W_NCAP", "Seguridad: peso de las estrellas Euro NCAP (estrellas/5 × 100)", sv["peso_ncap"])
+    param("SV_W_ESP", "Seguridad: peso del ESP/ESC (sí 100 · no 0 · sin dato NEUTRO)", sv["peso_esp"])
+    rv = sc["reventa"]
+    param("RV_W_LIQ", "Reventa: peso de la liquidez (anuncios del modelo en el mercado recogido)", rv["peso_liquidez"])
+    param("RV_N_FULL", "Reventa: nº de anuncios del modelo para 100 puntos", rv["liquidez_n_full"])
+    param("RV_W_DIAS", "Reventa: peso de los días hasta desaparecer el anuncio", rv["peso_dias"])
+    param("RV_DIAS_FULL", "Reventa: días (mediana) con 100 puntos", rv["dias_full"])
+    param("RV_DIAS_CERO", "Reventa: días (mediana) con 0 puntos", rv["dias_cero"])
+    param("RV_DIAS_MIN", "Reventa: mínimo de ventas observadas para usar los días (si no, NEUTRO)", rv["dias_min_muestras"])
+    param("RV_W_ETQ", "Reventa: peso de la etiqueta (C por encima de B; tabla ETQ_TBL)", rv["peso_etiqueta"])
 
     # ---- fiscalidad
     section("3. Coste de compra: ITP (Comunitat Valenciana) y tasas DGT")
@@ -269,23 +283,87 @@ def build_supuestos(wb: Workbook, p: Params, names: Names) -> None:
         r += 1
     names.add("CARR_PEN_TBL", f"Supuestos!$A${t0}:$B${max(r-1, t0)}")
     r += 1
-    es = sc.get("estilo") or {}
-    header(["Preferencia de estilo: segmento", "Puntos", "Estado", "Fuente"])
+    est = p.estetica
+    ws.cell(r, 1, "Estética (estetica.yaml, editable): criterio = EST_W_MOD × (puntos modelo − 1)/4 × 100 + EST_W_ATR × atributos").font = Font(bold=True)
+    r += 1
+    param("EST_W_MOD", "Estética: peso del modelo (2/3)", est["peso_modelo"], "preferencia (estetica.yaml)", "estetica.yaml")
+    param("EST_W_ATR", "Estética: peso de los atributos del anuncio (1/3)", est["peso_atributos"], "preferencia (estetica.yaml)", "estetica.yaml")
+    pa = est["puntos_atributos"]
+    for nm, k2, lab in (("ATR_BASE", "base", "base (anuncio sin atributos)"), ("ATR_ACAB", "acabado", "acabado alto o deportivo"),
+                        ("ATR_LL", "llantas", "llantas de aleación"), ("ATR_LL16", "llantas_16", "llantas de 16\" o más"),
+                        ("ATR_FAROS", "faros", "faros xenón o LED"), ("ATR_TINT", "tintados", "cristales tintados"),
+                        ("ATR_CHAPA", "chapa", "RESTA: tapacubiertos o llantas de chapa")):
+        param(nm, f"Atributos: puntos por {lab}", pa[k2], "preferencia (estetica.yaml)", "estetica.yaml → puntos_atributos")
+    header(["Modelo (estetica.yaml)", "Puntos 1-5", "Generación / años", "Motores · combustible"])
+    for e in est.get("modelos") or []:
+        ws.cell(r, 1, e["modelo"]).font = _font(BLUE)
+        ws.cell(r, 2, e["puntos"]).font = _font(BLUE)
+        ws.cell(r, 3, f"{e.get('generacion', '')} {e['desde']}-{e['hasta']}")
+        ws.cell(r, 4, f"{'/'.join(map(str, e.get('motores') or [])) or 'todos'} · {e.get('combustible') or 'cualquiera'}")
+        r += 1
+    ws.cell(r, 1, "Resto de modelos por segmento: " + ", ".join(f"{k2} {v}" for k2, v in est["puntos_por_defecto"].items()))
+    r += 2
+    col = est["colores"]
+    header(["Color normalizado", "Puntos (criterio Color)", "Grupo", "Fuente"])
     t0 = r
-    for seg, pts in (es.get("por_segmento") or {}).items():
-        ws.cell(r, 1, seg).font = _font(BLUE)
-        ws.cell(r, 2, pts).font = _font(BLUE)
-        ws.cell(r, 3, "criterio (config.yaml)")
-        ws.cell(r, 4, "config.yaml → scoring.estilo.por_segmento")
+    excl = set((f.get("color") or {}).get("excluidos") or [])
+    for c, g in col["grupos"].items():
+        ws.cell(r, 1, c).font = _font(BLUE)
+        ws.cell(r, 2, col["puntos"].get(g, p.neutro)).font = _font(BLUE)
+        ws.cell(r, 3, g + (" (descartado por filtro)" if c in excl and f.get("color", {}).get("excluir_activo", True) else ""))
+        ws.cell(r, 4, "estetica.yaml → colores (preferencia); sin color o no reconocido = NEUTRO")
         r += 1
-    names.add("ESTILO_TBL", f"Supuestos!$A${t0}:$B${r-1}")
-    param("ESTILO_PRIO", "Preferencia de estilo: puntos de un modelo prioritario", es.get("prioritario", 100))
-    for e in es.get("prioritarios") or []:
-        ws.cell(r, 1, f"Prioritario: {e['modelo']} {e['desde']}-{e['hasta']}")
-        ws.cell(r, 2, ", ".join(e.get("motores") or []) or "cualquier motor")
-        ws.cell(r, 3, e.get("combustible") or "")
-        ws.cell(r, 4, "config.yaml → scoring.estilo.prioritarios (la columna 'Prioritario' de Anuncios se calcula con esta lista)")
+    names.add("COLOR_TBL", f"Supuestos!$A${t0}:$B${r-1}")
+    r += 1
+    mt = rel.get("mantenimiento") or {}
+    ws.cell(r, 1, "Mantenimiento (dentro de Coste de uso) = media de: recambios de la marca y tipo de distribución").font = Font(bold=True)
+    r += 1
+    header(["Marca", "Puntos recambios (0-100)", "Estado", "Fuente"])
+    t0 = r
+    for m, v in (mt.get("marcas") or {"(ninguna)": {"puntos": None, "estado": "PENDIENTE", "fuente": ""}}).items():
+        ws.cell(r, 1, m).font = _font(BLUE)
+        ws.cell(r, 2, v.get("puntos")).font = _font(BLUE)
+        ws.cell(r, 3, v.get("estado", ""))
+        ws.cell(r, 4, v.get("fuente", ""))
         r += 1
+    names.add("MANT_MARCA_TBL", f"Supuestos!$A${t0}:$B${r-1}")
+    header(["Distribución", "Puntos", "Estado", "Fuente"])
+    t0 = r
+    for tp, v in (mt.get("puntos_distribucion") or {"cadena": p.neutro}).items():
+        ws.cell(r, 1, tp).font = _font(BLUE)
+        ws.cell(r, 2, v).font = _font(BLUE)
+        ws.cell(r, 3, "supuesto (criterio)")
+        ws.cell(r, 4, mt.get("nota_puntos", "reliability.yaml → mantenimiento.puntos_distribucion"))
+        r += 1
+    names.add("DIST_PTS_TBL", f"Supuestos!$A${t0}:$B${r-1}")
+    header(["Marca|motor", "Distribución", "Intervalo de cambio", "Estado", "Fuente"])
+    t0 = r
+    for kk, v in (mt.get("distribucion") or {"(ninguno)|": {"tipo": "", "estado": "PENDIENTE"}}).items():
+        v = v if isinstance(v, dict) else {"tipo": v}
+        ws.cell(r, 1, kk).font = _font(BLUE)
+        ws.cell(r, 2, v.get("tipo")).font = _font(BLUE)
+        ws.cell(r, 3, v.get("intervalo", ""))
+        ws.cell(r, 4, v.get("estado", ""))
+        ws.cell(r, 5, v.get("fuente", ""))
+        r += 1
+    names.add("DIST_TBL", f"Supuestos!$A${t0}:$B${r-1}")
+    rs = fis.get("reserva_puesta_a_punto") or {}
+    param("RES_CORREA", "Coste real estimado (particulares): reserva de correa de distribución si no consta (€)", rs.get("correa_eur", 0),
+          rs.get("estado", "supuesto"), rs.get("fuente_correa", "fiscal.yaml → reserva_puesta_a_punto"))
+    param("RES_NEUM", "Coste real estimado (particulares): reserva de neumáticos (juego de 4) (€)", rs.get("neumaticos_eur", 0),
+          rs.get("estado", "supuesto"), rs.get("fuente_neumaticos", "fiscal.yaml → reserva_puesta_a_punto"))
+    param("RES_NEUM_EDAD", "Coste real estimado: edad del coche desde la que se reservan neumáticos si no constan nuevos (años)",
+          rs.get("neumaticos_edad_min", 0), rs.get("estado", "supuesto"), rs.get("fuente_neumaticos", ""))
+    nc = rel.get("euroncap") or []
+    ws.cell(r, 1, "Euro NCAP por generación (la columna 'Euro NCAP' de Anuncios sale de esta tabla). " +
+            (rel.get("euroncap_nota") or "El protocolo cambió en 2009: las estrellas de antes y después no son comparables.")).font = Font(bold=True)
+    r += 1
+    header(["Modelo", "Desde", "Hasta", "Estrellas", "Año ensayo", "Protocolo", "ESP de serie", "Estado", "Fuente"])
+    for e in nc:
+        for i2, k2 in enumerate(["modelo", "desde", "hasta", "estrellas", "ensayo", "protocolo", "esp_serie", "estado", "fuente"], 1):
+            ws.cell(r, i2, e.get(k2)).font = _font(BLUE if i2 <= 7 else BLACK)
+        r += 1
+    r += 1
     ws.cell(r, 1, "Diésel sin fuente de fiabilidad del motor (Mot. con fuente = 0): la fiabilidad del modelo se limita a NEUTRO "
                   "(tratamiento de dato pendiente); además se aplica el ajuste por combustible (DPF).")
     r += 1
@@ -468,7 +546,17 @@ COLUMNS = [
     ("mat_anio", "Año 1.ª matric.", "data", None), ("mat_mes", "Mes 1.ª matric.", "data", None),
     ("etq_dato", "Etiqueta DGT/anuncio", "data", None), ("etq_fuente", "Fuente etiqueta", "data", None),
     ("anio_alt", "Año en URL/título distinto (a confirmar)", "data", None), ("dud_anio", "Etiqueta dudosa por año", "data", None),
-    ("caja_rob", "Caja robotizada", "data", None), ("prioritario", "Modelo prioritario (estilo)", "data", None),
+    ("etq_opciones", "Etiquetas posibles", "data", None), ("etq_incoh", "Anuncio incoherente (etiqueta del anuncio)", "data", None),
+    ("caja_rob", "Caja robotizada", "data", None), ("prioritario", "Modelo de estetica.yaml admitido de particular", "data", None),
+    ("color_raw", "Color (anuncio)", "data", None), ("color", "Color normalizado", "data", None),
+    ("est_modelo", "Estética del modelo (1-5)", "est", None), ("est_ref", "Entrada de estetica.yaml", "est", None),
+    ("at_acabado", "Acabado alto/deportivo", "data", None), ("at_llantas", "Llantas (16+ / sí / chapa)", "data", None),
+    ("at_faros", "Faros xenón/LED", "data", None), ("at_tintados", "Cristales tintados", "data", None),
+    ("correa_det", "Correa con fecha o km", "data", None), ("facturas", "Facturas", "data", None),
+    ("neum_nuevos", "Neumáticos nuevos", "data", None),
+    ("ncap", "Euro NCAP (estrellas)", "data", None), ("esp", "ESP/ESC", "data", None),
+    ("n_modelo", "Anuncios del modelo en el mercado", "data", None), ("dias_venta", "Días medianos hasta desaparecer", "data", None),
+    ("n_dias", "Ventas observadas del modelo", "data", None),
     ("med_merc", "Mediana de mercado del segmento (€)", "data", None), ("n_merc", "N mercado", "data", None),
     ("nivel_merc", "Nivel mediana mercado", "data", None),
     ("duplicados", "Duplicados fusionados", "data", None),
@@ -524,10 +612,12 @@ COLUMNS = [
      "MAX(0,100*(KMA_CERO-{km_anio})/(KMA_CERO-KMA_IDEAL_MAX))))"),
     ("s_edad", "P. edad", "calc", "=MAX(0,MIN(100,100*({anio}-ANIO_MIN)/(ANIO_ACTUAL-ANIO_MIN)))"),
     ("s_kmedad", "P. Km y edad", "calc", "=W_KMT*{s_kmt}+W_KMA*{s_kma}+W_EDAD*{s_edad}"),
-    # anuncio
-    ("s_anuncio", "P. Anuncio", "calc",
-     '=P_ITV*({itv}="sí")+P_LIBRO*({libro}="sí")+P_CORREA*({correa}="sí")+P_PROP*({propietarios}=1)'
-     '+P_GAR*({garantia}="sí")+P_FOTOS*MIN(1,N({fotos})/FOTOS_OBJ)'),
+    # estado y mantenimiento
+    ("mant_key", "Clave marca|motor", "calc", '={marca}&"|"&{motor}'),
+    ("distrib", "Distribución", "calc", '=IFERROR(VLOOKUP({mant_key},DIST_TBL,2,0),"")'),
+    ("s_estado", "P. Estado y mantenimiento", "calc",
+     '=E_ITV*({itv}="sí")+E_LIBRO*({libro}="sí")+E_PROP*IF({propietarios}=1,1,IF({propietarios}=2,0.5,0))'
+     '+E_CORREA*IF(OR({distrib}="cadena",AND({correa}="sí",{correa_det}="sí")),1,IF({correa}="sí",0.5,0))+E_FACT*({facturas}="sí")'),
     # uso
     ("s_etiqueta", "P. Etiqueta y ZBE", "calc",
      '=MAX(0,MIN(100,IFERROR(VLOOKUP({etiqueta},ETQ_TBL,2,0),0)-IF({etq_dudosa}="sí",ETQ_PEN_DUD,IF({etq_fuente}="regla",ETQ_PEN_REGLA,0))))'),
@@ -537,18 +627,35 @@ COLUMNS = [
      '=IF({consumo}="",NEUTRO,MAX(0,MIN(100,100*(CONS_REF_MAX-{consumo})/(CONS_REF_MAX-CONS_REF_MIN))))'),
     ("seguro", "Seguro estimado €/año (aprox.)", "calc", '=IFERROR(VLOOKUP({carroceria},SEGURO_TBL,3,0),"")'),
     ("s_seg", "P. seguro", "calc", '=IF({seguro}="",NEUTRO,MAX(0,MIN(100,100*(SEG_REF_MAX-{seguro})/(SEG_REF_MAX-SEG_REF_MIN))))'),
-    ("s_uso", "P. Coste uso", "calc", "=W_CONS*{s_cons}+W_SEG*{s_seg}"),
+    ("s_mmarca", "P. recambios marca", "calc", "=IFERROR(VLOOKUP({marca},MANT_MARCA_TBL,2,0)+0,NEUTRO)"),
+    ("s_mdist", "P. distribución", "calc", '=IF({distrib}="",NEUTRO,IFERROR(VLOOKUP({distrib},DIST_PTS_TBL,2,0)+0,NEUTRO))'),
+    ("s_mant", "P. mantenimiento", "calc", "=({s_mmarca}+{s_mdist})/2"),
+    ("s_uso", "P. Coste uso", "calc", "=W_CONS*{s_cons}+W_SEG*{s_seg}+W_MANT*{s_mant}"),
     # seguridad de compra
     ("gar_ef", "Garantía efectiva (meses)", "calc",
      '=IF(N({gar_meses})>0,{gar_meses},IF(AND({vendedor}="profesional",SG_LEGAL_ON=1),GAR_LEGAL,0))'),
     ("s_seguridad", "P. Seguridad compra", "calc",
-     '=SG_GAR*MIN(1,{gar_ef}/SG_GAR_FULL)+SG_AMPL*({gar_ampl}="sí")+SG_KMC*({km_cert}="sí")+SG_REV*(N({revision})>0)'
-     '+SG_DEV*MIN(1,N({devolucion})/SG_DEV_FULL)+SG_HIST*({libro}="sí")'),
-    ("s_estilo", "P. Preferencia de estilo", "calc",
-     '=IF({prioritario}="sí",ESTILO_PRIO,IFERROR(VLOOKUP({carroceria},ESTILO_TBL,2,0),NEUTRO))'),
+     '=MAX(0,MIN(100,SG_GAR*MIN(1,{gar_ef}/SG_GAR_FULL)+SG_AMPL*({gar_ampl}="sí")+SG_KMC*({km_cert}="sí")+SG_REV*(N({revision})>0)'
+     '+SG_DEV*MIN(1,N({devolucion})/SG_DEV_FULL)+SG_HIST*({libro}="sí")-IF(AND({vendedor}="particular",{gar_ef}=0),SG_PART_PEN,0)))'),
+    # seguridad (Euro NCAP + ESP)
+    ("s_ncap", "P. Euro NCAP", "calc", '=IF({ncap}="",NEUTRO,MAX(0,MIN(100,{ncap}/5*100)))'),
+    ("s_esp", "P. ESP", "calc", '=IF({esp}="sí",100,IF({esp}="no",0,NEUTRO))'),
+    ("s_segvial", "P. Seguridad (NCAP + ESP)", "calc", "=SV_W_NCAP*{s_ncap}+SV_W_ESP*{s_esp}"),
+    # estética y color
+    ("s_atr", "P. atributos", "calc",
+     '=MAX(0,MIN(100,ATR_BASE+ATR_ACAB*({at_acabado}<>"")+IF({at_llantas}="16+",ATR_LL16,IF({at_llantas}="sí",ATR_LL,0))'
+     '+ATR_FAROS*({at_faros}="sí")+ATR_TINT*({at_tintados}="sí")-ATR_CHAPA*({at_llantas}="chapa")))'),
+    ("s_estetica", "P. Estética", "calc", "=EST_W_MOD*({est_modelo}-1)/4*100+EST_W_ATR*{s_atr}"),
+    ("s_color", "P. Color", "calc", '=IF({color}="",NEUTRO,IFERROR(VLOOKUP({color},COLOR_TBL,2,0)+0,NEUTRO))'),
+    # reventa
+    ("s_liq", "P. liquidez", "calc", "=MAX(0,MIN(100,100*N({n_modelo})/RV_N_FULL))"),
+    ("s_dias", "P. días de venta", "calc",
+     '=IF(OR({dias_venta}="",N({n_dias})<RV_DIAS_MIN),NEUTRO,MAX(0,MIN(100,100*(RV_DIAS_CERO-{dias_venta})/(RV_DIAS_CERO-RV_DIAS_FULL))))'),
+    ("s_reventa", "P. Reventa y liquidez", "calc", "=RV_W_LIQ*{s_liq}+RV_W_DIAS*{s_dias}+RV_W_ETQ*{s_etiqueta}"),
     ("pen_carr", "Penalización carrocería (puntos)", "calc", "=IFERROR(VLOOKUP({carroceria},CARR_PEN_TBL,2,0),0)"),
     ("total", "PUNTUACIÓN", "calc",
-     "=W_FIAB*{s_fiab}+W_PRECIO*{s_precio}+W_KMEDAD*{s_kmedad}+W_ANUNCIO*{s_anuncio}+W_USO*{s_uso}+W_SEGURIDAD*{s_seguridad}+W_ETIQUETA*{s_etiqueta}+W_ESTILO*{s_estilo}-{pen_carr}"),
+     "=W_FIAB*{s_fiab}+W_PRECIO*{s_precio}+W_KMEDAD*{s_kmedad}+W_ESTADO*{s_estado}+W_USO*{s_uso}+W_SEGURIDAD*{s_seguridad}"
+     "+W_SEGVIAL*{s_segvial}+W_ESTETICA*{s_estetica}+W_COLOR*{s_color}+W_REVENTA*{s_reventa}-{pen_carr}-{pen_pres}"),
     # coste
     ("cc_fiscal", "cc para ITP", "calc",
      '=IF(N({cc})>0,{cc},IFERROR(ROUND(_xlfn.NUMBERVALUE(LEFT({motor},FIND(" ",{motor}&" ")-1),".")*1000,0),99999))'),
@@ -563,8 +670,13 @@ COLUMNS = [
     ("informe", "Informe DGT (€)", "calc", "=INFORME_DGT"),
     ("coste_total", "COSTE TOTAL (€)", "calc", "={precio}+{gastos_calc}+{itp}+{tasa}+{informe}"),
     ("primer_anio", "Coste 1er año con seguro (€)", "calc", "={coste_total}+N({seguro})"),
+    ("exceso", "Exceso sobre presupuesto = € a negociar", "calc", "=MAX(0,{coste_total}-TOTAL_MAX)"),
+    ("pen_pres", "Penalización presupuesto (puntos)", "calc", "={exceso}/100*PEN_100"),
+    ("coste_real", "Coste real estimado particular (€, informativo)", "calc",
+     '=IF({vendedor}="particular",{coste_total}+IF(AND({distrib}<>"cadena",{correa}<>"sí"),RES_CORREA,0)'
+     '+IF(AND({neum_nuevos}<>"sí",{edad}>=RES_NEUM_EDAD),RES_NEUM,0),"")'),
     ("apto", "Presupuesto (sí / negociar / no)", "calc",
-     '=IF({coste_total}<=TOTAL_MAX,"sí",IF({coste_total}<=TOTAL_MAX+MARGEN_NEG,"negociar","no"))'),
+     '=IF({coste_total}<=TOTAL_MAX,"sí",IF({coste_total}<=TECHO,"negociar","no"))'),
     ("rank", "Puesto", "calc",
      '=IF({apto}<>"no",COUNTIFS({R:apto},"<>no",{R:total},">"&{total})+COUNTIFS({RUP:apto},"<>no",{RUP:total},{total}),"")'),
 ]
@@ -576,7 +688,17 @@ NOTES = {
     "motor": "Normalizado por src/normalize.py (cilindrada + tecnología).",
     "itv": "Extraído del texto del anuncio por src/extract.py: sí / no / vacío = no lo menciona.",
     "caja_rob": "Detectada en título/versión con el patrón de reliability.yaml → cajas_robotizadas.",
-    "prioritario": "Calculado con config.yaml → scoring.estilo.prioritarios (modelo, años, cilindrada y combustible).",
+    "prioritario": "sí = el modelo/motor/años está en estetica.yaml con puntos >= filtros.particulares.min_estetica: se admite de particular.",
+    "est_modelo": "Verde: viene de estetica.yaml (puntos del modelo) o de sus puntos por defecto del segmento.",
+    "color": "Normalizado con estetica.yaml → colores.alias (sin tildes; 'plateado' = plata, 'antracita' = gris oscuro...).",
+    "color_raw": "Dato de la plataforma (OcasionPlus vehicle.color, AutoScout24 bodyColor, Coches.net ad.color) o del texto ('color ...').",
+    "ncap": "Estrellas Euro NCAP de la generación (reliability.yaml → euroncap; fuente en la nota de cada celda). Protocolo distinto antes de 2009.",
+    "esp": "sí/no: del anuncio o equipamiento, del equipamiento de serie con fuente (reliability.yaml → euroncap) u obligatorio desde 2015.",
+    "n_modelo": "Calculado en Python: anuncios del modelo vistos en los listados de todas las plataformas (tabla 'mercado').",
+    "dias_venta": "Calculado en Python: mediana de días entre la primera vez que se vio y la fecha de desaparición (tabla 'mercado').",
+    "etq_opciones": "Etiquetas posibles con cualquier fecha del año (y con el año que diga la URL/título). La final es la peor.",
+    "etq_incoh": "Etiqueta que publica el anuncio y que contradice la regla por fecha: se usa la regla.",
+    "coste_real": "Solo particulares, informativo: + correa (si no consta cambiada y no es de cadena) + neumáticos (si no constan nuevos).",
     "anio_alt": "Año que aparece en la URL o el título y no coincide con la fecha de matriculación.",
     "mediana": "Si hay MIN_N o más anuncios de mercado del segmento (todos los vistos en los listados, también > precio máx.), "
                "usa la mediana de mercado; si no, fórmula matricial con la mediana de esta hoja (modelo+año+km, subiendo de nivel).",
@@ -608,7 +730,7 @@ def _ym(l: Listing):
     return (y, m) if y is not None else (l.anio, None)
 
 
-def listing_row(l: Listing, avisos: str, mkt=None) -> dict:
+def listing_row(l: Listing, avisos: str, mkt=None, liq=None) -> dict:
     mkt = mkt or (None, None, None)
     return {
         "med_merc": mkt[0], "n_merc": mkt[2] if mkt[0] is not None else None, "nivel_merc": mkt[1] or None,
@@ -627,13 +749,19 @@ def listing_row(l: Listing, avisos: str, mkt=None) -> dict:
         "etq_dato": l.etiqueta_dgt if l.etiqueta_fuente in ("DGT", "anuncio") else None, "etq_fuente": l.etiqueta_fuente,
         "anio_alt": l.anio_alternativo, "dud_anio": "sí" if l.etiqueta_dudosa_anio else "no",
         "caja_rob": "sí" if l.caja_robotizada else "no", "prioritario": "sí" if l.prioritario else "no",
+        "etq_opciones": l.etiqueta_opciones, "etq_incoh": l.etiqueta_incoherente,
+        "color_raw": l.color_raw, "color": l.color, "est_modelo": l.estetica_modelo, "est_ref": l.estetica_ref or "(por segmento)",
+        "at_acabado": l.at_acabado, "at_llantas": l.at_llantas, "at_faros": _yn(l.at_faros), "at_tintados": _yn(l.at_tintados),
+        "correa_det": _yn(l.correa_detalle), "facturas": _yn(l.facturas), "neum_nuevos": _yn(l.neumaticos_nuevos),
+        "ncap": l.ncap_estrellas, "esp": l.esp,
+        "n_modelo": (liq or {}).get("n_modelo"), "dias_venta": (liq or {}).get("dias"), "n_dias": (liq or {}).get("n_dias"),
         "gastos": l.gastos_gestion_eur, "gastos_transf": _yn(l.gastos_incluyen_transferencia), "distancia": l.distancia_km,
         "duplicados": "; ".join(l.duplicados) or None, "avisos": avisos or None,
         "descripcion": (l.descripcion or "")[:1500], "fuente": f"{l.fuente_dato or ''} {l.raw_ref or ''}".strip(),
     }
 
 
-def build_anuncios(wb: Workbook, listings: list[Listing], avisos: dict[str, str], names: Names, mkt=None) -> int:
+def build_anuncios(wb: Workbook, listings: list[Listing], avisos: dict[str, str], names: Names, mkt=None, liq=None) -> int:
     ws = wb.create_sheet("Anuncios", 0)
     n_last = max(len(listings) + 1, 2)
     for i, (key, hdr, kind, _t) in enumerate(COLUMNS, 1):
@@ -644,7 +772,7 @@ def build_anuncios(wb: Workbook, listings: list[Listing], avisos: dict[str, str]
         if key in NOTES:
             c.comment = Comment(NOTES[key], "buscador")
     for r, l in enumerate(listings, 2):
-        data = listing_row(l, avisos.get(l.uid, ""), (mkt or {}).get(l.uid))
+        data = listing_row(l, avisos.get(l.uid, ""), (mkt or {}).get(l.uid), (liq or {}).get(l.uid))
         for i, (key, _h, kind, tpl) in enumerate(COLUMNS, 1):
             cell = ws.cell(r, i)
             if kind == "etq":
@@ -654,6 +782,11 @@ def build_anuncios(wb: Workbook, listings: list[Listing], avisos: dict[str, str]
                     cell.comment = Comment(f"Año a confirmar: el anuncio dice {l.anio_alternativo} en la URL/título y "
                                            f"{l.fecha_matriculacion or l.anio} como matriculación; se toma la peor etiqueta "
                                            f"posible ({l.etiqueta_fuente}).", "buscador")
+                elif l.etiqueta_incoherente:
+                    cell.value = f"={COL['etq_regla']}{r}"
+                    cell.font = _font(BLACK)
+                    cell.comment = Comment(f"Anuncio incoherente: el anuncio dice {l.etiqueta_incoherente}; por combustible y "
+                                           f"fecha corresponde la regla. Se usa la regla.", "buscador")
                 elif l.etiqueta_fuente in ("DGT", "anuncio"):
                     cell.value = l.etiqueta_dgt
                     cell.font = _font(BLUE)
@@ -664,9 +797,16 @@ def build_anuncios(wb: Workbook, listings: list[Listing], avisos: dict[str, str]
                     cell.value = f"={COL['etq_regla']}{r}"
                     cell.font = _font(BLACK)
                 continue
+            if kind == "est":
+                cell.value = data[key]
+                cell.font = _font(GREEN)
+                continue
             if kind == "data":
                 cell.value = data[key]
                 cell.font = _font(BLUE)
+                src = {"ncap": l.ncap_ref, "esp": l.esp_fuente, "color_raw": l.color_fuente}.get(key)
+                if src and data[key] is not None:
+                    cell.comment = Comment(src, "buscador")
                 if key == "url" and l.url:
                     cell.hyperlink = l.url
             else:
@@ -687,19 +827,23 @@ TOP_COLS = [
     ("Título", "titulo"), ("Plataforma", "plataforma"), ("Marca", "marca"), ("Modelo", "modelo_key"),
     ("Motor", "motor"), ("Combustible", "combustible"), ("Año", "anio"), ("Km", "km"),
     ("Automático", "automatico"), ("Vendedor", "vendedor"), ("Precio contado (€)", "precio"),
-    ("Solo financiando", "solo_fin"), ("Precio financiado (€)", "p_financiado"), ("Garantía efectiva (meses)", "gar_ef"),
-    ("Gastos vendedor (€)", "gastos_calc"), ("ITP (€)", "itp"), ("Coste total (€)", "coste_total"), ("Mediana segmento (€)", "mediana"),
-    ("Descuento", "descuento"), ("Etiqueta", "etiqueta"), ("Fuente etiqueta", "etq_fuente"), ("Etiqueta dudosa", "etq_dudosa"),
-    ("P. Fiabilidad", "s_fiab"), ("P. Precio", "s_precio"), ("P. Km y edad", "s_kmedad"),
-    ("P. Anuncio", "s_anuncio"), ("P. Coste uso", "s_uso"), ("P. Seguridad compra", "s_seguridad"),
-    ("P. Etiqueta y ZBE", "s_etiqueta"), ("P. Estilo", "s_estilo"), ("Prioritario", "prioritario"), ("PUNTUACIÓN", "total"), ("Avisos", "avisos"),
+    ("Solo financiando", "solo_fin"), ("Garantía efectiva (meses)", "gar_ef"),
+    ("Gastos vendedor (€)", "gastos_calc"), ("ITP (€)", "itp"), ("Coste total (€)", "coste_total"),
+    ("€ a negociar (exceso sobre presupuesto)", "exceso"), ("Coste real estimado particular (€)", "coste_real"),
+    ("Mediana segmento (€)", "mediana"), ("Descuento", "descuento"),
+    ("Etiqueta", "etiqueta"), ("Fuente etiqueta", "etq_fuente"), ("Etiquetas posibles", "etq_opciones"), ("Etiqueta dudosa", "etq_dudosa"),
+    ("Color", "color"), ("Estética modelo (1-5)", "est_modelo"), ("Euro NCAP", "ncap"), ("ESP", "esp"),
+    ("P. Fiabilidad", "s_fiab"), ("P. Precio", "s_precio"), ("P. Estado y mant.", "s_estado"), ("P. Estética", "s_estetica"),
+    ("P. Seguridad", "s_segvial"), ("P. Seguridad compra", "s_seguridad"), ("P. Coste uso", "s_uso"), ("P. Km y edad", "s_kmedad"),
+    ("P. Reventa", "s_reventa"), ("P. Color", "s_color"), ("Penal. presupuesto", "pen_pres"), ("PUNTUACIÓN", "total"), ("Avisos", "avisos"),
 ]
+WEIGHTED = {"s_fiab": "W_FIAB", "s_precio": "W_PRECIO", "s_estado": "W_ESTADO", "s_estetica": "W_ESTETICA", "s_segvial": "W_SEGVIAL",
+            "s_seguridad": "W_SEGURIDAD", "s_uso": "W_USO", "s_kmedad": "W_KMEDAD", "s_reventa": "W_REVENTA", "s_color": "W_COLOR"}
 
 
 def build_top(wb: Workbook, n_last: int, top_n: int) -> None:
     ws = wb.create_sheet("Top20", 1)
-    hdrs = ["Puesto", "Fila en Anuncios", "Enlace"] + [h for h, _ in TOP_COLS] + \
-           ["Aport. fiabilidad", "Aport. precio", "Aport. km/edad", "Aport. anuncio", "Aport. uso", "Aport. seguridad", "Aport. etiqueta", "Aport. estilo"]
+    hdrs = ["Puesto", "Fila en Anuncios", "Enlace"] + [h for h, _ in TOP_COLS] + ["Aport. " + h[3:] for h, k in TOP_COLS if k in WEIGHTED]
     for i, h in enumerate(hdrs, 1):
         c = ws.cell(1, i, h)
         c.font = Font(bold=True)
@@ -718,25 +862,45 @@ def build_top(wb: Workbook, n_last: int, top_n: int) -> None:
         for j, (_h, key) in enumerate(TOP_COLS, 4):
             ws.cell(r, j, f'=IF($B{r}="","",INDEX({rng(key)},$B{r}))').font = _font(GREEN)
         base = 4 + len(TOP_COLS)
-        sub = {"s_fiab": "W_FIAB", "s_precio": "W_PRECIO", "s_kmedad": "W_KMEDAD", "s_anuncio": "W_ANUNCIO", "s_uso": "W_USO",
-               "s_seguridad": "W_SEGURIDAD", "s_etiqueta": "W_ETIQUETA", "s_estilo": "W_ESTILO"}
-        for j, (key, w) in enumerate(sub.items()):
+        sub = [(k, WEIGHTED[k]) for _h, k in TOP_COLS if k in WEIGHTED]
+        for j, (key, w) in enumerate(sub):
             colsrc = get_column_letter(4 + [x for _, x in TOP_COLS].index(key))
             ws.cell(r, base + j, f'=IF($B{r}="","",{colsrc}{r}*{w})').font = _font(GREEN)
     note = ws.cell(top_n + 3, 1, "Todo se calcula con fórmulas a partir de 'Anuncios' (verde) y 'Supuestos'. "
-                                 "Aportación = puntuación del criterio × peso. Suma de aportaciones = PUNTUACIÓN.")
+                                 "Aportación = puntuación del criterio × peso. Suma de aportaciones − penalizaciones = PUNTUACIÓN.")
     note.font = Font(italic=True)
     for i in range(1, len(hdrs) + 1):
         ws.column_dimensions[get_column_letter(i)].width = 14
     ws.column_dimensions["D"].width = 40
 
 
-def write_workbook(path: Path, listings: list[Listing], avisos: dict[str, str], p: Params, mkt=None) -> None:
+# Columna de Anuncios -> valor esperado según la réplica en Python (tests y tools/verify_excel.py)
+CHECKS = {
+    "s_fiab": lambda f: f["fiabilidad"]["score"], "s_precio": lambda f: f["precio"]["score"],
+    "s_kmedad": lambda f: f["km_edad"]["score"], "s_estado": lambda f: f["estado_mant"]["score"],
+    "s_mant": lambda f: f["coste_uso"]["mantenimiento"]["score"], "s_uso": lambda f: f["coste_uso"]["score"],
+    "gar_ef": lambda f: f["seguridad"]["garantia_meses"], "s_seguridad": lambda f: f["seguridad"]["score"],
+    "s_segvial": lambda f: f["seguridad_vial"]["score"], "s_atr": lambda f: f["estetica"]["s_atributos"],
+    "s_estetica": lambda f: f["estetica"]["score"], "s_color": lambda f: f["color"]["score"],
+    "s_etiqueta": lambda f: f["etiqueta"]["score"], "s_reventa": lambda f: f["reventa"]["score"],
+    "etiqueta": lambda f: f["listing"].etiqueta_dgt, "coste_total": lambda f: f["coste"]["total"],
+    "primer_anio": lambda f: f["coste"]["primer_anio"], "exceso": lambda f: f["coste"]["exceso"],
+    "pen_pres": lambda f: f["penal_presupuesto"], "coste_real": lambda f: f["coste"]["real_estimado"],
+    "pen_carr": lambda f: f["penalizacion"], "apto": lambda f: f["estado"], "total": lambda f: f["total"],
+}
+
+
+def liq_map(filas: list[dict]) -> dict:
+    """uid -> datos de liquidez (columnas azules de Anuncios) a partir de las filas puntuadas."""
+    return {f["listing"].uid: {k: f["reventa"][k] for k in ("n_modelo", "dias", "n_dias")} for f in filas}
+
+
+def write_workbook(path: Path, listings: list[Listing], avisos: dict[str, str], p: Params, mkt=None, liq=None) -> None:
     wb = Workbook()
     wb.remove(wb.active)
     names = Names(wb)
     build_supuestos(wb, p, names)
-    n_last = build_anuncios(wb, listings, avisos, names, mkt)
+    n_last = build_anuncios(wb, listings, avisos, names, mkt, liq)
     build_top(wb, n_last, p.cfg["salida"]["top_n"])
     for ws in wb.worksheets:
         ws.freeze_panes = None

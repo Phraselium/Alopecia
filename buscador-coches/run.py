@@ -26,7 +26,8 @@ import yaml
 BASE = Path(__file__).resolve().parent
 sys.path.insert(0, str(BASE))
 
-from src.excel import write_workbook  # noqa: E402
+from src.atributos import from_raw  # noqa: E402
+from src.excel import liq_map, write_workbook  # noqa: E402
 from src.http import BlockedError, DisallowedError, PoliteClient  # noqa: E402
 from src.pipeline import enrich, process  # noqa: E402
 from src.report import write_report  # noqa: E402
@@ -76,7 +77,7 @@ def collect(cfg: dict, store: Store, solo: str | None, max_paginas: int | None) 
                         # una ficha caída no para la fuente: no se guarda y se reintenta en la próxima ejecución
                         log.warning("%s: ficha %s no disponible (%s); se reintentará", name, l.url, e)
                         continue
-                nuevos.append(enrich(l))
+                nuevos.append(enrich(from_raw(l)))
         except NotReadyError as e:
             estado, detalle = "pendiente", str(e)
             log.warning("%s", e)
@@ -119,11 +120,12 @@ def build_outputs(cfg: dict, fiscal: dict, rel: dict, store: Store, allow_downlo
     listings = store.all()
     fiables = set()
     dgt = load_dgt(cfg, allow_download)
-    res = process(listings, p, fiables, store.market(), dgt=dgt)
+    res = process(listings, p, fiables, store.market(), dgt=dgt, ventas=store.sale_times())
     out = cfg["salida"]
     by_uid = {f["listing"].uid: f for f in res.filas}
     write_workbook(BASE / out["excel"], [f["listing"] for f in res.filas], res.avisos, p,
-                   {f["listing"].uid: f["mercado"] for f in res.filas})
+                   {f["listing"].uid: f["mercado"] for f in res.filas},
+                   liq_map(res.filas))
     stats = {"limpios": len(res.limpios), "descartados": len(res.descartados),
              "plataformas": ", ".join(sorted({l.plataforma for l in res.limpios})) or "ninguna"}
     runs = store.db.execute(

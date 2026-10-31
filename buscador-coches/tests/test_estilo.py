@@ -3,7 +3,7 @@ import pytest
 
 from src.models import Listing
 from src.pipeline import process
-from src.scoring import Params, consumo_estimado, engine_adjust, s_estilo, seguro_estimado
+from src.scoring import Params, consumo_estimado, engine_adjust, seguro_estimado
 
 
 @pytest.fixture
@@ -19,22 +19,19 @@ def mk(i, titulo, marca, modelo, anio=2006, **kw):
     return Listing(**d)
 
 
-def test_prioritarios_y_estilo(p):
+def test_prioritarios_por_estetica(p):
     ls = [mk(1, "Toyota Avensis 1.8 VVT-i Sol", "Toyota", "Avensis"),
           mk(2, "Audi A4 2.0 TFSI", "Audi", "A4", cambio="manual"),
-          mk(3, "Toyota Avensis 2.0 D-4D", "Toyota", "Avensis", combustible="diesel"),
           mk(4, "Seat Ibiza 1.4 16v", "Seat", "Ibiza", anio=2009),
           mk(5, "Honda Accord 2.4 i-VTEC", "Honda", "Accord")]
     res = process(ls, p, set())
     by = {f["listing"].titulo: f for f in res.filas}
-    assert by["Toyota Avensis 1.8 VVT-i Sol"]["listing"].prioritario
-    assert by["Audi A4 2.0 TFSI"]["listing"].prioritario
-    assert by["Toyota Avensis 1.8 VVT-i Sol"]["estilo"]["score"] == 100
+    assert by["Toyota Avensis 1.8 VVT-i Sol"]["listing"].estetica_modelo == 4
+    assert by["Audi A4 2.0 TFSI"]["listing"].estetica_modelo == 5
     ibiza = next(f for t, f in by.items() if "Ibiza" in t)
-    assert ibiza["estilo"]["score"] == p.cfg["scoring"]["estilo"]["por_segmento"]["utilitario"]
+    assert ibiza["listing"].estetica_modelo == 2 and ibiza["listing"].estetica_ref is None
     accord = by["Honda Accord 2.4 i-VTEC"]
-    assert not accord["listing"].prioritario and accord["estilo"]["score"] == 80   # berlina_d sin ser prioritario
-
+    assert accord["listing"].estetica_ref is None and accord["listing"].estetica_modelo == 3   # 2.4: no es el 2.0 de la lista
 
 
 def test_modelos_excluidos_y_multitronic(p):
@@ -43,7 +40,7 @@ def test_modelos_excluidos_y_multitronic(p):
           mk(3, "Citroën C1 1.0", "Citroën", "C1", anio=2012),
           mk(4, "Audi A4 2.0 Multitronic", "Audi", "A4"),
           mk(5, "Audi A4 1.8T automático", "Audi", "A4", cambio="automatico"),
-          mk(6, "Audi A4 2.0 TFSI manual", "Audi", "A4", cambio="manual")]
+          mk(6, "Audi A4 2.0 TFSI manual", "Audi", "A4", cambio="manual", anio=2007)]
     res = process(ls, p, set())
     fuera = {l.titulo: " | ".join(m) for l, m in res.descartados}
     for t in ("Toyota Aygo 1.0", "Peugeot 107 1.0", "Citroën C1 1.0"):

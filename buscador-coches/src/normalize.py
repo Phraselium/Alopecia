@@ -63,6 +63,8 @@ MODELS = {
                "Baleno": ("utilitario", ["baleno"]), "Celerio": ("utilitario", ["celerio"])},
     "Mitsubishi": {"Colt": ("utilitario", ["colt"]), "Space Star": ("utilitario", ["space star"])},
     "Audi": {"A1": ("utilitario", ["a1"]), "A3": ("compacto", ["a3"]), "A4": ("berlina_d", ["a4"])},
+    "Alfa Romeo": {"147": ("compacto", ["147"]), "159": ("berlina_d", ["159"]), "MiTo": ("utilitario", ["mito"]),
+                   "Giulietta": ("compacto", ["giulietta"])},
     "MINI": {"MINI": ("utilitario", ["mini", "cooper", "one"])},
     "Mercedes-Benz": {"Clase A": ("compacto", ["clase a", "a 160", "a 180", "a 200", "a160", "a180", "a200"]),
                       "Clase B": ("monovolumen_pequeno", ["clase b", "b 180", "b 200", "b180", "b200"])},

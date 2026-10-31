@@ -35,9 +35,13 @@ def _why(f: dict, p: Params) -> list[str]:
     w = p.cfg["scoring"]["pesos"]
     out = []
     parts = {"fiabilidad": f["fiabilidad"]["score"], "precio": f["precio"]["score"], "km_edad": f["km_edad"]["score"],
-             "anuncio": f["anuncio"]["score"], "coste_uso": f["coste_uso"]["score"], "seguridad": f["seguridad"]["score"]}
-    best = sorted(parts, key=lambda k: -parts[k] * w[k])[:2]
-    labels = {"fiabilidad": "fiabilidad", "precio": "precio", "km_edad": "km y edad", "anuncio": "anuncio", "coste_uso": "coste de uso", "seguridad": "seguridad de compra"}
+             "estado": f["estado_mant"]["score"], "coste_uso": f["coste_uso"]["score"], "seguridad_compra": f["seguridad"]["score"],
+             "seguridad_vial": f["seguridad_vial"]["score"], "estetica": f["estetica"]["score"], "reventa": f["reventa"]["score"],
+             "color": f["color"]["score"]}
+    best = sorted(parts, key=lambda k: -parts[k] * w[k])[:3]
+    labels = {"fiabilidad": "fiabilidad", "precio": "precio", "km_edad": "km y edad", "estado": "estado y mantenimiento",
+              "coste_uso": "coste de uso", "seguridad_compra": "seguridad de compra", "seguridad_vial": "seguridad (NCAP/ESP)",
+              "estetica": "estética", "reventa": "reventa", "color": "color"}
     out.append("Más aporta: " + ", ".join(f"{labels[k]} ({parts[k]:.0f}/100)" for k in best) + ".")
     d = f["precio"]["descuento"]
     if d is not None:
@@ -88,7 +92,8 @@ def _risks(f: dict, rel: dict | None = None) -> tuple[list[str], list[str]]:
     if l.solo_financiando:
         risks.append(f"El precio anunciado ({n((l.precio_financiado or 0))} €) solo vale financiando; el precio al contado es {n(l.precio)} € (el que se usa aquí).")
     if l.vendedor == "particular":
-        risks.append("Venta entre particulares: no hay garantía legal de conformidad (solo vicios ocultos del Código Civil).")
+        risks.append("Venta entre particulares: no hay garantía legal de conformidad (solo vicios ocultos del Código Civil). "
+                     "Pedir informe DGT, historial de ITV y revisión precompra.")
     if l.km_justificados is False or (f["km_edad"]["km_anio"] < 4000 and not l.km_justificados):
         risks.append("Kilometraje anormalmente bajo y sin justificar: verificar en el informe DGT (lecturas de ITV).")
     return risks, checks
@@ -120,8 +125,10 @@ def _etiqueta_md(f: dict, p) -> str:
     if l.etiqueta_fuente == "DGT":
         txt += f", matrícula {l.matricula}"
     txt += ")."
+    if l.etiqueta_incoherente:
+        txt += f" ⚠️ **Anuncio incoherente**: el anuncio dice {l.etiqueta_incoherente}; por combustible y fecha corresponde {l.etiqueta_dgt}."
     if l.etiqueta_dudosa:
-        txt += " ⚠️ **Dudosa** (año frontera sin mes de matriculación): confirmar la etiqueta con la DGT antes de comprar."
+        txt += (f" ⚠️ **Dudosa** (posibles: {l.etiqueta_opciones}): se puntúa la peor; confirmar la etiqueta con la DGT antes de comprar.")
     z = p.zbe["zbe_valencia"]
     if l.etiqueta_dgt == "B":
         txt += (" ZBE de València: la ordenanza (pendiente de aprobación definitiva; calendario previsto) solo restringe la etiqueta A; "
@@ -179,14 +186,74 @@ def _ventas_md(ventas: list[dict]) -> list[str]:
     return out + ["", "_Días contados desde que el buscador vio el anuncio por primera vez (no desde su publicación real)._", ""]
 
 
+def _resumen_tabla(fs: list[dict]) -> list[str]:
+    out = ["| # | Coche | Año | Km | Coste total | € a negociar | Puntos | Etiqueta (fuente) | Color | Euro NCAP | Garantía | "
+           "Vendedor | Enlace | Riesgo principal |", "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for i, f in enumerate(fs, 1):
+        l = f["listing"]
+        risks, _ = _risks(f, None)
+        prob = [h["problema"] for h in f["fiabilidad"]["problemas"] if h.get("ajuste", 0) < 0]
+        riesgo = (prob[0] if prob else (risks[0] if risks else "sin riesgos documentados con fuente"))[:110]
+        gar = f["seguridad"]["garantia_meses"]
+        out.append(f"| {i} | {l.titulo} | {l.anio} | {n(l.km)} | {n(f['coste']['total'])} € | "
+                   f"{n(f['coste']['exceso']) + ' €' if f['coste']['exceso'] else '—'} | {f['total']:.1f} | "
+                   f"{l.etiqueta_dgt or '?'}{' (dudosa: ' + l.etiqueta_opciones + ')' if l.etiqueta_dudosa else ''} ({l.etiqueta_fuente}) | "
+                   f"{l.color or (l.color_raw or 'sin dato')} | {('%g★' % l.ncap_estrellas) if l.ncap_estrellas else 'PENDIENTE'} | "
+                   f"{(str(gar) + ' meses' + (' (legal)' if f['seguridad']['minimo_legal'] else '')) if gar else 'no'} | "
+                   f"{l.vendedor} | [anuncio]({l.url}) | {riesgo} |")
+    return out + [""]
+
+
+def _ficha(f: dict, p: Params) -> list[str]:
+    l = f["listing"]
+    risks, checks = _risks(f, p.rel)
+    est = f["estetica"]
+    lines = [
+        f"### {f['rank']}. {l.titulo} — {n(l.precio)} € ({n(f['coste']['total'])} € en total)"
+        + (f" — **por encima del presupuesto: negociar {n(f['coste']['exceso'])} €**" if f.get("estado") == "negociar" else ""),
+        "", f"**Puntuación {f['total']:.1f}/100** · {l.plataforma} · {l.ubicacion or 'ubicación sin dato'} · "
+            f"{l.vendedor or 'vendedor sin dato'} · {'automático' if l.cambio == 'automatico' else 'manual' if l.cambio else 'cambio sin dato'} · "
+            f"etiqueta {l.etiqueta_dgt or '?'} · color {l.color or 'sin dato'} · [ver anuncio]({l.url})", "",
+        f"Coste: {n(l.precio)} € al contado + gastos {n(f['coste'].get('gastos', 0))} € + ITP {n(f['coste']['itp'])} € + tasa {n(f['coste']['tasa'], 2)} € + informe {n(f['coste']['informe'], 2)} € = **{n(f['coste']['total'])} €**; "
+        f"con el seguro estimado ({n(f['coste_uso']['seguro'] or 0)} €/año, aproximado) el primer año sale por **{n(f['coste']['primer_anio'])} €**."
+        + (f" **Coste real estimado** (con reserva de puesta a punto, informativo): {n(f['coste']['real_estimado'])} €."
+           if f["coste"].get("real_estimado") else ""), "",
+        _etiqueta_md(f, p), "",
+        f"Estética: modelo {est['puntos_modelo']}/5 ({est['ref'] or 'por segmento'}) · atributos {est['s_atributos']:.0f}/100"
+        + (f" ({', '.join(x for x in [l.at_acabado and 'acabado ' + l.at_acabado, l.at_llantas and 'llantas ' + l.at_llantas, l.at_faros and 'xenón/LED', l.at_tintados and 'tintados'] if x)})" if any([l.at_acabado, l.at_llantas, l.at_faros, l.at_tintados]) else "")
+        + f" · Euro NCAP {('%g estrellas' % l.ncap_estrellas) if l.ncap_estrellas else 'PENDIENTE'} · ESP {l.esp or 'sin dato'}"
+        + " · consumo estimado " + (f"{f['coste_uso']['consumo']:.1f} l/100 km (aprox.)" if f['coste_uso'].get('consumo') else "PENDIENTE"), "",
+        "**Por qué destaca**", *[f"- {x}" for x in _why(f, p)], "",
+        "**Riesgos de este modelo y motor**", *([f"- {x}" for x in risks] or ["- Sin problemas documentados con fuente para este modelo/motor (eso no significa que no los tenga)."]), "",
+        "**Qué revisar en la visita**", *[f"- {x}" for x in checks + GENERIC_CHECKS], "",
+        "**Qué preguntar al vendedor**", *[f"- {x}" for x in _questions(l) + GENERIC_QUESTIONS], "",
+    ]
+    if l.duplicados:
+        lines += ["_También publicado en: " + "; ".join(l.duplicados) + "_", ""]
+    av = [a for a in (f.get("avisos") or "").split("; ") if a]
+    if av:
+        lines += ["**Avisos**", *[f"- {a}" for a in av], ""]
+    if f["coste"]["avisos"]:
+        lines += ["_Avisos de coste: " + "; ".join(f["coste"]["avisos"]) + "_", ""]
+    return lines
+
+
 def write_report(path: Path, filas: list[dict], p: Params, top_n: int, stats: dict) -> None:
-    top = sorted((f for f in filas if f.get("rank")), key=lambda f: f["rank"])[:top_n]
-    lines = [f"# Mejores {top_n} coches de segunda mano (Valencia, ≤ {n(p.cfg['presupuesto']['total_max_eur'])} € en total)",
+    ranked = sorted((f for f in filas if f.get("rank")), key=lambda f: f["rank"])
+    top = [f for f in ranked if f["listing"].vendedor == "profesional"][:top_n]
+    part = [f for f in ranked if f["listing"].vendedor == "particular"][:5]
+    pr = p.cfg["presupuesto"]
+    lines = [f"# Mejores coches de segunda mano (Valencia, objetivo ≤ {n(pr['total_max_eur'])} € en total, techo {n(pr['techo_eur'])} €)",
              "", f"Generado el {time.strftime('%Y-%m-%d %H:%M')}. Anuncios limpios: {stats.get('limpios')}, "
                  f"descartados: {stats.get('descartados')}. Plataformas: {stats.get('plataformas')}.", "",
-             "> Los datos de fiabilidad, fiscalidad y ZBE marcados como *probable* o *PENDIENTE* en la hoja "
+             "> Los datos de fiabilidad, seguridad, fiscalidad y ZBE marcados como *probable* o *PENDIENTE* en la hoja "
              "Supuestos deben verificarse en la fuente antes de decidir. El coste total incluye ITP (cuota fija de la "
-             "Comunitat Valenciana o tipo porcentual), la tasa de transferencia y el informe DGT.", ""]
+             "Comunitat Valenciana o tipo porcentual) o los gastos del profesional, la tasa de transferencia y el informe DGT. "
+             f"Entre {n(pr['total_max_eur'])} y {n(pr['techo_eur'])} € se restan {pr['penal_por_100_eur']} puntos por cada 100 € y se marca «negociar».", ""]
+    lines += [f"## Top {top_n} de profesionales", ""] + (_resumen_tabla(top) if top else ["_Ninguno._", ""])
+    lines += ["## Top 5 de particulares (solo modelos de estetica.yaml con 4-5 puntos)", "",
+              "> Particular sin garantía: pedir informe DGT, historial ITV y revisión precompra.", ""] + \
+             (_resumen_tabla(part) if part else ["_Ninguno._", ""])
     if stats.get("fuentes"):
         lines += ["**Estado de las fuentes en la última ejecución**", ""]
         for plat, est, det in stats["fuentes"]:
@@ -207,39 +274,16 @@ def write_report(path: Path, filas: list[dict], p: Params, top_n: int, stats: di
               "etiqueta A (fuera de la provincia desde 12-2025; desde 1-1-2027 todos los de fuera del municipio; desde 1-1-2028 "
               "también los de vecinos). Los B no tienen restricción ni fecha prevista. Detalle y fuentes en zbe.yaml.", ""]
     ex = p.cfg["filtros"]
-    lines += [f"> **Enfoque**: prioridad a berlinas medianas sobrias (criterio *Preferencia de estilo*, "
-              f"{p.cfg['scoring']['pesos'].get('estilo', 0) * 100:.0f} %). Excluidos siempre: {', '.join(ex.get('modelos_excluidos') or []) or 'ninguno'}"
-              + ("; caja Multitronic de Audi" if ex.get("excluir_multitronic") else "") + ".", ""]
+    lines += [f"> **Excluidos siempre**: {', '.join(ex.get('modelos_excluidos') or []) or 'ninguno'}"
+              + ("; caja Multitronic de Audi" if ex.get("excluir_multitronic") else "")
+              + ("; cajas robotizadas" if ex.get("excluir_cajas_robotizadas") else "")
+              + (f"; colores {', '.join(ex['color']['excluidos'])}" if (ex.get("color") or {}).get("excluir_activo") else "") + ".", ""]
     lines += _embudo_md(stats)
     lines += _ventas_md(stats.get("ventas") or [])
-    lines += ["## Los mejores", ""]
-    if not top:
-        lines.append("_No hay anuncios aptos todavía._")
+    lines += [f"## Fichas: top {top_n} de profesionales", ""]
     for f in top:
-        l = f["listing"]
-        risks, checks = _risks(f, p.rel)
-        lines += [
-            f"### {f['rank']}. {l.titulo} — {n(l.precio)} € ({n(f['coste']['total'])} € en total)"
-            + (" — **por encima del presupuesto, negociar**" if f.get("estado") == "negociar" else ""),
-            "", f"**Puntuación {f['total']:.1f}/100** · {l.plataforma} · {l.ubicacion or 'ubicación sin dato'} · "
-                f"{l.vendedor or 'vendedor sin dato'} · {'automático' if l.cambio == 'automatico' else 'manual' if l.cambio else 'cambio sin dato'} · "
-                f"etiqueta {f['coste_uso']['etiqueta'] or '?'} · [ver anuncio]({l.url})", "",
-            f"Coste: {n(l.precio)} € al contado + gastos {n(f['coste'].get('gastos', 0))} € + ITP {n(f['coste']['itp'])} € + tasa {n(f['coste']['tasa'], 2)} € + informe {n(f['coste']['informe'], 2)} € = **{n(f['coste']['total'])} €**; "
-            f"con el seguro estimado ({n(f['coste_uso']['seguro'] or 0)} €/año, aproximado) el primer año sale por **{n(f['coste']['primer_anio'])} €**.", "",
-            _etiqueta_md(f, p), "",
-            f"Estilo: {'**modelo prioritario** (berlina mediana sobria)' if f['estilo']['prioritario'] else (l.carroceria or 'carrocería sin dato')} "
-            f"({f['estilo']['score']:.0f}/100) · consumo estimado "
-            + (f"{f['coste_uso']['consumo']:.1f} l/100 km (aprox., ver fiscal.yaml)" if f['coste_uso'].get('consumo') else "PENDIENTE"), "",
-            "**Por qué destaca**", *[f"- {x}" for x in _why(f, p)], "",
-            "**Riesgos de este modelo y motor**", *([f"- {x}" for x in risks] or ["- Sin problemas documentados con fuente para este modelo/motor (eso no significa que no los tenga)."]), "",
-            "**Qué revisar en la visita**", *[f"- {x}" for x in checks + GENERIC_CHECKS], "",
-            "**Qué preguntar al vendedor**", *[f"- {x}" for x in _questions(l) + GENERIC_QUESTIONS], "",
-        ]
-        if l.duplicados:
-            lines += ["_También publicado en: " + "; ".join(l.duplicados) + "_", ""]
-        av = [a for a in (f.get("avisos") or "").split("; ") if a]
-        if av:
-            lines += ["**Avisos**", *[f"- {a}" for a in av], ""]
-        if f["coste"]["avisos"]:
-            lines += ["_Avisos de coste: " + "; ".join(f["coste"]["avisos"]) + "_", ""]
+        lines += _ficha(f, p)
+    lines += ["## Fichas: top 5 de particulares", ""]
+    for f in part:
+        lines += _ficha(f, p)
     path.write_text("\n".join(lines), encoding="utf-8")

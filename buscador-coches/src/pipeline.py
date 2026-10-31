@@ -15,7 +15,7 @@ from .normalize import (body_from_text, norm_text, norm_brand, norm_engine, norm
                         potencia_cv)
 from .geo import distance_from
 from .etiqueta import asignar
-from .scoring import Params, market_medians, medians, score_all
+from .scoring import Params, asignar_seguridad, estado_presupuesto, liquidez, market_medians, medians, score_all
 
 # Modelos en los que 'cross/stepway' indica una versión SUV real (en el resto puede ser parte del nombre)
 SUV_SENSIBLE = {"Dacia Sandero", "Citroën C3", "Volkswagen Polo", "Toyota Yaris", "Kia Ceed", "Fiat Panda", "Suzuki Swift"}
@@ -83,19 +83,6 @@ def anio_alternativo(l: Listing):
     return None
 
 
-def es_prioritario(l: Listing, cfg: dict) -> bool:
-    for e in (cfg["scoring"].get("estilo") or {}).get("prioritarios") or []:
-        if l.modelo_key != e["modelo"] or not l.anio or not (e["desde"] <= l.anio <= e["hasta"]):
-            continue
-        if e.get("combustible") and l.combustible != e["combustible"]:
-            continue
-        mot = (l.motor_key or "").split(" ")[0]
-        if e.get("motores") and mot not in e["motores"]:
-            continue
-        return True
-    return False
-
-
 @dataclass
 class Result:
     limpios: list[Listing]
@@ -118,6 +105,12 @@ def _categoria(motivo: str) -> str:
             return cat
     if m.startswith("km no creíbles"):
         return "km no creíbles (error del anuncio)"
+    if m.startswith("presupuesto"):
+        return "presupuesto (coste total > techo)"
+    if m.startswith("color "):
+        return "color excluido (" + m.split(" ")[1] + ")"
+    if m.startswith("caja robotizada"):
+        return "caja robotizada"
     if m.startswith("etiqueta no confirmada"):
         return "etiqueta no confirmada (regla)"
     if m.startswith("etiqueta dudosa"):
@@ -131,7 +124,7 @@ def _categoria(motivo: str) -> str:
     if m.startswith("avería/estado: "):
         return "avería/estado: " + m[len("avería/estado: "):].split(" «")[0]
     if m.startswith("modelo excluido"):
-        return "modelo excluido (Aygo/107/C1)"
+        return "modelo excluido (" + m[m.find("(") + 1:m.find(")")] + ")"
     if m.startswith("caja Multitronic"):
         return "caja Multitronic"
     if m.startswith("vendedor "):
@@ -173,12 +166,14 @@ def embudo(listings, descartados, deduplicados, filas) -> dict:
     rows.append(row("fusionados como duplicados", deduplicados))
     rows.append(row("limpios (sin fraude)", [f["listing"] for f in filas]))
     rows.append(row("dentro de presupuesto", [f["listing"] for f in filas if f.get("estado") == "sí"]))
-    rows.append(row("caben negociando", [f["listing"] for f in filas if f.get("estado") == "negociar"]))
-    rows.append(row("fuera de presupuesto (> margen)", [f["listing"] for f in filas if f.get("estado") == "no"]))
+    rows.append(row("caben negociando (objetivo < coste <= techo)", [f["listing"] for f in filas if f.get("estado") == "negociar"]))
     grupos = {"vendedor no profesional": lambda c: c == "vendedor no profesional",
               "etiqueta (no confirmada, dudosa, < B o desconocida)": lambda c: c.startswith("etiqueta"),
               "avería / estado del coche": lambda c: c.startswith("avería/estado"),
-              "diésel con penalización de motor": lambda c: c.startswith("diésel")}
+              "diésel con penalización de motor": lambda c: c.startswith("diésel"),
+              "color excluido": lambda c: c.startswith("color excluido"),
+              "modelo excluido": lambda c: c.startswith("modelo excluido"),
+              "presupuesto (coste > techo)": lambda c: c.startswith("presupuesto")}
     principales = []
     for g, fn in grupos.items():
         todos, solo = [], []
@@ -194,7 +189,8 @@ def embudo(listings, descartados, deduplicados, filas) -> dict:
 
 
 def process(listings: list[Listing], p: Params, motores_fiables: set[str], market: Optional[list] = None,
-            dgt=None) -> Result:
+            dgt=None, ventas: Optional[list] = None) -> Result:
+    from .atributos import estetica_modelo, from_text
     global CENTER
     CENTER = (p.cfg["ubicacion"]["lat"], p.cfg["ubicacion"]["lon"])
     p.cfg["_anio_actual"] = p.anio_actual
@@ -219,7 +215,10 @@ def process(listings: list[Listing], p: Params, motores_fiables: set[str], marke
             l.multitronic = "posible"
         else:
             l.multitronic = None
-        l.prioritario = es_prioritario(l, p.cfg)
+        from_text(l, p.estetica)
+        l.estetica_modelo, l.estetica_ref = estetica_modelo(l, p.estetica)
+        l.prioritario = bool(l.estetica_ref) and l.estetica_modelo >= ((p.cfg["filtros"].get("particulares") or {}).get("min_estetica", 4))
+        asignar_seguridad(l, p)
         asignar(l, p.zbe, dgt)
         r = search_filter_reasons(l, p.cfg, p.rel)
         if r:
@@ -246,12 +245,29 @@ def process(listings: list[Listing], p: Params, motores_fiables: set[str], marke
         else:
             limpios.append(l)
     costes = {l.uid: coste_total(l, p.fiscal, p.anio_actual) for l in limpios}
-    filas = score_all(limpios, p, costes, mkt)
+    # Presupuesto con límite suave: por encima del techo, excluido (antes de puntuar: el Excel solo lleva los que quedan)
+    techo = p.cfg["presupuesto"].get("techo_eur")
+    dentro = []
+    for l in limpios:
+        if estado_presupuesto(costes[l.uid]["total"], p.cfg) == "no":
+            descartados.append((l, [f"filtro: presupuesto: coste total {costes[l.uid]['total']:.0f} € > techo {techo} €"]))
+        else:
+            dentro.append(l)
+    limpios = dentro
+    filas = score_all(limpios, p, costes, mkt, liquidez(limpios, market or [], ventas or []))
     avisos = {}
     for f in filas:
         a = list(f["coste"]["avisos"])
         if f.get("estado") == "negociar":
-            a.insert(0, f"por encima del presupuesto ({f['coste']['total']:.0f} €), negociar")
+            a.insert(0, f"por encima del presupuesto: negociar {f['coste']['exceso']:.0f} € (coste {f['coste']['total']:.0f} €; "
+                        f"-{f['penal_presupuesto']:.1f} puntos)")
+        if f["listing"].vendedor == "particular":
+            a.insert(0, "particular sin garantía: pedir informe DGT, historial ITV y revisión precompra")
+        if f["listing"].etiqueta_incoherente:
+            a.insert(0, f"anuncio incoherente: dice etiqueta {f['listing'].etiqueta_incoherente} y por fecha corresponde "
+                        f"{f['listing'].etiqueta_dgt}; se usa la regla")
+        if f["seguridad_vial"]["pendiente"]:
+            a.append("Euro NCAP de la generación PENDIENTE (seguridad neutra)")
         if f["fiabilidad"].get("diesel_pendiente"):
             a.append("diésel: motor sin fuente de fiabilidad (fiabilidad limitada a neutra)")
         if f.get("penalizacion"):
@@ -265,7 +281,10 @@ def process(listings: list[Listing], p: Params, motores_fiables: set[str], marke
         if f["fiabilidad"].get("gemelo"):
             a.append(f"fiabilidad por plataforma (gemelo: {f['fiabilidad']['gemelo']})")
         if f["listing"].etiqueta_dudosa:
-            a.insert(0, f"etiqueta {f['listing'].etiqueta_dgt} dudosa: confirmar etiqueta con la DGT antes de comprar")
+            a.insert(0, f"etiqueta dudosa ({f['listing'].etiqueta_opciones}): se puntúa la peor ({f['listing'].etiqueta_dgt}); "
+                        "confirmar con la DGT antes de comprar")
+        elif f["listing"].etiqueta_fuente == "regla":
+            a.append(f"etiqueta {f['listing'].etiqueta_dgt} deducida por fecha (sin matrícula ni dato del anuncio)")
         if f["listing"].revisar:
             a.append("revisar: " + ", ".join(f["listing"].revisar))
         if f["listing"].distancia_km is None:

@@ -12,9 +12,11 @@ ubicacion:
   provincia: "Valencia"
 
 presupuesto:
-  total_max_eur: 5000          # precio + ITP (o gastos del vendedor) + tasa DGT + informe DGT
-  margen_negociacion_eur: 300  # hasta 5.300 € entran marcados "por encima del presupuesto, negociar"
-  precio_anuncio_max_eur: 5200 # tope del anuncio para recoger (para que entren los que caben negociando)
+  # Límite suave (02-11-2026). Coste total = al contado + gestión del vendedor + transferencia o ITP + informe DGT.
+  total_max_eur: 5000          # objetivo: hasta aquí, sin penalización
+  techo_eur: 6000              # por encima: excluido
+  penal_por_100_eur: 2         # entre objetivo y techo: -2 puntos en la PUNTUACIÓN por cada 100 € (proporcional) y "negociar"
+  precio_anuncio_max_eur: 6000 # tope del anuncio para recoger (= techo)
   precio_anuncio_min_eur: 800  # por debajo casi siempre es despiece/fraude
 
 filtros:
@@ -26,9 +28,17 @@ filtros:
   # Distintivo ambiental (ver zbe.yaml): se descartan los que tengan una etiqueta peor que la mínima.
   # Las etiquetas "dudosas" (año frontera sin mes) NO se descartan: entran con aviso.
   etiqueta_minima: B
-  etiqueta_solo_confirmada: true   # solo etiqueta del fichero DGT o del anuncio (no deducida por regla)
-  etiqueta_permitir_dudosas: false # dudosas (año frontera o año a confirmar) fuera
-  solo_profesionales: true         # solo vendedores profesionales (concesionarios, compraventas)
+  # La etiqueta final es la PEOR de las posibles (todas las fechas posibles del año, y el año de la URL/título).
+  # 02-11-2026: dudosa y deducida por regla ya no descartan por sí solas; descartan si la peor opción < mínima.
+  etiqueta_dudosa: si_todas_cumplen   # no = fuera siempre · si_todas_cumplen = entra si todas las opciones >= mínima
+  etiqueta_regla: si_todas_cumplen    # no = solo DGT/anuncio · si_todas_cumplen = la regla vale si todas cumplen
+  solo_profesionales: true         # solo vendedores profesionales (concesionarios, compraventas)...
+  particulares:
+    admitir_modelos_estetica: true # ...salvo los modelos de estetica.yaml con puntos >= min_estetica (Audi A3 8P, A4 B7...)
+    min_estetica: 4
+  color:
+    excluir_activo: true           # descartar los colores de 'excluidos'
+    excluidos: [negro, marron_oscuro]
   averias:
     activo: true                   # filtro estricto de averías/estado en título y descripción (src/averias.py)
     revisar_si_no_menciona_itv: true
@@ -46,6 +56,7 @@ filtros:
   modelos_excluidos: [Peugeot 107, Toyota Aygo, Citroën C1]
   # Cajas de cambio excluidas (detectadas en título/versión); ver reliability.yaml -> cajas_excluidas
   excluir_multitronic: true
+  excluir_cajas_robotizadas: true  # 02-11-2026: antes solo -10 en fiabilidad; ahora fuera (Easytronic/MTA, Dualogic, MMT, ETG, ASG…)
   # Fuera: suv, cabrio, monovolumen (grande), furgoneta y desconocidas
   cambio: indiferente          # se marcan los automáticos en la columna "automatico"
 
@@ -98,20 +109,19 @@ segmentos:
   min_muestras: 4              # si hay menos, se sube de nivel (modelo+año, luego modelo)
 
 scoring:
-  # Pesos (suman 1). Cambio del 31-10-2026: se añade "Seguridad de compra" (15 %) y los cinco criterios
-  # anteriores (35/30/15/10/10, que sumaban 100) se escalan por 0,85 y se redondean a enteros:
-  # 29,75→30 · 25,5→25 · 12,75→12 · 8,5→9 · 8,5→9 · +15 = 100.
+  # Pesos (suman 1). 02-11-2026: nuevo reparto pedido por el usuario. Desaparecen "Anuncio" (pasa a "Estado y
+  # mantenimiento"), "Etiqueta y ZBE" (pasa a "Reventa": C por encima de B) y "Preferencia de estilo" (pasa a "Estética").
   pesos:
-    # 01-11-2026 (b): nuevo criterio "Preferencia de estilo" (10 %). Los 7 anteriores (29/24/12/9/5/15/6) × 0,9 y
-    # redondeados para sumar 100: 26 · 22 · 11 · 8 · 4 · 14 · 5 · +10 = 100.
-    fiabilidad: 0.26
-    precio: 0.22
-    km_edad: 0.11
-    anuncio: 0.08
-    coste_uso: 0.04
-    seguridad: 0.14
-    etiqueta: 0.05
-    estilo: 0.10
+    fiabilidad: 0.22          # fiabilidad y durabilidad (modelo, motor, plataforma gemela, cajas)
+    precio: 0.15              # precio frente al mercado
+    estado: 0.12              # estado y mantenimiento (ITV, libro, propietarios, correa, facturas)
+    estetica: 0.12            # modelo (estetica.yaml) + atributos del anuncio
+    seguridad_vial: 0.10      # Euro NCAP de la generación + ESP/ESC
+    seguridad_compra: 0.10    # garantía, km certificados, revisión, devolución, historial; particular sin garantía penaliza
+    coste_uso: 0.09           # consumo + seguro + mantenimiento (recambios y distribución)
+    km_edad: 0.05
+    reventa: 0.03             # liquidez del modelo en el mercado + días hasta venderse + etiqueta
+    color: 0.02
   precio:
     pendiente: 250             # puntos por unidad de descuento: -20% => 100, +20% => 0
     km_tope_desde: 180000      # a partir de aquí la nota de precio tiene un tope decreciente
@@ -124,15 +134,13 @@ scoring:
     peso_km_total: 0.4
     peso_km_anio: 0.3
     peso_edad: 0.3
-  anuncio:                     # puntos que suman 100 (la garantía pasa a "seguridad")
-    itv: 20
-    libro: 25
-    correa: 25
-    propietario_unico: 15
-    garantia: 0
-    fotos: 15
-    fotos_objetivo: 10
-  seguridad:                   # "Seguridad de compra": puntos que suman 100
+  estado:                      # "Estado y mantenimiento": puntos que suman 100
+    itv: 20                    # ITV en vigor / recién pasada
+    libro: 25                  # libro de mantenimiento o historial
+    propietario_unico: 15      # 1 propietario = 15; 2 = la mitad
+    correa: 25                 # correa cambiada con fecha o km = 25; sin fecha/km = la mitad; motor de cadena = 25
+    facturas: 15
+  seguridad_compra:            # "Seguridad de compra": puntos que suman 100
     garantia: 35               # proporcional a meses incluidos, hasta garantia_meses_full
     garantia_meses_full: 24
     ampliable: 10
@@ -144,31 +152,35 @@ scoring:
     # Vendedor profesional sin garantía declarada: se le asigna el mínimo legal (TRLGDCU art. 120,
     # ver fiscal.yaml → garantia_legal) y se marca el aviso.
     aplicar_minimo_legal_profesional: true
+    penal_particular_sin_garantia: 25   # puntos menos (sobre 100) si es particular y no hay garantía
+  seguridad_vial:              # "Seguridad": Euro NCAP (estrellas de la generación) + ESP/ESC
+    peso_ncap: 0.7
+    peso_esp: 0.3
+    esp_obligatorio_desde: 2015  # todos los turismos nuevos con ESC desde 1-11-2014 (Reglamento CE 661/2009): año >= 2015 -> sí
   penalizaciones:              # puntos que se restan a la PUNTUACIÓN total
     carroceria: {familiar: 3, monovolumen_pequeno: 6}   # berlina (C) y berlina_d: sin penalización
     caja_robotizada: 10        # puntos menos en Fiabilidad (Easytronic/MTA, Dualogic, MMT, 2-Tronic/ETG, ASG…)
     # Diésel sin fuente de fiabilidad del motor: la fiabilidad del modelo se limita a la puntuación neutra
     # (coste_uso.neutro_si_pendiente), igual que un dato "pendiente"; además se aplica el ajuste DPF.
-  estilo:                      # "Preferencia de estilo" (0-100): berlinas medianas sobrias tipo Audi A4
-    prioritario: 100           # modelo/motor/años de la lista de abajo
-    por_segmento: {berlina_d: 80, berlina: 60, compacto: 50, familiar: 50, utilitario: 15, monovolumen_pequeno: 15}
-    prioritarios:              # modelo (clave normalizada), años y motores (cilindrada en litros; vacío = cualquiera)
-      - {modelo: Honda Accord, desde: 2003, hasta: 2008, motores: ["2.0"], combustible: gasolina}
-      - {modelo: Toyota Avensis, desde: 2003, hasta: 2008, motores: ["1.8"], combustible: gasolina}
-      - {modelo: Mazda 6, desde: 2002, hasta: 2008, motores: ["1.8", "2.0"], combustible: gasolina}
-      - {modelo: Skoda Octavia, desde: 2004, hasta: 2013, motores: ["1.6"], combustible: gasolina}
-      - {modelo: Volkswagen Jetta, desde: 2005, hasta: 2010, motores: ["1.6"], combustible: gasolina}
-      - {modelo: Audi A4, desde: 2004, hasta: 2008, motores: ["2.0", "1.8"], combustible: gasolina}
-      - {modelo: Seat Exeo, desde: 2008, hasta: 2013, motores: [], combustible: gasolina}
-  etiqueta:                    # "Etiqueta y ZBE" (0-100)
+  etiqueta:                    # puntos de etiqueta (dentro de "Reventa")
     puntos: {B: 40, C: 70, ECO: 100, CERO: 100, A: 0}   # B = base, C = +, ECO/CERO = ++
     penal_dudosa: 15           # etiqueta dudosa (año frontera sin mes): confirmar con la DGT
     penal_regla: 5             # etiqueta deducida solo por la regla (sin dato DGT ni del anuncio)
-  coste_uso:                   # consumo + seguro (la etiqueta tiene criterio propio desde 01-11-2026)
+  coste_uso:                   # consumo + seguro + mantenimiento (recambios por marca y distribución)
     peso_etiqueta: 0
-    peso_consumo: 0.5
-    peso_seguro: 0.5
+    peso_consumo: 0.4
+    peso_seguro: 0.3
+    peso_mantenimiento: 0.3
     neutro_si_pendiente: 50
+
+  reventa:                     # "Reventa y liquidez" (0-100)
+    peso_liquidez: 0.4         # nº de anuncios del modelo en el mercado recogido
+    liquidez_n_full: 60        # con 60 o más anuncios del modelo -> 100
+    peso_dias: 0.2             # días medianos hasta desaparecer (solo con >= dias_min_muestras ventas observadas)
+    dias_full: 15              # <= 15 días -> 100
+    dias_cero: 90              # >= 90 días -> 0
+    dias_min_muestras: 3
+    peso_etiqueta: 0.4         # puntos de etiqueta (C por encima de B), con las penalizaciones de dudosa/regla
 
 alertas:
   activas: true

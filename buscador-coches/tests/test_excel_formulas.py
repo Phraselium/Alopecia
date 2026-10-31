@@ -9,7 +9,7 @@ import subprocess
 import pytest
 from openpyxl import load_workbook
 
-from src.excel import COL, write_workbook
+from src.excel import CHECKS, COL, liq_map, write_workbook
 from src.models import Listing
 from src.pipeline import process
 from src.scoring import Params
@@ -24,7 +24,12 @@ def synthetic(n=80, seed=1):
                ("Kia", "Rio", "1.2 CVVT"), ("Skoda", "Octavia Combi", "1.6 TDI"), ("Opel", "Meriva", "1.4"),
                ("Dacia", "Logan", "1.4 MPI"), ("Peugeot", "207", "1.6 HDi"), ("Opel", "Corsa", "1.2 Easytronic"),
                ("Peugeot", "107", "1.0"), ("MINI", "MINI", "One 1.4"), ("Toyota", "Aygo", "1.0 MMT"), ("Opel", "Astra", "1.7 CDTi diésel"),
-               ("Audi", "A4", "2.0 TFSI"), ("Toyota", "Avensis", "1.8 VVT-i"), ("Mazda", "6", "2.0")]
+               ("Audi", "A4", "2.0 TFSI"), ("Toyota", "Avensis", "1.8 VVT-i"), ("Mazda", "6", "2.0"),
+               ("Audi", "A3", "1.6 FSI"), ("Seat", "León", "1.6"), ("Alfa Romeo", "147", "1.6 TS"), ("Honda", "Civic", "1.8 i-VTEC")]
+    colores = [None, "Blanco", "Gris / Plata", "COMMON.COLOR_BLUE", "Antracita", "Beige", "Rojo", "verde lima", "Plateado"]
+    descs = ["ITV en vigor, libro de mantenimiento, color blanco", "único propietario, correa cambiada a los 120.000 km, facturas",
+             "buen estado, llantas de aleación de 17\", faros xenón, lunas tintadas, ESP", "dos propietarios, tapacubos, neumáticos nuevos",
+             "correa cambiada, libro de revisiones"]
     out = []
     for i in range(n):
         marca, modelo, motor = modelos[i % len(modelos)]
@@ -32,11 +37,11 @@ def synthetic(n=80, seed=1):
         out.append(Listing(
             plataforma="TEST", id_externo=str(i),
             url=rnd.choice([f"https://example.invalid/{i}", f"https://example.invalid/x-gasolina-{anio - 1}-en-valencia-{i}-covo.aspx"]),
-            titulo=f"{marca} {modelo} {motor}", marca=marca, modelo=modelo, version=motor,
+            titulo=f"{marca} {modelo} {motor}" + rnd.choice(["", " Sport", " FR"]), marca=marca, modelo=modelo, version=motor,
             combustible="diesel" if any(k in motor for k in ("TDCi", "TDI", "HDi", "CDTi")) else "gasolina",
-            anio=anio, km=rnd.randint(40000, 219000), precio=float(rnd.randint(2500, 5200)),
+            anio=anio, km=rnd.randint(40000, 219000), precio=float(rnd.randint(2500, 6000)),
             vendedor=rnd.choice(["particular", "profesional", None]), num_fotos=rnd.randint(1, 15),
-            descripcion=rnd.choice(["ITV en vigor, libro de mantenimiento", "único propietario, correa cambiada", "buen estado"]),
+            descripcion=rnd.choice(descs), color_raw=rnd.choice(colores),
             garantia_meses=rnd.choice([None, 12, 24]), garantia_ampliable=rnd.choice([None, True]),
             km_certificados=rnd.choice([None, True]), revision_puntos=rnd.choice([None, 150, 200]),
             devolucion_dias=rnd.choice([None, 7, 15]), gastos_gestion_eur=rnd.choice([None, 0.0, 350.0]),
@@ -49,9 +54,14 @@ def synthetic(n=80, seed=1):
 
 def test_formulas_match_python(tmp_path, cfg, fiscal, rel):
     # Las fórmulas se prueban con los filtros de vendedor/etiqueta desactivados para cubrir todos los casos
-    cfg["filtros"].update({"solo_profesionales": False, "etiqueta_solo_confirmada": False, "etiqueta_permitir_dudosas": True, "modelos_excluidos": []})
+    cfg["filtros"].update({"solo_profesionales": False, "modelos_excluidos": [], "excluir_cajas_robotizadas": False,
+                           "color": {"excluir_activo": False, "excluidos": []}})
     p = Params(cfg, fiscal, rel)
-    res = process(synthetic(), p, set())
+    ls = synthetic()
+    market = [{"uid": f"m{i}", "plataforma": "TEST", "marca": l.marca, "modelo": l.modelo, "titulo": l.titulo, "anio": l.anio,
+               "km": l.km, "precio": l.precio} for i, l in enumerate(ls * 2)]
+    ventas = [{"marca": l.marca, "modelo": l.modelo, "titulo": l.titulo, "dias": 5 + 3 * i} for i, l in enumerate(ls[:40])]
+    res = process(ls, p, set(), market, ventas=ventas)
     assert res.filas, "deberían quedar anuncios limpios"
     # el conjunto sintético debe ejercitar los casos nuevos
     assert any(f["penalizacion"] > 0 for f in res.filas), "falta carrocería penalizada"
@@ -63,9 +73,17 @@ def test_formulas_match_python(tmp_path, cfg, fiscal, rel):
     assert any(f["fiabilidad"].get("gemelo") for f in res.filas), "falta gemelo de plataforma"
     assert any(f["listing"].etiqueta_dudosa_anio for f in res.filas), "falta dudosa por año"
     assert any(f["precio"]["tope"] < 100 for f in res.filas), "falta tope de precio por km"
-    assert any(f["estilo"]["prioritario"] for f in res.filas), "falta modelo prioritario"
+    assert any(f["listing"].estetica_ref for f in res.filas), "falta modelo de estetica.yaml"
+    assert len({f["color"]["score"] for f in res.filas}) >= 3, "faltan colores de varios grupos"
+    assert any(f["listing"].at_llantas == "16+" for f in res.filas) and any(f["listing"].at_llantas == "chapa" for f in res.filas)
+    assert any(f["listing"].ncap_estrellas for f in res.filas), "falta Euro NCAP"
+    assert any(f["listing"].esp == "sí" for f in res.filas), "falta ESP"
+    assert any(f["penal_presupuesto"] > 0 for f in res.filas), "falta penalización de presupuesto"
+    assert any(f["coste"]["real_estimado"] for f in res.filas), "falta coste real de particular"
+    assert any(f["reventa"]["n_dias"] >= 3 for f in res.filas), "faltan días de venta"
+    assert any(f["seguridad"]["penal_particular"] for f in res.filas), "falta particular sin garantía"
     src = tmp_path / "r.xlsx"
-    write_workbook(src, [f["listing"] for f in res.filas], res.avisos, p)
+    write_workbook(src, [f["listing"] for f in res.filas], res.avisos, p, None, liq_map(res.filas))
     outdir = tmp_path / "calc"
     subprocess.run(["soffice", "--headless", "--calc", "--convert-to", "xlsx", "--outdir", str(outdir), str(src)],
                    check=True, capture_output=True, timeout=180)
@@ -82,27 +100,18 @@ def test_formulas_match_python(tmp_path, cfg, fiscal, rel):
             return ws.cell(r, hdr[COL[key]]).value
         assert v("uid") == f["listing"].uid
         assert v("mediana") == pytest.approx(f["mediana"]), f["listing"].uid
-        assert v("s_fiab") == pytest.approx(f["fiabilidad"]["score"])
-        assert v("s_precio") == pytest.approx(f["precio"]["score"])
-        assert v("s_kmedad") == pytest.approx(f["km_edad"]["score"])
-        assert v("s_anuncio") == pytest.approx(f["anuncio"]["score"])
-        assert v("s_uso") == pytest.approx(f["coste_uso"]["score"])
-        assert v("gar_ef") == pytest.approx(f["seguridad"]["garantia_meses"]), f["listing"].uid
-        assert v("s_seguridad") == pytest.approx(f["seguridad"]["score"]), f["listing"].uid
+        for k, getter in CHECKS.items():
+            exp = getter(f)
+            if exp is None or isinstance(exp, str):
+                assert (v(k) or None) == (exp or None), (k, f["listing"].uid)
+            else:
+                assert v(k) == pytest.approx(exp), (k, f["listing"].uid)
         assert v("gastos_calc") == pytest.approx(f["coste"]["gastos"]), f["listing"].uid
         assert v("tasa") == pytest.approx(f["coste"]["tasa"]), f["listing"].uid
         assert v("itp") == pytest.approx(f["coste"]["itp"]), f["listing"].uid
-        assert v("coste_total") == pytest.approx(f["coste"]["total"])
-        assert v("total") == pytest.approx(f["total"])
-        assert v("primer_anio") == pytest.approx(f["coste"]["primer_anio"])
         assert (v("rank") or None) == f.get("rank")
-        assert v("apto") == f["estado"], f["listing"].uid
-        assert v("pen_carr") == pytest.approx(f["penalizacion"])
         l = f["listing"]
-        assert v("etiqueta") == l.etiqueta_dgt, (l.uid, l.fecha_matriculacion, l.combustible)
         assert (v("etq_dudosa") == "sí") == bool(l.etiqueta_dudosa), l.uid
-        assert v("s_etiqueta") == pytest.approx(f["etiqueta"]["score"]), l.uid
-        assert v("s_estilo") == pytest.approx(f["estilo"]["score"]), l.uid
     top = wb["Top20"]
     best = min((f for f in res.filas if f.get("rank")), key=lambda f: f["rank"])
     assert top["D2"].value == best["listing"].titulo

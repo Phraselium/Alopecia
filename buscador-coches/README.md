@@ -103,3 +103,67 @@ Wallapop), desaparecer puede significar haber salido de las páginas accesibles:
   ajuste. El 1.4 TSI Twincharger 2005-2014 se penaliza por la cadena.
 - **Coste de uso**: seguro estimado por segmento, con la berlina D en ~380 €/año. El consumo real de gasolina se toma por modelo
   o, si no hay dato, por segmento (`fiscal.yaml → consumo_estimado`, Spritmonitor). Las dos cosas son aproximadas.
+
+## Estética, color, presupuesto suave y criterios nuevos (02-11-2026)
+
+**Pesos** (`config.yaml → scoring.pesos`, suman 100 %; también en la hoja Supuestos):
+
+| Criterio | Peso |
+|---|---|
+| Fiabilidad y durabilidad | 22 % |
+| Precio frente al mercado | 15 % |
+| Estado y mantenimiento | 12 % |
+| Estética | 12 % |
+| Seguridad (Euro NCAP y ESP) | 10 % |
+| Seguridad de compra | 10 % |
+| Coste de uso | 9 % |
+| Km y edad | 5 % |
+| Reventa y liquidez | 3 % |
+| Color | 2 % |
+
+**Etiqueta**
+- La etiqueta final es la **peor de las posibles**: cualquier fecha del año, más el año que diga la URL o el título.
+- Una etiqueta dudosa o deducida por regla solo descarta si alguna de sus opciones queda por debajo de `etiqueta_minima`. Se
+  controla con `filtros.etiqueta_dudosa` y `filtros.etiqueta_regla` (`si_todas_cumplen` | `no`).
+- Si el anuncio contradice la regla (por ejemplo, C en un gasolina de 2004), se usa la regla y se marca «anuncio incoherente».
+
+**Particulares**
+- Por defecto solo se admiten profesionales. La excepción son los modelos de `estetica.yaml` con 4 o 5 puntos
+  (`filtros.particulares`).
+- A los particulares se les añade el aviso «particular sin garantía: pedir informe DGT, historial ITV y revisión precompra».
+- En seguridad de compra pierden 25 puntos (`penal_particular_sin_garantia`).
+- Se muestra un **coste real estimado**, solo informativo: añade la reserva de correa y de neumáticos.
+
+**Estética** (`estetica.yaml`, editable)
+- El criterio pondera 2/3 los puntos del modelo (de 1 a 5) y 1/3 los atributos del anuncio.
+- Suman: acabado alto o deportivo, llantas de aleación (más si son de 16" o más), faros xenón o LED y cristales tintados.
+- Restan: tapacubos o llantas de chapa.
+
+**Color**
+- El texto se normaliza sin tildes («plateado» = plata, «antracita» = gris oscuro, «nacarado» = blanco).
+- Puntuación: blanco, plata y gris medio, máxima; azul, gris oscuro y azul marino, media. Beige, dorado, champán, verdes claros y
+  colores chillones restan.
+- Negro y marrón oscuro se excluyen (`filtros.color`). Sin color o con un color no reconocido, la nota es neutra.
+
+**Presupuesto**
+- Hasta `total_max_eur` (5.000 €) no hay penalización.
+- Hasta `techo_eur` (6.000 €) se restan `penal_por_100_eur` puntos (2) por cada 100 €, de forma proporcional, y el coche queda
+  marcado «negociar». La columna «€ a negociar» indica lo que habría que rebajar.
+- Por encima del techo, el coche queda excluido.
+
+**Cajas robotizadas**: excluidas por defecto (`filtros.excluir_cajas_robotizadas`). Antes solo restaban 10 puntos de
+fiabilidad.
+
+**Criterios nuevos**
+- **Seguridad**: estrellas Euro NCAP de la generación (`reliability.yaml → euroncap`; el protocolo cambió en 2009) y ESP/ESC.
+  El ESP se toma del anuncio, del equipamiento de serie con fuente o de la obligación en turismos nuevos desde el 1-11-2014.
+- **Estado y mantenimiento**: ITV, libro, propietarios, correa cambiada con fecha o km (un motor de cadena puntúa completo) y
+  facturas.
+- **Coste de uso**: consumo + seguro + mantenimiento (recambios por marca y tipo de distribución, en
+  `reliability.yaml → mantenimiento`).
+- **Reventa**: anuncios del modelo en el mercado recogido, días hasta que desaparece el anuncio (con al menos 3 ventas
+  observadas) y etiqueta (C por encima de B).
+
+**Datos estructurados**
+- Color y equipamiento se leen de la ficha guardada en `raw/`: OcasionPlus `vehicle`, AutoScout24 `vehicle` y Coches.net `ad`.
+- Para las fichas antiguas: `python tools/backfill_atributos.py`.

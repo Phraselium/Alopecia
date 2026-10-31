@@ -10,7 +10,7 @@ from openpyxl import load_workbook
 
 BASE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BASE))
-from src.excel import COL  # noqa: E402
+from src.excel import COL, CHECKS  # noqa: E402
 from src.pipeline import process  # noqa: E402
 from src.scoring import Params  # noqa: E402
 from src.store import Store  # noqa: E402
@@ -21,7 +21,7 @@ p = Params(cfg, L("fiscal.yaml"), L("reliability.yaml"))
 st = Store(BASE / cfg["salida"]["db"])
 from src.dgt import DGTIndex  # noqa: E402
 ix = DGTIndex(BASE)
-res = process(st.all(), p, set(), st.market(), dgt=ix if ix.ensure("x", allow_download=False) else None)
+res = process(st.all(), p, set(), st.market(), dgt=ix if ix.ensure("x", allow_download=False) else None, ventas=st.sale_times())
 with tempfile.TemporaryDirectory() as td:
     subprocess.run(["soffice", "--headless", "--calc", "--convert-to", "xlsx", "--outdir", td, str(BASE / cfg["salida"]["excel"])],
                    check=True, capture_output=True, timeout=300)
@@ -35,9 +35,14 @@ mism = []
 for r, f in enumerate(res.filas, 2):
     def v(k):
         return ws.cell(r, hdr[COL[k]]).value
-    for k, exp in (("total", f["total"]), ("coste_total", f["coste"]["total"]), ("primer_anio", f["coste"]["primer_anio"])):
-        if v(k) is None or abs(float(v(k)) - exp) > 1e-6:
-            mism.append((f["listing"].uid, k, v(k), exp))
+    for k, getter in CHECKS.items():
+        exp = getter(f)
+        got = v(k)
+        if exp is None or isinstance(exp, str):
+            if (got or None) != (exp or None):
+                mism.append((f["listing"].uid, k, got, exp))
+        elif got is None or got == "" or abs(float(got) - exp) > 1e-6:
+            mism.append((f["listing"].uid, k, got, exp))
     if (v("rank") or None) != f.get("rank"):
         mism.append((f["listing"].uid, "rank", v("rank"), f.get("rank")))
 print(f"filas={len(res.filas)} errores_formula={len(errors)} paneles_inmovilizados={frozen} discrepancias={len(mism)}")

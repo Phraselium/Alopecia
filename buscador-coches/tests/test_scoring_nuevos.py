@@ -40,6 +40,10 @@ def test_caja_robotizada(p):
           for i, (t, m, mo) in enumerate([("Opel Corsa 1.2 Easytronic", "Opel", "Corsa"), ("Fiat 500 1.2 Dualogic", "Fiat", "500"),
                                           ("Toyota Aygo 1.0 MMT", "Toyota", "Aygo"), ("Peugeot 208 1.2 ETG5", "Peugeot", "208"),
                                           ("Opel Corsa 1.2 MTA Enjoy", "Opel", "Corsa"), ("Opel Corsa 1.2 manual", "Opel", "Corsa")])]
+    fuera = process(ls, p, set())          # por defecto: excluidas
+    assert {l.titulo for l, m in fuera.descartados if any("caja robotizada" in x for x in m)} == \
+        {l.titulo for l in ls if "manual" not in l.titulo}
+    p.cfg["filtros"]["excluir_cajas_robotizadas"] = False
     res = process(ls, p, set())
     det = {f["listing"].titulo: f["listing"].caja_robotizada for f in res.filas}
     assert all(det[t] for t in det if "manual" not in t) and det["Opel Corsa 1.2 manual"] is None
