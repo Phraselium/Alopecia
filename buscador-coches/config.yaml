@@ -1,0 +1,105 @@
+# Configuración del buscador de coches de segunda mano (Valencia)
+# Todo lo editable está aquí. Los datos con fuente (fiabilidad, fiscalidad, ZBE)
+# viven en reliability.yaml y fiscal.yaml.
+
+ubicacion:
+  ciudad: "València"
+  lat: 39.4699
+  lon: -0.3763
+  radio_km: 50
+  provincia: "Valencia"
+
+presupuesto:
+  total_max_eur: 5000        # precio + ITP + tasa DGT + informe DGT
+  precio_anuncio_max_eur: 4600
+  precio_anuncio_min_eur: 800   # por debajo casi siempre es despiece/fraude
+
+filtros:
+  anio_min: 2008
+  km_max: 220000
+  combustibles: [gasolina, hibrido, glp]
+  # Diésel solo si etiqueta >= B Y el motor está marcado como fiable en reliability.yaml
+  diesel:
+    permitido: true
+    etiqueta_min: B
+    requiere_motor_fiable: true
+  carrocerias: [utilitario, compacto]
+  cambio: indiferente          # se marcan los automáticos en la columna "automatico"
+
+fuentes:
+  # orden = orden de ejecución; enabled=false para saltar una plataforma
+  wallapop:    {enabled: true,  max_paginas: 10}
+  autoscout24: {enabled: true,  max_paginas: 10}
+  autocasion:  {enabled: true,  max_paginas: 10}
+  cochesnet:   {enabled: true,  max_paginas: 10}
+  milanuncios: {enabled: true,  max_paginas: 10}
+
+http:
+  pausa_min_s: 2.0
+  pausa_max_s: 5.0
+  timeout_s: 30
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
+  accept_language: "es-ES,es;q=0.9"
+  cache_dir: raw
+  cache_ttl_horas: 24          # mientras se depura, no repetir peticiones
+  respetar_robots: true
+
+limpieza:
+  dedupe:
+    km_tolerancia: 0.02
+    precio_tolerancia: 0.05
+    similitud_texto_min: 60    # rapidfuzz token_set_ratio 0-100
+  fraude:
+    descuento_max_vs_mediana: 0.35
+    min_fotos: 1
+    palabras: ["solo envío", "solo envio", "estoy fuera", "estoy en el extranjero",
+               "pago por adelantado", "pago adelantado", "señal por transferencia",
+               "para piezas", "para despiece", "motor tocado", "motor roto",
+               "sin itv", "itv caducada", "embargo", "embargado", "precinto",
+               "importación sin papeles", "importacion sin papeles", "sin papeles",
+               "western union", "no funciona", "averiado", "gripado"]
+
+segmentos:
+  anio_tramo: 3                # años por tramo para la mediana
+  km_tramo: 50000
+  min_muestras: 4              # si hay menos, se sube de nivel (modelo+año, luego modelo)
+
+scoring:
+  pesos:                       # deben sumar 1
+    fiabilidad: 0.35
+    precio: 0.30
+    km_edad: 0.15
+    anuncio: 0.10
+    coste_uso: 0.10
+  precio:
+    pendiente: 250             # puntos por unidad de descuento: -20% => 100, +20% => 0
+  km_edad:
+    km_anio_ideal_max: 18000
+    km_anio_cero: 35000        # a partir de aquí 0 puntos en km/año
+    km_anio_sospechoso: 4000   # por debajo, penaliza si no está justificado
+    penaliza_sospechoso: 40    # puntuación km/año si es sospechosamente bajo
+    peso_km_total: 0.4
+    peso_km_anio: 0.3
+    peso_edad: 0.3
+  anuncio:                     # puntos que suman 100
+    itv: 20
+    libro: 25
+    correa: 20
+    propietario_unico: 15
+    garantia: 5
+    fotos: 15
+    fotos_objetivo: 10
+  coste_uso:
+    peso_etiqueta: 0.5
+    peso_consumo: 0.3
+    peso_seguro: 0.2
+    puntos_etiqueta: {CERO: 100, ECO: 100, C: 80, B: 45, A: 0}
+    neutro_si_pendiente: 50
+
+salida:
+  excel: ranking.xlsx
+  informe: informe.md
+  top_n: 20
+  informe_n: 10
+  db: data/listings.sqlite
+  log: logs/run.log

@@ -1,0 +1,73 @@
+# Parámetros fiscales y de tráfico. Cada valor lleva fuente, fecha de consulta y estado:
+#   confirmado = leído en la fuente oficial
+#   probable   = visto en fragmentos de la fuente oficial (la web no se pudo abrir entera desde este entorno)
+#   PENDIENTE  = sin fuente; no se usa como dato cierto
+# Consultado: 2026-10-31. Antes de comprar, abrir los enlaces y pasar los "probable" a "confirmado".
+
+anio_actual: 2026
+
+itp:
+  descripcion: "ITP por compraventa de vehículo usado entre particulares (Comunitat Valenciana, modelo 620)"
+  tipo: 0.06
+  tipo_estado: probable
+  tipo_fuente: "https://atv.gva.es/es/tarifes-itpajd ; https://atv.gva.es/es/compraventa-de-vehiculos"
+  tipo_incrementado: 0.08
+  tipo_incrementado_condicion: "turismos de hasta 5 años y más de 2.000 cc, o valor >= 20.000 €"
+  tipo_incrementado_estado: probable
+  exento_si_profesional: true   # compra a profesional: IVA o REBU incluido en precio, no ITP
+  exento_si_profesional_estado: "PENDIENTE de cita oficial (práctica habitual; confirmar en la factura)"
+  # Cuota fija que sustituye al porcentaje (vehículos de valor < 20.000 €, no históricos).
+  # Orden: primero el tramo de más antigüedad.
+  cuota_fija_valor_max_eur: 20000
+  cuotas_fijas_estado: probable
+  cuotas_fijas_fuente: "https://atv.gva.es/es/vehiculos-faq ; Ley 13/1997 consolidada https://www.boe.es/buscar/act.php?id=BOE-A-1998-8202"
+  cuotas_fijas:
+    - {antiguedad_mas_de_anios: 12, cc_min: 0,    cc_max: 1500, cuota_eur: 40,  descripcion: ">12 años, hasta 1.500 cc"}
+    - {antiguedad_mas_de_anios: 12, cc_min: 1501, cc_max: 2000, cuota_eur: 60,  descripcion: ">12 años, 1.501-2.000 cc"}
+    - {antiguedad_mas_de_anios: 12, cc_min: 2001, cc_max: null, cuota_eur: 140, descripcion: ">12 años, más de 2.000 cc"}
+    - {antiguedad_mas_de_anios: 5,  cc_min: 0,    cc_max: 1500, cuota_eur: 120, descripcion: ">5 y <=12 años, hasta 1.500 cc"}
+    - {antiguedad_mas_de_anios: 5,  cc_min: 1501, cc_max: 2000, cuota_eur: 180, descripcion: ">5 y <=12 años, 1.501-2.000 cc"}
+    - {antiguedad_mas_de_anios: 5,  cc_min: 2001, cc_max: null, cuota_eur: 280, descripcion: ">5 y <=12 años, más de 2.000 cc"}
+  nota_ley_5_2025: "Ley 5/2025 de 30 de mayo modifica tipos de ITP; parece afectar a inmuebles. Efecto sobre vehículos PENDIENTE de verificar."
+
+# Base imponible por porcentaje (solo aplica a coches de <=5 años, poco probable con 4.600 €)
+precios_medios:
+  norma: "Orden HAC/1501/2025, de 17 de diciembre (BOE núm. 308, 23-12-2025), vigente desde 01-01-2026"
+  fuente: "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-26357"
+  estado: confirmado (datos de publicación); valores por modelo PENDIENTES (PDF no accesible desde este entorno)
+  aplica_en_cv: PENDIENTE   # no hay cita expresa de la ATV
+  valores: {}               # "Marca Modelo|motor": precio medio nuevo en €
+
+tabla_depreciacion:
+  fuente: "Anexo de la Orden HAC/1501/2025 (PDF https://www.boe.es/boe/dias/2025/12/23/pdfs/BOE-A-2025-26357.pdf)"
+  estado: "PENDIENTE (solo se han visto primeros tramos y el último en fuentes secundarias)"
+  tramos: []                # [{hasta_anios: 1, pct: 100}, ...] — rellenar al leer el BOE
+
+dgt:
+  tasa_transferencia_eur: 55.70
+  tasa_transferencia_estado: "probable (sede DGT; un PDF antiguo de la DGT da 55,15 €; actualización 2026 por PGE sin verificar)"
+  tasa_transferencia_fuente: "https://sede.dgt.gob.es/es/vehiculos/transferencias-de-vehiculos/"
+  informe_vehiculo_eur: 8.67
+  informe_vehiculo_estado: probable
+  informe_vehiculo_fuente: "https://sede.dgt.gob.es/es/vehiculos/informacion-de-vehiculos/informe-de-un-vehiculo/"
+
+etiqueta_dgt:
+  # Reglas de asignación por combustible y año de matriculación (aproximación por año; la etiqueta
+  # real depende de la norma Euro y de la fecha exacta: comprobar con la matrícula en la sede DGT).
+  fuente: "https://www.dgt.es/muevete-con-seguridad/conoce-el-estado-del-trafico/distintivos-ambientales/ (PENDIENTE de verificar desde este entorno)"
+  estado: PENDIENTE
+  gasolina_C_desde: 2006
+  gasolina_B_desde: 2001
+  diesel_C_desde: 2016      # Euro 6 obligatorio en matriculaciones desde 09/2015; 2015 es dudoso
+  diesel_B_desde: 2006
+  hibrido: ECO
+  glp: ECO
+
+zbe_valencia:
+  fuente: "https://www.valencia.es/cas/actualidad/-/content/zona-bajas-emisiones-val%C3%A8ncia.-aprobaci%C3%B3n-por-el-pleno ; https://www.valencia.es/-/c%C3%A1maras-zbe"
+  estado: probable
+  resumen: >
+    Solo restringe vehículos SIN etiqueta (A). Desde dic-2025/ene-2026 los de fuera de la provincia;
+    desde 01-01-2027 también los de la provincia salvo los de la ciudad; desde 01-01-2028 todos.
+    B, C, ECO y CERO sin restricción en el calendario aprobado. Perímetro y posible moratoria PENDIENTES.
+  restringidas_hasta_2028: [A]

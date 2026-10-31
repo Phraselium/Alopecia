@@ -1,0 +1,109 @@
+# Tabla de fiabilidad. NO contiene valores inventados: cada métrica lleva fuente y estado.
+#   estado: confirmado | probable (visto en resumen/fragmento, verificar en la fuente) | PENDIENTE
+# Consultado: 2026-10-31. Desde este entorno no se pudo abrir adac.de, tuev-verband.de ni ocu.org
+# directamente; los valores "probable" salen de resúmenes de prensa de esos informes.
+#
+# Cobertura: ADAC Pannenstatistik 2026 solo incluye matriculaciones 2016-2023 (2-9 años), así que
+# para 2008-2015 la referencia útil es el TÜV Report en las franjas 10-11 y 12-13 años.
+#
+# Cómo se convierte en puntos (fórmulas en la hoja "Supuestos" del Excel):
+#   punt_TÜV = 50 + 100 * (media_franja - Mängelquote) / media_franja, acotado 0-100
+#   punt_OCU_marca = índice OCU de la marca (0-100)
+#   punt_modelo = media de los disponibles; si no hay ninguno -> neutro (config) y se marca PENDIENTE
+#   punt_final = punt_modelo + ajuste_motor + ajuste_combustible, acotado 0-100
+
+medias_tuv_2026:
+  "10-11": {valor: 22.9, estado: probable, fuente: "https://www.tuev-verband.de/presse/publikationen/reporte/tuev-report-autobild"}
+  "12-13": {valor: 28.4, estado: probable, fuente: "https://www.tuev-verband.de/presse/publikationen/reporte/tuev-report-autobild"}
+
+modelos:
+  # clave = "Marca Modelo" normalizado (ver src/normalize.py)
+  "Renault Clio":    {tuv_mq: 40.4, tuv_franja: "12-13", estado: probable, fuente: "TÜV Report 2026 vía https://www.autobild.de/artikel/tuev-report-2026-gewinner-verlierer-28424531.html (peor de su franja)"}
+  "Dacia Sandero":   {tuv_mq: 31.5, tuv_franja: "10-11", estado: "probable (edición no fechada en el resumen)", fuente: "https://www.tuev-verband.de/presse/publikationen/reporte/tuev-report-autobild"}
+  "Renault Mégane":  {tuv_mq: 31.7, tuv_franja: "10-11", estado: "probable (edición no fechada en el resumen)", fuente: "https://www.tuev-verband.de/presse/publikationen/reporte/tuev-report-autobild"}
+  "Ford Focus":      {tuv_mq: 34.8, tuv_franja: "12-13", estado: "probable (TÜV 2025; media de franja 28,1 % en esa edición)", fuente: "https://www.t-online.de/mobilitaet/aktuelles/id_100543260/tuev-report-das-sind-die-schlechtesten-kompakten-gebrauchten.html", tuv_media_propia: 28.1}
+  "Volkswagen Golf": {tuv_mq: 17.4, tuv_franja: "10-11", estado: "probable (el resumen lo marcó dudoso)", fuente: "https://www.tuvsud.com/de-de/publikationen/tuev-report/maengelzwerge-und-fehlerriesen"}
+  "Mazda 3":         {tuv_mq: 20.9, tuv_franja: "12-13", estado: "probable (sin verificar)", fuente: "https://www.tuvsud.com/de-de/publikationen/tuev-report/maengelzwerge-und-fehlerriesen"}
+  # PENDIENTES (sin métrica numérica verificada para 2008-2018):
+  "Toyota Yaris": {estado: PENDIENTE}
+  "Toyota Auris": {estado: PENDIENTE}
+  "Toyota Corolla": {estado: PENDIENTE}
+  "Honda Jazz": {estado: PENDIENTE}
+  "Honda Civic": {estado: PENDIENTE}
+  "Mazda 2": {estado: "PENDIENTE (TÜV 2026 solo da franjas jóvenes: 2,9 % a 2-3 años; ADAC 2026 lo pone entre los mejores Kleinwagen 2016-2023)"}
+  "Kia Rio": {estado: PENDIENTE}
+  "Kia Ceed": {estado: PENDIENTE}
+  "Kia Picanto": {estado: PENDIENTE}
+  "Hyundai i10": {estado: PENDIENTE}
+  "Hyundai i20": {estado: PENDIENTE}
+  "Hyundai i30": {estado: PENDIENTE}
+  "Skoda Fabia": {estado: "PENDIENTE (ADAC 2026 entre los mejores Kleinwagen 2016-2023, sin cifra)"}
+  "Skoda Octavia": {estado: PENDIENTE}
+  "Seat Ibiza": {estado: "PENDIENTE (ADAC 2026 entre los mejores Kleinwagen 2016-2023, sin cifra)"}
+  "Seat León": {estado: PENDIENTE}
+  "Volkswagen Polo": {estado: "PENDIENTE (ADAC 2026 entre los mejores Kleinwagen 2016-2023, sin cifra)"}
+  "Opel Corsa": {estado: PENDIENTE}
+  "Opel Astra": {estado: PENDIENTE}
+  "Peugeot 208": {estado: PENDIENTE}
+  "Peugeot 308": {estado: PENDIENTE}
+  "Citroën C3": {estado: PENDIENTE}
+  "Citroën C4": {estado: PENDIENTE}
+  "Ford Fiesta": {estado: PENDIENTE}
+  "Fiat Punto": {estado: PENDIENTE}
+  "Fiat 500": {estado: PENDIENTE}
+  "Nissan Micra": {estado: PENDIENTE}
+  "Suzuki Swift": {estado: "PENDIENTE (ADAC 2026 entre los mejores Kleinwagen 2016-2023, sin cifra)"}
+  "Mitsubishi Colt": {estado: PENDIENTE}
+
+marcas_ocu_2026:
+  # Índice de fiabilidad OCU 2026 por marca (0-100). Solo marcas con cifra en la nota de prensa.
+  fuente: "https://www.ocu.org/organizacion/prensa/notas-de-prensa/2026/fiabcoches020326 ; https://es.motor1.com/news/789821/ocu-fiabilidad-2026-japoneses-tesla/"
+  estado: probable
+  valores: {Lexus: 93, Subaru: 91, Toyota: 91, Suzuki: 91}
+  # Kia 89: fuente secundaria de edición incierta -> PENDIENTE, no se usa.
+
+motores:
+  # El PROBLEMA está documentado en la fuente; la MAGNITUD del ajuste (puntos) es un criterio de
+  # scoring editable, no un dato. marca "(todas)" = aplica a cualquier marca con esa clave de motor.
+  - {marca: "(todas)", motor: "1.2 PureTech", anio_desde: 2012, anio_hasta: 2022, ajuste: -25,
+     problema: "Correa de distribución húmeda que se degrada y consumo de aceite; Stellantis amplió garantía a 10 años/175.000 km con condiciones",
+     revisar: "Factura de cambio de correa y del tamiz/bomba de aceite; nivel de aceite; testigo de presión; si entra en la ampliación de garantía Stellantis",
+     estado: probable, fuente: "https://www.km77.com/revista/engendro-mecanico/stellantis-compensacion-afectados-puretech/ ; https://www.motorpasion.com/industria/stellantis-fin-responde-al-problema-motores-puretech-10-anos-garantia-retroactiva"}
+  - {marca: "(todas)", motor: "1.0 PureTech", anio_desde: 2012, anio_hasta: 2022, ajuste: -25,
+     problema: "Igual que 1.2 PureTech (familia EB)", revisar: "Igual que 1.2 PureTech",
+     estado: probable, fuente: "https://www.km77.com/revista/engendro-mecanico/stellantis-compensacion-afectados-puretech/"}
+  - {marca: "(todas)", motor: "1.2 VTi", anio_desde: 2012, anio_hasta: 2022, ajuste: -25,
+     problema: "1.2 VTi atmosférico = PureTech EB2 (correa húmeda)", revisar: "Igual que 1.2 PureTech",
+     estado: probable, fuente: "https://www.km77.com/revista/engendro-mecanico/stellantis-compensacion-afectados-puretech/"}
+  - {marca: "(todas)", motor: "1.2 TSI", anio_desde: 2008, anio_hasta: 2012, ajuste: -20,
+     problema: "EA111: cadena de distribución que se alarga y tensor que falla; puede saltar y romper el motor",
+     revisar: "Ruido metálico en arranque en frío (primeros segundos); factura de cambio de cadena y tensor",
+     estado: probable, fuente: "https://www.autobild.de/artikel/vw-steuerketten-kulanz-2892135.html"}
+  - {marca: "(todas)", motor: "1.4 TSI", anio_desde: 2008, anio_hasta: 2012, ajuste: -20,
+     problema: "EA111: cadena de distribución que se alarga y tensor que falla",
+     revisar: "Ruido de cadena en frío; factura de cadena/tensor; consumo de aceite",
+     estado: probable, fuente: "https://www.autobild.de/artikel/vw-steuerketten-kulanz-2892135.html"}
+  - {marca: "(todas)", motor: "1.0 EcoBoost", anio_desde: 2012, anio_hasta: 2018, ajuste: -20,
+     problema: "Correa bañada en aceite que se degrada; fallos de refrigeración y sobrecalentamiento (≈2012-2014)",
+     revisar: "Fugas y nivel de refrigerante, manguitos, historial de sobrecalentamiento, factura de correa",
+     estado: probable, fuente: "https://www.motor.es/noticias/ford-10-ecoboost-tricilindricos-correas-banadas-2026115650.html ; https://www.whatcar.com/news/ford-ecoboost-engine-recall-%E2%80%93-what-you-need-to-know/n17972"}
+  - {marca: "(todas)", motor: "1.2 TCe", anio_desde: 2012, anio_hasta: 2016, ajuste: -20,
+     problema: "H5Ft: consumo excesivo de aceite (fabricados 10/2012-07/2016); recalibración desde 06/2015",
+     revisar: "Consumo de aceite, humo azul, si se le hizo la actualización de software/campaña",
+     estado: probable, fuente: "https://questions.assemblee-nationale.fr/dyn/15/questions/QANR5L15QOSD963.pdf"}
+  - {marca: "Opel", motor: "1.4 Turbo", anio_desde: 2010, anio_hasta: 2018, ajuste: -10,
+     problema: "A14NET: pistones/segmentos (consumo de aceite, preencendido), ventilación del cárter, cadena. Fuentes secundarias",
+     revisar: "Consumo de aceite, tirones, ruido de cadena",
+     estado: "probable (fuente secundaria)", fuente: "https://carwiki.de/opel-a14net-motor"}
+  # Motores con buena fama (Toyota VVT-i/HSD, Honda i-VTEC, Mazda Skyactiv-G, Kia/Hyundai MPI, VAG MPI):
+  # PENDIENTE, no se encontró fuente de autoridad. Sin ajuste positivo hasta tenerla.
+
+combustibles:
+  - {combustible: diesel, ajuste: -15,
+     problema: "Filtro de partículas (DPF): en uso urbano no regenera y se colmata; sustitución >1.000-1.500 €",
+     revisar: "Testigo DPF, regeneraciones frecuentes, EGR, si se ha anulado el filtro (ilegal en ITV)",
+     estado: probable, fuente: "https://www.motor16.com/las-ultimas-noticias/filtro-particulas-diesel-averia-1500/"}
+
+# Consumo (l/100 km) y seguro: PENDIENTE (no hay fuente cargada). Se puntúan neutros.
+consumo: {}
+seguro: {}
