@@ -82,6 +82,7 @@ def collect(cfg: dict, store: Store, solo: str | None, max_paginas: int | None) 
             log.exception("Error en %s", name)
         if getattr(src, "coverage", None):
             detalle = (detalle + " | " if detalle else "") + "cobertura parcial: " + "; ".join(src.coverage)
+        store.add_market(src.market)
         n = store.add_new(nuevos)  # se guardan los recogidos aunque la plataforma se corte a medias
         store.touch(vistos)
         store.log_run(name, started, estado, n, len(vistos), detalle)
@@ -94,10 +95,11 @@ def build_outputs(cfg: dict, fiscal: dict, rel: dict, store: Store) -> dict:
     p = Params(cfg, fiscal, rel)
     listings = store.all()
     fiables = set()  # motores diésel con fiabilidad respaldada por fuente: ninguno todavía (PENDIENTE)
-    res = process(listings, p, fiables)
+    res = process(listings, p, fiables, store.market())
     out = cfg["salida"]
     by_uid = {f["listing"].uid: f for f in res.filas}
-    write_workbook(BASE / out["excel"], [f["listing"] for f in res.filas], res.avisos, p)
+    write_workbook(BASE / out["excel"], [f["listing"] for f in res.filas], res.avisos, p,
+                   {f["listing"].uid: f["mercado"] for f in res.filas})
     stats = {"limpios": len(res.limpios), "descartados": len(res.descartados),
              "plataformas": ", ".join(sorted({l.plataforma for l in res.limpios})) or "ninguna"}
     runs = store.db.execute(

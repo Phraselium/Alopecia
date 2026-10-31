@@ -30,6 +30,14 @@ class Source:
         self.client = client
         self.cfg = cfg
         self.src_cfg = src_cfg
+        # Observaciones de mercado: TODOS los anuncios vistos en los listados (también > precio máx.),
+        # para medianas de precio sin el sesgo de mirar solo coches baratos. Sin peticiones adicionales.
+        self.market: list[dict] = []
+
+    def observe(self, ext_id, marca, modelo, titulo, anio, km, precio):
+        if precio and anio:
+            self.market.append({"uid": f"{self.name}:{ext_id}", "plataforma": self.name, "marca": marca, "modelo": modelo,
+                                "titulo": titulo or "", "anio": anio, "km": km, "precio": float(precio)})
 
     def search(self, since: Optional[str] = None) -> Iterator[Listing]:
         raise NotReadyError(f"{self.name}: {self.estado}")

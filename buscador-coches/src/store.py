@@ -16,6 +16,10 @@ CREATE TABLE IF NOT EXISTS listings (
   last_seen TEXT NOT NULL,
   data TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS mercado (
+  uid TEXT PRIMARY KEY, plataforma TEXT, marca TEXT, modelo TEXT, titulo TEXT,
+  anio INTEGER, km INTEGER, precio REAL, last_seen TEXT
+);
 CREATE TABLE IF NOT EXISTS runs (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   started TEXT, finished TEXT, plataforma TEXT, estado TEXT, nuevos INTEGER, vistos INTEGER, detalle TEXT
@@ -51,6 +55,20 @@ class Store:
         now = _now()
         self.db.executemany("UPDATE listings SET last_seen=? WHERE uid=?", [(now, u) for u in uids])
         self.db.commit()
+
+    def add_market(self, rows: list[dict]) -> None:
+        now = _now()
+        self.db.executemany(
+            "INSERT OR REPLACE INTO mercado(uid, plataforma, marca, modelo, titulo, anio, km, precio, last_seen) "
+            "VALUES (:uid, :plataforma, :marca, :modelo, :titulo, :anio, :km, :precio, :now)",
+            [dict(r, now=now) for r in rows])
+        self.db.commit()
+
+    def market(self, max_age_days: int = 60) -> list[dict]:
+        cur = self.db.execute("SELECT uid, plataforma, marca, modelo, titulo, anio, km, precio FROM mercado "
+                              "WHERE last_seen >= datetime('now', ?)", (f"-{max_age_days} days",))
+        cols = [c[0] for c in cur.description]
+        return [dict(zip(cols, r)) for r in cur]
 
     def last_success(self, plataforma: str) -> str | None:
         r = self.db.execute("SELECT MAX(started) FROM runs WHERE plataforma=? AND estado='ok'", (plataforma,)).fetchone()

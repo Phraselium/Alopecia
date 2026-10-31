@@ -38,9 +38,7 @@ class Wallapop(Source):
                 if seg not in f["carrocerias"]:
                     continue
                 md = norm_text(modelo).replace("!", "").replace(" ", "-")
-                if marca == "Mazda" and md.isdigit():
-                    md = f"mazda{md}"
-                slug = f"{norm_text(marca).replace(' ', '-')}-{md}" if not md.startswith(norm_text(marca)) else md
+                slug = f"{norm_text(marca).replace(' ', '-')}-{md}"
                 url = f"{BASE}/coches-segunda-mano/{slug}/valencia"
                 try:
                     r = self.client.get(self.name, url)
@@ -55,6 +53,8 @@ class Wallapop(Source):
                     seen.add(it.get("id"))
                     car = it.get("itemCar") or {}
                     price, year, km = it.get("price"), to_int(car.get("year")), to_int(car.get("km"))
+                    if marca.lower() in norm_text(it.get("title", "")) or norm_text(modelo) in norm_text(it.get("title", "")):
+                        self.observe(it["id"], marca, modelo, it.get("title"), year, km, price)
                     if not price or price > pmax or price < pmin or (year and year < f["anio_min"]) or (km and km > f["km_max"]):
                         continue
                     if marca.lower() not in norm_text(it.get("title", "")) and norm_text(modelo) not in norm_text(it.get("title", "")):

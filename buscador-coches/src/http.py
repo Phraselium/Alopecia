@@ -141,7 +141,12 @@ class PoliteClient:
         host = urlparse(url).netloc
         self._throttle(host)
         log.info("GET %s", full)
-        resp = self.session.get(url, params=params, headers=headers or {}, timeout=self.cfg.get("timeout_s", 30))
+        try:
+            resp = self.session.get(url, params=params, headers=headers or {}, timeout=self.cfg.get("timeout_s", 30))
+        except (requests.Timeout, requests.ConnectionError) as e:
+            log.warning("%s en %s; un reintento tras pausa", type(e).__name__, full)
+            time.sleep(self.cfg["pausa_max_s"] * 2)
+            resp = self.session.get(url, params=params, headers=headers or {}, timeout=self.cfg.get("timeout_s", 30))
         if self._looks_blocked(resp):
             self.blocked.add(platform)
             log.error("BLOQUEO en %s: HTTP %s en %s. Se abandona la plataforma en esta ejecución.",

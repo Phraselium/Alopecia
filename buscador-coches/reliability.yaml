@@ -214,3 +214,12 @@ combustibles:
 # Consumo (l/100 km) y seguro: PENDIENTE (no hay fuente cargada). Se puntúan neutros.
 consumo: {}
 seguro: {}
+
+cajas:
+  # Riesgos de caja de cambios: se explican en informe.md y NO ajustan la puntuación (sin dato cuantitativo europeo).
+  - patron: "dsg ?7|dq200|7 velocidades dsg|dsg de 7"
+    nombre: "VAG DSG de 7 velocidades y embrague seco (DQ200)"
+    problema: "Desgaste de los embragues secos y fallos de la mecatrónica. En 2012 VW China amplió la garantía de la DQ200 a 10 años o 160.000 km; en Europa no consta campaña equivalente"
+    revisar: "Tirones o vibración al arrancar y en maniobras, golpes al cambiar de 1.ª a 2.ª, testigo de la caja; facturas de embrague o mecatrónica"
+    estado: "probable (prensa del sector)"
+    fuente: "https://autonews.gasgoo.com/articles/market-industry/vw-apologizes-to-chinese-customers-for-dsg-gearbox-problem-1021311"

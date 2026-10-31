@@ -54,6 +54,10 @@ class CochesNet(Source):
                     except requests.HTTPError as e:
                         log.info("cochesnet: %s %s no existe (%s)", marca, modelo, e.response.status_code if e.response is not None else e)
                         break
+                    except requests.RequestException as e:
+                        log.warning("cochesnet: error de red en %s (%s); se salta este modelo", url, e)
+                        self.coverage.append(f"{marca} {modelo}: error de red, omitido")
+                        break
                     p = js_json_parse(r["text"], "window.__INITIAL_PROPS__") or {}
                     s, res = p.get("initialSearch") or {}, p.get("initialResults") or {}
                     veh = (s.get("vehicles") or [{}])[0] if s.get("vehicles") else {}
@@ -69,6 +73,7 @@ class CochesNet(Source):
                             continue
                         seen.add(it["id"])
                         price, year, km = it.get("price"), it.get("year"), it.get("km")
+                        self.observe(it["id"], it.get("make"), it.get("model"), it.get("title"), year, km, price)
                         if not price or price > pmax or (year and year < f["anio_min"]) or (km and km > f["km_max"]):
                             continue
                         loc = it.get("location") or {}

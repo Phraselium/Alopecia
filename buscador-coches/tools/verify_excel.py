@@ -18,7 +18,8 @@ from src.store import Store  # noqa: E402
 L = lambda n: yaml.safe_load((BASE / n).read_text(encoding="utf-8"))  # noqa: E731
 cfg = L("config.yaml")
 p = Params(cfg, L("fiscal.yaml"), L("reliability.yaml"))
-res = process(Store(BASE / cfg["salida"]["db"]).all(), p, set())
+st = Store(BASE / cfg["salida"]["db"])
+res = process(st.all(), p, set(), st.market())
 with tempfile.TemporaryDirectory() as td:
     subprocess.run(["soffice", "--headless", "--calc", "--convert-to", "xlsx", "--outdir", td, str(BASE / cfg["salida"]["excel"])],
                    check=True, capture_output=True, timeout=300)

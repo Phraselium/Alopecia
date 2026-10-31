@@ -58,6 +58,35 @@ def seg_keys(l: Listing, cfg: dict) -> tuple[str, str, str]:
     return k1, k2, f"{k2}|{tk}"
 
 
+def market_medians(listings: list[Listing], market: list[dict], cfg: dict) -> dict[str, tuple[Optional[float], str, int]]:
+    """Mediana de mercado por segmento con TODOS los anuncios vistos en los listados (incluidos los de
+    precio > máximo). Misma jerarquía de segmentos; si ni a nivel modelo hay MIN_N, devuelve (None, '', n)."""
+    from .normalize import norm_brand, norm_model
+    min_n = cfg["segmentos"]["min_muestras"]
+    groups: dict[tuple[int, str], list[float]] = {}
+    for m in market:
+        marca = norm_brand(m.get("marca"), m.get("titulo") or "")
+        modelo, _ = norm_model(marca, m.get("modelo"), m.get("titulo") or "")
+        if not (marca and modelo):
+            continue
+        fake = Listing(plataforma="", id_externo="", url="", titulo="", anio=m["anio"], km=m.get("km") or 0)
+        fake.modelo_key = f"{marca} {modelo}"
+        for i, k in enumerate(seg_keys(fake, cfg)):
+            groups.setdefault((i, k), []).append(m["precio"])
+    names = ["modelo", "modelo+año", "modelo+año+km"]
+    out = {}
+    for l in listings:
+        ks = seg_keys(l, cfg)
+        res = (None, "", 0)
+        for i in (2, 1):   # nunca a nivel "todo el modelo": mezclaría coches de 2008 con los de 2024
+            vals = groups.get((i, ks[i]), [])
+            if len(vals) >= min_n:
+                res = (statistics.median(vals), names[i], len(vals))
+                break
+        out[l.uid] = res
+    return out
+
+
 def medians(listings: list[Listing], cfg: dict) -> dict[str, tuple[Optional[float], str, int]]:
     """uid -> (mediana, nivel, n) con la misma jerarquía que la fórmula del Excel."""
     min_n = cfg["segmentos"]["min_muestras"]
@@ -209,12 +238,17 @@ def s_coste_uso(l: Listing, p: Params) -> dict:
     return {"etiqueta": et, "s_etiqueta": s_et, "seguro": seg, "score": score}
 
 
-def score_all(listings: list[Listing], p: Params, costes: dict[str, dict]) -> list[dict]:
+def score_all(listings: list[Listing], p: Params, costes: dict[str, dict],
+              mkt: Optional[dict] = None) -> list[dict]:
     meds = medians(listings, p.cfg)
+    mkt = mkt or {}
     w = p.cfg["scoring"]["pesos"]
     rows = []
     for l in listings:
         med, nivel, n = meds[l.uid]
+        mm = mkt.get(l.uid)
+        if mm and mm[0] is not None:
+            med, nivel, n = mm[0], "mercado " + mm[1], mm[2]
         f = s_fiabilidad(l, p)
         pr = s_precio(l, med, p.cfg)
         ke = s_km_edad(l, p)
@@ -225,7 +259,7 @@ def score_all(listings: list[Listing], p: Params, costes: dict[str, dict]) -> li
                  + w["anuncio"] * an["score"] + w["coste_uso"] * us["score"] + w["seguridad"] * sg["score"])
         c = dict(costes[l.uid])
         c["primer_anio"] = c["total"] + (us["seguro"] or 0)
-        rows.append({"listing": l, "mediana": med, "nivel_mediana": nivel, "n_mediana": n,
+        rows.append({"listing": l, "mediana": med, "nivel_mediana": nivel, "n_mediana": n, "mercado": mm,
                      "fiabilidad": f, "precio": pr, "km_edad": ke, "anuncio": an, "coste_uso": us, "seguridad": sg,
                      "total": total, "coste": c,
                      "apto": c["total"] <= p.cfg["presupuesto"]["total_max_eur"]})

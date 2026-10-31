@@ -50,6 +50,10 @@ class OcasionPlus(Source):
                 price = off.get("price")
                 year = to_int((it.get("productionDate") or "")[:4])
                 km = to_int((it.get("mileageFromOdometer") or {}).get("value"))
+                if not link:
+                    continue
+                self.observe(link.rstrip("/").split("-")[-1], (it.get("brand") or {}).get("name"), None,
+                             it.get("model") or it.get("name"), year, km, price)
                 # Precio del listado = el más bajo (financiado). Si ni así entra, no se abre la ficha.
                 if price is None or price > pmax or (year and year < f["anio_min"]) or (km and km > f["km_max"]):
                     continue

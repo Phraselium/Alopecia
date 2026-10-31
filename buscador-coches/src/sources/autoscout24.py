@@ -50,6 +50,8 @@ class AutoScout24(Source):
                         continue
                     v, loc, sel = it.get("vehicle") or {}, it.get("location") or {}, it.get("seller") or {}
                     reg = (it.get("tracking") or {}).get("firstRegistration") or ""
+                    self.observe(it["id"], v.get("make"), v.get("model"), it.get("title"), to_int(reg[-4:]),
+                                 to_int(v.get("mileageInKm")), (it.get("price") or {}).get("priceRaw"))
                     yield Listing(
                         plataforma=self.name, id_externo=it["id"], url=BASE + it["url"],
                         titulo=f"{v.get('make')} {v.get('model')} {v.get('modelVersionInput') or ''}".strip(),

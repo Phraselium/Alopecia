@@ -42,7 +42,7 @@ def _why(f: dict, p: Params) -> list[str]:
     d = f["precio"]["descuento"]
     if d is not None:
         out.append(f"Precio {n(l.precio)} € frente a una mediana de {n(f['mediana'])} € en su segmento "
-                   f"({f['nivel_mediana']}, {f['n_mediana']} anuncios): {d:+.0%}.")
+                   f"({f['nivel_mediana']}, {f['n_mediana']} anuncios): {abs(d):.0%} {'por debajo' if d >= 0 else 'por encima'}.")
     ke = f["km_edad"]
     out.append(f"{n(l.km)} km en {ke['edad']} años ({n(ke['km_anio'])} km/año).")
     sig = [n for n, v in (("ITV en vigor", l.itv_vigor), ("libro de mantenimiento", l.libro_mantenimiento),
@@ -66,9 +66,16 @@ def _why(f: dict, p: Params) -> list[str]:
     return out
 
 
-def _risks(f: dict) -> tuple[list[str], list[str]]:
+def _risks(f: dict, rel: dict | None = None) -> tuple[list[str], list[str]]:
+    import re as _re
+    from .normalize import norm_text
     l = f["listing"]
     risks, checks = [], []
+    txt = norm_text(f"{l.titulo} {l.version or ''} {l.descripcion[:400]}")
+    for c in (rel or {}).get("cajas") or []:
+        if _re.search(c["patron"], txt):
+            risks.append(f"{c['nombre']}: {c['problema']} (fuente: {c['fuente']}; estado: {c['estado']}; no ajusta la puntuación)")
+            checks.append(c["revisar"])
     for h in f["fiabilidad"]["problemas"]:
         risks.append(f"{h['problema']} (fuente: {h['fuente']}; estado: {h['estado']})")
         checks.append(h["revisar"])
@@ -122,7 +129,7 @@ def write_report(path: Path, filas: list[dict], p: Params, top_n: int, stats: di
         lines.append("_No hay anuncios aptos todavía._")
     for f in top:
         l = f["listing"]
-        risks, checks = _risks(f)
+        risks, checks = _risks(f, p.rel)
         lines += [
             f"## {f['rank']}. {l.titulo} — {n(l.precio)} € ({n(f['coste']['total'])} € en total)",
             "", f"**Puntuación {f['total']:.1f}/100** · {l.plataforma} · {l.ubicacion or 'ubicación sin dato'} · "

@@ -348,6 +348,8 @@ COLUMNS = [
     ("solo_fin", "Precio anunciado solo financiando", "data", None),
     ("gastos", "Gastos de gestión del vendedor (€)", "data", None), ("gastos_transf", "Gastos incluyen transferencia", "data", None),
     ("distancia", "Distancia a València (km)", "data", None),
+    ("med_merc", "Mediana de mercado del segmento (€)", "data", None), ("n_merc", "N mercado", "data", None),
+    ("nivel_merc", "Nivel mediana mercado", "data", None),
     ("duplicados", "Duplicados fusionados", "data", None),
     ("avisos", "Avisos", "data", None), ("descripcion", "Descripción", "data", None),
     ("fuente", "Fuente (fichero /raw)", "data", None),
@@ -361,8 +363,9 @@ COLUMNS = [
     ("n2", "N modelo+año", "calc", "=COUNTIF({R:k2},{k2})"),
     ("n3", "N modelo+año+km", "calc", "=COUNTIF({R:k3},{k3})"),
     ("mediana", "Mediana segmento (€)", "array",
-     "=IF({n3}>=MIN_N,MEDIAN(IF({R:k3}={k3},{R:precio})),IF({n2}>=MIN_N,MEDIAN(IF({R:k2}={k2},{R:precio})),MEDIAN(IF({R:k1}={k1},{R:precio}))))"),
-    ("nivel", "Nivel mediana", "calc", '=IF({n3}>=MIN_N,"modelo+año+km",IF({n2}>=MIN_N,"modelo+año","modelo"))'),
+     "=IF(N({n_merc})>=MIN_N,{med_merc},IF({n3}>=MIN_N,MEDIAN(IF({R:k3}={k3},{R:precio})),IF({n2}>=MIN_N,MEDIAN(IF({R:k2}={k2},{R:precio})),MEDIAN(IF({R:k1}={k1},{R:precio})))))"),
+    ("nivel", "Nivel mediana", "calc",
+     '=IF(N({n_merc})>=MIN_N,"mercado "&{nivel_merc},IF({n3}>=MIN_N,"modelo+año+km",IF({n2}>=MIN_N,"modelo+año","modelo")))'),
     ("descuento", "Descuento vs mediana", "calc", "=({mediana}-{precio})/{mediana}"),
     ("etiqueta", "Etiqueta DGT", "calc",
      '=IF(OR({combustible}="hibrido",{combustible}="glp"),"ECO",IF({combustible}="electrico","CERO",'
@@ -428,7 +431,10 @@ NOTES = {
     "marca": "Normalizada por src/normalize.py a partir del dato scrapeado.",
     "motor": "Normalizado por src/normalize.py (cilindrada + tecnología).",
     "itv": "Extraído del texto del anuncio por src/extract.py: sí / no / vacío = no lo menciona.",
-    "mediana": "Fórmula matricial: mediana de precio del segmento (modelo+año+km; si hay menos de MIN_N, sube de nivel).",
+    "mediana": "Si hay MIN_N o más anuncios de mercado del segmento (todos los vistos en los listados, también > precio máx.), "
+               "usa la mediana de mercado; si no, fórmula matricial con la mediana de esta hoja (modelo+año+km, subiendo de nivel).",
+    "med_merc": "Calculada en Python (src/scoring.py: market_medians) con los anuncios vistos en los listados de las plataformas "
+                "(tabla 'mercado' de data/listings.sqlite), mismo esquema de segmentos.",
     "itp": "Cuota fija CV por antigüedad y cilindrada si valor < CUOTA_VALOR_MAX; si no, tipo porcentual. Profesional: 0.",
     "rank": "Desempate por orden de fila.",
 }
@@ -449,8 +455,10 @@ def _expand(tpl: str, r: int, n_last: int, names: set[str]) -> tuple[str, bool]:
     return f, external
 
 
-def listing_row(l: Listing, avisos: str) -> dict:
+def listing_row(l: Listing, avisos: str, mkt=None) -> dict:
+    mkt = mkt or (None, None, None)
     return {
+        "med_merc": mkt[0], "n_merc": mkt[2] if mkt[0] is not None else None, "nivel_merc": mkt[1] or None,
         "uid": l.uid, "plataforma": l.plataforma, "url": l.url, "titulo": l.titulo, "marca": l.marca,
         "modelo_key": l.modelo_key, "motor": l.motor_key, "version": l.version, "cc": l.cilindrada_cc,
         "cv": l.potencia_cv, "combustible": l.combustible, "carroceria": l.carroceria, "anio": l.anio, "km": l.km, "precio": l.precio,
@@ -467,7 +475,7 @@ def listing_row(l: Listing, avisos: str) -> dict:
     }
 
 
-def build_anuncios(wb: Workbook, listings: list[Listing], avisos: dict[str, str], names: Names) -> int:
+def build_anuncios(wb: Workbook, listings: list[Listing], avisos: dict[str, str], names: Names, mkt=None) -> int:
     ws = wb.create_sheet("Anuncios", 0)
     n_last = max(len(listings) + 1, 2)
     for i, (key, hdr, kind, _t) in enumerate(COLUMNS, 1):
@@ -478,7 +486,7 @@ def build_anuncios(wb: Workbook, listings: list[Listing], avisos: dict[str, str]
         if key in NOTES:
             c.comment = Comment(NOTES[key], "buscador")
     for r, l in enumerate(listings, 2):
-        data = listing_row(l, avisos.get(l.uid, ""))
+        data = listing_row(l, avisos.get(l.uid, ""), (mkt or {}).get(l.uid))
         for i, (key, _h, kind, tpl) in enumerate(COLUMNS, 1):
             cell = ws.cell(r, i)
             if kind == "data":
@@ -548,12 +556,12 @@ def build_top(wb: Workbook, n_last: int, top_n: int) -> None:
     ws.column_dimensions["D"].width = 40
 
 
-def write_workbook(path: Path, listings: list[Listing], avisos: dict[str, str], p: Params) -> None:
+def write_workbook(path: Path, listings: list[Listing], avisos: dict[str, str], p: Params, mkt=None) -> None:
     wb = Workbook()
     wb.remove(wb.active)
     names = Names(wb)
     build_supuestos(wb, p, names)
-    n_last = build_anuncios(wb, listings, avisos, names)
+    n_last = build_anuncios(wb, listings, avisos, names, mkt)
     build_top(wb, n_last, p.cfg["salida"]["top_n"])
     for ws in wb.worksheets:
         ws.freeze_panes = None
