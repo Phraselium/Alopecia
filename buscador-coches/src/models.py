@@ -48,6 +48,13 @@ class Listing:
     solo_financiando: Optional[bool] = None       # el precio anunciado solo vale financiando
     gastos_gestion_eur: Optional[float] = None    # gastos de gestión/preparación/transferencia del vendedor
     gastos_incluyen_transferencia: Optional[bool] = None
+    # Distintivo ambiental
+    matricula: Optional[str] = None
+    fecha_matriculacion: Optional[str] = None     # 'YYYY-MM-DD', 'YYYY-MM', 'MM/YYYY' o 'YYYY'
+    etiqueta_anuncio: Optional[str] = None        # la que publica la plataforma
+    etiqueta_fuente: Optional[str] = None         # DGT | anuncio | regla
+    etiqueta_dudosa: Optional[bool] = None
+    etiqueta_codigo_dgt: Optional[str] = None
     lat: Optional[float] = None
     lon: Optional[float] = None
     # Campos normalizados / calculados en Python

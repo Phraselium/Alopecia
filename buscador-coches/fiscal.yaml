@@ -52,6 +52,8 @@ dgt:
   informe_vehiculo_fuente: "https://sede.dgt.gob.es/es/vehiculos/informacion-de-vehiculos/informe-de-un-vehiculo/"
 
 etiqueta_dgt:
+  # SUSTITUIDO desde 01-11-2026 por zbe.yaml (criterios por fecha de matriculación con mes, fichero oficial DGT y
+  # calendario de la ZBE). Se conserva solo como referencia histórica; el código ya no lo usa.
   # Reglas de asignación por combustible y año de matriculación (aproximación por año; la etiqueta
   # real depende de la norma Euro y de la fecha exacta: comprobar con la matrícula en la sede DGT).
   fuente: "https://www.dgt.es/nuestros-servicios/tu-vehiculo/tus-vehiculos/distintivo-ambiental/"
@@ -64,6 +66,7 @@ etiqueta_dgt:
   glp: ECO
 
 zbe_valencia:
+  # Ver zbe.yaml (fuente vigente para el buscador desde 01-11-2026).
   verificado: "Leído en valencia.es el 31-10-2026: solo etiqueta A; sanciones desde 01-12-2025 para los de fuera de la provincia (todo 2026); desde 01-01-2027 también los de la provincia salvo los matriculados en la ciudad; desde 01-01-2028 todos. Moratoria para afectados por la DANA y pedanías hasta 31-12-2028."
   fuente: "https://www.valencia.es/cas/actualidad/-/content/zona-bajas-emisiones-val%C3%A8ncia.-aprobaci%C3%B3n-por-el-pleno ; https://www.valencia.es/-/c%C3%A1maras-zbe"
   estado: confirmado

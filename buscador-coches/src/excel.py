@@ -96,6 +96,8 @@ def build_supuestos(wb: Workbook, p: Params, names: Names) -> None:
     param("W_USO", "Coste de uso en Valencia", w["coste_uso"])
     param("W_SEGURIDAD", "Seguridad de compra (garantía, km certificados, revisión, devolución, historial)", w["seguridad"],
           "criterio (config.yaml)", "config.yaml: añadido el 31-10-2026; los 5 pesos anteriores × 0,85 redondeados")
+    param("W_ETIQUETA", "Etiqueta y ZBE", w.get("etiqueta", 0), "criterio (config.yaml)",
+          "config.yaml: añadido el 01-11-2026; sale de Coste de uso (9→5) y 1 punto de fiabilidad y de precio")
     param("W_SUMA", "Suma de pesos (control)", f"=SUM(B{first}:B{r-1})", "calculado", "", formula=True)
 
     # ---- parámetros
@@ -183,28 +185,72 @@ def build_supuestos(wb: Workbook, p: Params, names: Names) -> None:
     r += 1
 
     # ---- etiqueta y ZBE
-    section("4. Etiqueta DGT y ZBE de València")
-    header(["Concepto", "Valor", "Estado", "Fuente"])
-    e = fis["etiqueta_dgt"]
-    param("GAS_C", "Gasolina etiqueta C desde (año)", e["gasolina_C_desde"], e["estado"], e["fuente"])
-    param("GAS_B", "Gasolina etiqueta B desde (año)", e["gasolina_B_desde"], e["estado"], e["fuente"])
-    param("DIE_C", "Diésel etiqueta C desde (año)", e["diesel_C_desde"], e["estado"], e["fuente"])
-    param("DIE_B", "Diésel etiqueta B desde (año)", e["diesel_B_desde"], e["estado"], e["fuente"])
-    z = fis["zbe_valencia"]
-    ws.cell(r, 1, "ZBE València")
-    ws.cell(r, 2, z["resumen"].strip()).alignment = Alignment(wrap_text=True)
-    ws.cell(r, 3, z["estado"])
-    ws.cell(r, 4, z["fuente"])
+    zb = p.zbe
+    ce = zb["criterios_etiqueta"]
+    section("4. Distintivo ambiental (DGT) y ZBE de València")
+    ws.cell(r, 1, "Orden de fiabilidad: 1) fichero oficial de la DGT por matrícula; 2) etiqueta publicada en el anuncio; "
+                  "3) regla por combustible y fecha de primera matriculación. Año frontera sin mes = 'dudosa' (la peor posible).")
+    r += 1
+    header(["Criterio (fecha de primera matriculación, AAAAMM)", "Valor", "Estado", "Fuente"])
+    src_c = f"{ce['fuente']} (consultado {ce['consultado']})"
+    param("GAS_B_YM", "Gasolina: B desde (AAAAMM)", ce["gasolina"]["B_desde"][0] * 100 + ce["gasolina"]["B_desde"][1], ce["estado"], src_c)
+    param("GAS_C_YM", "Gasolina: C desde (AAAAMM)", ce["gasolina"]["C_desde"][0] * 100 + ce["gasolina"]["C_desde"][1], ce["estado"], src_c)
+    param("DIE_B_YM", "Diésel: B desde (AAAAMM)", ce["diesel"]["B_desde"][0] * 100 + ce["diesel"]["B_desde"][1], ce["estado"], src_c)
+    param("DIE_C_YM", "Diésel: C desde (AAAAMM)", ce["diesel"]["C_desde"][0] * 100 + ce["diesel"]["C_desde"][1], ce["estado"], src_c)
+    for k, txt in ce["textos_dgt"].items():
+        ws.cell(r, 1, f"Etiqueta {k} (texto DGT)")
+        ws.cell(r, 2, txt).alignment = Alignment(wrap_text=True)
+        ws.cell(r, 3, ce["estado"])
+        ws.cell(r, 4, src_c)
+        r += 1
+    ws.cell(r, 1, "Híbridos (HEV), GLP, GNC/GNL → ECO; eléctricos → CERO; enchufables sin autonomía conocida → ECO (conservador).")
     r += 2
-    header(["Etiqueta", "Puntos (criterio)", "Estado", "Fuente"])
+    header(["Combustible (año frontera)", "Año", "Estado", "Fuente"])
     t0 = r
-    for et, pts in u["puntos_etiqueta"].items():
-        ws.cell(r, 1, et).font = _font(BLUE)
+    for fuel, years in (ce.get("fronteras") or {}).items():
+        for y in years:
+            ws.cell(r, 1, fuel).font = _font(BLUE)
+            ws.cell(r, 2, y).font = _font(BLUE)
+            ws.cell(r, 3, "criterio (zbe.yaml)")
+            ws.cell(r, 4, "Sin mes de matriculación → etiqueta dudosa = la peor del par de años")
+            r += 1
+    names.add("FR_FUEL", f"Supuestos!$A${t0}:$A${r-1}")
+    names.add("FR_YEAR", f"Supuestos!$B${t0}:$B${r-1}")
+    r += 1
+    fd = zb["fichero_dgt"]
+    header(["Código fichero DGT", "Etiqueta", "Estado", "Fuente"])
+    for code, lab in fd["codigos"].items():
+        ws.cell(r, 1, code).font = _font(BLUE)
+        ws.cell(r, 2, lab).font = _font(BLUE)
+        ws.cell(r, 3, "verificado (843 matrículas cruzadas)")
+        ws.cell(r, 4, fd["url"])
+        r += 1
+    ws.cell(r, 1, "Validación: " + " ".join(fd["validacion_codigos"].split()))
+    r += 2
+    z = zb["zbe_valencia"]
+    header(["ZBE València: desde", "Hasta", "Restringidos", "Estado / fuente"])
+    for c in z["calendario_previsto"]:
+        ws.cell(r, 1, str(c["desde"])).font = _font(BLUE)
+        ws.cell(r, 2, str(c["hasta"] or "—")).font = _font(BLUE)
+        ws.cell(r, 3, c["restringidos"]).font = _font(BLUE)
+        ws.cell(r, 4, f"{z['estado']} — {z['fuentes'][0]} (consultado {z['consultado']})")
+        r += 1
+    ws.cell(r, 1, "Estado de la ordenanza: " + " ".join(z["estado_ordenanza"].split()))
+    r += 1
+    ws.cell(r, 1, "Etiqueta B: " + " ".join(z["etiqueta_B"].split()))
+    r += 2
+    et = sc["etiqueta"]
+    header(["Etiqueta (criterio 'Etiqueta y ZBE')", "Puntos", "Estado", "Fuente"])
+    t0 = r
+    for lab, pts in et["puntos"].items():
+        ws.cell(r, 1, lab).font = _font(BLUE)
         ws.cell(r, 2, pts).font = _font(BLUE)
         ws.cell(r, 3, "criterio (config.yaml)")
-        ws.cell(r, 4, "config.yaml; la ZBE solo restringe sin etiqueta (A), ver fila ZBE")
+        ws.cell(r, 4, "config.yaml → scoring.etiqueta.puntos (B base, C +, ECO/CERO ++)")
         r += 1
     names.add("ETQ_TBL", f"Supuestos!$A${t0}:$B${r-1}")
+    param("ETQ_PEN_DUD", "Penalización si la etiqueta es dudosa (puntos)", et["penal_dudosa"])
+    param("ETQ_PEN_REGLA", "Penalización si la etiqueta sale solo de la regla (puntos)", et["penal_regla"])
     r += 1
     header(["Carrocería admitida con penalización", "Puntos restados a la PUNTUACIÓN", "Estado", "Fuente"])
     t0 = r
@@ -363,6 +409,9 @@ COLUMNS = [
     ("solo_fin", "Precio anunciado solo financiando", "data", None),
     ("gastos", "Gastos de gestión del vendedor (€)", "data", None), ("gastos_transf", "Gastos incluyen transferencia", "data", None),
     ("distancia", "Distancia a València (km)", "data", None),
+    ("matricula", "Matrícula", "data", None), ("fecha_matric", "1.ª matriculación (anuncio)", "data", None),
+    ("mat_anio", "Año 1.ª matric.", "data", None), ("mat_mes", "Mes 1.ª matric.", "data", None),
+    ("etq_dato", "Etiqueta DGT/anuncio", "data", None), ("etq_fuente", "Fuente etiqueta", "data", None),
     ("med_merc", "Mediana de mercado del segmento (€)", "data", None), ("n_merc", "N mercado", "data", None),
     ("nivel_merc", "Nivel mediana mercado", "data", None),
     ("duplicados", "Duplicados fusionados", "data", None),
@@ -382,10 +431,16 @@ COLUMNS = [
     ("nivel", "Nivel mediana", "calc",
      '=IF(N({n_merc})>=MIN_N,"mercado "&{nivel_merc},IF({n3}>=MIN_N,"modelo+año+km",IF({n2}>=MIN_N,"modelo+año","modelo")))'),
     ("descuento", "Descuento vs mediana", "calc", "=({mediana}-{precio})/{mediana}"),
-    ("etiqueta", "Etiqueta DGT", "calc",
-     '=IF(OR({combustible}="hibrido",{combustible}="glp"),"ECO",IF({combustible}="electrico","CERO",'
-     'IF({combustible}="gasolina",IF({anio}>=GAS_C,"C",IF({anio}>=GAS_B,"B","A")),'
-     'IF({combustible}="diesel",IF({anio}>=DIE_C,"C",IF({anio}>=DIE_B,"B","A")),""))))'),
+    ("frontera", "Año frontera (1/0)", "calc", "=IF(COUNTIFS(FR_FUEL,{combustible},FR_YEAR,{mat_anio})>0,1,0)"),
+    ("frontera_prev", "Año anterior frontera (1/0)", "calc", "=IF(COUNTIFS(FR_FUEL,{combustible},FR_YEAR,{mat_anio}-1)>0,1,0)"),
+    ("ym", "AAAAMM para la regla", "calc",
+     "=IF(N({mat_mes})>0,{mat_anio}*100+{mat_mes},IF(AND({frontera}=1,{frontera_prev}=1),({mat_anio}-1)*100+1,{mat_anio}*100+1))"),
+    ("etq_regla", "Etiqueta por regla", "calc",
+     '=IF(OR({combustible}="hibrido",{combustible}="glp",{combustible}="gnc",{combustible}="phev"),"ECO",'
+     'IF({combustible}="electrico","CERO",IF({combustible}="gasolina",IF({ym}>=GAS_C_YM,"C",IF({ym}>=GAS_B_YM,"B","A")),'
+     'IF({combustible}="diesel",IF({ym}>=DIE_C_YM,"C",IF({ym}>=DIE_B_YM,"B","A")),""))))'),
+    ("etiqueta", "ETIQUETA", "etq", None),
+    ("etq_dudosa", "Etiqueta dudosa", "calc", '=IF({etq_fuente}="regla",IF(AND(N({mat_mes})=0,{frontera}=1),"sí","no"),"no")'),
     # fiabilidad
     ("f_base", "Fiab. base modelo", "calc",
      "=IFERROR(VLOOKUP({modelo_key},MOD_TBL,11,0),IFERROR(VLOOKUP({marca},OCU_TBL,2,0),NEUTRO))"),
@@ -413,11 +468,12 @@ COLUMNS = [
      '=P_ITV*({itv}="sí")+P_LIBRO*({libro}="sí")+P_CORREA*({correa}="sí")+P_PROP*({propietarios}=1)'
      '+P_GAR*({garantia}="sí")+P_FOTOS*MIN(1,N({fotos})/FOTOS_OBJ)'),
     # uso
-    ("s_etq", "P. etiqueta", "calc", "=IFERROR(VLOOKUP({etiqueta},ETQ_TBL,2,0),NEUTRO)"),
+    ("s_etiqueta", "P. Etiqueta y ZBE", "calc",
+     '=MAX(0,MIN(100,IFERROR(VLOOKUP({etiqueta},ETQ_TBL,2,0),0)-IF({etq_dudosa}="sí",ETQ_PEN_DUD,IF({etq_fuente}="regla",ETQ_PEN_REGLA,0))))'),
     ("s_cons", "P. consumo (PENDIENTE)", "calc", "=NEUTRO"),
     ("seguro", "Seguro estimado €/año (aprox.)", "calc", '=IFERROR(VLOOKUP({carroceria},SEGURO_TBL,3,0),"")'),
     ("s_seg", "P. seguro", "calc", '=IF({seguro}="",NEUTRO,MAX(0,MIN(100,100*(SEG_REF_MAX-{seguro})/(SEG_REF_MAX-SEG_REF_MIN))))'),
-    ("s_uso", "P. Coste uso", "calc", "=W_ET*{s_etq}+W_CONS*{s_cons}+W_SEG*{s_seg}"),
+    ("s_uso", "P. Coste uso", "calc", "=W_CONS*{s_cons}+W_SEG*{s_seg}"),
     # seguridad de compra
     ("gar_ef", "Garantía efectiva (meses)", "calc",
      '=IF(N({gar_meses})>0,{gar_meses},IF(AND({vendedor}="profesional",SG_LEGAL_ON=1),GAR_LEGAL,0))'),
@@ -426,7 +482,7 @@ COLUMNS = [
      '+SG_DEV*MIN(1,N({devolucion})/SG_DEV_FULL)+SG_HIST*({libro}="sí")'),
     ("pen_carr", "Penalización carrocería (puntos)", "calc", "=IFERROR(VLOOKUP({carroceria},CARR_PEN_TBL,2,0),0)"),
     ("total", "PUNTUACIÓN", "calc",
-     "=W_FIAB*{s_fiab}+W_PRECIO*{s_precio}+W_KMEDAD*{s_kmedad}+W_ANUNCIO*{s_anuncio}+W_USO*{s_uso}+W_SEGURIDAD*{s_seguridad}-{pen_carr}"),
+     "=W_FIAB*{s_fiab}+W_PRECIO*{s_precio}+W_KMEDAD*{s_kmedad}+W_ANUNCIO*{s_anuncio}+W_USO*{s_uso}+W_SEGURIDAD*{s_seguridad}+W_ETIQUETA*{s_etiqueta}-{pen_carr}"),
     # coste
     ("cc_fiscal", "cc para ITP", "calc",
      '=IF(N({cc})>0,{cc},IFERROR(ROUND(_xlfn.NUMBERVALUE(LEFT({motor},FIND(" ",{motor}&" ")-1),".")*1000,0),99999))'),
@@ -477,6 +533,12 @@ def _expand(tpl: str, r: int, n_last: int, names: set[str]) -> tuple[str, bool]:
     return f, external
 
 
+def _ym(l: Listing):
+    from .etiqueta import parse_fecha
+    y, m = parse_fecha(l.fecha_matriculacion)
+    return (y, m) if y is not None else (l.anio, None)
+
+
 def listing_row(l: Listing, avisos: str, mkt=None) -> dict:
     mkt = mkt or (None, None, None)
     return {
@@ -491,6 +553,9 @@ def listing_row(l: Listing, avisos: str, mkt=None) -> dict:
         "gar_meses": l.garantia_meses, "gar_ampl": _yn(l.garantia_ampliable), "gar_ampl_eur": l.garantia_ampliacion_eur,
         "revision": l.revision_puntos, "km_cert": _yn(l.km_certificados), "devolucion": l.devolucion_dias,
         "p_contado": l.precio_contado, "p_financiado": l.precio_financiado, "solo_fin": _yn(l.solo_financiando),
+        "matricula": l.matricula, "fecha_matric": l.fecha_matriculacion,
+        "mat_anio": _ym(l)[0], "mat_mes": _ym(l)[1],
+        "etq_dato": l.etiqueta_dgt if l.etiqueta_fuente in ("DGT", "anuncio") else None, "etq_fuente": l.etiqueta_fuente,
         "gastos": l.gastos_gestion_eur, "gastos_transf": _yn(l.gastos_incluyen_transferencia), "distancia": l.distancia_km,
         "duplicados": "; ".join(l.duplicados) or None, "avisos": avisos or None,
         "descripcion": (l.descripcion or "")[:1500], "fuente": f"{l.fuente_dato or ''} {l.raw_ref or ''}".strip(),
@@ -511,6 +576,17 @@ def build_anuncios(wb: Workbook, listings: list[Listing], avisos: dict[str, str]
         data = listing_row(l, avisos.get(l.uid, ""), (mkt or {}).get(l.uid))
         for i, (key, _h, kind, tpl) in enumerate(COLUMNS, 1):
             cell = ws.cell(r, i)
+            if kind == "etq":
+                if l.etiqueta_fuente in ("DGT", "anuncio"):
+                    cell.value = l.etiqueta_dgt
+                    cell.font = _font(BLUE)
+                    src = (f"Fichero oficial DGT de distintivos (código {l.etiqueta_codigo_dgt}, matrícula {l.matricula})"
+                           if l.etiqueta_fuente == "DGT" else f"Publicada en el anuncio ({l.plataforma}): {l.url}")
+                    cell.comment = Comment(src, "buscador")
+                else:
+                    cell.value = f"={COL['etq_regla']}{r}"
+                    cell.font = _font(BLACK)
+                continue
             if kind == "data":
                 cell.value = data[key]
                 cell.font = _font(BLUE)
@@ -536,17 +612,17 @@ TOP_COLS = [
     ("Automático", "automatico"), ("Vendedor", "vendedor"), ("Precio contado (€)", "precio"),
     ("Solo financiando", "solo_fin"), ("Precio financiado (€)", "p_financiado"), ("Garantía efectiva (meses)", "gar_ef"),
     ("Gastos vendedor (€)", "gastos_calc"), ("ITP (€)", "itp"), ("Coste total (€)", "coste_total"), ("Mediana segmento (€)", "mediana"),
-    ("Descuento", "descuento"), ("Etiqueta", "etiqueta"),
+    ("Descuento", "descuento"), ("Etiqueta", "etiqueta"), ("Fuente etiqueta", "etq_fuente"), ("Etiqueta dudosa", "etq_dudosa"),
     ("P. Fiabilidad", "s_fiab"), ("P. Precio", "s_precio"), ("P. Km y edad", "s_kmedad"),
     ("P. Anuncio", "s_anuncio"), ("P. Coste uso", "s_uso"), ("P. Seguridad compra", "s_seguridad"),
-    ("PUNTUACIÓN", "total"), ("Avisos", "avisos"),
+    ("P. Etiqueta y ZBE", "s_etiqueta"), ("PUNTUACIÓN", "total"), ("Avisos", "avisos"),
 ]
 
 
 def build_top(wb: Workbook, n_last: int, top_n: int) -> None:
     ws = wb.create_sheet("Top20", 1)
     hdrs = ["Puesto", "Fila en Anuncios", "Enlace"] + [h for h, _ in TOP_COLS] + \
-           ["Aport. fiabilidad", "Aport. precio", "Aport. km/edad", "Aport. anuncio", "Aport. uso", "Aport. seguridad"]
+           ["Aport. fiabilidad", "Aport. precio", "Aport. km/edad", "Aport. anuncio", "Aport. uso", "Aport. seguridad", "Aport. etiqueta"]
     for i, h in enumerate(hdrs, 1):
         c = ws.cell(1, i, h)
         c.font = Font(bold=True)
@@ -566,7 +642,7 @@ def build_top(wb: Workbook, n_last: int, top_n: int) -> None:
             ws.cell(r, j, f'=IF($B{r}="","",INDEX({rng(key)},$B{r}))').font = _font(GREEN)
         base = 4 + len(TOP_COLS)
         sub = {"s_fiab": "W_FIAB", "s_precio": "W_PRECIO", "s_kmedad": "W_KMEDAD", "s_anuncio": "W_ANUNCIO", "s_uso": "W_USO",
-               "s_seguridad": "W_SEGURIDAD"}
+               "s_seguridad": "W_SEGURIDAD", "s_etiqueta": "W_ETIQUETA"}
         for j, (key, w) in enumerate(sub.items()):
             colsrc = get_column_letter(4 + [x for _, x in TOP_COLS].index(key))
             ws.cell(r, base + j, f'=IF($B{r}="","",{colsrc}{r}*{w})').font = _font(GREEN)

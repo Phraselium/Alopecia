@@ -46,7 +46,7 @@ class Flexicar(Source):
                     solo_financiando=bool(cash and fin and fin < cash),
                     marca=v.get("brand"), modelo=v.get("model"), version=v.get("version"),
                     combustible=v.get("fuel"), anio=v.get("year"), km=v.get("km"), cambio=v.get("transmission"),
-                    vendedor="profesional", ubicacion=f"Flexicar {v.get('carDealership')}",
+                    vendedor="profesional", ubicacion=f"Flexicar {v.get('carDealership')}", etiqueta_anuncio=v.get("ecoSticker"),
                     num_fotos=len(v.get("images") or []) or None, fuente_dato=url, raw_ref=r["cache_file"])
             if len(vs) < 12:
                 return
@@ -148,6 +148,8 @@ class Renew(Source):
                 marca=(v.get("brand") or {}).get("label"), modelo=(v.get("model") or {}).get("label"),
                 precio=float(price), precio_contado=price, km=v.get("mileage"), anio=to_int((v.get("firstRegistrationDate") or "")[:4]),
                 vendedor="profesional", garantia_meses=(v.get("warrantyInfo") or {}).get("duration"),
+                etiqueta_anuncio=v.get("environmentLabel"), matricula=v.get("registrationNumber"),
+                fecha_matriculacion=(v.get("firstRegistrationDate") or "")[:10] or None,
                 ubicacion=f"{site.get('name')} ({(site.get('address') or {}).get('locality')})",
                 lat=geo.get("lat"), lon=geo.get("lon"), fuente_dato=url, raw_ref=r["cache_file"])
 

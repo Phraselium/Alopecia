@@ -91,6 +91,9 @@ class OcasionPlus(Source):
             l.cambio = eng.get("transmission") or l.cambio
             l.km = to_int(v.get("kms")) or l.km
             reg = v.get("registrationDate") or ""
+            l.fecha_matriculacion = reg[:10] or l.fecha_matriculacion
+            l.matricula = v.get("carPlate") if isinstance(v.get("carPlate"), str) else l.matricula
+            l.etiqueta_anuncio = v.get("environmentalLabel") or l.etiqueta_anuncio
             l.anio = to_int(reg[:4]) or l.anio
             l.marca = (v.get("brand") or {}).get("name") or l.marca
             l.modelo = (v.get("model") or {}).get("name")

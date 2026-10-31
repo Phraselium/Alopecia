@@ -8,7 +8,7 @@ from src.store import Store
 
 def _f(uid, total, estado="sí"):
     l = Listing(plataforma="p", id_externo=uid, url=f"https://x/{uid}", titulo="Toyota Yaris 1.3", marca="Toyota",
-                modelo="Yaris", anio=2012, km=120000, precio=4200)
+                modelo="Yaris", anio=2012, km=120000, precio=4200, etiqueta_dgt="C", etiqueta_fuente="DGT")
     return {"listing": l, "total": total, "estado": estado, "coste": {"total": 4300}, "avisos": "distancia no verificable"}
 
 
@@ -17,11 +17,15 @@ def test_select_alerts(cfg):
     sel = select_alerts(filas, new_uids={"p:1", "p:2", "p:3", "p:4"}, already=set(), cfg=cfg)
     assert [f["listing"].uid for f in sel] == ["p:1", "p:3"]          # umbral, presupuesto y solo nuevos
     assert not select_alerts(filas, {"p:1"}, {"p:1"}, cfg)            # no se repite una alerta
+    a = _f("6", 90)
+    a["listing"].etiqueta_dgt, a["listing"].etiqueta_dudosa = "A", True
+    assert not select_alerts([a], {"p:6"}, set(), cfg)                 # dudosa A: no se avisa
 
 
 def test_message_and_send_without_token(tmp_path, monkeypatch):
     monkeypatch.delenv("TELEGRAM_BOT_TOKEN", raising=False)
     txt = message(_f("3", 80, "negociar"))
+    assert "Etiqueta: C (fichero oficial DGT)" in txt
     assert "negociar" in txt and "4.300 €" in txt and "https://x/3" in txt and "120.000 km" in txt
     env = load_env(tmp_path / ".env")   # no existe
     assert send(txt, env, tmp_path / "alertas.log") is False

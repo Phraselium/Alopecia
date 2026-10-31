@@ -19,7 +19,9 @@ L = lambda n: yaml.safe_load((BASE / n).read_text(encoding="utf-8"))  # noqa: E7
 cfg = L("config.yaml")
 p = Params(cfg, L("fiscal.yaml"), L("reliability.yaml"))
 st = Store(BASE / cfg["salida"]["db"])
-res = process(st.all(), p, set(), st.market())
+from src.dgt import DGTIndex  # noqa: E402
+ix = DGTIndex(BASE)
+res = process(st.all(), p, set(), st.market(), dgt=ix if ix.ensure("x", allow_download=False) else None)
 with tempfile.TemporaryDirectory() as td:
     subprocess.run(["soffice", "--headless", "--calc", "--convert-to", "xlsx", "--outdir", td, str(BASE / cfg["salida"]["excel"])],
                    check=True, capture_output=True, timeout=300)

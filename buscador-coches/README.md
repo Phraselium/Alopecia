@@ -76,3 +76,15 @@ Un anuncio (de los candidatos y de todo el mercado visto) se marca como desapare
 `seguimiento.ejecuciones_para_desaparecido` ejecuciones correctas seguidas sin verlo. `informe.md` resume la mediana de
 días por modelo y tramo de precio. En fuentes con cobertura parcial (tope de páginas de Coches.net, ~80 por página en
 Wallapop), desaparecer puede significar haber salido de las páginas accesibles: es una estimación.
+
+## Distintivo ambiental (DGT) y ZBE
+- La etiqueta de cada anuncio se obtiene, por orden: 1) **fichero oficial de la DGT** por matrícula
+  ("Microdatos de distintivo ambiental de vehículos (diarios)", ~38,7 M matrículas; se descarga como mucho una vez al día
+  y se indexa en `data/dgt/distintivos.sqlite`, unos 840 MB, fuera del repositorio); 2) la etiqueta que publica el anuncio;
+  3) la **regla** de la DGT por combustible y fecha de primera matriculación (`zbe.yaml`). En un año frontera sin mes conocido,
+  la etiqueta es "dudosa" y se asigna la peor posible.
+- Filtro: `filtros.etiqueta_minima` (B). Las dudosas no se descartan: entran con el aviso "confirmar etiqueta con la DGT".
+- Puntuación: criterio "Etiqueta y ZBE" (`scoring.pesos.etiqueta`, 6 %), con B 40, C 70 y ECO/CERO 100, −15 si es dudosa y −5 si sale
+  solo de la regla.
+- `python tools/dgt_check.py` vuelve a validar la equivalencia de los códigos del fichero DGT con las etiquetas de OcasionPlus.
+- Estado de la ZBE de València: ordenanza pendiente de aprobación definitiva; calendario previsto y fuentes en `zbe.yaml`.

@@ -23,8 +23,12 @@ filtros:
   km_min_creible: 1000         # menos km en un coche de más de 2 años = dato erróneo del anuncio
   # Combustible: gasolina, híbrido, GLP y diésel entran. Excluidos:
   combustibles_excluidos: [electrico, gnc]
+  # Distintivo ambiental (ver zbe.yaml): se descartan los que tengan una etiqueta peor que la mínima.
+  # Las etiquetas "dudosas" (año frontera sin mes) NO se descartan: entran con aviso.
+  etiqueta_minima: B
   diesel:
-    etiqueta_min: B
+    # Diésel B o C: entran salvo que su motor tenga una penalización conocida en reliability.yaml (excluir_si_penalizacion_motor)
+    excluir_si_penalizacion_motor: true
     # Diésel cuyo motor no tiene fuente de fiabilidad en reliability.yaml:
     #   penalizar -> entra con la fiabilidad "pendiente" (tope en la puntuación neutra) ; excluir -> fuera
     sin_fuente: penalizar
@@ -49,6 +53,10 @@ fuentes:
   # Bloqueadas en el reconocimiento (31-10-2026): no se insiste
   milanuncios: {enabled: false}    # HTTP 405 + página antibots
   autocasion:  {enabled: false}    # desafío Cloudflare
+
+dgt:
+  fichero_distintivos: true    # descargar (máx. 1 vez al día) e indexar el fichero oficial de distintivos de la DGT
+  max_edad_horas: 24
 
 http:
   pausa_min_s: 2.0
@@ -85,12 +93,16 @@ scoring:
   # anteriores (35/30/15/10/10, que sumaban 100) se escalan por 0,85 y se redondean a enteros:
   # 29,75→30 · 25,5→25 · 12,75→12 · 8,5→9 · 8,5→9 · +15 = 100.
   pesos:
-    fiabilidad: 0.30
-    precio: 0.25
+    # 01-11-2026: nuevo criterio "Etiqueta y ZBE" (6 %). La etiqueta deja de ser la mitad de "Coste de uso"
+    # (que baja de 9 a 5 y queda en consumo + seguro) y se resta 1 punto a fiabilidad y 1 a precio:
+    # 30→29 · 25→24 · 12 · 9 · 9→5 · 15 · +6 = 100.
+    fiabilidad: 0.29
+    precio: 0.24
     km_edad: 0.12
     anuncio: 0.09
-    coste_uso: 0.09
+    coste_uso: 0.05
     seguridad: 0.15
+    etiqueta: 0.06
   precio:
     pendiente: 250             # puntos por unidad de descuento: -20% => 100, +20% => 0
   km_edad:
@@ -125,11 +137,14 @@ scoring:
     carroceria: {berlina: 4, familiar: 3, monovolumen_pequeno: 6}
     # Diésel sin fuente de fiabilidad del motor: la fiabilidad del modelo se limita a la puntuación neutra
     # (coste_uso.neutro_si_pendiente), igual que un dato "pendiente"; además se aplica el ajuste DPF.
-  coste_uso:
-    peso_etiqueta: 0.5
-    peso_consumo: 0.3
-    peso_seguro: 0.2
-    puntos_etiqueta: {CERO: 100, ECO: 100, C: 80, B: 45, A: 0}
+  etiqueta:                    # "Etiqueta y ZBE" (0-100)
+    puntos: {B: 40, C: 70, ECO: 100, CERO: 100, A: 0}   # B = base, C = +, ECO/CERO = ++
+    penal_dudosa: 15           # etiqueta dudosa (año frontera sin mes): confirmar con la DGT
+    penal_regla: 5             # etiqueta deducida solo por la regla (sin dato DGT ni del anuncio)
+  coste_uso:                   # consumo + seguro (la etiqueta tiene criterio propio desde 01-11-2026)
+    peso_etiqueta: 0
+    peso_consumo: 0.5
+    peso_seguro: 0.5
     neutro_si_pendiente: 50
 
 alertas:
@@ -137,6 +152,7 @@ alertas:
   intervalo_horas: 4           # para python run.py --watch
   umbral_puntuacion: 55        # avisa de anuncios NUEVOS con puntuación >= umbral (los de fraude ya están descartados)
   incluir_negociar: true       # también los que solo caben negociando (marcados en el mensaje)
+  etiqueta_minima: B           # solo se avisa de etiqueta >= B (confirmada o deducida); no de las dudosas A
   # Telegram: TELEGRAM_BOT_TOKEN y TELEGRAM_CHAT_ID en .env (ver .env.example). Sin .env: solo logs/alertas.log
 
 seguimiento:

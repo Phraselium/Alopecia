@@ -110,6 +110,30 @@ def _questions(l) -> list[str]:
     return q
 
 
+FUENTE_TXT = {"DGT": "fichero oficial de la DGT por matrícula", "anuncio": "publicada en el anuncio",
+             "regla": "deducida por combustible y fecha de primera matriculación"}
+
+
+def _etiqueta_md(f: dict, p) -> str:
+    l = f["listing"]
+    txt = f"**Etiqueta DGT: {l.etiqueta_dgt or '?'}** ({FUENTE_TXT.get(l.etiqueta_fuente, 'sin fuente')}"
+    if l.etiqueta_fuente == "DGT":
+        txt += f", matrícula {l.matricula}"
+    txt += ")."
+    if l.etiqueta_dudosa:
+        txt += " ⚠️ **Dudosa** (año frontera sin mes de matriculación): confirmar la etiqueta con la DGT antes de comprar."
+    z = p.zbe["zbe_valencia"]
+    if l.etiqueta_dgt == "B":
+        txt += (" ZBE de València: la ordenanza (pendiente de aprobación definitiva) solo restringe la etiqueta A; "
+                "los B pueden circular y no hay fecha prevista para restringirlos, aunque serían el siguiente escalón lógico "
+                "si la ZBE se endurece: tenlo en cuenta si piensas quedarte el coche muchos años.")
+    elif l.etiqueta_dgt == "A":
+        txt += (" ZBE de València: calendario previsto para los A → fuera de la provincia ya restringidos; desde el 1-1-2027 "
+                "todos los de fuera del municipio; desde el 1-1-2028 también los de vecinos de València (ordenanza pendiente de "
+                "aprobación definitiva).")
+    return txt
+
+
 def _embudo_md(stats: dict) -> list[str]:
     e = stats.get("embudo")
     if not e:
@@ -166,6 +190,12 @@ def write_report(path: Path, filas: list[dict], p: Params, top_n: int, stats: di
         if stats.get("desactivadas"):
             lines.append(f"- Desactivadas por bloqueo antibots (ver RECONOCIMIENTO.md): {', '.join(stats['desactivadas'])}")
         lines.append("")
+    e = stats.get("etiquetas") or {}
+    if e:
+        fu = e.get("fuente", {})
+        lines += [f"**Etiqueta DGT de los {stats.get('limpios')} anuncios limpios**: confirmada en el fichero oficial de la DGT "
+                  f"{fu.get('DGT', 0)}, según el anuncio {fu.get('anuncio', 0)}, deducida por regla {fu.get('regla', 0)} "
+                  f"(de ellas dudosas: {e.get('dudosas', 0)}). Descartados por etiqueta: {e.get('descartadas', 0)}.", ""]
     lines += _embudo_md(stats)
     lines += _ventas_md(stats.get("ventas") or [])
     lines += ["## Los mejores", ""]
@@ -182,6 +212,7 @@ def write_report(path: Path, filas: list[dict], p: Params, top_n: int, stats: di
                 f"etiqueta {f['coste_uso']['etiqueta'] or '?'} · [ver anuncio]({l.url})", "",
             f"Coste: {n(l.precio)} € al contado + gastos {n(f['coste'].get('gastos', 0))} € + ITP {n(f['coste']['itp'])} € + tasa {n(f['coste']['tasa'], 2)} € + informe {n(f['coste']['informe'], 2)} € = **{n(f['coste']['total'])} €**; "
             f"con el seguro estimado ({n(f['coste_uso']['seguro'] or 0)} €/año, aproximado) el primer año sale por **{n(f['coste']['primer_anio'])} €**.", "",
+            _etiqueta_md(f, p), "",
             "**Por qué destaca**", *[f"- {x}" for x in _why(f, p)], "",
             "**Riesgos de este modelo y motor**", *([f"- {x}" for x in risks] or ["- Sin problemas documentados con fuente para este modelo/motor (eso no significa que no los tenga)."]), "",
             "**Qué revisar en la visita**", *[f"- {x}" for x in checks + GENERIC_CHECKS], "",

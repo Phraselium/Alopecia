@@ -105,11 +105,21 @@ def collect(cfg: dict, store: Store, solo: str | None, max_paginas: int | None) 
     return resumen
 
 
-def build_outputs(cfg: dict, fiscal: dict, rel: dict, store: Store) -> dict:
+def load_dgt(cfg: dict, allow_download: bool):
+    from src.dgt import DGTIndex
+    d = cfg.get("dgt") or {}
+    if not d.get("fichero_distintivos", True):
+        return None
+    ix = DGTIndex(BASE, d.get("max_edad_horas", 24))
+    return ix if ix.ensure(cfg["http"]["user_agent"], allow_download=allow_download) else None
+
+
+def build_outputs(cfg: dict, fiscal: dict, rel: dict, store: Store, allow_download: bool = True) -> dict:
     p = Params(cfg, fiscal, rel)
     listings = store.all()
-    fiables = set()  # motores diésel con fiabilidad respaldada por fuente: ninguno todavía (PENDIENTE)
-    res = process(listings, p, fiables, store.market())
+    fiables = set()
+    dgt = load_dgt(cfg, allow_download)
+    res = process(listings, p, fiables, store.market(), dgt=dgt)
     out = cfg["salida"]
     by_uid = {f["listing"].uid: f for f in res.filas}
     write_workbook(BASE / out["excel"], [f["listing"] for f in res.filas], res.avisos, p,
@@ -120,6 +130,10 @@ def build_outputs(cfg: dict, fiscal: dict, rel: dict, store: Store) -> dict:
         "SELECT plataforma, estado, detalle FROM runs WHERE id IN (SELECT MAX(id) FROM runs GROUP BY plataforma)").fetchall()
     stats["fuentes"] = runs
     stats["desactivadas"] = [k for k, v in cfg["fuentes"].items() if not v.get("enabled", True)]
+    from collections import Counter as _C
+    stats["etiquetas"] = {"fuente": dict(_C(f["listing"].etiqueta_fuente for f in res.filas)),
+                          "dudosas": sum(1 for f in res.filas if f["listing"].etiqueta_dudosa),
+                          "descartadas": sum(1 for _l, m in res.descartados if any(x.startswith("filtro: etiqueta") for x in m))}
     stats["embudo"] = res.embudo
     from collections import Counter
     stats["mercado_por_plataforma"] = dict(Counter(m["plataforma"] for m in store.market()))
@@ -153,10 +167,11 @@ def run_once(cfg, fiscal, rel, store, a) -> None:
     if not a.sin_red:
         for k, v in collect(cfg, store, a.solo, a.max_paginas).items():
             print(f"  {k:12s} {v['estado']:10s} nuevos={v['nuevos']:<4d} ya_vistos={v['ya_vistos']:<4d} {v['detalle'][:80]}")
-    stats = build_outputs(cfg, fiscal, rel, store)
+    stats = build_outputs(cfg, fiscal, rel, store, allow_download=not a.sin_red)
     filas, avisos = stats.pop("_filas"), stats.pop("_avisos")
     n_al = 0 if a.sin_red else alert(cfg, store, filas, avisos, started)
-    print(f"Salidas regeneradas: limpios={stats['limpios']} descartados={stats['descartados']} alertas={n_al}")
+    print(f"Salidas regeneradas: limpios={stats['limpios']} descartados={stats['descartados']} alertas={n_al} "
+          f"etiquetas={stats['etiquetas']}")
 
 
 def main() -> int:

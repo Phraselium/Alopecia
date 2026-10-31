@@ -40,6 +40,8 @@ def message(f: dict) -> str:
         f"{l.titulo}",
         f"Coste total: {fmt_eur(f['coste']['total'])} ({estado}) · precio {fmt_eur(l.precio)}",
         f"Puntuación: {f['total']:.1f}/100 · {l.plataforma} · {l.vendedor or 'vendedor ?'} · {l.ubicacion or ''}",
+        f"Etiqueta: {l.etiqueta_dgt or '?'} ({ {'DGT': 'fichero oficial DGT', 'anuncio': 'según el anuncio', 'regla': 'deducida por fecha y combustible'}.get(l.etiqueta_fuente, 'sin fuente') })"
+        + (" — DUDOSA, confirmar con la DGT" if l.etiqueta_dudosa else ""),
     ]
     if avisos:
         lines.append("Avisos: " + "; ".join(avisos[:4]))
@@ -71,6 +73,9 @@ def select_alerts(filas: list[dict], new_uids: set[str], already: set[str], cfg:
     a = cfg.get("alertas") or {}
     umbral = a.get("umbral_puntuacion", 55)
     estados = {"sí", "negociar"} if a.get("incluir_negociar", True) else {"sí"}
+    from .etiqueta import rank
+    minima = a.get("etiqueta_minima", "B")
     return [f for f in filas
             if f["listing"].uid in new_uids and f["listing"].uid not in already
-            and f.get("estado") in estados and f["total"] >= umbral]
+            and f.get("estado") in estados and f["total"] >= umbral
+            and rank(f["listing"].etiqueta_dgt) >= rank(minima)]

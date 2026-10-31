@@ -1,6 +1,6 @@
 # Mejores 10 coches de segunda mano (Valencia, ≤ 5.000 € en total)
 
-Generado el 2026-10-31 11:57. Anuncios limpios: 661, descartados: 301. Plataformas: autoscout24, cochesnet, ocasionplus, wallapop.
+Generado el 2026-10-31 17:03. Anuncios limpios: 544, descartados: 438. Plataformas: autoscout24, cochesnet, ocasionplus, wallapop.
 
 > Los datos de fiabilidad, fiscalidad y ZBE marcados como *probable* o *PENDIENTE* en la hoja Supuestos deben verificarse en la fuente antes de decidir. El coste total incluye ITP (cuota fija de la Comunitat Valenciana o tipo porcentual), la tasa de transferencia y el informe DGT.
 
@@ -16,6 +16,8 @@ Generado el 2026-10-31 11:57. Anuncios limpios: 661, descartados: 301. Plataform
 - cochesnet: ok — cobertura parcial: /toyota/segunda-mano/valencia/: 483 anuncios en 17 páginas; accesibles 6; /mazda/segunda-mano/valencia/: 201 anuncios en 7 páginas; accesibles 6; /kia/segunda-mano/valencia/: 474 anuncios en 16 páginas; accesibles 6; /hyundai/segunda-mano/valencia/: 540 anuncios en 18 páginas; accesibles 6; /skoda/segunda-mano/valencia/: 195 anuncios en 7 páginas; accesibles 6; /seat/segunda-mano/valencia/: 695 anuncios en 24 páginas; accesibles 6; /seat/ibiza/segunda-mano/valencia/: 222 anuncios en 8 páginas; accesibles 6; /seat/leon/segunda-mano/valencia/: 218 anuncios en 8 páginas; accesibles 6; /volkswagen/segunda-mano/valencia/: 1336 anuncios en 45 páginas; accesibles 6; /volkswagen/golf/segunda-mano/valencia/: 445 anuncios en 15 páginas; accesibles 6; /opel/segunda-mano/valencia/: 826 anuncios en 28 páginas; accesibles 6; /opel/corsa/segunda-mano/valencia/: 204 anuncios en 7 páginas; accesibles 6; /renault/segunda-mano/valencia/: 749 anuncios en 25 páginas; accesibles 6; /renault/megane/segunda-mano/valencia/: 181 anuncios en 7 páginas; accesibles 6; /peugeot/segunda-mano/valencia/: 1277 anuncios en 43 páginas; accesibles 6; /citroen/segunda-mano/valencia/: 808 anuncios en 27 páginas; accesibles 6; /ford/segunda-mano/valencia/: 1010 anuncios en 34 páginas; accesibles 6; /ford/focus/segunda-mano/valencia/: 270 anuncios en 9 páginas; accesibles 6; /fiat/segunda-mano/valencia/: 322 anuncios en 11 páginas; accesibles 6; /nissan/segunda-mano/valencia/: 432 anuncios en 15 páginas; accesibles 6; /audi/segunda-mano/valencia/: 1035 anuncios en 35 páginas; accesibles 6; /audi/a3/segunda-mano/valencia/: 222 anuncios en 8 páginas; accesibles 6; /mini/segunda-mano/valencia/: 238 anuncios en 8 páginas; accesibles 6; /mercedes-benz/segunda-mano/valencia/: 1611 anuncios en 54 páginas; accesibles 6; /volkswagen/segunda-mano/castellon/: 344 anuncios en 12 páginas; accesibles 6; /opel/segunda-mano/castellon/: 202 anuncios en 7 páginas; accesibles 6; /peugeot/segunda-mano/castellon/: 228 anuncios en 8 páginas; accesibles 6; /citroen/segunda-mano/castellon/: 183 anuncios en 7 páginas; accesibles 6; /audi/segunda-mano/castellon/: 224 anuncios en 8 páginas; accesibles 6; /mercedes-benz/segunda-mano/castellon/: 285 anuncios en 10 páginas; accesibles 6
 - Desactivadas por bloqueo antibots (ver RECONOCIMIENTO.md): milanuncios, autocasion
 
+**Etiqueta DGT de los 544 anuncios limpios**: confirmada en el fichero oficial de la DGT 21, según el anuncio 150, deducida por regla 373 (de ellas dudosas: 28). Descartados por etiqueta: 2.
+
 ## Embudo: dónde se pierde volumen
 
 Antes de guardar la ficha, cada fuente ya descarta en el listado lo que no cumple precio, año y km (fila «vistos en listados»). Las cifras de «motivos» cuentan cada anuncio en todos los filtros que no cumple; «solo por este motivo» son los que entrarían si se relajara únicamente ese filtro.
@@ -24,30 +26,33 @@ Antes de guardar la ficha, cada fuente ya descarta en el listado lo que no cumpl
 |---|---|---|---|---|---|
 | vistos en listados (mercado) | 87 | 8614 | 833 | 4668 | 14202 |
 | recogidos (fichas guardadas) | 87 | 661 | 25 | 275 | 1048 |
-| pasan los filtros | 69 | 574 | 15 | 188 | 846 |
-| fusionados como duplicados | 6 | 65 | 0 | 15 | 86 |
-| limpios (sin fraude) | 57 | 446 | 14 | 144 | 661 |
-| dentro de presupuesto | 43 | 359 | 12 | 119 | 533 |
-| caben negociando | 8 | 76 | 1 | 24 | 109 |
-| fuera de presupuesto (> margen) | 6 | 11 | 1 | 1 | 19 |
+| pasan los filtros | 54 | 484 | 12 | 145 | 695 |
+| fusionados como duplicados | 6 | 47 | 0 | 13 | 66 |
+| limpios (sin fraude) | 44 | 381 | 11 | 108 | 544 |
+| dentro de presupuesto | 33 | 305 | 9 | 92 | 439 |
+| caben negociando | 6 | 66 | 1 | 15 | 88 |
+| fuera de presupuesto (> margen) | 5 | 10 | 1 | 1 | 17 |
 
 **Motivos de descarte** (todos / solo por este motivo)
 
 | Motivo | autoscout24 | cochesnet | ocasionplus | wallapop | Total |
 |---|---|---|---|---|---|
-| fraude: precio anómalo (> 35 % bajo la mediana) | 4 / 4 | 53 / 46 | 1 / 1 | 26 / 23 | 84 / 74 |
-| km > máximo | 0 / 0 | 9 / 7 | 0 / 0 | 58 / 55 | 67 / 62 |
-| carrocería monovolumen | 5 / 5 | 26 / 23 | 6 / 6 | 10 / 9 | 47 / 43 |
+| diésel con penalización de motor | 17 / 15 | 111 / 90 | 6 / 3 | 59 / 43 | 193 / 151 |
+| fraude: precio anómalo (> 35 % bajo la mediana) | 3 / 3 | 46 / 39 | 1 / 1 | 22 / 19 | 72 / 62 |
+| km > máximo | 0 / 0 | 9 / 6 | 0 / 0 | 58 / 45 | 67 / 51 |
+| carrocería monovolumen | 5 / 3 | 26 / 16 | 6 / 3 | 10 / 4 | 47 / 26 |
 | carrocería cabrio | 6 / 6 | 10 / 10 | 1 / 1 | 19 / 18 | 36 / 35 |
-| fraude: texto sospechoso | 0 / 0 | 17 / 10 | 0 / 0 | 6 / 3 | 23 / 13 |
-| distancia > radio | 0 / 0 | 21 / 19 | 0 / 0 | 0 / 0 | 21 / 19 |
-| carrocería desconocida | 4 / 4 | 10 / 9 | 1 / 1 | 1 / 1 | 16 / 15 |
-| carrocería suv | 2 / 1 | 10 / 10 | 0 / 0 | 1 / 1 | 13 / 12 |
+| fraude: texto sospechoso | 0 / 0 | 17 / 10 | 0 / 0 | 5 / 2 | 22 / 12 |
+| distancia > radio | 0 / 0 | 21 / 14 | 0 / 0 | 0 / 0 | 21 / 14 |
+| carrocería desconocida | 4 / 4 | 10 / 7 | 1 / 0 | 1 / 0 | 16 / 11 |
+| carrocería suv | 2 / 1 | 10 / 9 | 0 / 0 | 1 / 1 | 13 / 11 |
 | precio fuera de rango | 1 / 0 | 2 / 2 | 2 / 2 | 0 / 0 | 5 / 4 |
-| carrocería furgoneta | 0 / 0 | 3 / 3 | 0 / 0 | 0 / 0 | 3 / 3 |
-| sin fotos | 2 / 2 | 0 / 0 | 0 / 0 | 0 / 0 | 2 / 2 |
+| carrocería furgoneta | 0 / 0 | 3 / 0 | 0 / 0 | 0 / 0 | 3 / 0 |
 | combustible excluido | 1 / 1 | 0 / 0 | 0 / 0 | 0 / 0 | 1 / 1 |
+| etiqueta A (< mínima) | 0 / 0 | 0 / 0 | 1 / 0 | 0 / 0 | 1 / 0 |
 | combustible desconocido | 0 / 0 | 0 / 0 | 0 / 0 | 1 / 0 | 1 / 0 |
+| etiqueta desconocida | 0 / 0 | 0 / 0 | 0 / 0 | 1 / 0 | 1 / 0 |
+| sin fotos | 1 / 1 | 0 / 0 | 0 / 0 | 0 / 0 | 1 / 1 |
 
 ## Tiempo hasta desaparecer del anuncio (estimación de venta)
 
@@ -57,9 +62,11 @@ _Aún no hay anuncios desaparecidos: hace falta que `run.py` se ejecute varias v
 
 ### 1. TOYOTA Aygo 1.0 VVTi Live — 4.450 € (4.514 € en total)
 
-**Puntuación 68.6/100** · cochesnet · GO! autos Sagunto (Sagunt) · profesional · manual · etiqueta C · [ver anuncio](https://www.coches.net/toyota-aygo-10-vvti-live-5p-gasolina-2010-en-valencia-71691745-covo.aspx)
+**Puntuación 67.7/100** · cochesnet · GO! autos Sagunto (Sagunt) · profesional · manual · etiqueta C · [ver anuncio](https://www.coches.net/toyota-aygo-10-vvti-live-5p-gasolina-2010-en-valencia-71691745-covo.aspx)
 
 Coste: 4.450 € al contado + gastos 0 € + ITP 0 € + tasa 55,70 € + informe 8,67 € = **4.514 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **4.814 €**.
+
+**Etiqueta DGT: C** (publicada en el anuncio).
 
 **Por qué destaca**
 - Más aporta: fiabilidad (88/100), precio (100/100).
@@ -94,9 +101,11 @@ _Avisos de coste: vendedor profesional: sin ITP (operación con IVA/REBU, confir
 
 ### 2. SUZUKI Alto 1.0 GL — 1.500 € (1.604 € en total)
 
-**Puntuación 63.7/100** · cochesnet · Vilamarxant · particular · manual · etiqueta C · [ver anuncio](https://www.coches.net/suzuki-alto-10-gl-5p-gasolina-2009-en-valencia-71388781-covo.aspx)
+**Puntuación 62.4/100** · cochesnet · Vilamarxant · particular · manual · etiqueta C · [ver anuncio](https://www.coches.net/suzuki-alto-10-gl-5p-gasolina-2009-en-valencia-71388781-covo.aspx)
 
 Coste: 1.500 € al contado + gastos 0 € + ITP 40 € + tasa 55,70 € + informe 8,67 € = **1.604 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **1.904 €**.
+
+**Etiqueta DGT: C** (deducida por combustible y fecha de primera matriculación).
 
 **Por qué destaca**
 - Más aporta: fiabilidad (91/100), precio (100/100).
@@ -128,9 +137,11 @@ _Avisos de coste: cuota fija ITP: >12 años, hasta 1.500 cc_
 
 ### 3. VOLKSWAGEN Polo 1.4 United — 3.700 € (3.804 € en total)
 
-**Puntuación 62.9/100** · cochesnet · ubicación sin dato · particular · manual · etiqueta C · [ver anuncio](https://www.coches.net/volkswagen-polo-14-united-80cv-5p-gasolina-2007-en-valencia-71770392-covo.aspx)
+**Puntuación 61.8/100** · cochesnet · ubicación sin dato · particular · manual · etiqueta C · [ver anuncio](https://www.coches.net/volkswagen-polo-14-united-80cv-5p-gasolina-2007-en-valencia-71770392-covo.aspx)
 
 Coste: 3.700 € al contado + gastos 0 € + ITP 40 € + tasa 55,70 € + informe 8,67 € = **3.804 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **4.104 €**.
+
+**Etiqueta DGT: C** (deducida por combustible y fecha de primera matriculación).
 
 **Por qué destaca**
 - Más aporta: precio (100/100), fiabilidad (69/100).
@@ -161,9 +172,11 @@ _Avisos de coste: cuota fija ITP: >12 años, hasta 1.500 cc_
 
 ### 4. SKODA Fabia 1.2 12v Young — 3.950 € (4.054 € en total)
 
-**Puntuación 62.6/100** · cochesnet · Vila-real · particular · manual · etiqueta C · [ver anuncio](https://www.coches.net/skoda-fabia-12-12v-60cv-young-5p-gasolina-2011-en-castellon-71112200-covo.aspx)
+**Puntuación 61.7/100** · cochesnet · Vila-real · particular · manual · etiqueta C · [ver anuncio](https://www.coches.net/skoda-fabia-12-12v-60cv-young-5p-gasolina-2011-en-castellon-71112200-covo.aspx)
 
 Coste: 3.950 € al contado + gastos 0 € + ITP 40 € + tasa 55,70 € + informe 8,67 € = **4.054 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **4.354 €**.
+
+**Etiqueta DGT: C** (publicada en el anuncio).
 
 **Por qué destaca**
 - Más aporta: precio (100/100), fiabilidad (80/100).
@@ -195,9 +208,11 @@ _Avisos de coste: cuota fija ITP: >12 años, hasta 1.500 cc_
 
 ### 5. Toyota Aygo Edition — 4.999 € (5.103 € en total) — **por encima del presupuesto, negociar**
 
-**Puntuación 62.6/100** · autoscout24 · oliva (46780) · particular · manual · etiqueta C · [ver anuncio](https://www.autoscout24.es/anuncios/toyota-aygo-edition-gasolina-cat_ma70mo18655-b781a865-5dae-49bf-a729-21dc60e62642)
+**Puntuación 61.4/100** · autoscout24 · oliva (46780) · particular · manual · etiqueta C · [ver anuncio](https://www.autoscout24.es/anuncios/toyota-aygo-edition-gasolina-cat_ma70mo18655-b781a865-5dae-49bf-a729-21dc60e62642)
 
 Coste: 4.999 € al contado + gastos 0 € + ITP 40 € + tasa 55,70 € + informe 8,67 € = **5.103 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **5.403 €**.
+
+**Etiqueta DGT: C** (deducida por combustible y fecha de primera matriculación).
 
 **Por qué destaca**
 - Más aporta: fiabilidad (88/100), precio (90/100).
@@ -229,9 +244,11 @@ _Avisos de coste: cuota fija ITP: >12 años, hasta 1.500 cc_
 
 ### 6. SEAT Leon — 4.500 € (4.704 € en total)
 
-**Puntuación 61.9/100** · cochesnet · ubicación sin dato · particular · manual · etiqueta C · [ver anuncio](https://www.coches.net/seat-leon-gasolina-2007-en-castellon-71374977-covo.aspx)
+**Puntuación 60.6/100** · cochesnet · ubicación sin dato · particular · manual · etiqueta C · [ver anuncio](https://www.coches.net/seat-leon-gasolina-2007-en-castellon-71374977-covo.aspx)
 
 Coste: 4.500 € al contado + gastos 0 € + ITP 140 € + tasa 55,70 € + informe 8,67 € = **4.704 €**; con el seguro estimado (340 €/año, aproximado) el primer año sale por **5.044 €**.
+
+**Etiqueta DGT: C** (deducida por combustible y fecha de primera matriculación).
 
 **Por qué destaca**
 - Más aporta: fiabilidad (96/100), precio (90/100).
@@ -262,19 +279,23 @@ Coste: 4.500 € al contado + gastos 0 € + ITP 140 € + tasa 55,70 € + info
 
 _Avisos de coste: cilindrada desconocida: se aplica el tramo de cuota fija más alto; cuota fija ITP: >12 años, más de 2.000 cc_
 
-### 7. SUZUKI Swift 1.3 GL — 2.800 € (2.904 € en total)
+### 7. Peugeot 207 1.4 Confort (75 CV) — 2.900 € (3.259 € en total)
 
-**Puntuación 61.7/100** · cochesnet · San Antonio de Benagéber · particular · manual · etiqueta C · [ver anuncio](https://www.coches.net/suzuki-swift-13-gl-5p-5p-gasolina-2006-en-valencia-71604098-covo.aspx)
+**Puntuación 60.1/100** · ocasionplus · Valencia - Sagunto (Sagunto, 46500) · profesional · manual · etiqueta C · [ver anuncio](https://www.ocasionplus.com/coches-segunda-mano/peugeot-207-14-confort-con-116183km-2008-b9auzqaa)
 
-Coste: 2.800 € al contado + gastos 0 € + ITP 40 € + tasa 55,70 € + informe 8,67 € = **2.904 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **3.204 €**.
+Coste: 2.900 € al contado + gastos 350 € + ITP 0 € + tasa 0,00 € + informe 8,67 € = **3.259 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **3.559 €**.
+
+**Etiqueta DGT: C** (fichero oficial de la DGT por matrícula, matrícula 8408GBN).
 
 **Por qué destaca**
-- Más aporta: fiabilidad (88/100), precio (99/100).
-- Precio 2.800 € frente a una mediana de 3.475 € en su segmento (mercado modelo+año, 5 anuncios): 19% por debajo.
-- 206.000 km en 20 años (10.300 km/año).
+- Más aporta: precio (96/100), fiabilidad (50/100).
+- Precio 2.900 € frente a una mediana de 3.550 € en su segmento (mercado modelo+año+km, 30 anuncios): 18% por debajo.
+- 116.183 km en 18 años (6.455 km/año).
+- El anuncio menciona: ITV en vigor.
+- Seguridad de compra: garantía 12 meses (mínimo legal, no declarada en el anuncio), ampliable por 500 €, km certificados.
 
 **Riesgos de este modelo y motor**
-- Venta entre particulares: no hay garantía legal de conformidad (solo vicios ocultos del Código Civil).
+- No hay dato de fiabilidad con fuente para el Peugeot 207: PENDIENTE (se ha puntuado neutro).
 
 **Qué revisar en la visita**
 - Pedir el informe DGT (con la matrícula) antes de la visita: cargas, embargos, titulares, ITV y km registrados.
@@ -285,24 +306,24 @@ Coste: 2.800 € al contado + gastos 0 € + ITP 40 € + tasa 55,70 € + infor
 - Revisar el aire acondicionado: imprescindible en Valencia.
 
 **Qué preguntar al vendedor**
-- ¿Hasta cuándo tiene la ITV? ¿Pasó la última sin defectos?
 - ¿Tiene el libro de mantenimiento sellado?
 - ¿Cuándo y con cuántos km se cambió la distribución (correa o cadena)? ¿Tiene la factura?
-- ¿Cuántos propietarios ha tenido?
+- ¿Qué garantía da por escrito y qué cubre? (mínimo legal 1 año en usados: TRLGDCU art. 120, RDL 7/2021)
+- ¿Cuál es el precio final al contado con todos los gastos (gestión, preparación, transferencia)? ¿Exige financiar?
 - ¿Por qué lo vende y desde cuándo es suyo?
 - ¿Tiene facturas de mantenimiento? ¿Cuándo fue la última revisión y qué se hizo?
 - ¿Ha tenido algún golpe o reparación importante?
 - ¿Acepta que lo revise un mecánico de mi confianza o en un taller antes de cerrar?
 
-_También publicado en: cochesnet:71652616 (https://www.coches.net/suzuki-swift-gasolina-2006-en-valencia-71652616-covo.aspx)_
-
-_Avisos de coste: cuota fija ITP: >12 años, hasta 1.500 cc_
+_Avisos de coste: vendedor profesional: sin ITP (operación con IVA/REBU, confirmar en factura)_
 
 ### 8. Volkswagen Golf Golf 1.6 Highline Highline — 4.000 € (4.124 € en total)
 
-**Puntuación 61.2/100** · autoscout24 · Castelló de la Plana (12001) · particular · manual · etiqueta C · [ver anuncio](https://www.autoscout24.es/anuncios/volkswagen-golf-golf-1-6-highline-highline-gasolina-negro-cat_ma74mo2084-2422eae7-5387-42bd-9d60-aa5952b4a9ba)
+**Puntuación 60.0/100** · autoscout24 · Castelló de la Plana (12001) · particular · manual · etiqueta C · [ver anuncio](https://www.autoscout24.es/anuncios/volkswagen-golf-golf-1-6-highline-highline-gasolina-negro-cat_ma74mo2084-2422eae7-5387-42bd-9d60-aa5952b4a9ba)
 
 Coste: 4.000 € al contado + gastos 0 € + ITP 60 € + tasa 55,70 € + informe 8,67 € = **4.124 €**; con el seguro estimado (340 €/año, aproximado) el primer año sale por **4.464 €**.
+
+**Etiqueta DGT: C** (deducida por combustible y fecha de primera matriculación).
 
 **Por qué destaca**
 - Más aporta: fiabilidad (83/100), precio (92/100).
@@ -336,9 +357,11 @@ _Avisos de coste: cuota fija ITP: >12 años, 1.501-2.000 cc_
 
 ### 9. SEAT Leon 1.2 TSI Reference — 4.390 € (4.494 € en total)
 
-**Puntuación 61.1/100** · cochesnet · Godelleta · particular · manual · etiqueta C · [ver anuncio](https://www.coches.net/seat-leon-12-tsi-reference-5p-gasolina-2010-en-valencia-71516293-covo.aspx)
+**Puntuación 59.9/100** · cochesnet · Godelleta · particular · manual · etiqueta C · [ver anuncio](https://www.coches.net/seat-leon-12-tsi-reference-5p-gasolina-2010-en-valencia-71516293-covo.aspx)
 
 Coste: 4.390 € al contado + gastos 0 € + ITP 40 € + tasa 55,70 € + informe 8,67 € = **4.494 €**; con el seguro estimado (340 €/año, aproximado) el primer año sale por **4.834 €**.
+
+**Etiqueta DGT: C** (deducida por combustible y fecha de primera matriculación).
 
 **Por qué destaca**
 - Más aporta: precio (100/100), fiabilidad (76/100).
@@ -372,9 +395,11 @@ _Avisos de coste: cuota fija ITP: >12 años, hasta 1.500 cc_
 
 ### 10. Toyota Avensis Wagon 1.8 Sol — 3.000 € (3.124 € en total)
 
-**Puntuación 60.9/100** · autoscout24 · la Pobla Llarga (46670) · particular · manual · etiqueta C · [ver anuncio](https://www.autoscout24.es/anuncios/toyota-avensis-wagon-1-8-sol-gasolina-cat_ma70mo15230-1a5a1cfa-8aa2-4eb2-becc-bd32ed1bb345)
+**Puntuación 59.6/100** · autoscout24 · la Pobla Llarga (46670) · particular · manual · etiqueta C · [ver anuncio](https://www.autoscout24.es/anuncios/toyota-avensis-wagon-1-8-sol-gasolina-cat_ma70mo15230-1a5a1cfa-8aa2-4eb2-becc-bd32ed1bb345)
 
 Coste: 3.000 € al contado + gastos 0 € + ITP 60 € + tasa 55,70 € + informe 8,67 € = **3.124 €**; con el seguro estimado (0 €/año, aproximado) el primer año sale por **3.124 €**.
+
+**Etiqueta DGT: C** (deducida por combustible y fecha de primera matriculación).
 
 **Por qué destaca**
 - Más aporta: fiabilidad (91/100), precio (100/100).

@@ -79,7 +79,7 @@ class CochesNet(Source):
                     garantia=bool(it.get("hasWarranty")) if it.get("hasWarranty") is not None else None,
                     garantia_meses=it.get("warrantyMonths"), km_certificados=True if it.get("isCertified") else None,
                     ubicacion=loc.get("cityLiteral"), num_fotos=len(it.get("photos") or []) or None,
-                    etiqueta_dgt=it.get("environmentalLabel"), fecha_publicacion=it.get("publicationDate"),
+                    etiqueta_anuncio=it.get("environmentalLabel"), fecha_matriculacion=str(year) if year else None, fecha_publicacion=it.get("publicationDate"),
                     fuente_dato=url, raw_ref=r["cache_file"])
             if pg >= (res.get("totalPages") or 1):
                 return
@@ -122,6 +122,10 @@ class CochesNet(Source):
         l.anio = ad.get("year") or l.anio
         l.km = ad.get("km") or l.km
         l.precio_financiado = ad.get("financedPrice") or l.precio_financiado
+        l.etiqueta_anuncio = ad.get("environmentalLabel") or l.etiqueta_anuncio
+        if ad.get("plateRegistrationDate"):
+            l.fecha_matriculacion = ad["plateRegistrationDate"]   # 'MM/YYYY'
+        l.matricula = ad.get("licensePlate") or ad.get("plate") or l.matricula
         if ad.get("warrantyMonths"):
             l.garantia_meses = ad["warrantyMonths"]
             l.garantia = True

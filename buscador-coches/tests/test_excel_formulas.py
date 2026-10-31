@@ -36,7 +36,10 @@ def synthetic(n=80, seed=1):
             garantia_meses=rnd.choice([None, 12, 24]), garantia_ampliable=rnd.choice([None, True]),
             km_certificados=rnd.choice([None, True]), revision_puntos=rnd.choice([None, 150, 200]),
             devolucion_dias=rnd.choice([None, 7, 15]), gastos_gestion_eur=rnd.choice([None, 0.0, 350.0]),
-            gastos_incluyen_transferencia=rnd.choice([None, True, False])))
+            gastos_incluyen_transferencia=rnd.choice([None, True, False]),
+            fecha_matriculacion=rnd.choice([None, f"{anio}", f"{anio}-{rnd.randint(1, 12):02d}-01", f"{rnd.randint(1, 12):02d}/{anio}",
+                                           "2015-08-01", "2015", "2006"]),
+            etiqueta_anuncio=rnd.choice([None, None, None, "C", "B", "ECO"])))
     return out
 
 
@@ -48,6 +51,8 @@ def test_formulas_match_python(tmp_path, cfg, fiscal, rel):
     assert any(f["penalizacion"] > 0 for f in res.filas), "falta carrocería penalizada"
     assert any(f["fiabilidad"]["diesel_pendiente"] for f in res.filas), "falta diésel sin fuente"
     assert any(f["estado"] == "negociar" for f in res.filas), "falta caso 'negociar'"
+    assert any(f["listing"].etiqueta_dudosa for f in res.filas), "falta etiqueta dudosa"
+    assert {f["listing"].etiqueta_fuente for f in res.filas} >= {"regla", "anuncio"}
     src = tmp_path / "r.xlsx"
     write_workbook(src, [f["listing"] for f in res.filas], res.avisos, p)
     outdir = tmp_path / "calc"
@@ -82,6 +87,10 @@ def test_formulas_match_python(tmp_path, cfg, fiscal, rel):
         assert (v("rank") or None) == f.get("rank")
         assert v("apto") == f["estado"], f["listing"].uid
         assert v("pen_carr") == pytest.approx(f["penalizacion"])
+        l = f["listing"]
+        assert v("etiqueta") == l.etiqueta_dgt, (l.uid, l.fecha_matriculacion, l.combustible)
+        assert (v("etq_dudosa") == "sí") == bool(l.etiqueta_dudosa), l.uid
+        assert v("s_etiqueta") == pytest.approx(f["etiqueta"]["score"]), l.uid
     top = wb["Top20"]
     best = min((f for f in res.filas if f.get("rank")), key=lambda f: f["rank"])
     assert top["D2"].value == best["listing"].titulo

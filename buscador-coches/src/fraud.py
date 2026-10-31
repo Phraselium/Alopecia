@@ -55,11 +55,21 @@ def search_filter_reasons(l: Listing, cfg: dict, rel: dict | None = None) -> lis
         r.append(f"combustible {comb}")
     elif comb == "diesel":
         d = f["diesel"]
-        orden = ["A", "B", "C", "ECO", "CERO"]
-        if l.etiqueta_dgt not in orden or orden.index(l.etiqueta_dgt) < orden.index(d["etiqueta_min"]):
-            r.append(f"diésel con etiqueta {l.etiqueta_dgt}")
+        if d.get("excluir_si_penalizacion_motor", True):
+            pen = [e for e in (rel or {}).get("motores") or [] if e["motor"] == l.motor_key
+                   and e["marca"] in ("(todas)", l.marca) and l.anio is not None
+                   and e["anio_desde"] <= l.anio <= e["anio_hasta"] and e["ajuste"] < 0]
+            if pen:
+                r.append(f"diésel con penalización de motor conocida ({l.motor_key}: {pen[0]['ajuste']})")
         if d.get("sin_fuente") == "excluir" and not motor_documentado(l, rel or {}):
             r.append(f"diésel sin fuente de fiabilidad del motor ({l.motor_key})")
+    # Distintivo ambiental: fuera los que estén por debajo de la mínima, salvo los dudosos (entran con aviso)
+    from .etiqueta import rank
+    minima = f.get("etiqueta_minima", "B")
+    if l.etiqueta_dgt is None:
+        r.append("etiqueta desconocida")
+    elif rank(l.etiqueta_dgt) < rank(minima) and not l.etiqueta_dudosa:
+        r.append(f"etiqueta {l.etiqueta_dgt} ({l.etiqueta_fuente}) < {minima}")
     return r
 
 

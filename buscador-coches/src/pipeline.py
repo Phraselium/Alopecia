@@ -14,7 +14,8 @@ from .models import Listing
 from .normalize import (body_from_text, norm_text, norm_brand, norm_engine, norm_fuel, norm_gearbox, norm_model, norm_seller,
                         potencia_cv)
 from .geo import distance_from
-from .scoring import Params, etiqueta, market_medians, medians, score_all
+from .etiqueta import asignar
+from .scoring import Params, market_medians, medians, score_all
 
 # Modelos en los que 'cross/stepway' indica una versión SUV real (en el resto puede ser parte del nombre)
 SUV_SENSIBLE = {"Dacia Sandero", "Citroën C3", "Volkswagen Polo", "Toyota Yaris", "Kia Ceed", "Fiat Panda", "Suzuki Swift"}
@@ -80,6 +81,10 @@ def _categoria(motivo: str) -> str:
             return cat
     if m.startswith("km no creíbles"):
         return "km no creíbles (error del anuncio)"
+    if m.startswith("etiqueta "):
+        return "etiqueta " + m.split(" ")[1] + " (< mínima)" if "<" in m else "etiqueta desconocida"
+    if m.startswith("diésel con penalización"):
+        return "diésel con penalización de motor"
     if m.startswith("carrocería"):
         return "carrocería " + m.split(" ", 1)[1]
     if m.startswith("texto:"):
@@ -122,7 +127,8 @@ def embudo(listings, descartados, deduplicados, filas) -> dict:
     return {"plataformas": plats, "etapas": rows, "motivos": detalle}
 
 
-def process(listings: list[Listing], p: Params, motores_fiables: set[str], market: Optional[list] = None) -> Result:
+def process(listings: list[Listing], p: Params, motores_fiables: set[str], market: Optional[list] = None,
+            dgt=None) -> Result:
     global CENTER
     CENTER = (p.cfg["ubicacion"]["lat"], p.cfg["ubicacion"]["lon"])
     p.cfg["_anio_actual"] = p.anio_actual
@@ -130,7 +136,10 @@ def process(listings: list[Listing], p: Params, motores_fiables: set[str], marke
     candidatos = []
     for l in listings:
         enrich(l)
-        l.etiqueta_dgt = etiqueta(l, p.fiscal)
+        if not l.matricula:
+            from .dgt import find_plate
+            l.matricula = find_plate(l.titulo, l.descripcion)
+        asignar(l, p.zbe, dgt)
         r = search_filter_reasons(l, p.cfg, p.rel)
         if r:
             descartados.append((l, ["filtro: " + x for x in r]))
@@ -166,6 +175,8 @@ def process(listings: list[Listing], p: Params, motores_fiables: set[str], marke
             a.append("diésel: motor sin fuente de fiabilidad (fiabilidad limitada a neutra)")
         if f.get("penalizacion"):
             a.append(f"carrocería {f['listing'].carroceria}: -{f['penalizacion']:.0f} puntos")
+        if f["listing"].etiqueta_dudosa:
+            a.insert(0, f"etiqueta {f['listing'].etiqueta_dgt} dudosa: confirmar etiqueta con la DGT antes de comprar")
         if f["listing"].distancia_km is None:
             a.append("distancia no verificable (el anuncio solo indica la provincia): confirmar que está a <= "
                      f"{p.cfg['ubicacion']['radio_km']} km")

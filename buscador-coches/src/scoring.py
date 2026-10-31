@@ -21,6 +21,13 @@ class Params:
     cfg: dict
     fiscal: dict
     rel: dict
+    zbe: Optional[dict] = None
+
+    def __post_init__(self):
+        if self.zbe is None:
+            import yaml
+            from pathlib import Path
+            self.zbe = yaml.safe_load((Path(__file__).resolve().parents[1] / "zbe.yaml").read_text(encoding="utf-8"))
 
     @property
     def anio_actual(self) -> int:
@@ -32,20 +39,18 @@ class Params:
 
 
 # ---------- etiqueta DGT ----------
-def etiqueta(l: Listing, fiscal: dict) -> Optional[str]:
-    e = fiscal["etiqueta_dgt"]
-    c, a = l.combustible, l.anio
-    if c in ("hibrido", "glp"):
-        return "ECO"
-    if c == "electrico":
-        return "CERO"
-    if a is None:
-        return None
-    if c == "gasolina":
-        return "C" if a >= e["gasolina_C_desde"] else "B" if a >= e["gasolina_B_desde"] else "A"
-    if c == "diesel":
-        return "C" if a >= e["diesel_C_desde"] else "B" if a >= e["diesel_B_desde"] else "A"
-    return None
+def etiqueta(l: Listing, fiscal: dict = None) -> Optional[str]:
+    """Etiqueta final ya asignada por src/etiqueta.asignar (DGT > anuncio > regla)."""
+    return l.etiqueta_dgt
+
+
+def s_etiqueta(l: Listing, p: Params) -> dict:
+    """'Etiqueta y ZBE': B base, C +, ECO/CERO ++; penalización si es dudosa o solo de la regla."""
+    e = p.cfg["scoring"]["etiqueta"]
+    base = float(e["puntos"].get(l.etiqueta_dgt, 0)) if l.etiqueta_dgt else 0.0
+    pen = e["penal_dudosa"] if l.etiqueta_dudosa else (e["penal_regla"] if l.etiqueta_fuente == "regla" else 0)
+    return {"etiqueta": l.etiqueta_dgt, "fuente": l.etiqueta_fuente, "dudosa": bool(l.etiqueta_dudosa),
+            "base": base, "penal": pen, "score": clamp(base - pen)}
 
 
 # ---------- segmentos y medianas ----------
@@ -249,8 +254,8 @@ def seguro_rango(fiscal: dict) -> tuple[float, float]:
 
 def s_coste_uso(l: Listing, p: Params) -> dict:
     c = p.cfg["scoring"]["coste_uso"]
-    et = etiqueta(l, p.fiscal)
-    s_et = float(c["puntos_etiqueta"].get(et, p.neutro)) if et else p.neutro
+    et = l.etiqueta_dgt
+    s_et = 0.0  # desde 01-11-2026 la etiqueta tiene criterio propio (s_etiqueta); peso_etiqueta = 0
     s_cons = p.neutro   # consumo: PENDIENTE de fuente
     seg = seguro_estimado(l, p.fiscal)
     rng = seguro_rango(p.fiscal)
@@ -276,13 +281,15 @@ def score_all(listings: list[Listing], p: Params, costes: dict[str, dict],
         an = s_anuncio(l, p.cfg)
         us = s_coste_uso(l, p)
         sg = s_seguridad(l, p)
+        se = s_etiqueta(l, p)
         pen = penal_carroceria(l, p.cfg)
         total = (w["fiabilidad"] * f["score"] + w["precio"] * pr["score"] + w["km_edad"] * ke["score"]
-                 + w["anuncio"] * an["score"] + w["coste_uso"] * us["score"] + w["seguridad"] * sg["score"]) - pen
+                 + w["anuncio"] * an["score"] + w["coste_uso"] * us["score"] + w["seguridad"] * sg["score"]
+                 + w.get("etiqueta", 0) * se["score"]) - pen
         c = dict(costes[l.uid])
         c["primer_anio"] = c["total"] + (us["seguro"] or 0)
         rows.append({"listing": l, "mediana": med, "nivel_mediana": nivel, "n_mediana": n, "mercado": mm,
-                     "fiabilidad": f, "precio": pr, "km_edad": ke, "anuncio": an, "coste_uso": us, "seguridad": sg,
+                     "fiabilidad": f, "precio": pr, "km_edad": ke, "anuncio": an, "coste_uso": us, "seguridad": sg, "etiqueta": se,
                      "total": total, "coste": c,
                      "penalizacion": pen, "estado": estado_presupuesto(c["total"], p.cfg),
                      "apto": estado_presupuesto(c["total"], p.cfg) != "no"})

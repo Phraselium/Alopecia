@@ -59,6 +59,7 @@ class AutoScout24(Source):
                         marca=v.get("make"), modelo=v.get("model"),
                         version=" ".join(x for x in (v.get("modelVersionInput"), v.get("motorTypeName")) if x),
                         combustible=v.get("fuel"), anio=to_int(reg[-4:]), km=to_int(v.get("mileageInKm")),
+                        fecha_matriculacion=reg or None,
                         cambio=v.get("transmission"), cilindrada_cc=to_int(v.get("engineDisplacementInCCM")),
                         vendedor="profesional" if sel.get("type") == "Dealer" else "particular",
                         ubicacion=f"{loc.get('city')} ({loc.get('zip')})", num_fotos=len(it.get("images") or []),
@@ -80,6 +81,8 @@ class AutoScout24(Source):
         l.descripcion = det.get("description") or ""
         l.km = v.get("mileageInKmRaw") or l.km
         fr = v.get("firstRegistrationDateRaw") or ""
+        l.fecha_matriculacion = fr[:7] or l.fecha_matriculacion   # AS24 guarda mes/año (día = 01)
+        l.matricula = v.get("licensePlate") or l.matricula
         l.anio = to_int(fr[:4]) or l.anio
         l.cilindrada_cc = v.get("rawDisplacementInCCM") or l.cilindrada_cc
         l.potencia_cv = v.get("rawPowerInHp") or l.potencia_cv

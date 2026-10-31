@@ -1,0 +1,74 @@
+# Distintivo ambiental de la DGT y Zona de Bajas Emisiones de València.
+# Consultado el 2026-10-31. Cada dato lleva fuente y estado.
+
+criterios_etiqueta:
+  fuente: "https://www.dgt.es/nuestros-servicios/tu-vehiculo/tus-vehiculos/distintivo-ambiental/"
+  consultado: 2026-10-31
+  estado: confirmado
+  nota: >
+    La DGT asigna la etiqueta por norma Euro; las fechas son la regla práctica que publica la propia DGT para
+    turismos y furgonetas ligeras. Por eso el dato oficial por matrícula (fichero DGT) tiene prioridad.
+  # Regla por combustible y FECHA DE PRIMERA MATRICULACIÓN (año, mes). Formato: desde (año, mes) inclusive.
+  gasolina: {B_desde: [2001, 1], C_desde: [2006, 1]}     # A antes de 2001
+  diesel:   {B_desde: [2006, 1], C_desde: [2015, 9]}     # A antes de 2006; C desde septiembre de 2015
+  eco: [hibrido, glp, gnc, gnl, phev_menos_40km]         # HEV, GLP, GNC/GNL y enchufables con < 40 km
+  cero: [electrico, phev_40km_o_mas, reev, pila_combustible]  # la DGT dice "PHEV con una autonomía de 40 km"
+  textos_dgt:
+    CERO: "eléctricos de batería (BEV), eléctricos de autonomía extendida (REEV), eléctricos híbridos enchufables (PHEV) con una autonomía de 40 km o vehículos de pila de combustible"
+    ECO: "eléctricos enchufables con autonomía inferior a 40 km, híbridos no enchufables (HEV), vehículos propulsados por gas natural y gas (GNC y GNL) o gas licuado del petróleo (GLP)"
+    C: "turismos y furgonetas ligeras de gasolina matriculadas a partir de enero de 2006 y diésel a partir de septiembre de 2015"
+    B: "turismos y furgonetas ligeras de gasolina matriculadas desde el 1 de enero de 2001 y diésel a partir de 2006"
+  # Años frontera: si solo se conoce el año (sin mes), la etiqueta es "dudosa" y se asigna la peor de las dos posibles.
+  fronteras:
+    gasolina: [2000, 2001]
+    diesel: [2005, 2006, 2015]
+
+fichero_dgt:
+  nombre: "Microdatos de distintivo ambiental de vehículos (diarios) — DGT en Cifras"
+  url: "https://www.dgt.es/microdatos/salida/distintivoAmbiental/export_dist_ambiental.zip"
+  catalogo: "https://datos.gob.es/es/catalogo/e00130502-microdatos-de-distintivo-ambiental-de-vehiculos-diarios"
+  robots: "permitido por https://www.dgt.es/robots.txt (comprobado con src/robots.py)"
+  formato: "TXT 'MATRICULA|TIPO DE ETIQUETA', ~38,7 millones de filas (fichero del 30-10-2026), 106 MB zip / 597 MB texto"
+  actualizacion: "diaria según la DGT; el buscador lo descarga como mucho una vez al día y lo indexa en data/dgt/distintivos.sqlite"
+  codigos:
+    "16TB": B
+    "16TC": C
+    "16TE": ECO
+    "16T0": CERO
+    "16MB": B      # 16M* = motocicletas
+    "16MC": C
+    "16ME": ECO
+    "16M0": CERO
+    "SIN DISTINTIVO": A
+  validacion_codigos: >
+    No hay diccionario publicado para el fichero diario (el de parque anual usa "DISTINTIVO B/C, ECO, CERO, SIN
+    DISTINTIVO"). Se ha verificado la equivalencia cruzando 843 matrículas con la etiqueta publicada por OcasionPlus
+    (tools/dgt_check.py): 16TC↔C 656, 16TE↔ECO 95, 16TB↔B 67, 16T0/16M0↔CERO 22; 2 discrepancias (OcasionPlus
+    decía C y la DGT B; ECO y la DGT C), en las que se toma el dato de la DGT. Todos los ECO son híbridos, GLP o
+    GNC y todos los CERO, eléctricos o enchufables.
+  no_se_usa: "el buscador web de la sede de la DGT (consulta por matrícula): no se automatizan consultas"
+
+zbe_valencia:
+  restringe: [A]            # solo turismos, motos y ciclomotores SIN etiqueta; furgonetas, camiones y autobuses no
+  estado_ordenanza: >
+    Aprobación INICIAL por el Pleno el 25-02-2025; "pendiente el acuerdo plenario de aprobación definitiva"
+    (página municipal de la ZBE, consultada el 31-10-2026). La ZBE se puso en marcha el 01-12-2025 "de acuerdo
+    con el calendario de implantación previsto en la Ordenanza aprobada provisionalmente". Las preguntas
+    frecuentes municipales de enero de 2026 dicen que, al estar pendiente la aprobación definitiva, "no es
+    posible concretar el inicio de las restricciones previstas".
+  estado: "calendario PREVISTO, no definitivo (ordenanza pendiente de aprobación definitiva)"
+  calendario_previsto:
+    # (desde, hasta, a quién afecta la restricción de los coches con etiqueta A)
+    - {desde: 2025-12-01, hasta: 2026-12-31, restringidos: "A matriculados fuera de la provincia de València"}
+    - {desde: 2027-01-01, hasta: 2027-12-31, restringidos: "A matriculados fuera del municipio de València (incluida la provincia)"}
+    - {desde: 2028-01-01, hasta: null, restringidos: "todos los A, incluidos los de vecinos de València"}
+  excepciones: "48 accesos al año de 24 h; históricos exentos; moratoria para afectados por la DANA y pedanías hasta 31-12-2028"
+  etiqueta_B: >
+    Sin restricciones en la ordenanza (ni prevista con fecha). Que vaya a ser la siguiente es una expectativa
+    razonable (Ley 7/2021 y otras ZBE), pero NO consta en ninguna fuente oficial de València: no se usa como dato.
+  fuentes:
+    - "https://www.valencia.es/cas/actualidad/-/content/val%C3%A8ncia-aprueba-la-ordenanza-de-zona-de-bajas-emisiones (nota municipal 21-10-2025: calendario)"
+    - "https://www.valencia.es/cas/pagina-de-categoria/-/asset_publisher/JzpZn9jBadjS/content/zona-bajas-emisiones (estado: aprobación inicial 25-02-2025, pendiente de definitiva; consultada 31-10-2026)"
+    - "https://www.valencia.es/cas/actualidad/-/content/zona-bajas-emisiones-val%C3%A8ncia (28-11-2025: puesta en marcha 01-12-2025 con la ordenanza aprobada provisionalmente)"
+    - "https://www.valencia.es/documents/d/guest/preguntas-frecuentes-zbe_enero-2026-pdf (preguntas frecuentes, enero 2026)"
+  consultado: 2026-10-31
