@@ -24,6 +24,8 @@ def is_duplicate(a: Listing, b: Listing, cfg: dict) -> bool:
         return False
     if abs(a.precio - b.precio) > d["precio_tolerancia"] * max(a.precio, b.precio):
         return False
+    if a.km == b.km and a.precio == b.precio:
+        return True  # mismo modelo, año, km y precio exactos: el mismo coche republicado
     ta, tb = norm_text(a.descripcion), norm_text(b.descripcion)
     if not ta or not tb:
         # sin texto en alguno: basta con que coincidan exactamente km o el combustible/motor

@@ -6,24 +6,32 @@ ubicacion:
   ciudad: "València"
   lat: 39.4699
   lon: -0.3763
-  radio_km: 50
+  radio_km: 70                 # antes 50; con 70 km entra el sur de Castellón
+  provincias_cochesnet: [valencia, castellon]   # rutas por provincia en Coches.net (las que toca el radio)
+  municipios_wallapop: [valencia, torrent, paterna, sagunto, gandia, burjassot, manises]
   provincia: "Valencia"
 
 presupuesto:
-  total_max_eur: 5000        # precio + ITP + tasa DGT + informe DGT
-  precio_anuncio_max_eur: 4600
-  precio_anuncio_min_eur: 800   # por debajo casi siempre es despiece/fraude
+  total_max_eur: 5000          # precio + ITP (o gastos del vendedor) + tasa DGT + informe DGT
+  margen_negociacion_eur: 300  # hasta 5.300 € entran marcados "por encima del presupuesto, negociar"
+  precio_anuncio_max_eur: 5200 # tope del anuncio para recoger (para que entren los que caben negociando)
+  precio_anuncio_min_eur: 800  # por debajo casi siempre es despiece/fraude
 
 filtros:
-  anio_min: 2008
+  anio_min: 2006               # antes 2008
   km_max: 220000
-  combustibles: [gasolina, hibrido, glp]
-  # Diésel solo si etiqueta >= B Y el motor está marcado como fiable en reliability.yaml
+  km_min_creible: 1000         # menos km en un coche de más de 2 años = dato erróneo del anuncio
+  # Combustible: gasolina, híbrido, GLP y diésel entran. Excluidos:
+  combustibles_excluidos: [electrico, gnc]
   diesel:
-    permitido: true
     etiqueta_min: B
-    requiere_motor_fiable: true
+    # Diésel cuyo motor no tiene fuente de fiabilidad en reliability.yaml:
+    #   penalizar -> entra con la fiabilidad "pendiente" (tope en la puntuación neutra) ; excluir -> fuera
+    sin_fuente: penalizar
+  # Carrocerías: admitidas sin penalización / admitidas con penalización (puntos en scoring.penalizaciones) / el resto fuera
   carrocerias: [utilitario, compacto]
+  carrocerias_penalizadas: [berlina, familiar, monovolumen_pequeno]
+  # Fuera: suv, cabrio, monovolumen (grande), furgoneta y desconocidas
   cambio: indiferente          # se marcan los automáticos en la columna "automatico"
 
 fuentes:
@@ -37,7 +45,7 @@ fuentes:
   # Portales
   autoscout24: {enabled: true,  max_paginas: 10}
   cochesnet:   {enabled: true,  max_paginas: 6}    # robots.txt prohíbe pg>=7
-  wallapop:    {enabled: true}     # opción A: solo rutas permitidas por robots.txt
+  wallapop:    {enabled: true, saturacion: 75}   # opción A: solo rutas permitidas; municipios si la página viene llena
   # Bloqueadas en el reconocimiento (31-10-2026): no se insiste
   milanuncios: {enabled: false}    # HTTP 405 + página antibots
   autocasion:  {enabled: false}    # desafío Cloudflare
@@ -49,7 +57,7 @@ http:
   user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
   accept_language: "es-ES,es;q=0.9"
   cache_dir: raw
-  cache_ttl_horas: 24          # mientras se depura, no repetir peticiones
+  cache_ttl_horas: 3           # listados: menos que el intervalo de --watch (4 h) para ver anuncios nuevos
   respetar_robots: true
 
 limpieza:
@@ -113,12 +121,26 @@ scoring:
     # Vendedor profesional sin garantía declarada: se le asigna el mínimo legal (TRLGDCU art. 120,
     # ver fiscal.yaml → garantia_legal) y se marca el aviso.
     aplicar_minimo_legal_profesional: true
+  penalizaciones:              # puntos que se restan a la PUNTUACIÓN total
+    carroceria: {berlina: 4, familiar: 3, monovolumen_pequeno: 6}
+    # Diésel sin fuente de fiabilidad del motor: la fiabilidad del modelo se limita a la puntuación neutra
+    # (coste_uso.neutro_si_pendiente), igual que un dato "pendiente"; además se aplica el ajuste DPF.
   coste_uso:
     peso_etiqueta: 0.5
     peso_consumo: 0.3
     peso_seguro: 0.2
     puntos_etiqueta: {CERO: 100, ECO: 100, C: 80, B: 45, A: 0}
     neutro_si_pendiente: 50
+
+alertas:
+  activas: true
+  intervalo_horas: 4           # para python run.py --watch
+  umbral_puntuacion: 55        # avisa de anuncios NUEVOS con puntuación >= umbral (los de fraude ya están descartados)
+  incluir_negociar: true       # también los que solo caben negociando (marcados en el mensaje)
+  # Telegram: TELEGRAM_BOT_TOKEN y TELEGRAM_CHAT_ID en .env (ver .env.example). Sin .env: solo logs/alertas.log
+
+seguimiento:
+  ejecuciones_para_desaparecido: 2   # nº de ejecuciones correctas seguidas sin verlo para fijar la fecha de desaparición
 
 salida:
   excel: ranking.xlsx

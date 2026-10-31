@@ -25,3 +25,16 @@ def test_fraud(cfg):
     assert fraud_reasons(_l(1, precio=2000), 4000, cfg)          # -50 % vs mediana
     assert fraud_reasons(_l(1, num_fotos=0), 4000, cfg)
     assert not fraud_reasons(_l(1), 4000, cfg)
+
+
+def test_exact_duplicate_different_text(cfg):
+    a = _l(1, descripcion="Particular vende Swift, muy cuidado")
+    b = _l(2, descripcion="Concesionario: financiación disponible, aceptamos coche")
+    assert len(dedupe([a, b], cfg)) == 1
+
+
+def test_km_no_creibles(cfg):
+    from src.fraud import search_filter_reasons
+    cfg["_anio_actual"] = 2026
+    l = _l(1, km=244, anio=2008, carroceria="utilitario", combustible="gasolina")
+    assert any("km no creíbles" in r for r in search_filter_reasons(l, cfg, {}))

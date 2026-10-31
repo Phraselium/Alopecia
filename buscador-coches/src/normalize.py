@@ -22,36 +22,54 @@ BRAND_ALIASES = {
 MODELS = {
     "Toyota": {"Yaris": ("utilitario", ["yaris"]), "Auris": ("compacto", ["auris"]),
                "Corolla": ("compacto", ["corolla"]), "Aygo": ("utilitario", ["aygo"]),
-               "iQ": ("utilitario", ["iq"]), "Prius": ("compacto", ["prius"]), "Verso": ("monovolumen", ["verso"])},
-    "Honda": {"Jazz": ("utilitario", ["jazz"]), "Civic": ("compacto", ["civic"]), "Insight": ("compacto", ["insight"])},
-    "Mazda": {"2": ("utilitario", ["mazda2", "mazda 2", "2"]), "3": ("compacto", ["mazda3", "mazda 3", "3"])},
+               "iQ": ("utilitario", ["iq"]), "Prius": ("compacto", ["prius"]), "Verso": ("monovolumen", ["verso"]), "Avensis": ("berlina", ["avensis"])},
+    "Honda": {"Jazz": ("utilitario", ["jazz"]), "CR-V": ("suv", ["cr-v", "crv"]), "Accord": ("berlina", ["accord"]), "Civic": ("compacto", ["civic"]), "Insight": ("compacto", ["insight"])},
+    "Mazda": {"2": ("utilitario", ["mazda2", "mazda 2", "2"]), "3": ("compacto", ["mazda3", "mazda 3", "3"]),
+              "5": ("monovolumen", ["mazda5", "mazda 5", "5"]), "6": ("berlina", ["mazda6", "mazda 6", "6"])},
     "Kia": {"Picanto": ("utilitario", ["picanto"]), "Rio": ("utilitario", ["rio"]),
-            "Ceed": ("compacto", ["ceed", "cee'd", "cee d", "pro ceed", "proceed"]), "Venga": ("monovolumen", ["venga"])},
+            "Ceed": ("compacto", ["ceed", "cee'd", "cee d", "pro ceed", "proceed"]), "Venga": ("monovolumen_pequeno", ["venga"])},
     "Hyundai": {"i10": ("utilitario", ["i10"]), "i20": ("utilitario", ["i20"]), "i30": ("compacto", ["i30"]),
-                "Getz": ("utilitario", ["getz"]), "ix20": ("monovolumen", ["ix20"])},
+                "Getz": ("utilitario", ["getz"]), "Matrix": ("monovolumen_pequeno", ["matrix"]), "Tucson": ("suv", ["tucson"]), "ix20": ("monovolumen_pequeno", ["ix20"])},
     "Skoda": {"Fabia": ("utilitario", ["fabia"]), "Octavia": ("compacto", ["octavia"]),
-              "Rapid": ("compacto", ["rapid"]), "Citigo": ("utilitario", ["citigo"])},
+              "Rapid": ("berlina", ["rapid"]), "Citigo": ("utilitario", ["citigo"]), "Superb": ("berlina", ["superb"]), "Yeti": ("suv", ["yeti"])},
     "Seat": {"Ibiza": ("utilitario", ["ibiza"]), "León": ("compacto", ["leon", "león"]),
-             "Mii": ("utilitario", ["mii"]), "Arosa": ("utilitario", ["arosa"]), "Altea": ("monovolumen", ["altea"])},
+             "Mii": ("utilitario", ["mii"]), "Arosa": ("utilitario", ["arosa"]), "Altea": ("monovolumen_pequeno", ["altea"]), "Córdoba": ("berlina", ["cordoba", "córdoba"]), "Toledo": ("berlina", ["toledo"])},
     "Volkswagen": {"Polo": ("utilitario", ["polo"]), "Golf": ("compacto", ["golf"]),
-                   "up!": ("utilitario", ["up!", "up"]), "Fox": ("utilitario", ["fox"])},
+                   "up!": ("utilitario", ["up!", "up"]), "Fox": ("utilitario", ["fox"]),
+                   "Beetle": ("compacto", ["beetle", "escarabajo"]), "Touran": ("monovolumen", ["touran"]), "Jetta": ("berlina", ["jetta"]), "Touareg": ("suv", ["touareg"]), "Tiguan": ("suv", ["tiguan"])},
     "Opel": {"Corsa": ("utilitario", ["corsa"]), "Astra": ("compacto", ["astra"]),
-             "Adam": ("utilitario", ["adam"]), "Agila": ("utilitario", ["agila"]), "Meriva": ("monovolumen", ["meriva"])},
+             "Adam": ("utilitario", ["adam"]), "Agila": ("utilitario", ["agila"]), "Meriva": ("monovolumen_pequeno", ["meriva"]), "Zafira": ("monovolumen", ["zafira"]),
+             "Karl": ("utilitario", ["karl"]), "Insignia": ("berlina", ["insignia"]), "Antara": ("suv", ["antara"])},
     "Renault": {"Clio": ("utilitario", ["clio"]), "Mégane": ("compacto", ["megane", "mégane"]),
-                "Twingo": ("utilitario", ["twingo"]), "Modus": ("monovolumen", ["modus"])},
-    "Dacia": {"Sandero": ("utilitario", ["sandero"]), "Logan": ("compacto", ["logan"])},
-    "Peugeot": {"107": ("utilitario", ["107"]), "108": ("utilitario", ["108"]), "207": ("utilitario", ["207"]),
-                "208": ("utilitario", ["208"]), "308": ("compacto", ["308"])},
-    "Citroën": {"C1": ("utilitario", ["c1"]), "C3": ("utilitario", ["c3"]), "C4": ("compacto", ["c4"]),
-                "C-Elysée": ("compacto", ["c-elysee", "c elysee", "c-elysée"])},
-    "Ford": {"Ka": ("utilitario", ["ka", "ka+"]), "Fiesta": ("utilitario", ["fiesta"]), "Focus": ("compacto", ["focus"])},
+                "Twingo": ("utilitario", ["twingo"]), "Modus": ("monovolumen_pequeno", ["modus"]), "Fluence": ("berlina", ["fluence"]), "Laguna": ("berlina", ["laguna"]),
+                "Scénic": ("monovolumen", ["scenic", "scénic", "grand scenic"])},
+    "Dacia": {"Sandero": ("utilitario", ["sandero"]), "Logan": ("berlina", ["logan"])},
+    "Peugeot": {"107": ("utilitario", ["107"]), "108": ("utilitario", ["108"]), "206": ("utilitario", ["206", "206+"]), "207": ("utilitario", ["207"]), "508": ("berlina", ["508"]),
+                "5008": ("monovolumen", ["5008"]), "Partner": ("furgoneta", ["partner"]),
+                "208": ("utilitario", ["208"]), "308": ("compacto", ["308"]), "301": ("berlina", ["301"]), "2008": ("suv", ["2008"]), "3008": ("suv", ["3008"])},
+    "Citroën": {"C1": ("utilitario", ["c1"]), "C2": ("utilitario", ["c2"]), "C3": ("utilitario", ["c3"]), "C4": ("compacto", ["c4"]),
+                "C-Elysée": ("berlina", ["c-elysee", "c elysee", "c-elysée"]),
+                "C3 Picasso": ("monovolumen_pequeno", ["c3 picasso"]), "Xsara Picasso": ("monovolumen", ["xsara picasso"]),
+                "C4 Picasso": ("monovolumen", ["c4 picasso", "grand c4 picasso"])},
+    "Ford": {"Ka": ("utilitario", ["ka", "ka+"]), "Fiesta": ("utilitario", ["fiesta"]), "Focus": ("compacto", ["focus"]),
+             "B-Max": ("monovolumen_pequeno", ["b-max", "b max", "bmax"]), "C-Max": ("monovolumen", ["c-max", "c max", "cmax"]),
+             "Fusion": ("monovolumen_pequeno", ["fusion"]), "Mondeo": ("berlina", ["mondeo"]),
+             "Connect": ("furgoneta", ["connect", "transit connect", "tourneo connect"]), "Kuga": ("suv", ["kuga"])},
     "Fiat": {"Panda": ("utilitario", ["panda"]), "Punto": ("utilitario", ["punto", "grande punto", "punto evo"]),
-             "500": ("utilitario", ["500"]), "Bravo": ("compacto", ["bravo"]), "Tipo": ("compacto", ["tipo"])},
-    "Nissan": {"Micra": ("utilitario", ["micra"]), "Note": ("monovolumen", ["note"]), "Pulsar": ("compacto", ["pulsar"])},
+             "500": ("utilitario", ["500"]), "Bravo": ("compacto", ["bravo"]), "Linea": ("berlina", ["linea"]), "Tipo": ("compacto", ["tipo"])},
+    "Nissan": {"Micra": ("utilitario", ["micra"]), "Pixo": ("utilitario", ["pixo"]), "Qashqai": ("suv", ["qashqai"]),
+               "Juke": ("suv", ["juke"]), "Leaf": ("utilitario", ["leaf"]), "Note": ("monovolumen_pequeno", ["note"]), "Pulsar": ("compacto", ["pulsar"])},
     "Suzuki": {"Swift": ("utilitario", ["swift"]), "Alto": ("utilitario", ["alto"]), "Splash": ("utilitario", ["splash"]),
                "Baleno": ("utilitario", ["baleno"]), "Celerio": ("utilitario", ["celerio"])},
     "Mitsubishi": {"Colt": ("utilitario", ["colt"]), "Space Star": ("utilitario", ["space star"])},
-    "Chevrolet": {"Aveo": ("utilitario", ["aveo"]), "Spark": ("utilitario", ["spark"]), "Cruze": ("compacto", ["cruze"])},
+    "Audi": {"A1": ("utilitario", ["a1"]), "A3": ("compacto", ["a3"])},
+    "MINI": {"MINI": ("utilitario", ["mini", "cooper", "one"])},
+    "Mercedes-Benz": {"Clase A": ("compacto", ["clase a", "a 160", "a 180", "a 200", "a160", "a180", "a200"]),
+                      "Clase B": ("monovolumen_pequeno", ["clase b", "b 180", "b 200", "b180", "b200"])},
+    "smart": {"forfour": ("utilitario", ["forfour"]), "fortwo": ("utilitario", ["fortwo"])},
+    "Chevrolet": {"Kalos": ("utilitario", ["kalos"]), "Matiz": ("utilitario", ["matiz"]), "Nubira": ("compacto", ["nubira"]),
+                  "Epica": ("berlina", ["epica"]), "Captiva": ("suv", ["captiva"]),
+                  "Aveo": ("utilitario", ["aveo"]), "Spark": ("utilitario", ["spark"]), "Cruze": ("compacto", ["cruze"])},
 }
 
 # Patrones de tecnología de motor -> etiqueta canónica
@@ -153,7 +171,7 @@ def parse_displacement(text: str) -> Optional[float]:
 
 def norm_engine(*texts: Optional[str]) -> Optional[str]:
     """'1.4 16v TSI 122cv' -> '1.4 TSI'. '1,2 PureTech' -> '1.2 PureTech'."""
-    joined = " ".join(t for t in texts if t)
+    joined = " ".join(str(t) for t in texts if t)
     t = norm_text(joined)
     disp = parse_displacement(joined)
     tech = None
@@ -168,7 +186,7 @@ def norm_engine(*texts: Optional[str]) -> Optional[str]:
 
 
 def norm_fuel(raw: Optional[str], *texts: Optional[str]) -> Optional[str]:
-    for cand in (raw, " ".join(t for t in texts if t)):
+    for cand in (raw, " ".join(str(t) for t in texts if t)):
         t = norm_text(cand)
         if not t:
             continue
@@ -179,7 +197,7 @@ def norm_fuel(raw: Optional[str], *texts: Optional[str]) -> Optional[str]:
 
 
 def norm_gearbox(raw: Optional[str], *texts: Optional[str]) -> Optional[str]:
-    t = norm_text(" ".join(x for x in (raw, *texts) if x))
+    t = norm_text(" ".join(str(x) for x in (raw, *texts) if x))
     if re.search(r"autom[aá]tic|\bdsg\b|\bcvt\b|e-?cvt|tiptronic|\bedc\b|powershift|\bamt\b|s-?tronic|i-?shift|easytronic|\beat\b", t):
         return "automatico"
     if re.search(r"manual", t):
@@ -206,4 +224,21 @@ def potencia_cv(text: str) -> Optional[int]:
     m = re.search(r"(\d{2,3})\s*kw\b", t)
     if m:
         return round(int(m.group(1)) * 1.35962)
+    return None
+
+
+BODY_KEYWORDS = [
+    (r"\b(cc|cabrio\w*|coup[eé]|roadster|descapotable|spider)\b", "cabrio"),
+    (r"\b(st|sw|sportwagon|sports? ?wagon|sports? ?tourer|variant|combi|break|touring|estate|kombi|mcv|grand ?tour"
+     r"|sportbreak|sport ?brake|tourer|cw|sportswagon|familiar|caravan)\b", "familiar"),
+    (r"\b(sedan|sed[aá]n|4p|4 puertas)\b", "berlina"),
+    (r"\b(4x4|crossover|suv|cross|x-?cross|stepway|aircross|countryman)\b", "suv"),
+]
+
+
+def body_from_text(text: str) -> Optional[str]:
+    t = norm_text(text)
+    for pat, body in BODY_KEYWORDS:
+        if re.search(pat, t):
+            return body
     return None

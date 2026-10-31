@@ -107,6 +107,8 @@ def build_supuestos(wb: Workbook, p: Params, names: Names) -> None:
     param("KM_MAX", "Km máximos", f["km_max"])
     param("PRECIO_MAX", "Precio anuncio máximo (€)", cfg["presupuesto"]["precio_anuncio_max_eur"])
     param("TOTAL_MAX", "Coste total máximo (€)", cfg["presupuesto"]["total_max_eur"])
+    param("MARGEN_NEG", "Margen de negociación sobre el coste total (€): entra marcado 'negociar'",
+          cfg["presupuesto"].get("margen_negociacion_eur", 0))
     param("SEG_ANIO", "Tramo de años para mediana", cfg["segmentos"]["anio_tramo"])
     param("SEG_KM", "Tramo de km para mediana", cfg["segmentos"]["km_tramo"])
     param("MIN_N", "Mín. anuncios por segmento (si no, se sube de nivel)", cfg["segmentos"]["min_muestras"])
@@ -203,6 +205,19 @@ def build_supuestos(wb: Workbook, p: Params, names: Names) -> None:
         ws.cell(r, 4, "config.yaml; la ZBE solo restringe sin etiqueta (A), ver fila ZBE")
         r += 1
     names.add("ETQ_TBL", f"Supuestos!$A${t0}:$B${r-1}")
+    r += 1
+    header(["Carrocería admitida con penalización", "Puntos restados a la PUNTUACIÓN", "Estado", "Fuente"])
+    t0 = r
+    for carr, pts in (sc.get("penalizaciones") or {}).get("carroceria", {}).items():
+        ws.cell(r, 1, carr).font = _font(BLUE)
+        ws.cell(r, 2, pts).font = _font(BLUE)
+        ws.cell(r, 3, "criterio (config.yaml)")
+        ws.cell(r, 4, "config.yaml → scoring.penalizaciones.carroceria")
+        r += 1
+    names.add("CARR_PEN_TBL", f"Supuestos!$A${t0}:$B${max(r-1, t0)}")
+    ws.cell(r, 1, "Diésel sin fuente de fiabilidad del motor (Mot. con fuente = 0): la fiabilidad del modelo se limita a NEUTRO "
+                  "(tratamiento de dato pendiente); además se aplica el ajuste por combustible (DPF).")
+    r += 1
     ws.cell(r, 1, "Consumo (l/100 km): PENDIENTE de fuente -> se puntúa con NEUTRO.")
     r += 2
     se = fis["seguro_estimado"]
@@ -378,7 +393,12 @@ COLUMNS = [
      '=SUMIFS(MOT_AJUSTE,MOT_MOTOR,{motor},MOT_MARCA,{marca},MOT_DESDE,"<="&{anio},MOT_HASTA,">="&{anio})'
      '+SUMIFS(MOT_AJUSTE,MOT_MOTOR,{motor},MOT_MARCA,"(todas)",MOT_DESDE,"<="&{anio},MOT_HASTA,">="&{anio})'),
     ("f_comb", "Ajuste combustible", "calc", "=SUMIFS(COMB_AJUSTE,COMB_COMB,{combustible})"),
-    ("s_fiab", "P. Fiabilidad", "calc", "=MAX(0,MIN(100,{f_base}+{f_motor}+{f_comb}))"),
+    ("mot_doc", "Motor con fuente (nº entradas)", "calc",
+     '=COUNTIFS(MOT_MOTOR,{motor},MOT_MARCA,{marca},MOT_DESDE,"<="&{anio},MOT_HASTA,">="&{anio})'
+     '+COUNTIFS(MOT_MOTOR,{motor},MOT_MARCA,"(todas)",MOT_DESDE,"<="&{anio},MOT_HASTA,">="&{anio})'),
+    ("f_base_ef", "Fiab. base aplicada", "calc",
+     '=IF(AND({combustible}="diesel",{mot_doc}=0),MIN({f_base},NEUTRO),{f_base})'),
+    ("s_fiab", "P. Fiabilidad", "calc", "=MAX(0,MIN(100,{f_base_ef}+{f_motor}+{f_comb}))"),
     # precio
     ("s_precio", "P. Precio", "calc", "=MAX(0,MIN(100,50+{descuento}*PRECIO_PEND))"),
     # km y edad
@@ -404,8 +424,9 @@ COLUMNS = [
     ("s_seguridad", "P. Seguridad compra", "calc",
      '=SG_GAR*MIN(1,{gar_ef}/SG_GAR_FULL)+SG_AMPL*({gar_ampl}="sí")+SG_KMC*({km_cert}="sí")+SG_REV*(N({revision})>0)'
      '+SG_DEV*MIN(1,N({devolucion})/SG_DEV_FULL)+SG_HIST*({libro}="sí")'),
+    ("pen_carr", "Penalización carrocería (puntos)", "calc", "=IFERROR(VLOOKUP({carroceria},CARR_PEN_TBL,2,0),0)"),
     ("total", "PUNTUACIÓN", "calc",
-     "=W_FIAB*{s_fiab}+W_PRECIO*{s_precio}+W_KMEDAD*{s_kmedad}+W_ANUNCIO*{s_anuncio}+W_USO*{s_uso}+W_SEGURIDAD*{s_seguridad}"),
+     "=W_FIAB*{s_fiab}+W_PRECIO*{s_precio}+W_KMEDAD*{s_kmedad}+W_ANUNCIO*{s_anuncio}+W_USO*{s_uso}+W_SEGURIDAD*{s_seguridad}-{pen_carr}"),
     # coste
     ("cc_fiscal", "cc para ITP", "calc",
      '=IF(N({cc})>0,{cc},IFERROR(ROUND(_xlfn.NUMBERVALUE(LEFT({motor},FIND(" ",{motor}&" ")-1),".")*1000,0),99999))'),
@@ -420,9 +441,10 @@ COLUMNS = [
     ("informe", "Informe DGT (€)", "calc", "=INFORME_DGT"),
     ("coste_total", "COSTE TOTAL (€)", "calc", "={precio}+{gastos_calc}+{itp}+{tasa}+{informe}"),
     ("primer_anio", "Coste 1er año con seguro (€)", "calc", "={coste_total}+N({seguro})"),
-    ("apto", "Dentro de presupuesto", "calc", '=IF({coste_total}<=TOTAL_MAX,"sí","no")'),
+    ("apto", "Presupuesto (sí / negociar / no)", "calc",
+     '=IF({coste_total}<=TOTAL_MAX,"sí",IF({coste_total}<=TOTAL_MAX+MARGEN_NEG,"negociar","no"))'),
     ("rank", "Puesto", "calc",
-     '=IF({apto}="sí",COUNTIFS({R:apto},"sí",{R:total},">"&{total})+COUNTIFS({RUP:apto},"sí",{RUP:total},{total}),"")'),
+     '=IF({apto}<>"no",COUNTIFS({R:apto},"<>no",{R:total},">"&{total})+COUNTIFS({RUP:apto},"<>no",{RUP:total},{total}),"")'),
 ]
 COL = {key: get_column_letter(i) for i, (key, *_r) in enumerate(COLUMNS, 1)}
 

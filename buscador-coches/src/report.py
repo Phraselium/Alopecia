@@ -110,6 +110,47 @@ def _questions(l) -> list[str]:
     return q
 
 
+def _embudo_md(stats: dict) -> list[str]:
+    e = stats.get("embudo")
+    if not e:
+        return []
+    plats = e["plataformas"]
+    head = "| Etapa | " + " | ".join(plats) + " | Total |"
+    sep = "|---|" + "---|" * (len(plats) + 1)
+    out = ["## Embudo: dónde se pierde volumen", "",
+           "Antes de guardar la ficha, cada fuente ya descarta en el listado lo que no cumple precio, año y km "
+           "(fila «vistos en listados»). Las cifras de «motivos» cuentan cada anuncio en todos los filtros que no cumple; "
+           "«solo por este motivo» son los que entrarían si se relajara únicamente ese filtro.", "", head, sep]
+    merc = stats.get("mercado_por_plataforma") or {}
+    if merc:
+        out.append("| vistos en listados (mercado) | " + " | ".join(str(merc.get(p, 0)) for p in plats) + f" | {sum(merc.get(p, 0) for p in plats)} |")
+    for name, c in e["etapas"]:
+        out.append(f"| {name} | " + " | ".join(str(c[p]) for p in plats) + f" | {c['total']} |")
+    out += ["", "**Motivos de descarte** (todos / solo por este motivo)", "", head.replace("Etapa", "Motivo"), sep]
+    for cat, todos, solo in e["motivos"]:
+        out.append(f"| {cat} | " + " | ".join(f"{todos[p]} / {solo[p]}" for p in plats) + f" | {todos['total']} / {solo['total']} |")
+    return out + [""]
+
+
+def _ventas_md(ventas: list[dict]) -> list[str]:
+    out = ["## Tiempo hasta desaparecer del anuncio (estimación de venta)", ""]
+    if not ventas:
+        return out + ["_Aún no hay anuncios desaparecidos: hace falta que `run.py` se ejecute varias veces (p. ej. con `--watch`). "
+                      "Un anuncio se da por desaparecido tras "
+                      "`seguimiento.ejecuciones_para_desaparecido` ejecuciones correctas seguidas sin verlo; en fuentes con "
+                      "cobertura parcial (Coches.net, Wallapop) puede ser que solo haya salido de las páginas accesibles._", ""]
+    from collections import defaultdict
+    from statistics import median
+    g = defaultdict(list)
+    for v in ventas:
+        tramo = "≤ 3.000 €" if v["precio"] <= 3000 else ("3.001–5.000 €" if v["precio"] <= 5000 else "> 5.000 €")
+        g[(f"{v['marca'] or ''} {v['modelo'] or ''}".strip(), tramo)].append(v["dias"] or 0)
+    out += ["| Modelo | Tramo de precio | Anuncios desaparecidos | Mediana de días publicados |", "|---|---|---|---|"]
+    for (mod, tr), d in sorted(g.items(), key=lambda kv: -len(kv[1]))[:30]:
+        out.append(f"| {mod} | {tr} | {len(d)} | {median(d):.1f} |")
+    return out + ["", "_Días contados desde que el buscador vio el anuncio por primera vez (no desde su publicación real)._", ""]
+
+
 def write_report(path: Path, filas: list[dict], p: Params, top_n: int, stats: dict) -> None:
     top = sorted((f for f in filas if f.get("rank")), key=lambda f: f["rank"])[:top_n]
     lines = [f"# Mejores {top_n} coches de segunda mano (Valencia, ≤ {n(p.cfg['presupuesto']['total_max_eur'])} € en total)",
@@ -125,13 +166,17 @@ def write_report(path: Path, filas: list[dict], p: Params, top_n: int, stats: di
         if stats.get("desactivadas"):
             lines.append(f"- Desactivadas por bloqueo antibots (ver RECONOCIMIENTO.md): {', '.join(stats['desactivadas'])}")
         lines.append("")
+    lines += _embudo_md(stats)
+    lines += _ventas_md(stats.get("ventas") or [])
+    lines += ["## Los mejores", ""]
     if not top:
         lines.append("_No hay anuncios aptos todavía._")
     for f in top:
         l = f["listing"]
         risks, checks = _risks(f, p.rel)
         lines += [
-            f"## {f['rank']}. {l.titulo} — {n(l.precio)} € ({n(f['coste']['total'])} € en total)",
+            f"### {f['rank']}. {l.titulo} — {n(l.precio)} € ({n(f['coste']['total'])} € en total)"
+            + (" — **por encima del presupuesto, negociar**" if f.get("estado") == "negociar" else ""),
             "", f"**Puntuación {f['total']:.1f}/100** · {l.plataforma} · {l.ubicacion or 'ubicación sin dato'} · "
                 f"{l.vendedor or 'vendedor sin dato'} · {'automático' if l.cambio == 'automatico' else 'manual' if l.cambio else 'cambio sin dato'} · "
                 f"etiqueta {f['coste_uso']['etiqueta'] or '?'} · [ver anuncio]({l.url})", "",

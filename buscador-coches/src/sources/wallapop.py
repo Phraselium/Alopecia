@@ -28,43 +28,60 @@ class Wallapop(Source):
     metodo = "__NEXT_DATA__ de páginas de categoría por modelo/ciudad + ficha /item/"
     estado = "ok"
 
-    def search(self, since: Optional[str] = None) -> Iterator[Listing]:
+    def _landing(self, url: str, marca: str, modelo: str, seen: set) -> tuple[int, list]:
         f = self.cfg["filtros"]
         pmax = self.cfg["presupuesto"]["precio_anuncio_max_eur"]
         pmin = self.cfg["presupuesto"].get("precio_anuncio_min_eur", 0)
+        try:
+            r = self.client.get(self.name, url)
+        except requests.HTTPError as e:
+            log.info("wallapop: %s no existe (%s)", url, e)
+            return 0, []
+        pp = (next_data(r["text"]) or {}).get("props", {}).get("pageProps", {})
+        items = (pp.get("seoLandingData") or {}).get("items") or []
+        out = []
+        for it in items:
+            if it.get("id") in seen or it.get("sold") or it.get("reserved"):
+                continue
+            seen.add(it.get("id"))
+            car = it.get("itemCar") or {}
+            price, year, km = it.get("price"), to_int(car.get("year")), to_int(car.get("km"))
+            title = norm_text(it.get("title", ""))
+            if marca.lower() not in title and norm_text(modelo) not in title:
+                continue  # resultados "parecidos" de otras marcas
+            self.observe(it["id"], marca, modelo, it.get("title"), year, km, price)
+            if not price or price > pmax or price < pmin or (year and year < f["anio_min"]) or (km and km > f["km_max"]):
+                continue
+            out.append(Listing(
+                plataforma=self.name, id_externo=str(it["id"]), url=f"{BASE}/item/{it['slugId']}",
+                titulo=it.get("title") or "", precio=float(price), anio=year, km=km,
+                combustible=car.get("engineLabel"), cambio=car.get("gearboxLabel"),
+                descripcion=it.get("description") or "", num_fotos=len(it.get("images") or []) or None,
+                garantia=True if it.get("hasWarranty") else None, fuente_dato=url, raw_ref=r["cache_file"]))
+        return len(items), out
+
+    def search(self, since: Optional[str] = None) -> Iterator[Listing]:
+        from ..fraud import segmentos_admitidos
+        segs = segmentos_admitidos(self.cfg)
+        munis = self.cfg["ubicacion"].get("municipios_wallapop", ["valencia"])
+        saturacion = self.src_cfg.get("saturacion", 75)
         seen: set[str] = set()
+        self.coverage = []
         for marca, models in MODELS.items():
             for modelo, (seg, _a) in models.items():
-                if seg not in f["carrocerias"]:
+                if seg not in segs:
                     continue
                 md = norm_text(modelo).replace("!", "").replace(" ", "-")
                 slug = f"{norm_text(marca).replace(' ', '-')}-{md}"
-                url = f"{BASE}/coches-segunda-mano/{slug}/valencia"
-                try:
-                    r = self.client.get(self.name, url)
-                except requests.HTTPError as e:
-                    log.info("wallapop: %s no existe (%s)", url, e)
-                    continue
-                pp = (next_data(r["text"]) or {}).get("props", {}).get("pageProps", {})
-                items = (pp.get("seoLandingData") or {}).get("items") or []
-                for it in items:
-                    if it.get("id") in seen or it.get("sold") or it.get("reserved"):
-                        continue
-                    seen.add(it.get("id"))
-                    car = it.get("itemCar") or {}
-                    price, year, km = it.get("price"), to_int(car.get("year")), to_int(car.get("km"))
-                    if marca.lower() in norm_text(it.get("title", "")) or norm_text(modelo) in norm_text(it.get("title", "")):
-                        self.observe(it["id"], marca, modelo, it.get("title"), year, km, price)
-                    if not price or price > pmax or price < pmin or (year and year < f["anio_min"]) or (km and km > f["km_max"]):
-                        continue
-                    if marca.lower() not in norm_text(it.get("title", "")) and norm_text(modelo) not in norm_text(it.get("title", "")):
-                        continue  # resultados "parecidos" de otras marcas
-                    yield Listing(
-                        plataforma=self.name, id_externo=str(it["id"]), url=f"{BASE}/item/{it['slugId']}",
-                        titulo=it.get("title") or "", precio=float(price), anio=year, km=km,
-                        combustible=car.get("engineLabel"), cambio=car.get("gearboxLabel"),
-                        descripcion=it.get("description") or "", num_fotos=len(it.get("images") or []) or None,
-                        garantia=True if it.get("hasWarranty") else None, fuente_dato=url, raw_ref=r["cache_file"])
+                n, found = self._landing(f"{BASE}/coches-segunda-mano/{slug}/{munis[0]}", marca, modelo, seen)
+                yield from found
+                # La página de categoría devuelve como mucho ~80 anuncios: si viene llena, se consultan los
+                # municipios cercanos (rutas permitidas por robots.txt) para ver anuncios que no caben.
+                if n >= saturacion:
+                    for m in munis[1:]:
+                        _, more = self._landing(f"{BASE}/coches-segunda-mano/{slug}/{m}", marca, modelo, seen)
+                        yield from more
+                    self.coverage.append(f"{marca} {modelo}: página de {munis[0]} llena ({n}); consultados {len(munis) - 1} municipios")
 
     def needs_detail(self, l: Listing) -> bool:
         return True
@@ -84,7 +101,7 @@ class Wallapop(Source):
         l.titulo = (it.get("title") or {}).get("original") or l.titulo
         l.descripcion = (it.get("description") or {}).get("original") or l.descripcion
         l.marca, l.modelo = it.get("brand") or l.marca, it.get("model") or l.modelo
-        l.version = val("version") or l.version
+        l.version = str(val("version")) if val("version") is not None else l.version
         l.km = to_int(val("km")) or l.km
         l.anio = to_int(val("year")) or l.anio
         l.potencia_cv = to_int(val("horsePower")) or l.potencia_cv

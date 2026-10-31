@@ -52,3 +52,40 @@ Notas:
 Otros hallazgos:
 - `urllib.robotparser` no sirve para estos robots.txt (sin comodines); se usa `src/robots.py`.
 - La distancia se calcula con GeoNames (CP o municipio → coordenadas) y se descartan los anuncios a más de `radio_km`. Ejemplo: Gandía, a unos 58 km.
+
+---
+
+# Ampliación de cobertura (31-10-2026, tarde)
+
+- **Radio de 70 km y año mínimo 2006** (configurables). En Coches.net se recorren las provincias que toca el radio
+  (`ubicacion.provincias_cochesnet`: valencia, castellon).
+- **Coches.net**: para cada provincia, la ruta **por marca** (`/{marca}/segunda-mano/{provincia}/`) y la ruta
+  **por modelo** (`/{marca}/{modelo}/segunda-mano/{provincia}/`), cada una hasta `pg=6`, deduplicando por ID. La ruta por
+  marca usa otro orden de relevancia y deja ver anuncios de modelos que en su propia ruta pasan de 6 páginas.
+  Comprobado: `/seat/segunda-mano/castellon/` → provincia 12, 137 anuncios.
+- **Wallapop**: existen las rutas de modelo por municipio (`/coches-segunda-mano/{modelo}/{municipio}`) para Torrent,
+  Paterna, Sagunto, Gandía, Burjassot y Manises (comprobado con Seat Ibiza: 5, 22, 13, 14, 1 y 1 anuncios). Están
+  permitidas por robots.txt (sin `?`). Solo se consultan cuando la página de València de ese modelo viene llena
+  (≥ `fuentes.wallapop.saturacion`, 75), para no multiplicar las peticiones por 7.
+- **Modelos añadidos** (con dato de fiabilidad ADAC/TÜV/OCU o carrocería que ahora se admite con penalización): Audi A1/A3,
+  MINI, Mercedes Clase A/B, smart, Opel Adam/Karl/Meriva, Renault Twingo/Fluence, Skoda Rapid, Seat Toledo, VW Beetle/Jetta,
+  Ford B-Max/Fusion, Hyundai ix20, Kia Venga, Citroën C3 Picasso, Peugeot 301, Toyota Avensis…
+  Los monovolúmenes grandes (Zafira, Scénic, Touran, C-Max, Xsara/C4 Picasso, Verso) se reconocen para excluirlos.
+
+## Fuentes de fiabilidad de motores diésel
+Verificado leyendo el artículo original (robots.txt de largus.fr lo permite):
+**L'argus, «Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI…», 28-10-2014**, págs. 2–5.
+| Motor | Problema (según la fuente) | Años |
+|---|---|---|
+| PSA 1.6 HDi 16v (= Ford 1.6 TDCi) | Inyectores, volante motor, turbo, embrague | hasta 2010 |
+| PSA 1.6 HDi 8v | Inyectores Continental (tirones) hasta 04-2014; la polea del cigüeñal desgasta la correa | 2010–2014 |
+| PSA 1.4 HDi (= Ford 1.4 TDCi) | Fugas de inyectores (juntas hasta 04-2004, tubos hasta 01-2008); FAP Euro 5 hasta 07-2013 | 2001–2013 |
+| Renault 1.5 dCi (K9K) | Cojinetes de biela con desgaste anormal y riesgo de rotura (cerca del 1 %) | hasta 2007 |
+| Fiat 1.3 JTD/Multijet (también Ford Ka, Suzuki Splash/Swift) | Riesgo de rotura por dilución del aceite | — |
+| Opel 1.3 CDTI | Soportes/juntas de inyectores (olor a gasóleo) | hasta 06-2009 |
+| VW 1.6 TDI (common rail) | Fuga de refrigerante por la bomba de agua | — |
+
+Además: campaña EA189 (dieselgate) del 1.2/1.6/2.0 TDI (autofacil.es, motor.es) y garantía de 8 años del depósito
+AdBlue de los BlueHDi de Stellantis (nota de prensa de la OCU, 27-12-2024).
+**PENDIENTES** (sin fuente seria): 1.2/1.4 TDI de 3 cilindros (más allá de la campaña), Opel 1.7/1.6 CDTi, Toyota 1.4 D-4D,
+Hyundai/Kia CRDi y Suzuki 1.3 DDiS. Entran con la fiabilidad limitada a neutra (`filtros.diesel.sin_fuente: penalizar`).

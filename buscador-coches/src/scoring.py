@@ -157,10 +157,31 @@ def engine_adjust(l: Listing, rel: dict) -> tuple[float, list[dict]]:
 
 
 # ---------- subpuntuaciones ----------
+def motor_doc(l: Listing, rel: dict) -> bool:
+    return any(e["motor"] == l.motor_key and e["marca"] in ("(todas)", l.marca) and l.anio is not None
+               and e["anio_desde"] <= l.anio <= e["anio_hasta"] for e in rel.get("motores") or [])
+
+
 def s_fiabilidad(l: Listing, p: Params) -> dict:
     base, pend = model_score(l.modelo_key or "", l.marca or "", p)
+    diesel_pend = l.combustible == "diesel" and not motor_doc(l, p.rel)
+    base_ef = min(base, p.neutro) if diesel_pend else base
     adj, hits = engine_adjust(l, p.rel)
-    return {"base": base, "pendiente": pend, "ajuste": adj, "problemas": hits, "score": clamp(base + adj)}
+    return {"base": base, "base_ef": base_ef, "pendiente": pend, "diesel_pendiente": diesel_pend,
+            "ajuste": adj, "problemas": hits, "score": clamp(base_ef + adj)}
+
+
+def penal_carroceria(l: Listing, cfg: dict) -> float:
+    return float((cfg["scoring"].get("penalizaciones") or {}).get("carroceria", {}).get(l.carroceria, 0))
+
+
+def estado_presupuesto(total: float, cfg: dict) -> str:
+    pr = cfg["presupuesto"]
+    if total <= pr["total_max_eur"]:
+        return "sí"
+    if total <= pr["total_max_eur"] + pr.get("margen_negociacion_eur", 0):
+        return "negociar"
+    return "no"
 
 
 def s_precio(l: Listing, mediana: Optional[float], cfg: dict) -> dict:
@@ -255,14 +276,16 @@ def score_all(listings: list[Listing], p: Params, costes: dict[str, dict],
         an = s_anuncio(l, p.cfg)
         us = s_coste_uso(l, p)
         sg = s_seguridad(l, p)
+        pen = penal_carroceria(l, p.cfg)
         total = (w["fiabilidad"] * f["score"] + w["precio"] * pr["score"] + w["km_edad"] * ke["score"]
-                 + w["anuncio"] * an["score"] + w["coste_uso"] * us["score"] + w["seguridad"] * sg["score"])
+                 + w["anuncio"] * an["score"] + w["coste_uso"] * us["score"] + w["seguridad"] * sg["score"]) - pen
         c = dict(costes[l.uid])
         c["primer_anio"] = c["total"] + (us["seguro"] or 0)
         rows.append({"listing": l, "mediana": med, "nivel_mediana": nivel, "n_mediana": n, "mercado": mm,
                      "fiabilidad": f, "precio": pr, "km_edad": ke, "anuncio": an, "coste_uso": us, "seguridad": sg,
                      "total": total, "coste": c,
-                     "apto": c["total"] <= p.cfg["presupuesto"]["total_max_eur"]})
+                     "penalizacion": pen, "estado": estado_presupuesto(c["total"], p.cfg),
+                     "apto": estado_presupuesto(c["total"], p.cfg) != "no"})
     aptos = sorted((r for r in rows if r["apto"]), key=lambda r: -r["total"])
     # mismo desempate que la fórmula del Excel: orden de fila
     order = {id(r): i for i, r in enumerate(rows)}

@@ -11,10 +11,13 @@ from .dedupe import dedupe
 from .extract import extract_pro_signals, extract_signals
 from .fraud import fraud_reasons, search_filter_reasons
 from .models import Listing
-from .normalize import (norm_text, norm_brand, norm_engine, norm_fuel, norm_gearbox, norm_model, norm_seller,
+from .normalize import (body_from_text, norm_text, norm_brand, norm_engine, norm_fuel, norm_gearbox, norm_model, norm_seller,
                         potencia_cv)
 from .geo import distance_from
 from .scoring import Params, etiqueta, market_medians, medians, score_all
+
+# Modelos en los que 'cross/stepway' indica una versión SUV real (en el resto puede ser parte del nombre)
+SUV_SENSIBLE = {"Dacia Sandero", "Citroën C3", "Volkswagen Polo", "Toyota Yaris", "Kia Ceed", "Fiat Panda", "Suzuki Swift"}
 
 CENTER = (39.4699, -0.3763)  # se sobrescribe con config en process()
 
@@ -29,8 +32,9 @@ def enrich(l: Listing) -> Listing:
     l.modelo = modelo
     # El segmento sale de la tabla de modelos; si el modelo no está, se conserva lo que diga la plataforma
     l.carroceria = seg or l.carroceria
-    if re.search(r"\b(cc|cabrio\w*|coup[eé]|roadster|descapotable)\b", norm_text(f"{l.titulo} {l.version or ''}")):
-        l.carroceria = "cabrio"
+    body = body_from_text(f"{l.titulo} {l.version or ''}")
+    if body and not (body == "suv" and seg in ("utilitario", "compacto") and l.modelo_key not in SUV_SENSIBLE):
+        l.carroceria = body
     l.modelo_key = f"{l.marca} {l.modelo}" if l.marca and l.modelo else None
     l.motor_key = norm_engine(l.version, l.titulo, f"{l.cilindrada_cc}cc" if l.cilindrada_cc else None)
     l.combustible = norm_fuel(l.combustible, txt, l.descripcion[:500])
@@ -60,22 +64,82 @@ class Result:
     descartados: list[tuple[Listing, list[str]]]
     filas: list[dict]
     avisos: dict[str, str]
+    embudo: dict | None = None
+
+
+def _categoria(motivo: str) -> str:
+    """Agrupa los motivos de descarte en categorías estables para el embudo."""
+    m = motivo
+    if "por debajo de la mediana" in m:
+        return "fraude: precio anómalo (> 35 % bajo la mediana)"
+    for pref, cat in (("precio ", "precio fuera de rango"), ("sin precio", "sin precio"), ("año ", "año < mínimo"),
+                      ("km ", "km > máximo"), ("a ", "distancia > radio"), ("combustible desconocido", "combustible desconocido"),
+                      ("combustible ", "combustible excluido"), ("diésel con etiqueta", "diésel sin etiqueta B"),
+                      ("diésel sin fuente", "diésel sin fuente (modo excluir)")):
+        if m.startswith(pref):
+            return cat
+    if m.startswith("km no creíbles"):
+        return "km no creíbles (error del anuncio)"
+    if m.startswith("carrocería"):
+        return "carrocería " + m.split(" ", 1)[1]
+    if m.startswith("texto:"):
+        return "fraude: texto sospechoso"
+    if "por debajo de la mediana" in m:
+        return "fraude: precio anómalo"
+    return m
+
+
+def embudo(listings, descartados, deduplicados, filas) -> dict:
+    plats = sorted({l.plataforma for l in listings})
+    def row(name, items):
+        c = {p: 0 for p in plats}
+        for l in items:
+            c[l.plataforma] += 1
+        c["total"] = sum(c.values())
+        return (name, c)
+    rows = [row("recogidos (fichas guardadas)", listings)]
+    filt = [(l, [x[len("filtro: "):] for x in m if x.startswith("filtro: ")]) for l, m in descartados]
+    frau = [(l, [x[len("fraude/problema: "):] for x in m if x.startswith("fraude/problema: ")]) for l, m in descartados]
+    cats: dict[str, list] = {}
+    excl: dict[str, list] = {}
+    for l, ms in filt + frau:
+        cs = sorted({_categoria(m) for m in ms})
+        for c in cs:
+            cats.setdefault(c, []).append(l)
+        if len(cs) == 1:
+            excl.setdefault(cs[0], []).append(l)
+    detalle = []
+    for c in sorted(cats, key=lambda k: -len(cats[k])):
+        n, ex = row(c, cats[c]), row(c, excl.get(c, []))
+        detalle.append((c, n[1], ex[1]))
+    pasan_filtros = [l for l in listings if l.uid not in {x.uid for x, m in filt if m}]
+    rows.append(row("pasan los filtros", pasan_filtros))
+    rows.append(row("fusionados como duplicados", deduplicados))
+    rows.append(row("limpios (sin fraude)", [f["listing"] for f in filas]))
+    rows.append(row("dentro de presupuesto", [f["listing"] for f in filas if f.get("estado") == "sí"]))
+    rows.append(row("caben negociando", [f["listing"] for f in filas if f.get("estado") == "negociar"]))
+    rows.append(row("fuera de presupuesto (> margen)", [f["listing"] for f in filas if f.get("estado") == "no"]))
+    return {"plataformas": plats, "etapas": rows, "motivos": detalle}
 
 
 def process(listings: list[Listing], p: Params, motores_fiables: set[str], market: Optional[list] = None) -> Result:
     global CENTER
     CENTER = (p.cfg["ubicacion"]["lat"], p.cfg["ubicacion"]["lon"])
+    p.cfg["_anio_actual"] = p.anio_actual
     descartados = []
     candidatos = []
     for l in listings:
         enrich(l)
         l.etiqueta_dgt = etiqueta(l, p.fiscal)
-        r = search_filter_reasons(l, p.cfg, motores_fiables)
+        r = search_filter_reasons(l, p.cfg, p.rel)
         if r:
             descartados.append((l, ["filtro: " + x for x in r]))
         else:
             candidatos.append(l)
+    antes = list(candidatos)
     candidatos = dedupe(candidatos, p.cfg)
+    keep = {l.uid for l in candidatos}
+    deduplicados = [l for l in antes if l.uid not in keep]
     meds = medians(candidatos, p.cfg)
     mkt = market_medians(candidatos, market or [], p.cfg)
     limpios = []
@@ -96,6 +160,12 @@ def process(listings: list[Listing], p: Params, motores_fiables: set[str], marke
     avisos = {}
     for f in filas:
         a = list(f["coste"]["avisos"])
+        if f.get("estado") == "negociar":
+            a.insert(0, f"por encima del presupuesto ({f['coste']['total']:.0f} €), negociar")
+        if f["fiabilidad"].get("diesel_pendiente"):
+            a.append("diésel: motor sin fuente de fiabilidad (fiabilidad limitada a neutra)")
+        if f.get("penalizacion"):
+            a.append(f"carrocería {f['listing'].carroceria}: -{f['penalizacion']:.0f} puntos")
         if f["listing"].distancia_km is None:
             a.append("distancia no verificable (el anuncio solo indica la provincia): confirmar que está a <= "
                      f"{p.cfg['ubicacion']['radio_km']} km")
@@ -105,4 +175,4 @@ def process(listings: list[Listing], p: Params, motores_fiables: set[str], marke
             a.append(f"mediana con solo {f['n_mediana']} anuncio(s)")
         avisos[f["listing"].uid] = "; ".join(a)
     log.info("Anuncios: %d entrada, %d limpios, %d descartados", len(listings), len(limpios), len(descartados))
-    return Result(limpios, descartados, filas, avisos)
+    return Result(limpios, descartados, filas, avisos, embudo(listings, descartados, deduplicados, filas))

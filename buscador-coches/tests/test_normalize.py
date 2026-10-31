@@ -70,3 +70,7 @@ def test_pro_signals():
     assert s["gastos_gestion_eur"] == 290
     assert extract_pro_signals("Transferencia incluida. Garantía 1 año")["gastos_incluyen_transferencia"]
     assert extract_pro_signals("Garantía 1 año")["garantia_meses"] == 12
+
+
+def test_engine_numeric_version():
+    assert norm_engine(1.6, "Seat Ibiza") == "1.6"

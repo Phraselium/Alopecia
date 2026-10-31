@@ -36,6 +36,18 @@ class Store:
         path.parent.mkdir(parents=True, exist_ok=True)
         self.db = sqlite3.connect(path)
         self.db.executescript(SCHEMA)
+        self._migrate()
+
+    def _migrate(self) -> None:
+        """Columnas añadidas después de la primera versión (bases de datos existentes)."""
+        for table, cols in {"listings": {"gone_at": "TEXT", "missed": "INTEGER DEFAULT 0", "alerted_at": "TEXT"},
+                            "mercado": {"first_seen": "TEXT", "gone_at": "TEXT", "missed": "INTEGER DEFAULT 0"}}.items():
+            have = {r[1] for r in self.db.execute(f"PRAGMA table_info({table})")}
+            for c, typ in cols.items():
+                if c not in have:
+                    self.db.execute(f"ALTER TABLE {table} ADD COLUMN {c} {typ}")
+        self.db.execute("UPDATE mercado SET first_seen = last_seen WHERE first_seen IS NULL")
+        self.db.commit()
 
     def known(self, plataforma: str) -> set[str]:
         return {r[0] for r in self.db.execute("SELECT uid FROM listings WHERE plataforma=?", (plataforma,))}
@@ -59,10 +71,48 @@ class Store:
     def add_market(self, rows: list[dict]) -> None:
         now = _now()
         self.db.executemany(
-            "INSERT OR REPLACE INTO mercado(uid, plataforma, marca, modelo, titulo, anio, km, precio, last_seen) "
-            "VALUES (:uid, :plataforma, :marca, :modelo, :titulo, :anio, :km, :precio, :now)",
+            "INSERT INTO mercado(uid, plataforma, marca, modelo, titulo, anio, km, precio, last_seen, first_seen, missed) "
+            "VALUES (:uid, :plataforma, :marca, :modelo, :titulo, :anio, :km, :precio, :now, :now, 0) "
+            "ON CONFLICT(uid) DO UPDATE SET precio=excluded.precio, km=excluded.km, last_seen=excluded.last_seen, "
+            "missed=0, gone_at=NULL",
             [dict(r, now=now) for r in rows])
         self.db.commit()
+
+    def mark_missing(self, plataforma: str, seen_listings: set[str], seen_market: set[str], runs_needed: int) -> dict:
+        """Tras una ejecución correcta de la plataforma: lo que no se ha visto suma un 'fallo'; con
+        runs_needed fallos seguidos se fija gone_at = última vez visto. Si reaparece, se borra."""
+        out = {}
+        for table, seen in (("listings", seen_listings), ("mercado", seen_market)):
+            if not seen:
+                continue  # sin observaciones (p. ej. fuente vacía): no se marca nada
+            rows = self.db.execute(f"SELECT uid FROM {table} WHERE plataforma=? AND gone_at IS NULL", (plataforma,)).fetchall()
+            missing = [(u,) for (u,) in rows if u not in seen]
+            self.db.executemany(f"UPDATE {table} SET missed = COALESCE(missed,0) + 1 WHERE uid=?", missing)
+            self.db.executemany(f"UPDATE {table} SET missed = 0, gone_at = NULL WHERE uid=?", [(u,) for u in seen])
+            cur = self.db.execute(f"UPDATE {table} SET gone_at = last_seen WHERE plataforma=? AND gone_at IS NULL "
+                                  f"AND missed >= ?", (plataforma, runs_needed))
+            out[table] = cur.rowcount
+        self.db.commit()
+        return out
+
+    def new_since(self, ts: str) -> set[str]:
+        return {r[0] for r in self.db.execute("SELECT uid FROM listings WHERE first_seen >= ?", (ts,))}
+
+    def mark_alerted(self, uids: list[str]) -> None:
+        now = _now()
+        self.db.executemany("UPDATE listings SET alerted_at=? WHERE uid=?", [(now, u) for u in uids])
+        self.db.commit()
+
+    def alerted(self) -> set[str]:
+        return {r[0] for r in self.db.execute("SELECT uid FROM listings WHERE alerted_at IS NOT NULL")}
+
+    def sale_times(self) -> list[dict]:
+        """Anuncios desaparecidos (mercado y candidatos) con días publicados según nuestras observaciones."""
+        cur = self.db.execute(
+            "SELECT plataforma, marca, modelo, titulo, anio, km, precio, first_seen, gone_at, "
+            "julianday(gone_at) - julianday(first_seen) AS dias FROM mercado WHERE gone_at IS NOT NULL")
+        cols = [c[0] for c in cur.description]
+        return [dict(zip(cols, r)) for r in cur]
 
     def market(self, max_age_days: int = 60) -> list[dict]:
         cur = self.db.execute("SELECT uid, plataforma, marca, modelo, titulo, anio, km, precio FROM mercado "

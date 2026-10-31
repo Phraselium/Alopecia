@@ -16,8 +16,19 @@ def keyword_flags(l: Listing, palabras: list[str]) -> list[str]:
     return hits
 
 
-def search_filter_reasons(l: Listing, cfg: dict, motores_fiables: set[str]) -> list[str]:
-    """Motivos por los que el anuncio no cumple los filtros de búsqueda del config."""
+def segmentos_admitidos(cfg: dict) -> set[str]:
+    f = cfg["filtros"]
+    return set(f["carrocerias"]) | set(f.get("carrocerias_penalizadas") or [])
+
+
+def motor_documentado(l: Listing, rel: dict) -> bool:
+    """¿Hay una entrada en reliability.yaml → motores para este motor (marca o '(todas)') y año?"""
+    return any(e["motor"] == l.motor_key and e["marca"] in ("(todas)", l.marca) and l.anio is not None
+               and e["anio_desde"] <= l.anio <= e["anio_hasta"] for e in rel.get("motores") or [])
+
+
+def search_filter_reasons(l: Listing, cfg: dict, rel: dict | None = None) -> list[str]:
+    """Motivos de EXCLUSIÓN (filtros duros). Lo que solo penaliza se trata en scoring."""
     f, p = cfg["filtros"], cfg["presupuesto"]
     r = []
     if l.precio is None:
@@ -30,24 +41,25 @@ def search_filter_reasons(l: Listing, cfg: dict, motores_fiables: set[str]) -> l
         r.append(f"año {l.anio}")
     if l.km is None or l.km > f["km_max"]:
         r.append(f"km {l.km}")
+    elif l.anio and l.km < f.get("km_min_creible", 1000) and (cfg.get("_anio_actual", 2026) - l.anio) > 2:
+        r.append(f"km no creíbles ({l.km} km en un coche de {l.anio}): probable error del anuncio")
     radio = cfg["ubicacion"]["radio_km"]
     if l.distancia_km is not None and l.distancia_km > radio:
         r.append(f"a {l.distancia_km:.0f} km (> {radio} km)")
-    if l.carroceria not in f["carrocerias"]:
+    if l.carroceria not in segmentos_admitidos(cfg):
         r.append(f"carrocería {l.carroceria or 'desconocida'}")
     comb = l.combustible
-    if comb == "diesel":
+    if comb is None:
+        r.append("combustible desconocido")
+    elif comb in f.get("combustibles_excluidos", []):
+        r.append(f"combustible {comb}")
+    elif comb == "diesel":
         d = f["diesel"]
-        if not d["permitido"]:
-            r.append("diésel no permitido")
-        else:
-            orden = ["A", "B", "C", "ECO", "CERO"]
-            if l.etiqueta_dgt not in orden or orden.index(l.etiqueta_dgt) < orden.index(d["etiqueta_min"]):
-                r.append(f"diésel con etiqueta {l.etiqueta_dgt}")
-            if d.get("requiere_motor_fiable") and l.motor_key not in motores_fiables:
-                r.append(f"diésel con motor no marcado como fiable ({l.motor_key})")
-    elif comb not in f["combustibles"]:
-        r.append(f"combustible {comb or 'desconocido'}")
+        orden = ["A", "B", "C", "ECO", "CERO"]
+        if l.etiqueta_dgt not in orden or orden.index(l.etiqueta_dgt) < orden.index(d["etiqueta_min"]):
+            r.append(f"diésel con etiqueta {l.etiqueta_dgt}")
+        if d.get("sin_fuente") == "excluir" and not motor_documentado(l, rel or {}):
+            r.append(f"diésel sin fuente de fiabilidad del motor ({l.motor_key})")
     return r
 
 

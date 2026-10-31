@@ -202,6 +202,63 @@ motores:
      problema: "Familia Prince EP6 atmosférico: se citan problemas de cadena y consumo de aceite, pero solo en foros. Sin ajuste hasta tener fuente seria",
      revisar: "Ruido de cadena en frío, consumo de aceite, humo azul",
      estado: PENDIENTE, fuente: "sin fuente de autoridad (foros)"}
+  # --- Diésel (añadido 31-10-2026). La magnitud del ajuste es criterio; el problema tiene fuente. ---
+  - {marca: "(todas)", motor: "1.6 HDi", anio_desde: 2004, anio_hasta: 2010, ajuste: -20,
+     problema: "PSA DV6 16v (producido hasta 2010): fallos de inyectores, volante motor, turbo y embrague",
+     revisar: "Humo y silbido de turbo, juntas de inyector (carbonilla), volante bimasa (vibración al ralentí), factura de turbo/embrague",
+     estado: confirmado, fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_2.html"}
+  - {marca: "(todas)", motor: "1.6 HDi", anio_desde: 2011, anio_hasta: 2014, ajuste: -10,
+     problema: "PSA DV6 8v: inyectores Continental con tirones hasta abril de 2014; la polea del cigüeñal desgasta la correa de distribución",
+     revisar: "Tirones en aceleración, estado de la correa y de la polea del cigüeñal, factura de distribución",
+     estado: confirmado, fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_2.html"}
+  - {marca: "(todas)", motor: "1.6 HDi", anio_desde: 2015, anio_hasta: 2020, ajuste: -5,
+     problema: "1.6 BlueHDi: depósito de AdBlue defectuoso; Stellantis amplió la garantía de sustitución a 8 años (acuerdo OCU/BEUC)",
+     revisar: "Testigo de AdBlue/anticontaminación; si se cambió el depósito, factura o si entra en la ampliación",
+     estado: confirmado, fuente: "OCU, nota de prensa 27-12-2024: https://www.ocu.org/organizacion/prensa/notas-de-prensa/2024/adblue271224"}
+  - {marca: "(todas)", motor: "1.6 TDCi", anio_desde: 2004, anio_hasta: 2010, ajuste: -20,
+     problema: "Ford 1.6 TDCi = PSA DV6 16v: mismos fallos de inyectores, turbo y volante motor",
+     revisar: "Igual que 1.6 HDi 16v",
+     estado: "probable (mismo motor que el 1.6 HDi; la fuente habla de PSA)", fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_2.html"}
+  - {marca: "(todas)", motor: "1.6 TDCi", anio_desde: 2011, anio_hasta: 2014, ajuste: -10,
+     problema: "Ford 1.6 TDCi = PSA DV6 8v: inyectores y desgaste de la correa por la polea",
+     revisar: "Igual que 1.6 HDi 8v", estado: "probable (mismo motor)", fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_2.html"}
+  - {marca: "(todas)", motor: "1.4 HDi", anio_desde: 2001, anio_hasta: 2008, ajuste: -10,
+     problema: "PSA DV4: fugas en inyectores (juntas hasta 01-04-2004, tubos rígidos hasta 31-01-2008)",
+     revisar: "Olor a gasóleo, fugas en inyectores, arranque en caliente", estado: confirmado, fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_2.html"}
+  - {marca: "(todas)", motor: "1.4 HDi", anio_desde: 2009, anio_hasta: 2013, ajuste: -5,
+     problema: "1.4 HDi 68 FAP Euro 5: riesgo de obstrucción del filtro de partículas hasta julio de 2013 (regeneración)",
+     revisar: "Testigo de FAP, regeneraciones frecuentes", estado: confirmado, fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_2.html"}
+  - {marca: "(todas)", motor: "1.4 TDCi", anio_desde: 2001, anio_hasta: 2008, ajuste: -10,
+     problema: "Ford 1.4 TDCi = PSA DV4: fugas en inyectores", revisar: "Igual que 1.4 HDi",
+     estado: "probable (mismo motor)", fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_2.html"}
+  - {marca: "(todas)", motor: "1.5 dCi", anio_desde: 2001, anio_hasta: 2007, ajuste: -25,
+     problema: "Renault K9K: desgaste anormal de los cojinetes de biela que puede acabar en rotura del motor (afectó a cerca del 1 % hasta 2007)",
+     revisar: "Ruido de bielas en caliente, presión de aceite, facturas de cambio de aceite cada 10-15.000 km; si se cambiaron cojinetes",
+     estado: confirmado, fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_3.html"}
+  - {marca: "(todas)", motor: "1.5 dCi", anio_desde: 2008, anio_hasta: 2018, ajuste: 0,
+     problema: "La fuente sitúa el problema de los cojinetes hasta 2007; después no señala fallos graves específicos",
+     revisar: "Historial de cambios de aceite, EGR y FAP en uso urbano", estado: "probable", fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_3.html"}
+  - {marca: "(todas)", motor: "1.3 Multijet", anio_desde: 2005, anio_hasta: 2018, ajuste: -15,
+     problema: "Fiat 1.3 JTD/Multijet (también Ford Ka, Suzuki Splash y Swift): riesgo de rotura del motor por dilución del aceite",
+     revisar: "Nivel de aceite que SUBE (dilución por gasóleo), regeneraciones del FAP, cambios de aceite frecuentes",
+     estado: confirmado, fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_5.html"}
+  - {marca: "Ford", motor: "1.3 TDCi", anio_desde: 2008, anio_hasta: 2016, ajuste: -15,
+     problema: "Ford Ka 1.3 TDCi = Fiat 1.3 Multijet: riesgo de rotura por dilución del aceite",
+     revisar: "Igual que 1.3 Multijet", estado: "confirmado (la fuente cita el Ford Ka)",
+     fuente: "L'argus (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_5.html"}
+  - {marca: "(todas)", motor: "1.3 CDTi", anio_desde: 2003, anio_hasta: 2009, ajuste: -5,
+     problema: "Opel 1.3 CDTI: olor a gasóleo por soportes o juntas de inyectores hasta junio de 2009",
+     revisar: "Olor a gasóleo en el habitáculo, juntas de inyector", estado: confirmado, fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_5.html"}
+  - {marca: "(todas)", motor: "1.6 TDI", anio_desde: 2009, anio_hasta: 2015, ajuste: -10,
+     problema: "VAG EA189: fuga de refrigerante por la bomba de agua (L'argus) y campaña de emisiones (dieselgate) con actualización de software y rectificador de flujo",
+     revisar: "Nivel de refrigerante; comprobar con el bastidor que la campaña EA189 está hecha (si no, puede afectar a la ITV)",
+     estado: confirmado, fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_4.html ; campaña EA189 en España: https://www.autofacil.es/lista-coches-afectados-fraude-volkswagen-asciende-683626-unidades-espana"}
+  - {marca: "(todas)", motor: "1.2 TDI", anio_desde: 2009, anio_hasta: 2014, ajuste: -5,
+     problema: "VAG 1.2 TDI EA189: incluido en la campaña de emisiones (actualización de software)",
+     revisar: "Comprobar con el bastidor que la campaña EA189 está hecha; FAP en uso urbano",
+     estado: "confirmado (campaña); fiabilidad mecánica PENDIENTE", fuente: "https://www.motor.es/noticias/deberia-llevar-tdi-revision-dieselgate-201630418.html"}
+  # Pendientes (sin fuente seria encontrada): 1.2/1.4 TDI 3 cil. (más allá de la campaña), 1.7 CDTi, 1.6 CDTi,
+  # 1.4 D-4D, Hyundai/Kia 1.1/1.4/1.6 CRDi, 1.3 DDiS. Entran con la fiabilidad del modelo limitada a neutra.
   # Motores con buena fama (Toyota VVT-i/HSD, Honda i-VTEC, Mazda Skyactiv-G, Kia/Hyundai MPI, VAG MPI):
   # PENDIENTE, no se encontró fuente de autoridad. Sin ajuste positivo hasta tenerla.
 

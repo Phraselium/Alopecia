@@ -38,3 +38,41 @@ pytest -q                         # incluye recálculo del Excel con LibreOffice
 - `reliability.yaml`: fiabilidad por modelo (TÜV, ADAC Pannenstatistik 2025, OCU por marca) y problemas de motor con fuente.
 
 Datos geográficos: GeoNames (CC BY 4.0), que se descargan solos en `data/geo/`.
+
+## Alertas y ejecución periódica
+
+### Telegram (bot propio)
+1. En Telegram, abre **@BotFather** → `/newbot` y copia el token.
+2. Escribe un mensaje a tu bot y abre `https://api.telegram.org/bot<TOKEN>/getUpdates` para ver tu `chat.id`.
+3. `cp .env.example .env` y rellena `TELEGRAM_BOT_TOKEN` y `TELEGRAM_CHAT_ID`. `.env` está en `.gitignore`, así que no se sube.
+
+Se avisa de cada anuncio **nuevo** con puntuación ≥ `alertas.umbral_puntuacion` (55 por defecto), dentro de presupuesto
+o en el margen de negociación, y que no haya caído en los filtros de fraude. El mensaje lleva modelo, año, km, coste total,
+puntuación, avisos y enlace. Sin `.env`, las alertas solo se escriben en `logs/alertas.log`.
+
+### Opción A: dejarlo corriendo
+```bash
+python run.py --watch        # ejecuta, avisa y repite cada alertas.intervalo_horas (4 h)
+```
+
+### Opción B: programarlo (recomendado; sobrevive a reinicios)
+**Linux / macOS (cron)**: `crontab -e` y añade (ajusta rutas):
+```
+17 */4 * * * cd /ruta/a/buscador-coches && /usr/bin/python3 run.py >> logs/cron.log 2>&1
+```
+**Windows (Programador de tareas)**: en PowerShell (ajusta rutas):
+```powershell
+schtasks /Create /TN "BuscadorCoches" /SC HOURLY /MO 4 /ST 08:17 `
+  /TR "cmd /c cd /d C:\ruta\buscador-coches && C:\Python313\python.exe run.py >> logs\cron.log 2>&1"
+```
+o en la interfaz: Programador de tareas → Crear tarea básica → Diariamente → Repetir cada 4 horas →
+Iniciar un programa: `python.exe`, argumentos `run.py`, iniciar en `C:\ruta\buscador-coches`.
+
+Cada ejecución solo abre la ficha de los anuncios nuevos. La caché de listados dura `http.cache_ttl_horas` (3 h), así que
+cada ejecución de 4 h ve los anuncios recientes.
+
+### Tiempo hasta la venta
+Un anuncio (de los candidatos y de todo el mercado visto) se marca como desaparecido tras
+`seguimiento.ejecuciones_para_desaparecido` ejecuciones correctas seguidas sin verlo. `informe.md` resume la mediana de
+días por modelo y tramo de precio. En fuentes con cobertura parcial (tope de páginas de Coches.net, ~80 por página en
+Wallapop), desaparecer puede significar haber salido de las páginas accesibles: es una estimación.

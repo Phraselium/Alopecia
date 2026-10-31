@@ -2,7 +2,7 @@
 
 Datos tal como se guardan en `data/listings.sqlite` tras la extracción y normalización, antes de los filtros y del scoring. Sirve para comprobar que cada fuente extrae bien los campos.
 
-## ocasionplus — 10 anuncios guardados (muestra de 10)
+## ocasionplus — 25 anuncios guardados (muestra de 25)
 
 | Título | Precio | Contado / financiado | Año | Km | Combustible | Cambio | Vendedor | Ubicación | Fotos | Garantía (meses) | Gastos (€) | ITV / Libro / Correa / Prop. | Enlace |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -16,8 +16,23 @@ Datos tal como se guardan en `data/listings.sqlite` tras la extracción y normal
 | Ford Ka 1.3 Collection (70 CV) | 3900.0 | 3900 / 1700 | 2008 | 115071 | gasolina | manual | profesional | Valencia - Gandía (Gandía, 46702) | 22 |  | 350.0 | sí /  /  /  | [ver](https://www.ocasionplus.com/coches-segunda-mano/ford-ka-13-collection-con-115071km-2008-saqsyqa5) |
 | Dacia Logan 1.6 Break Laureate (90 CV) | 7990.0 | 7990 / 2500 | 2009 | 69200 | gasolina | manual | profesional | Valencia - Gandía (Gandía, 46702) | 27 |  | 350.0 | sí /  /  /  | [ver](https://www.ocasionplus.com/coches-segunda-mano/dacia-logan-16-break-laureate-con-69200km-2009-pbtjyqab) |
 | Ligier X-TOO S XTOO (5 CV) | 5800.0 | 5800 / 3990 | 2009 | 65532 | diesel |  | profesional | Valencia - Alzira (Alzira, 46600) | 13 |  | 350.0 | sí /  /  /  | [ver](https://www.ocasionplus.com/coches-segunda-mano/ligier-x-too-s-4-kw-(5-cv)-con-65532km-2009) |
+| Lancia Ypsilon 1.4 8v Platino (77 CV) | 4490.0 | 4490 / 4490 | 2007 | 126555 | gasolina | manual | profesional | Valencia - Paterna (Paterna, 46980) | 32 | 12 | 350.0 | sí / sí /  /  | [ver](https://www.ocasionplus.com/coches-segunda-mano/lancia-ypsilon-14-8v-platino-con-126555km-2007-b1himqaq) |
+| Peugeot 107 1.0i Urban (68 CV) | 2200.0 | 2200 / 2200 | 2007 | 150561 | gasolina | manual | profesional | Valencia - Gandía (Gandía, 46702) | 33 | 12 | 350.0 | sí / sí /  /  | [ver](https://www.ocasionplus.com/coches-segunda-mano/peugeot-107-10i-urban-con-150561km-2007-aynqvqai) |
+| Peugeot 5008 1.6 VTi Access (120 CV) | 4990.0 | 4990 / 4990 | 2015 | 217659 | gasolina | manual | profesional | Valencia - Pista de Silla - Macroce | 29 | 12 | 350.0 | sí / sí /  /  | [ver](https://www.ocasionplus.com/coches-segunda-mano/peugeot-5008-16-vti-access-con-217659km-2015-agtghqay) |
+| Renault Clio Confort Expression dCi (85 CV) | 2700.0 | 2700 / 2700 | 2006 | 198577 | diesel | manual | profesional | Valencia - Gandía (Gandía, 46702) | 35 |  | 350.0 | sí /  /  /  | [ver](https://www.ocasionplus.com/coches-segunda-mano/renault-clio-confort-expression-dci-con-198577km-2006-b1sibqaa) |
+| Renault Clio 1.4 16v Dynamique (100 CV) | 4700.0 | 4700 / 4500 | 2006 | 106165 | gasolina | manual | profesional | Valencia - Pista de Silla - Macroce | 35 | 12 | 350.0 | sí /  /  / 1 | [ver](https://www.ocasionplus.com/coches-segunda-mano/renault-clio-14-16v-dynamique-con-106165km-2006-zgabhqan) |
+| Mercedes Clase C Sportcoupe 220 CDI (143 CV) | 4900.0 | 4900 / 4900 | 2006 | 205957 | diesel | manual | profesional | Valencia - Paterna (Paterna, 46980) | 27 | 12 | 350.0 | sí / sí /  /  | [ver](https://www.ocasionplus.com/coches-segunda-mano/mercedes-clase-c-c-sportcoupe-220-cdi-con-205957km-2006-ykumxqa5) |
+| Seat Ibiza 1.4 TDI Reference (80 CV) | 3800.0 | 3800 / 3800 | 2007 | 140744 | diesel | manual | profesional | Valencia - Sagunto (Sagunto, 46500) | 25 |  | 350.0 | sí /  /  /  | [ver](https://www.ocasionplus.com/coches-segunda-mano/seat-ibiza-14-tdi-reference-con-140744km-2007-ychajqan) |
+| Citroën Xsara Picasso 1.6 SX Top (110 CV) | 1890.0 | 1890 / 1890 | 2006 | 218806 | gasolina | manual | profesional | Valencia - Pista de Silla - Macroce | 33 |  | 350.0 | sí / sí /  /  | [ver](https://www.ocasionplus.com/coches-segunda-mano/citroen-xsara-picasso-16-sx-con-218806km-2006-w495vqar) |
+| Citroën Xsara Picasso 1.6 HDI SX Top (110 CV) | 5200.0 | 5200 / 4700 | 2006 | 136256 | diesel | manual | profesional | Valencia - Sagunto (Sagunto, 46500) | 31 | 12 | 350.0 | sí / sí /  /  | [ver](https://www.ocasionplus.com/coches-segunda-mano/citroen-xsara-picasso-16-hdi-sx-top-con-136256km-2006-uipwzqaj) |
+| Renault Scenic Dynamique 1.5 dCi (105 CV) | 3300.0 | 3300 / 3300 | 2007 | 162146 | diesel | manual | profesional | Valencia - Pista de Silla - Macroce | 34 |  | 350.0 | sí /  /  /  | [ver](https://www.ocasionplus.com/coches-segunda-mano/renault-scenic-dynamique-15-dci-con-162146km-2007-svpb4qaf) |
+| Ford Mondeo 2.0 TDCI Ghia (130 CV) | 3700.0 | 3700 / 3700 | 2006 | 142530 | diesel | manual | profesional | Valencia - Paterna (Paterna, 46980) | 33 |  | 350.0 | sí /  /  / 1 | [ver](https://www.ocasionplus.com/coches-segunda-mano/ford-mondeo-20-tdci-ghia-con-142530km-2006-somqeqa3) |
+| Seat Ibiza 1.4 16v Reference (100 CV) | 4990.0 | 4990 / 4990 | 2006 | 86371 | gasolina | manual | profesional | Valencia - Pista de Silla - Macroce | 32 |  | 350.0 | sí /  /  /  | [ver](https://www.ocasionplus.com/coches-segunda-mano/seat-ibiza-14-16v-reference-con-70908km-2006-azeojqah) |
+| Opel Corsa 1.2 Enjoy MTA (80 CV) | 2900.0 | 2900 / 2300 | 2007 | 112793 | gasolina |  | profesional | Valencia - Pista De Silla (Massanas | 33 |  | 350.0 | sí /  /  /  | [ver](https://www.ocasionplus.com/coches-segunda-mano/opel-corsa-12-enjoy-mta-con-112793km-2007-nu8qgqaj) |
+| Opel Corsa 1.2 16v Silverline Base (80 CV) | 1490.0 | 1490 / 1490 | 2006 | 153000 | gasolina | manual | profesional | Valencia - Alzira (Alzira, 46600) | 23 |  | 350.0 | sí /  /  /  | [ver](https://www.ocasionplus.com/coches-segunda-mano/opel-corsa-12-16v-silverline-base-con-153000km-2006-1q1gwqak) |
+| Fiat Panda 1.2 Dynamic (60 CV) | 2200.0 | 2200 / 2200 | 2006 | 213136 | gasolina | manual | profesional | Valencia - Alzira (Alzira, 46600) | 23 |  | 350.0 | sí /  /  /  | [ver](https://www.ocasionplus.com/coches-segunda-mano/fiat-panda-12-dynamic-con-213136km-2006) |
 
-## autoscout24 — 29 anuncios guardados (muestra de 25)
+## autoscout24 — 87 anuncios guardados (muestra de 25)
 
 | Título | Precio | Contado / financiado | Año | Km | Combustible | Cambio | Vendedor | Ubicación | Fotos | Garantía (meses) | Gastos (€) | ITV / Libro / Correa / Prop. | Enlace |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -47,7 +62,7 @@ Datos tal como se guardan en `data/listings.sqlite` tras la extracción y normal
 | Ford Ka/Ka+ Ka 1.30TDCi Titanium+ | 3500.0 |  | 2010 | 172730 | diesel | manual | particular | Riba-roja de Túria (46190) | 8 |  |  |  /  /  /  | [ver](https://www.autoscout24.es/anuncios/ford-ka-ka+-ka-1-30tdci-titanium+-diesel-cat_ma29mo1761-a57f66ac-145f-4765-9ec5-fb1cfb789a07) |
 | Fiat Punto Punto 1.2 Feel/Classic Feel/Classi | 3900.0 |  | 2009 | 114000 | gasolina | manual | particular | Vilamarxant (46191) | 5 |  |  | sí /  /  /  | [ver](https://www.autoscout24.es/anuncios/fiat-punto-punto-1-2-feel-classic-feel-classic-gasolina-rojo-cat_ma28mo1747-c0e51c94-8ec0-4a36-8134-caae0331b183) |
 
-## wallapop — 81 anuncios guardados (muestra de 25)
+## wallapop — 275 anuncios guardados (muestra de 25)
 
 | Título | Precio | Contado / financiado | Año | Km | Combustible | Cambio | Vendedor | Ubicación | Fotos | Garantía (meses) | Gastos (€) | ITV / Libro / Correa / Prop. | Enlace |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -77,7 +92,7 @@ Datos tal como se guardan en `data/listings.sqlite` tras la extracción y normal
 | RENAULT MEGANE | 1200.0 |  | 2008 |  | gasolina | manual | particular | Valencia (46022) | 4 |  |  | sí /  /  /  | [ver](https://es.wallapop.com/item/renault-megane-2008-1312665616) |
 | Renault Megane 2009 | 2500.0 |  | 2009 | 206000 | diesel | manual | particular | Valencia (46006) | 3 |  |  | no /  /  /  | [ver](https://es.wallapop.com/item/renault-megane-2009-1316237992) |
 
-## cochesnet — 192 anuncios guardados (muestra de 25)
+## cochesnet — 661 anuncios guardados (muestra de 25)
 
 | Título | Precio | Contado / financiado | Año | Km | Combustible | Cambio | Vendedor | Ubicación | Fotos | Garantía (meses) | Gastos (€) | ITV / Libro / Correa / Prop. | Enlace |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|

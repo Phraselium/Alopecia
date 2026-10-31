@@ -17,19 +17,20 @@ from src.scoring import Params
 pytestmark = pytest.mark.skipif(not shutil.which("soffice"), reason="LibreOffice no instalado")
 
 
-def synthetic(n=40, seed=1):
+def synthetic(n=80, seed=1):
     rnd = random.Random(seed)
     modelos = [("Toyota", "Yaris", "1.33 VVT-i"), ("Peugeot", "208", "1.2 PureTech"), ("Seat", "Ibiza", "1.4 MPI"),
                ("Renault", "Clio", "1.2 TCe"), ("Volkswagen", "Golf", "1.4 TSI"), ("Ford", "Focus", "1.6 TDCi diésel"),
-               ("Kia", "Rio", "1.2 CVVT")]
+               ("Kia", "Rio", "1.2 CVVT"), ("Skoda", "Octavia Combi", "1.6 TDI"), ("Opel", "Meriva", "1.4"),
+               ("Dacia", "Logan", "1.4 MPI"), ("Peugeot", "207", "1.6 HDi")]
     out = []
     for i in range(n):
         marca, modelo, motor = modelos[i % len(modelos)]
-        anio = rnd.randint(2008, 2018)
+        anio = rnd.randint(2006, 2018)
         out.append(Listing(
             plataforma="TEST", id_externo=str(i), url=f"https://example.invalid/{i}",
             titulo=f"{marca} {modelo} {motor}", marca=marca, modelo=modelo, version=motor,
-            anio=anio, km=rnd.randint(40000, 210000), precio=float(rnd.randint(2500, 4600)),
+            anio=anio, km=rnd.randint(40000, 210000), precio=float(rnd.randint(2500, 5200)),
             vendedor=rnd.choice(["particular", "profesional", None]), num_fotos=rnd.randint(1, 15),
             descripcion=rnd.choice(["ITV en vigor, libro de mantenimiento", "único propietario, correa cambiada", "buen estado"]),
             garantia_meses=rnd.choice([None, 12, 24]), garantia_ampliable=rnd.choice([None, True]),
@@ -43,6 +44,10 @@ def test_formulas_match_python(tmp_path, cfg, fiscal, rel):
     p = Params(cfg, fiscal, rel)
     res = process(synthetic(), p, set())
     assert res.filas, "deberían quedar anuncios limpios"
+    # el conjunto sintético debe ejercitar los casos nuevos
+    assert any(f["penalizacion"] > 0 for f in res.filas), "falta carrocería penalizada"
+    assert any(f["fiabilidad"]["diesel_pendiente"] for f in res.filas), "falta diésel sin fuente"
+    assert any(f["estado"] == "negociar" for f in res.filas), "falta caso 'negociar'"
     src = tmp_path / "r.xlsx"
     write_workbook(src, [f["listing"] for f in res.filas], res.avisos, p)
     outdir = tmp_path / "calc"
@@ -75,6 +80,8 @@ def test_formulas_match_python(tmp_path, cfg, fiscal, rel):
         assert v("total") == pytest.approx(f["total"])
         assert v("primer_anio") == pytest.approx(f["coste"]["primer_anio"])
         assert (v("rank") or None) == f.get("rank")
+        assert v("apto") == f["estado"], f["listing"].uid
+        assert v("pen_carr") == pytest.approx(f["penalizacion"])
     top = wb["Top20"]
     best = min((f for f in res.filas if f.get("rank")), key=lambda f: f["rank"])
     assert top["D2"].value == best["listing"].titulo

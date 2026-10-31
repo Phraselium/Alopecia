@@ -38,57 +38,71 @@ class CochesNet(Source):
     estado = "ok"
     coverage: list[str] = []
 
-    def search(self, since: Optional[str] = None) -> Iterator[Listing]:
+    def _route(self, path: str, seen: set, check_model: bool) -> Iterator[Listing]:
+        """Recorre una ruta permitida hasta pg=6. Devuelve los candidatos; registra el resto como mercado."""
         f = self.cfg["filtros"]
         pmax = self.cfg["presupuesto"]["precio_anuncio_max_eur"]
-        seen: set[str] = set()
-        for marca, models in MODELS.items():
-            for modelo, (seg, _aliases) in models.items():
-                if seg not in f["carrocerias"]:
+        for pg in range(1, min(MAX_PG, self.src_cfg.get("max_paginas", MAX_PG)) + 1):
+            url = f"{BASE}{path}" + (f"?pg={pg}" if pg > 1 else "")
+            try:
+                r = self.client.get(self.name, url)
+            except requests.HTTPError as e:
+                log.info("cochesnet: %s no existe (%s)", path, e.response.status_code if e.response is not None else e)
+                return
+            except requests.RequestException as e:
+                log.warning("cochesnet: error de red en %s (%s); se salta esta ruta", url, e)
+                self.coverage.append(f"{path}: error de red, omitida")
+                return
+            p = js_json_parse(r["text"], "window.__INITIAL_PROPS__") or {}
+            s, res = p.get("initialSearch") or {}, p.get("initialResults") or {}
+            if check_model:
+                veh = (s.get("vehicles") or [{}])[0] if s.get("vehicles") else {}
+                if not veh or not (veh.get("model") or {}).get("id"):
+                    log.info("cochesnet: la ruta %s no filtra por modelo; se omite", path)
+                    return
+            if pg == 1 and (res.get("totalPages") or 0) > MAX_PG:
+                self.coverage.append(f"{path}: {res.get('totalResults')} anuncios en {res.get('totalPages')} páginas; accesibles {MAX_PG}")
+            for it in res.get("items") or []:
+                if it["id"] in seen:
                     continue
-                mk, md = model_slug(marca, modelo)
-                for pg in range(1, min(MAX_PG, self.src_cfg.get("max_paginas", MAX_PG)) + 1):
-                    url = f"{BASE}/{mk}/{md}/segunda-mano/valencia/" + (f"?pg={pg}" if pg > 1 else "")
-                    try:
-                        r = self.client.get(self.name, url)
-                    except requests.HTTPError as e:
-                        log.info("cochesnet: %s %s no existe (%s)", marca, modelo, e.response.status_code if e.response is not None else e)
-                        break
-                    except requests.RequestException as e:
-                        log.warning("cochesnet: error de red en %s (%s); se salta este modelo", url, e)
-                        self.coverage.append(f"{marca} {modelo}: error de red, omitido")
-                        break
-                    p = js_json_parse(r["text"], "window.__INITIAL_PROPS__") or {}
-                    s, res = p.get("initialSearch") or {}, p.get("initialResults") or {}
-                    veh = (s.get("vehicles") or [{}])[0] if s.get("vehicles") else {}
-                    if not veh or not (veh.get("model") or {}).get("id"):
-                        log.info("cochesnet: la ruta de %s %s no filtra por modelo; se omite", marca, modelo)
-                        break
-                    if pg == 1 and (res.get("totalPages") or 0) > MAX_PG:
-                        msg = f"{marca} {modelo}: {res.get('totalResults')} anuncios en {res.get('totalPages')} páginas; solo accesibles {MAX_PG}"
-                        log.warning("cochesnet cobertura parcial: %s", msg)
-                        self.coverage.append(msg)
-                    for it in res.get("items") or []:
-                        if it["id"] in seen:
-                            continue
-                        seen.add(it["id"])
-                        price, year, km = it.get("price"), it.get("year"), it.get("km")
-                        self.observe(it["id"], it.get("make"), it.get("model"), it.get("title"), year, km, price)
-                        if not price or price > pmax or (year and year < f["anio_min"]) or (km and km > f["km_max"]):
-                            continue
-                        loc = it.get("location") or {}
-                        yield Listing(
-                            plataforma=self.name, id_externo=str(it["id"]), url=BASE + it["url"], titulo=it.get("title") or "",
-                            precio=float(price), precio_contado=price, precio_financiado=it.get("financedPrice"),
-                            marca=it.get("make"), modelo=it.get("model"), combustible=it.get("fuelType"),
-                            anio=year, km=km, vendedor="profesional" if it.get("isProfessional") else "particular",
-                            garantia=bool(it.get("hasWarranty")) if it.get("hasWarranty") is not None else None,
-                            garantia_meses=it.get("warrantyMonths"), km_certificados=True if it.get("isCertified") else None,
-                            ubicacion=loc.get("cityLiteral"), num_fotos=len(it.get("photos") or []) or None,
-                            etiqueta_dgt=it.get("environmentalLabel"), fecha_publicacion=it.get("publicationDate"),
-                            fuente_dato=url, raw_ref=r["cache_file"])
-                    if pg >= (res.get("totalPages") or 1):
-                        break
+                seen.add(it["id"])
+                price, year, km = it.get("price"), it.get("year"), it.get("km")
+                self.observe(it["id"], it.get("make"), it.get("model"), it.get("title"), year, km, price)
+                if not price or price > pmax or (year and year < f["anio_min"]) or (km and km > f["km_max"]):
+                    continue
+                loc = it.get("location") or {}
+                yield Listing(
+                    plataforma=self.name, id_externo=str(it["id"]), url=BASE + it["url"], titulo=it.get("title") or "",
+                    precio=float(price), precio_contado=price, precio_financiado=it.get("financedPrice"),
+                    marca=it.get("make"), modelo=it.get("model"), combustible=it.get("fuelType"),
+                    anio=year, km=km, vendedor="profesional" if it.get("isProfessional") else "particular",
+                    garantia=bool(it.get("hasWarranty")) if it.get("hasWarranty") is not None else None,
+                    garantia_meses=it.get("warrantyMonths"), km_certificados=True if it.get("isCertified") else None,
+                    ubicacion=loc.get("cityLiteral"), num_fotos=len(it.get("photos") or []) or None,
+                    etiqueta_dgt=it.get("environmentalLabel"), fecha_publicacion=it.get("publicationDate"),
+                    fuente_dato=url, raw_ref=r["cache_file"])
+            if pg >= (res.get("totalPages") or 1):
+                return
+
+    def search(self, since: Optional[str] = None) -> Iterator[Listing]:
+        from ..fraud import segmentos_admitidos
+        segs = segmentos_admitidos(self.cfg)
+        seen: set[str] = set()
+        self.coverage = []
+        for prov in self.cfg["ubicacion"].get("provincias_cochesnet", ["valencia"]):
+            for marca, models in MODELS.items():
+                if not any(seg in segs for seg, _a in models.values()):
+                    continue
+                mk = model_slug(marca, "x")[0]
+                # 1) ruta por marca (otro orden de relevancia: añade anuncios de modelos con más de 6 páginas)
+                yield from self._route(f"/{mk}/segunda-mano/{prov}/", seen, check_model=False)
+                # 2) rutas por modelo
+                for modelo, (seg, _aliases) in models.items():
+                    if seg not in segs:
+                        continue
+                    _, md = model_slug(marca, modelo)
+                    yield from self._route(f"/{mk}/{md}/segunda-mano/{prov}/", seen, check_model=True)
+        self.vistos_ids = seen
 
     def needs_detail(self, l: Listing) -> bool:
         return True

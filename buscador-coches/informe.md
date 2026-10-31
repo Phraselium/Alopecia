@@ -1,173 +1,69 @@
 # Mejores 10 coches de segunda mano (Valencia, ≤ 5.000 € en total)
 
-Generado el 2026-10-31 10:09. Anuncios limpios: 90, descartados: 213. Plataformas: autoscout24, cochesnet, ocasionplus, wallapop.
+Generado el 2026-10-31 11:57. Anuncios limpios: 661, descartados: 301. Plataformas: autoscout24, cochesnet, ocasionplus, wallapop.
 
 > Los datos de fiabilidad, fiscalidad y ZBE marcados como *probable* o *PENDIENTE* en la hoja Supuestos deben verificarse en la fuente antes de decidir. El coste total incluye ITP (cuota fija de la Comunitat Valenciana o tipo porcentual), la tasa de transferencia y el informe DGT.
 
 **Estado de las fuentes en la última ejecución**
 
-- ocasionplus: ok
 - flexicar: ok
 - clicars: ok
 - autohero: ok
 - renew: ok
+- ocasionplus: ok
 - autoscout24: ok
-- cochesnet: ok — cobertura parcial: Seat Ibiza: 222 anuncios en 8 páginas; solo accesibles 6; Seat León: 218 anuncios en 8 páginas; solo accesibles 6; Volkswagen Golf: 445 anuncios en 15 páginas; solo accesibles 6; Opel Corsa: 204 anuncios en 7 páginas; solo accesibles 6; Renault Mégane: 181 anuncios en 7 páginas; solo accesibles 6; Ford Focus: 270 anuncios en 9 páginas; solo accesibles 6
-- wallapop: ok
+- wallapop: ok — cobertura parcial: Toyota Yaris: página de valencia llena (80); consultados 6 municipios; Toyota Corolla: página de valencia llena (80); consultados 6 municipios; Mazda 2: página de valencia llena (80); consultados 6 municipios; Mazda 3: página de valencia llena (80); consultados 6 municipios; Kia Picanto: página de valencia llena (78); consultados 6 municipios; Kia Ceed: página de valencia llena (80); consultados 6 municipios; Hyundai i10: página de valencia llena (80); consultados 6 municipios; Hyundai i20: página de valencia llena (80); consultados 6 municipios; Hyundai i30: página de valencia llena (79); consultados 6 municipios; Skoda Fabia: página de valencia llena (80); consultados 6 municipios; Seat Ibiza: página de valencia llena (80); consultados 6 municipios; Seat León: página de valencia llena (80); consultados 6 municipios; Seat Toledo: página de valencia llena (78); consultados 6 municipios; Volkswagen Polo: página de valencia llena (80); consultados 6 municipios; Volkswagen Golf: página de valencia llena (80); consultados 6 municipios; Opel Corsa: página de valencia llena (80); consultados 6 municipios; Opel Astra: página de valencia llena (80); consultados 6 municipios; Renault Clio: página de valencia llena (80); consultados 6 municipios; Renault Mégane: página de valencia llena (80); consultados 6 municipios; Dacia Sandero: página de valencia llena (79); consultados 6 municipios; Peugeot 208: página de valencia llena (80); consultados 6 municipios; Peugeot 308: página de valencia llena (80); consultados 6 municipios; Citroën C3: página de valencia llena (80); consultados 6 municipios; Citroën C4: página de valencia llena (79); consultados 6 municipios; Ford Fiesta: página de valencia llena (79); consultados 6 municipios; Ford Focus: página de valencia llena (79); consultados 6 municipios; Fiat Panda: página de valencia llena (80); consultados 6 municipios; Fiat Punto: página de valencia llena (79); consultados 6 municipios; Fiat 500: página de valencia llena (80); consultados 6 municipios; Audi A1: página de valencia llena (80); consultados 6 municipios; Audi A3: página de valencia llena (80); consultados 6 municipios
+- cochesnet: ok — cobertura parcial: /toyota/segunda-mano/valencia/: 483 anuncios en 17 páginas; accesibles 6; /mazda/segunda-mano/valencia/: 201 anuncios en 7 páginas; accesibles 6; /kia/segunda-mano/valencia/: 474 anuncios en 16 páginas; accesibles 6; /hyundai/segunda-mano/valencia/: 540 anuncios en 18 páginas; accesibles 6; /skoda/segunda-mano/valencia/: 195 anuncios en 7 páginas; accesibles 6; /seat/segunda-mano/valencia/: 695 anuncios en 24 páginas; accesibles 6; /seat/ibiza/segunda-mano/valencia/: 222 anuncios en 8 páginas; accesibles 6; /seat/leon/segunda-mano/valencia/: 218 anuncios en 8 páginas; accesibles 6; /volkswagen/segunda-mano/valencia/: 1336 anuncios en 45 páginas; accesibles 6; /volkswagen/golf/segunda-mano/valencia/: 445 anuncios en 15 páginas; accesibles 6; /opel/segunda-mano/valencia/: 826 anuncios en 28 páginas; accesibles 6; /opel/corsa/segunda-mano/valencia/: 204 anuncios en 7 páginas; accesibles 6; /renault/segunda-mano/valencia/: 749 anuncios en 25 páginas; accesibles 6; /renault/megane/segunda-mano/valencia/: 181 anuncios en 7 páginas; accesibles 6; /peugeot/segunda-mano/valencia/: 1277 anuncios en 43 páginas; accesibles 6; /citroen/segunda-mano/valencia/: 808 anuncios en 27 páginas; accesibles 6; /ford/segunda-mano/valencia/: 1010 anuncios en 34 páginas; accesibles 6; /ford/focus/segunda-mano/valencia/: 270 anuncios en 9 páginas; accesibles 6; /fiat/segunda-mano/valencia/: 322 anuncios en 11 páginas; accesibles 6; /nissan/segunda-mano/valencia/: 432 anuncios en 15 páginas; accesibles 6; /audi/segunda-mano/valencia/: 1035 anuncios en 35 páginas; accesibles 6; /audi/a3/segunda-mano/valencia/: 222 anuncios en 8 páginas; accesibles 6; /mini/segunda-mano/valencia/: 238 anuncios en 8 páginas; accesibles 6; /mercedes-benz/segunda-mano/valencia/: 1611 anuncios en 54 páginas; accesibles 6; /volkswagen/segunda-mano/castellon/: 344 anuncios en 12 páginas; accesibles 6; /opel/segunda-mano/castellon/: 202 anuncios en 7 páginas; accesibles 6; /peugeot/segunda-mano/castellon/: 228 anuncios en 8 páginas; accesibles 6; /citroen/segunda-mano/castellon/: 183 anuncios en 7 páginas; accesibles 6; /audi/segunda-mano/castellon/: 224 anuncios en 8 páginas; accesibles 6; /mercedes-benz/segunda-mano/castellon/: 285 anuncios en 10 páginas; accesibles 6
 - Desactivadas por bloqueo antibots (ver RECONOCIMIENTO.md): milanuncios, autocasion
 
-## 1. Peugeot 207 1.4 Confort (75 CV) — 2.900 € (3.259 € en total)
+## Embudo: dónde se pierde volumen
 
-**Puntuación 59.6/100** · ocasionplus · Valencia - Sagunto (Sagunto, 46500) · profesional · manual · etiqueta C · [ver anuncio](https://www.ocasionplus.com/coches-segunda-mano/peugeot-207-14-confort-con-116183km-2008-b9auzqaa)
+Antes de guardar la ficha, cada fuente ya descarta en el listado lo que no cumple precio, año y km (fila «vistos en listados»). Las cifras de «motivos» cuentan cada anuncio en todos los filtros que no cumple; «solo por este motivo» son los que entrarían si se relajara únicamente ese filtro.
 
-Coste: 2.900 € al contado + gastos 350 € + ITP 0 € + tasa 0,00 € + informe 8,67 € = **3.259 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **3.559 €**.
+| Etapa | autoscout24 | cochesnet | ocasionplus | wallapop | Total |
+|---|---|---|---|---|---|
+| vistos en listados (mercado) | 87 | 8614 | 833 | 4668 | 14202 |
+| recogidos (fichas guardadas) | 87 | 661 | 25 | 275 | 1048 |
+| pasan los filtros | 69 | 574 | 15 | 188 | 846 |
+| fusionados como duplicados | 6 | 65 | 0 | 15 | 86 |
+| limpios (sin fraude) | 57 | 446 | 14 | 144 | 661 |
+| dentro de presupuesto | 43 | 359 | 12 | 119 | 533 |
+| caben negociando | 8 | 76 | 1 | 24 | 109 |
+| fuera de presupuesto (> margen) | 6 | 11 | 1 | 1 | 19 |
 
-**Por qué destaca**
-- Más aporta: precio (93/100), fiabilidad (50/100).
-- Precio 2.900 € frente a una mediana de 3.500 € en su segmento (mercado modelo+año+km, 28 anuncios): 17% por debajo.
-- 116.183 km en 18 años (6.455 km/año).
-- El anuncio menciona: ITV en vigor.
-- Seguridad de compra: garantía 12 meses (mínimo legal, no declarada en el anuncio), ampliable por 500 €, km certificados.
+**Motivos de descarte** (todos / solo por este motivo)
 
-**Riesgos de este modelo y motor**
-- No hay dato de fiabilidad con fuente para el Peugeot 207: PENDIENTE (se ha puntuado neutro).
+| Motivo | autoscout24 | cochesnet | ocasionplus | wallapop | Total |
+|---|---|---|---|---|---|
+| fraude: precio anómalo (> 35 % bajo la mediana) | 4 / 4 | 53 / 46 | 1 / 1 | 26 / 23 | 84 / 74 |
+| km > máximo | 0 / 0 | 9 / 7 | 0 / 0 | 58 / 55 | 67 / 62 |
+| carrocería monovolumen | 5 / 5 | 26 / 23 | 6 / 6 | 10 / 9 | 47 / 43 |
+| carrocería cabrio | 6 / 6 | 10 / 10 | 1 / 1 | 19 / 18 | 36 / 35 |
+| fraude: texto sospechoso | 0 / 0 | 17 / 10 | 0 / 0 | 6 / 3 | 23 / 13 |
+| distancia > radio | 0 / 0 | 21 / 19 | 0 / 0 | 0 / 0 | 21 / 19 |
+| carrocería desconocida | 4 / 4 | 10 / 9 | 1 / 1 | 1 / 1 | 16 / 15 |
+| carrocería suv | 2 / 1 | 10 / 10 | 0 / 0 | 1 / 1 | 13 / 12 |
+| precio fuera de rango | 1 / 0 | 2 / 2 | 2 / 2 | 0 / 0 | 5 / 4 |
+| carrocería furgoneta | 0 / 0 | 3 / 3 | 0 / 0 | 0 / 0 | 3 / 3 |
+| sin fotos | 2 / 2 | 0 / 0 | 0 / 0 | 0 / 0 | 2 / 2 |
+| combustible excluido | 1 / 1 | 0 / 0 | 0 / 0 | 0 / 0 | 1 / 1 |
+| combustible desconocido | 0 / 0 | 0 / 0 | 0 / 0 | 1 / 0 | 1 / 0 |
 
-**Qué revisar en la visita**
-- Pedir el informe DGT (con la matrícula) antes de la visita: cargas, embargos, titulares, ITV y km registrados.
-- Comprobar que el número de bastidor del permiso coincide con el del coche (parabrisas y bastidor).
-- Arranque en frío (motor sin calentar): ruidos, humo y testigos del cuadro.
-- Prueba de al menos 20 minutos con autovía: embrague, cambio, dirección y frenos.
-- Desgaste de neumáticos y discos, holguras de suspensión y fugas bajo el motor.
-- Revisar el aire acondicionado: imprescindible en Valencia.
+## Tiempo hasta desaparecer del anuncio (estimación de venta)
 
-**Qué preguntar al vendedor**
-- ¿Tiene el libro de mantenimiento sellado?
-- ¿Cuándo y con cuántos km se cambió la distribución (correa o cadena)? ¿Tiene la factura?
-- ¿Qué garantía da por escrito y qué cubre? (mínimo legal 1 año en usados: TRLGDCU art. 120, RDL 7/2021)
-- ¿Cuál es el precio final al contado con todos los gastos (gestión, preparación, transferencia)? ¿Exige financiar?
-- ¿Por qué lo vende y desde cuándo es suyo?
-- ¿Tiene facturas de mantenimiento? ¿Cuándo fue la última revisión y qué se hizo?
-- ¿Ha tenido algún golpe o reparación importante?
-- ¿Acepta que lo revise un mecánico de mi confianza o en un taller antes de cerrar?
+_Aún no hay anuncios desaparecidos: hace falta que `run.py` se ejecute varias veces (p. ej. con `--watch`). Un anuncio se da por desaparecido tras `seguimiento.ejecuciones_para_desaparecido` ejecuciones correctas seguidas sin verlo; en fuentes con cobertura parcial (Coches.net, Wallapop) puede ser que solo haya salido de las páginas accesibles._
 
-_Avisos de coste: vendedor profesional: sin ITP (operación con IVA/REBU, confirmar en factura)_
+## Los mejores
 
-## 2. VOLKSWAGEN Polo 1.4 Advance DSG 7 — 4.400 € (4.504 € en total)
+### 1. TOYOTA Aygo 1.0 VVTi Live — 4.450 € (4.514 € en total)
 
-**Puntuación 59.6/100** · cochesnet · Alboraya · particular · automático · etiqueta C · [ver anuncio](https://www.coches.net/volkswagen-polo-gasolina-2010-en-valencia-71536489-covo.aspx)
-
-Coste: 4.400 € al contado + gastos 0 € + ITP 40 € + tasa 55,70 € + informe 8,67 € = **4.504 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **4.804 €**.
-
-**Por qué destaca**
-- Más aporta: precio (100/100), fiabilidad (69/100).
-- Precio 4.400 € frente a una mediana de 5.675 € en su segmento (mercado modelo+año+km, 10 anuncios): 22% por debajo.
-- 177.000 km en 16 años (11.062 km/año).
-- El anuncio menciona: distribución cambiada.
-
-**Riesgos de este modelo y motor**
-- VAG DSG de 7 velocidades y embrague seco (DQ200): Desgaste de los embragues secos y fallos de la mecatrónica. En 2012 VW China amplió la garantía de la DQ200 a 10 años o 160.000 km; en Europa no consta campaña equivalente (fuente: https://autonews.gasgoo.com/articles/market-industry/vw-apologizes-to-chinese-customers-for-dsg-gearbox-problem-1021311; estado: probable (prensa del sector); no ajusta la puntuación)
-- Venta entre particulares: no hay garantía legal de conformidad (solo vicios ocultos del Código Civil).
-
-**Qué revisar en la visita**
-- Tirones o vibración al arrancar y en maniobras, golpes al cambiar de 1.ª a 2.ª, testigo de la caja; facturas de embrague o mecatrónica
-- Cambio automático: transiciones en frío y en caliente, tirones, historial de cambio de aceite de la caja.
-- Pedir el informe DGT (con la matrícula) antes de la visita: cargas, embargos, titulares, ITV y km registrados.
-- Comprobar que el número de bastidor del permiso coincide con el del coche (parabrisas y bastidor).
-- Arranque en frío (motor sin calentar): ruidos, humo y testigos del cuadro.
-- Prueba de al menos 20 minutos con autovía: embrague, cambio, dirección y frenos.
-- Desgaste de neumáticos y discos, holguras de suspensión y fugas bajo el motor.
-- Revisar el aire acondicionado: imprescindible en Valencia.
-
-**Qué preguntar al vendedor**
-- ¿Hasta cuándo tiene la ITV? ¿Pasó la última sin defectos?
-- ¿Tiene el libro de mantenimiento sellado?
-- ¿Cuántos propietarios ha tenido?
-- ¿Por qué lo vende y desde cuándo es suyo?
-- ¿Tiene facturas de mantenimiento? ¿Cuándo fue la última revisión y qué se hizo?
-- ¿Ha tenido algún golpe o reparación importante?
-- ¿Acepta que lo revise un mecánico de mi confianza o en un taller antes de cerrar?
-
-_Avisos de coste: cuota fija ITP: >12 años, hasta 1.500 cc_
-
-## 3. VOLKSWAGEN Polo 1.2 Edition — 3.300 € (3.404 € en total)
-
-**Puntuación 58.8/100** · cochesnet · Torrent · particular · cambio sin dato · etiqueta C · [ver anuncio](https://www.coches.net/volkswagen-polo-12-edition-60cv-5p-gasolina-2009-en-valencia-71666559-covo.aspx)
-
-Coste: 3.300 € al contado + gastos 0 € + ITP 40 € + tasa 55,70 € + informe 8,67 € = **3.404 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **3.704 €**.
-
-**Por qué destaca**
-- Más aporta: precio (100/100), fiabilidad (69/100).
-- Precio 3.300 € frente a una mediana de 4.990 € en su segmento (mercado modelo+año+km, 6 anuncios): 34% por debajo.
-- 128.680 km en 17 años (7.569 km/año).
-
-**Riesgos de este modelo y motor**
-- Venta entre particulares: no hay garantía legal de conformidad (solo vicios ocultos del Código Civil).
-
-**Qué revisar en la visita**
-- Pedir el informe DGT (con la matrícula) antes de la visita: cargas, embargos, titulares, ITV y km registrados.
-- Comprobar que el número de bastidor del permiso coincide con el del coche (parabrisas y bastidor).
-- Arranque en frío (motor sin calentar): ruidos, humo y testigos del cuadro.
-- Prueba de al menos 20 minutos con autovía: embrague, cambio, dirección y frenos.
-- Desgaste de neumáticos y discos, holguras de suspensión y fugas bajo el motor.
-- Revisar el aire acondicionado: imprescindible en Valencia.
-
-**Qué preguntar al vendedor**
-- ¿Hasta cuándo tiene la ITV? ¿Pasó la última sin defectos?
-- ¿Tiene el libro de mantenimiento sellado?
-- ¿Cuándo y con cuántos km se cambió la distribución (correa o cadena)? ¿Tiene la factura?
-- ¿Cuántos propietarios ha tenido?
-- ¿Por qué lo vende y desde cuándo es suyo?
-- ¿Tiene facturas de mantenimiento? ¿Cuándo fue la última revisión y qué se hizo?
-- ¿Ha tenido algún golpe o reparación importante?
-- ¿Acepta que lo revise un mecánico de mi confianza o en un taller antes de cerrar?
-
-_Avisos de coste: cuota fija ITP: >12 años, hasta 1.500 cc_
-
-## 4. PEUGEOT 207 Confort 1.4 75 — 3.990 € (4.054 € en total)
-
-**Puntuación 58.0/100** · cochesnet · Prime Cars Alzira Alzira · profesional · manual · etiqueta C · [ver anuncio](https://www.coches.net/peugeot-207-confort-14-75-5p-gasolina-2009-en-valencia-71833160-covo.aspx)
-
-Coste: 3.990 € al contado + gastos 0 € + ITP 0 € + tasa 55,70 € + informe 8,67 € = **4.054 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **4.354 €**.
-
-**Por qué destaca**
-- Más aporta: precio (90/100), fiabilidad (50/100).
-- Precio 3.990 € frente a una mediana de 4.750 € en su segmento (mercado modelo+año+km, 13 anuncios): 16% por debajo.
-- 95.000 km en 17 años (5.588 km/año).
-- El anuncio menciona: ITV en vigor, distribución cambiada.
-- Seguridad de compra: garantía 12 meses (mínimo legal, no declarada en el anuncio).
-
-**Riesgos de este modelo y motor**
-- No hay dato de fiabilidad con fuente para el Peugeot 207: PENDIENTE (se ha puntuado neutro).
-
-**Qué revisar en la visita**
-- Pedir el informe DGT (con la matrícula) antes de la visita: cargas, embargos, titulares, ITV y km registrados.
-- Comprobar que el número de bastidor del permiso coincide con el del coche (parabrisas y bastidor).
-- Arranque en frío (motor sin calentar): ruidos, humo y testigos del cuadro.
-- Prueba de al menos 20 minutos con autovía: embrague, cambio, dirección y frenos.
-- Desgaste de neumáticos y discos, holguras de suspensión y fugas bajo el motor.
-- Revisar el aire acondicionado: imprescindible en Valencia.
-
-**Qué preguntar al vendedor**
-- ¿Tiene el libro de mantenimiento sellado?
-- ¿Cuántos propietarios ha tenido?
-- ¿Qué garantía da por escrito y qué cubre? (mínimo legal 1 año en usados: TRLGDCU art. 120, RDL 7/2021)
-- ¿Cuál es el precio final al contado con todos los gastos (gestión, preparación, transferencia)? ¿Exige financiar?
-- ¿Por qué lo vende y desde cuándo es suyo?
-- ¿Tiene facturas de mantenimiento? ¿Cuándo fue la última revisión y qué se hizo?
-- ¿Ha tenido algún golpe o reparación importante?
-- ¿Acepta que lo revise un mecánico de mi confianza o en un taller antes de cerrar?
-
-_Avisos de coste: vendedor profesional: sin ITP (operación con IVA/REBU, confirmar en factura); gastos de gestión del vendedor no indicados: se suma la tasa DGT; preguntar el precio final_
-
-## 5. TOYOTA Aygo 1.0 VVTi Live — 4.450 € (4.514 € en total)
-
-**Puntuación 55.8/100** · cochesnet · GO! autos Sagunto (Sagunt) · profesional · manual · etiqueta C · [ver anuncio](https://www.coches.net/toyota-aygo-10-vvti-live-5p-gasolina-2010-en-valencia-71691745-covo.aspx)
+**Puntuación 68.6/100** · cochesnet · GO! autos Sagunto (Sagunt) · profesional · manual · etiqueta C · [ver anuncio](https://www.coches.net/toyota-aygo-10-vvti-live-5p-gasolina-2010-en-valencia-71691745-covo.aspx)
 
 Coste: 4.450 € al contado + gastos 0 € + ITP 0 € + tasa 55,70 € + informe 8,67 € = **4.514 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **4.814 €**.
 
 **Por qué destaca**
-- Más aporta: fiabilidad (88/100), precio (50/100).
-- Precio 4.450 € frente a una mediana de 4.450 € en su segmento (modelo, 1 anuncios): 0% por debajo.
+- Más aporta: fiabilidad (88/100), precio (100/100).
+- Precio 4.450 € frente a una mediana de 5.944 € en su segmento (mercado modelo+año, 4 anuncios): 25% por debajo.
 - 166.000 km en 16 años (10.375 km/año).
 - El anuncio menciona: ITV en vigor, garantía.
 - Seguridad de compra: garantía 12 meses.
@@ -196,85 +92,16 @@ Coste: 4.450 € al contado + gastos 0 € + ITP 0 € + tasa 55,70 € + inform
 
 _Avisos de coste: vendedor profesional: sin ITP (operación con IVA/REBU, confirmar en factura); gastos de gestión del vendedor no indicados: se suma la tasa DGT; preguntar el precio final_
 
-## 6. Toyota Prius 2009 — 3.999 € (4.123 € en total)
+### 2. SUZUKI Alto 1.0 GL — 1.500 € (1.604 € en total)
 
-**Puntuación 54.6/100** · wallapop · Valencia (46002) · particular · automático · etiqueta ECO · [ver anuncio](https://es.wallapop.com/item/toyota-prius-2009-1254410344)
+**Puntuación 63.7/100** · cochesnet · Vilamarxant · particular · manual · etiqueta C · [ver anuncio](https://www.coches.net/suzuki-alto-10-gl-5p-gasolina-2009-en-valencia-71388781-covo.aspx)
 
-Coste: 3.999 € al contado + gastos 0 € + ITP 60 € + tasa 55,70 € + informe 8,67 € = **4.123 €**; con el seguro estimado (340 €/año, aproximado) el primer año sale por **4.463 €**.
-
-**Por qué destaca**
-- Más aporta: fiabilidad (91/100), precio (50/100).
-- Precio 3.999 € frente a una mediana de 3.999 € en su segmento (modelo, 1 anuncios): 0% por debajo.
-- 70.000 km en 17 años (4.118 km/año).
-
-**Riesgos de este modelo y motor**
-- Venta entre particulares: no hay garantía legal de conformidad (solo vicios ocultos del Código Civil).
-
-**Qué revisar en la visita**
-- Cambio automático: transiciones en frío y en caliente, tirones, historial de cambio de aceite de la caja.
-- Pedir el informe DGT (con la matrícula) antes de la visita: cargas, embargos, titulares, ITV y km registrados.
-- Comprobar que el número de bastidor del permiso coincide con el del coche (parabrisas y bastidor).
-- Arranque en frío (motor sin calentar): ruidos, humo y testigos del cuadro.
-- Prueba de al menos 20 minutos con autovía: embrague, cambio, dirección y frenos.
-- Desgaste de neumáticos y discos, holguras de suspensión y fugas bajo el motor.
-- Revisar el aire acondicionado: imprescindible en Valencia.
-
-**Qué preguntar al vendedor**
-- ¿Hasta cuándo tiene la ITV? ¿Pasó la última sin defectos?
-- ¿Tiene el libro de mantenimiento sellado?
-- ¿Cuándo y con cuántos km se cambió la distribución (correa o cadena)? ¿Tiene la factura?
-- ¿Cuántos propietarios ha tenido?
-- ¿Por qué lo vende y desde cuándo es suyo?
-- ¿Tiene facturas de mantenimiento? ¿Cuándo fue la última revisión y qué se hizo?
-- ¿Ha tenido algún golpe o reparación importante?
-- ¿Acepta que lo revise un mecánico de mi confianza o en un taller antes de cerrar?
-
-_Avisos de coste: cuota fija ITP: >12 años, 1.501-2.000 cc_
-
-## 7. Ford Ka 2014 — 4.200 € (4.384 € en total)
-
-**Puntuación 54.1/100** · wallapop · Valencia (46002) · particular · manual · etiqueta C · [ver anuncio](https://es.wallapop.com/item/ford-ka-2014-1311163176)
-
-Coste: 4.200 € al contado + gastos 0 € + ITP 120 € + tasa 55,70 € + informe 8,67 € = **4.384 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **4.684 €**.
+Coste: 1.500 € al contado + gastos 0 € + ITP 40 € + tasa 55,70 € + informe 8,67 € = **1.604 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **1.904 €**.
 
 **Por qué destaca**
-- Más aporta: precio (90/100), fiabilidad (50/100).
-- Precio 4.200 € frente a una mediana de 4.990 € en su segmento (mercado modelo+año, 6 anuncios): 16% por debajo.
-- 177.000 km en 12 años (14.750 km/año).
-- El anuncio menciona: ITV en vigor, distribución cambiada.
-
-**Riesgos de este modelo y motor**
-- No hay dato de fiabilidad con fuente para el Ford Ka: PENDIENTE (se ha puntuado neutro).
-- Venta entre particulares: no hay garantía legal de conformidad (solo vicios ocultos del Código Civil).
-
-**Qué revisar en la visita**
-- Pedir el informe DGT (con la matrícula) antes de la visita: cargas, embargos, titulares, ITV y km registrados.
-- Comprobar que el número de bastidor del permiso coincide con el del coche (parabrisas y bastidor).
-- Arranque en frío (motor sin calentar): ruidos, humo y testigos del cuadro.
-- Prueba de al menos 20 minutos con autovía: embrague, cambio, dirección y frenos.
-- Desgaste de neumáticos y discos, holguras de suspensión y fugas bajo el motor.
-- Revisar el aire acondicionado: imprescindible en Valencia.
-
-**Qué preguntar al vendedor**
-- ¿Tiene el libro de mantenimiento sellado?
-- ¿Cuántos propietarios ha tenido?
-- ¿Por qué lo vende y desde cuándo es suyo?
-- ¿Tiene facturas de mantenimiento? ¿Cuándo fue la última revisión y qué se hizo?
-- ¿Ha tenido algún golpe o reparación importante?
-- ¿Acepta que lo revise un mecánico de mi confianza o en un taller antes de cerrar?
-
-_Avisos de coste: cuota fija ITP: >5 y <=12 años, hasta 1.500 cc_
-
-## 8. Hyundai i30 2009 — 4.000 € (4.104 € en total)
-
-**Puntuación 53.5/100** · wallapop · Valencia (46018) · particular · manual · etiqueta C · [ver anuncio](https://es.wallapop.com/item/hyundai-i30-2009-1303258356)
-
-Coste: 4.000 € al contado + gastos 0 € + ITP 40 € + tasa 55,70 € + informe 8,67 € = **4.104 €**; con el seguro estimado (340 €/año, aproximado) el primer año sale por **4.444 €**.
-
-**Por qué destaca**
-- Más aporta: precio (100/100), fiabilidad (59/100).
-- Precio 4.000 € frente a una mediana de 6.000 € en su segmento (mercado modelo+año, 5 anuncios): 33% por debajo.
-- 177.000 km en 17 años (10.412 km/año).
+- Más aporta: fiabilidad (91/100), precio (100/100).
+- Precio 1.500 € frente a una mediana de 3.250 € en su segmento (modelo, 2 anuncios): 54% por debajo.
+- 200.000 km en 17 años (11.765 km/año).
 
 **Riesgos de este modelo y motor**
 - Venta entre particulares: no hay garantía legal de conformidad (solo vicios ocultos del Código Civil).
@@ -299,50 +126,188 @@ Coste: 4.000 € al contado + gastos 0 € + ITP 40 € + tasa 55,70 € + infor
 
 _Avisos de coste: cuota fija ITP: >12 años, hasta 1.500 cc_
 
-## 9. SUZUKI Swift 1.3 GL — 4.500 € (4.604 € en total)
+### 3. VOLKSWAGEN Polo 1.4 United — 3.700 € (3.804 € en total)
 
-**Puntuación 53.0/100** · cochesnet · Paterna · particular · manual · etiqueta C · [ver anuncio](https://www.coches.net/suzuki-swift-13-gl-3p-3p-gasolina-2009-en-valencia-71785002-covo.aspx)
-
-Coste: 4.500 € al contado + gastos 0 € + ITP 40 € + tasa 55,70 € + informe 8,67 € = **4.604 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **4.904 €**.
-
-**Por qué destaca**
-- Más aporta: fiabilidad (88/100), precio (50/100).
-- Precio 4.500 € frente a una mediana de 4.500 € en su segmento (modelo, 1 anuncios): 0% por debajo.
-- 84.000 km en 17 años (4.941 km/año).
-
-**Riesgos de este modelo y motor**
-- Venta entre particulares: no hay garantía legal de conformidad (solo vicios ocultos del Código Civil).
-
-**Qué revisar en la visita**
-- Pedir el informe DGT (con la matrícula) antes de la visita: cargas, embargos, titulares, ITV y km registrados.
-- Comprobar que el número de bastidor del permiso coincide con el del coche (parabrisas y bastidor).
-- Arranque en frío (motor sin calentar): ruidos, humo y testigos del cuadro.
-- Prueba de al menos 20 minutos con autovía: embrague, cambio, dirección y frenos.
-- Desgaste de neumáticos y discos, holguras de suspensión y fugas bajo el motor.
-- Revisar el aire acondicionado: imprescindible en Valencia.
-
-**Qué preguntar al vendedor**
-- ¿Hasta cuándo tiene la ITV? ¿Pasó la última sin defectos?
-- ¿Tiene el libro de mantenimiento sellado?
-- ¿Cuándo y con cuántos km se cambió la distribución (correa o cadena)? ¿Tiene la factura?
-- ¿Cuántos propietarios ha tenido?
-- ¿Por qué lo vende y desde cuándo es suyo?
-- ¿Tiene facturas de mantenimiento? ¿Cuándo fue la última revisión y qué se hizo?
-- ¿Ha tenido algún golpe o reparación importante?
-- ¿Acepta que lo revise un mecánico de mi confianza o en un taller antes de cerrar?
-
-_Avisos de coste: cuota fija ITP: >12 años, hasta 1.500 cc_
-
-## 10. OPEL Corsa Cosmo 1.4 — 3.700 € (3.804 € en total)
-
-**Puntuación 52.4/100** · cochesnet · Valencia · particular · manual · etiqueta C · [ver anuncio](https://www.coches.net/opel-corsa-cosmo-14-5p-gasolina-2010-en-valencia-71818405-covo.aspx)
+**Puntuación 62.9/100** · cochesnet · ubicación sin dato · particular · manual · etiqueta C · [ver anuncio](https://www.coches.net/volkswagen-polo-14-united-80cv-5p-gasolina-2007-en-valencia-71770392-covo.aspx)
 
 Coste: 3.700 € al contado + gastos 0 € + ITP 40 € + tasa 55,70 € + informe 8,67 € = **3.804 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **4.104 €**.
 
 **Por qué destaca**
-- Más aporta: precio (100/100), fiabilidad (40/100).
-- Precio 3.700 € frente a una mediana de 4.650 € en su segmento (mercado modelo+año+km, 6 anuncios): 20% por debajo.
-- 118.857 km en 16 años (7.429 km/año).
+- Más aporta: precio (100/100), fiabilidad (69/100).
+- Precio 3.700 € frente a una mediana de 4.850 € en su segmento (mercado modelo+año+km, 6 anuncios): 24% por debajo.
+- 189.626 km en 19 años (9.980 km/año).
+- El anuncio menciona: ITV en vigor, libro de mantenimiento.
+
+**Riesgos de este modelo y motor**
+- Venta entre particulares: no hay garantía legal de conformidad (solo vicios ocultos del Código Civil).
+
+**Qué revisar en la visita**
+- Pedir el informe DGT (con la matrícula) antes de la visita: cargas, embargos, titulares, ITV y km registrados.
+- Comprobar que el número de bastidor del permiso coincide con el del coche (parabrisas y bastidor).
+- Arranque en frío (motor sin calentar): ruidos, humo y testigos del cuadro.
+- Prueba de al menos 20 minutos con autovía: embrague, cambio, dirección y frenos.
+- Desgaste de neumáticos y discos, holguras de suspensión y fugas bajo el motor.
+- Revisar el aire acondicionado: imprescindible en Valencia.
+
+**Qué preguntar al vendedor**
+- ¿Cuándo y con cuántos km se cambió la distribución (correa o cadena)? ¿Tiene la factura?
+- ¿Cuántos propietarios ha tenido?
+- ¿Por qué lo vende y desde cuándo es suyo?
+- ¿Tiene facturas de mantenimiento? ¿Cuándo fue la última revisión y qué se hizo?
+- ¿Ha tenido algún golpe o reparación importante?
+- ¿Acepta que lo revise un mecánico de mi confianza o en un taller antes de cerrar?
+
+_Avisos de coste: cuota fija ITP: >12 años, hasta 1.500 cc_
+
+### 4. SKODA Fabia 1.2 12v Young — 3.950 € (4.054 € en total)
+
+**Puntuación 62.6/100** · cochesnet · Vila-real · particular · manual · etiqueta C · [ver anuncio](https://www.coches.net/skoda-fabia-12-12v-60cv-young-5p-gasolina-2011-en-castellon-71112200-covo.aspx)
+
+Coste: 3.950 € al contado + gastos 0 € + ITP 40 € + tasa 55,70 € + informe 8,67 € = **4.054 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **4.354 €**.
+
+**Por qué destaca**
+- Más aporta: precio (100/100), fiabilidad (80/100).
+- Precio 3.950 € frente a una mediana de 4.999 € en su segmento (mercado modelo+año, 5 anuncios): 21% por debajo.
+- 144.000 km en 15 años (9.600 km/año).
+
+**Riesgos de este modelo y motor**
+- Venta entre particulares: no hay garantía legal de conformidad (solo vicios ocultos del Código Civil).
+
+**Qué revisar en la visita**
+- Pedir el informe DGT (con la matrícula) antes de la visita: cargas, embargos, titulares, ITV y km registrados.
+- Comprobar que el número de bastidor del permiso coincide con el del coche (parabrisas y bastidor).
+- Arranque en frío (motor sin calentar): ruidos, humo y testigos del cuadro.
+- Prueba de al menos 20 minutos con autovía: embrague, cambio, dirección y frenos.
+- Desgaste de neumáticos y discos, holguras de suspensión y fugas bajo el motor.
+- Revisar el aire acondicionado: imprescindible en Valencia.
+
+**Qué preguntar al vendedor**
+- ¿Hasta cuándo tiene la ITV? ¿Pasó la última sin defectos?
+- ¿Tiene el libro de mantenimiento sellado?
+- ¿Cuándo y con cuántos km se cambió la distribución (correa o cadena)? ¿Tiene la factura?
+- ¿Cuántos propietarios ha tenido?
+- ¿Por qué lo vende y desde cuándo es suyo?
+- ¿Tiene facturas de mantenimiento? ¿Cuándo fue la última revisión y qué se hizo?
+- ¿Ha tenido algún golpe o reparación importante?
+- ¿Acepta que lo revise un mecánico de mi confianza o en un taller antes de cerrar?
+
+_Avisos de coste: cuota fija ITP: >12 años, hasta 1.500 cc_
+
+### 5. Toyota Aygo Edition — 4.999 € (5.103 € en total) — **por encima del presupuesto, negociar**
+
+**Puntuación 62.6/100** · autoscout24 · oliva (46780) · particular · manual · etiqueta C · [ver anuncio](https://www.autoscout24.es/anuncios/toyota-aygo-edition-gasolina-cat_ma70mo18655-b781a865-5dae-49bf-a729-21dc60e62642)
+
+Coste: 4.999 € al contado + gastos 0 € + ITP 40 € + tasa 55,70 € + informe 8,67 € = **5.103 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **5.403 €**.
+
+**Por qué destaca**
+- Más aporta: fiabilidad (88/100), precio (90/100).
+- Precio 4.999 € frente a una mediana de 5.944 € en su segmento (mercado modelo+año, 4 anuncios): 16% por debajo.
+- 132.000 km en 15 años (8.800 km/año).
+
+**Riesgos de este modelo y motor**
+- Venta entre particulares: no hay garantía legal de conformidad (solo vicios ocultos del Código Civil).
+
+**Qué revisar en la visita**
+- Pedir el informe DGT (con la matrícula) antes de la visita: cargas, embargos, titulares, ITV y km registrados.
+- Comprobar que el número de bastidor del permiso coincide con el del coche (parabrisas y bastidor).
+- Arranque en frío (motor sin calentar): ruidos, humo y testigos del cuadro.
+- Prueba de al menos 20 minutos con autovía: embrague, cambio, dirección y frenos.
+- Desgaste de neumáticos y discos, holguras de suspensión y fugas bajo el motor.
+- Revisar el aire acondicionado: imprescindible en Valencia.
+
+**Qué preguntar al vendedor**
+- ¿Hasta cuándo tiene la ITV? ¿Pasó la última sin defectos?
+- ¿Tiene el libro de mantenimiento sellado?
+- ¿Cuándo y con cuántos km se cambió la distribución (correa o cadena)? ¿Tiene la factura?
+- ¿Cuántos propietarios ha tenido?
+- ¿Por qué lo vende y desde cuándo es suyo?
+- ¿Tiene facturas de mantenimiento? ¿Cuándo fue la última revisión y qué se hizo?
+- ¿Ha tenido algún golpe o reparación importante?
+- ¿Acepta que lo revise un mecánico de mi confianza o en un taller antes de cerrar?
+
+_Avisos de coste: cuota fija ITP: >12 años, hasta 1.500 cc_
+
+### 6. SEAT Leon — 4.500 € (4.704 € en total)
+
+**Puntuación 61.9/100** · cochesnet · ubicación sin dato · particular · manual · etiqueta C · [ver anuncio](https://www.coches.net/seat-leon-gasolina-2007-en-castellon-71374977-covo.aspx)
+
+Coste: 4.500 € al contado + gastos 0 € + ITP 140 € + tasa 55,70 € + informe 8,67 € = **4.704 €**; con el seguro estimado (340 €/año, aproximado) el primer año sale por **5.044 €**.
+
+**Por qué destaca**
+- Más aporta: fiabilidad (96/100), precio (90/100).
+- Precio 4.500 € frente a una mediana de 5.345 € en su segmento (mercado modelo+año+km, 4 anuncios): 16% por debajo.
+- 192.000 km en 19 años (10.105 km/año).
+
+**Riesgos de este modelo y motor**
+- El anuncio no deja claro el motor: confirmar con la ficha técnica antes de valorar riesgos.
+- Venta entre particulares: no hay garantía legal de conformidad (solo vicios ocultos del Código Civil).
+
+**Qué revisar en la visita**
+- Pedir el informe DGT (con la matrícula) antes de la visita: cargas, embargos, titulares, ITV y km registrados.
+- Comprobar que el número de bastidor del permiso coincide con el del coche (parabrisas y bastidor).
+- Arranque en frío (motor sin calentar): ruidos, humo y testigos del cuadro.
+- Prueba de al menos 20 minutos con autovía: embrague, cambio, dirección y frenos.
+- Desgaste de neumáticos y discos, holguras de suspensión y fugas bajo el motor.
+- Revisar el aire acondicionado: imprescindible en Valencia.
+
+**Qué preguntar al vendedor**
+- ¿Hasta cuándo tiene la ITV? ¿Pasó la última sin defectos?
+- ¿Tiene el libro de mantenimiento sellado?
+- ¿Cuándo y con cuántos km se cambió la distribución (correa o cadena)? ¿Tiene la factura?
+- ¿Cuántos propietarios ha tenido?
+- ¿Por qué lo vende y desde cuándo es suyo?
+- ¿Tiene facturas de mantenimiento? ¿Cuándo fue la última revisión y qué se hizo?
+- ¿Ha tenido algún golpe o reparación importante?
+- ¿Acepta que lo revise un mecánico de mi confianza o en un taller antes de cerrar?
+
+_Avisos de coste: cilindrada desconocida: se aplica el tramo de cuota fija más alto; cuota fija ITP: >12 años, más de 2.000 cc_
+
+### 7. SUZUKI Swift 1.3 GL — 2.800 € (2.904 € en total)
+
+**Puntuación 61.7/100** · cochesnet · San Antonio de Benagéber · particular · manual · etiqueta C · [ver anuncio](https://www.coches.net/suzuki-swift-13-gl-5p-5p-gasolina-2006-en-valencia-71604098-covo.aspx)
+
+Coste: 2.800 € al contado + gastos 0 € + ITP 40 € + tasa 55,70 € + informe 8,67 € = **2.904 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **3.204 €**.
+
+**Por qué destaca**
+- Más aporta: fiabilidad (88/100), precio (99/100).
+- Precio 2.800 € frente a una mediana de 3.475 € en su segmento (mercado modelo+año, 5 anuncios): 19% por debajo.
+- 206.000 km en 20 años (10.300 km/año).
+
+**Riesgos de este modelo y motor**
+- Venta entre particulares: no hay garantía legal de conformidad (solo vicios ocultos del Código Civil).
+
+**Qué revisar en la visita**
+- Pedir el informe DGT (con la matrícula) antes de la visita: cargas, embargos, titulares, ITV y km registrados.
+- Comprobar que el número de bastidor del permiso coincide con el del coche (parabrisas y bastidor).
+- Arranque en frío (motor sin calentar): ruidos, humo y testigos del cuadro.
+- Prueba de al menos 20 minutos con autovía: embrague, cambio, dirección y frenos.
+- Desgaste de neumáticos y discos, holguras de suspensión y fugas bajo el motor.
+- Revisar el aire acondicionado: imprescindible en Valencia.
+
+**Qué preguntar al vendedor**
+- ¿Hasta cuándo tiene la ITV? ¿Pasó la última sin defectos?
+- ¿Tiene el libro de mantenimiento sellado?
+- ¿Cuándo y con cuántos km se cambió la distribución (correa o cadena)? ¿Tiene la factura?
+- ¿Cuántos propietarios ha tenido?
+- ¿Por qué lo vende y desde cuándo es suyo?
+- ¿Tiene facturas de mantenimiento? ¿Cuándo fue la última revisión y qué se hizo?
+- ¿Ha tenido algún golpe o reparación importante?
+- ¿Acepta que lo revise un mecánico de mi confianza o en un taller antes de cerrar?
+
+_También publicado en: cochesnet:71652616 (https://www.coches.net/suzuki-swift-gasolina-2006-en-valencia-71652616-covo.aspx)_
+
+_Avisos de coste: cuota fija ITP: >12 años, hasta 1.500 cc_
+
+### 8. Volkswagen Golf Golf 1.6 Highline Highline — 4.000 € (4.124 € en total)
+
+**Puntuación 61.2/100** · autoscout24 · Castelló de la Plana (12001) · particular · manual · etiqueta C · [ver anuncio](https://www.autoscout24.es/anuncios/volkswagen-golf-golf-1-6-highline-highline-gasolina-negro-cat_ma74mo2084-2422eae7-5387-42bd-9d60-aa5952b4a9ba)
+
+Coste: 4.000 € al contado + gastos 0 € + ITP 60 € + tasa 55,70 € + informe 8,67 € = **4.124 €**; con el seguro estimado (340 €/año, aproximado) el primer año sale por **4.464 €**.
+
+**Por qué destaca**
+- Más aporta: fiabilidad (83/100), precio (92/100).
+- Precio 4.000 € frente a una mediana de 4.800 € en su segmento (mercado modelo+año+km, 5 anuncios): 17% por debajo.
+- 185.000 km en 20 años (9.250 km/año).
 - El anuncio menciona: ITV en vigor.
 
 **Riesgos de este modelo y motor**
@@ -365,4 +330,76 @@ Coste: 3.700 € al contado + gastos 0 € + ITP 40 € + tasa 55,70 € + infor
 - ¿Ha tenido algún golpe o reparación importante?
 - ¿Acepta que lo revise un mecánico de mi confianza o en un taller antes de cerrar?
 
+_También publicado en: cochesnet:70972197 (https://www.coches.net/volkswagen-golf-16-fsi-gt-sport-5p-gasolina-2006-en-castellon-70972197-covo.aspx)_
+
+_Avisos de coste: cuota fija ITP: >12 años, 1.501-2.000 cc_
+
+### 9. SEAT Leon 1.2 TSI Reference — 4.390 € (4.494 € en total)
+
+**Puntuación 61.1/100** · cochesnet · Godelleta · particular · manual · etiqueta C · [ver anuncio](https://www.coches.net/seat-leon-12-tsi-reference-5p-gasolina-2010-en-valencia-71516293-covo.aspx)
+
+Coste: 4.390 € al contado + gastos 0 € + ITP 40 € + tasa 55,70 € + informe 8,67 € = **4.494 €**; con el seguro estimado (340 €/año, aproximado) el primer año sale por **4.834 €**.
+
+**Por qué destaca**
+- Más aporta: precio (100/100), fiabilidad (76/100).
+- Precio 4.390 € frente a una mediana de 5.900 € en su segmento (mercado modelo+año+km, 7 anuncios): 26% por debajo.
+- 212.000 km en 16 años (13.250 km/año).
+- El anuncio menciona: ITV en vigor.
+
+**Riesgos de este modelo y motor**
+- EA111: cadena de distribución que se alarga y tensor que falla; puede saltar y romper el motor (fuente: https://www.autobild.de/artikel/vw-steuerketten-kulanz-2892135.html; estado: probable)
+- Venta entre particulares: no hay garantía legal de conformidad (solo vicios ocultos del Código Civil).
+
+**Qué revisar en la visita**
+- Ruido metálico en arranque en frío (primeros segundos); factura de cambio de cadena y tensor
+- Pedir el informe DGT (con la matrícula) antes de la visita: cargas, embargos, titulares, ITV y km registrados.
+- Comprobar que el número de bastidor del permiso coincide con el del coche (parabrisas y bastidor).
+- Arranque en frío (motor sin calentar): ruidos, humo y testigos del cuadro.
+- Prueba de al menos 20 minutos con autovía: embrague, cambio, dirección y frenos.
+- Desgaste de neumáticos y discos, holguras de suspensión y fugas bajo el motor.
+- Revisar el aire acondicionado: imprescindible en Valencia.
+
+**Qué preguntar al vendedor**
+- ¿Tiene el libro de mantenimiento sellado?
+- ¿Cuándo y con cuántos km se cambió la distribución (correa o cadena)? ¿Tiene la factura?
+- ¿Cuántos propietarios ha tenido?
+- ¿Por qué lo vende y desde cuándo es suyo?
+- ¿Tiene facturas de mantenimiento? ¿Cuándo fue la última revisión y qué se hizo?
+- ¿Ha tenido algún golpe o reparación importante?
+- ¿Acepta que lo revise un mecánico de mi confianza o en un taller antes de cerrar?
+
 _Avisos de coste: cuota fija ITP: >12 años, hasta 1.500 cc_
+
+### 10. Toyota Avensis Wagon 1.8 Sol — 3.000 € (3.124 € en total)
+
+**Puntuación 60.9/100** · autoscout24 · la Pobla Llarga (46670) · particular · manual · etiqueta C · [ver anuncio](https://www.autoscout24.es/anuncios/toyota-avensis-wagon-1-8-sol-gasolina-cat_ma70mo15230-1a5a1cfa-8aa2-4eb2-becc-bd32ed1bb345)
+
+Coste: 3.000 € al contado + gastos 0 € + ITP 60 € + tasa 55,70 € + informe 8,67 € = **3.124 €**; con el seguro estimado (0 €/año, aproximado) el primer año sale por **3.124 €**.
+
+**Por qué destaca**
+- Más aporta: fiabilidad (91/100), precio (100/100).
+- Precio 3.000 € frente a una mediana de 4.399 € en su segmento (mercado modelo+año, 7 anuncios): 32% por debajo.
+- 145.000 km en 19 años (7.632 km/año).
+
+**Riesgos de este modelo y motor**
+- Venta entre particulares: no hay garantía legal de conformidad (solo vicios ocultos del Código Civil).
+
+**Qué revisar en la visita**
+- Pedir el informe DGT (con la matrícula) antes de la visita: cargas, embargos, titulares, ITV y km registrados.
+- Comprobar que el número de bastidor del permiso coincide con el del coche (parabrisas y bastidor).
+- Arranque en frío (motor sin calentar): ruidos, humo y testigos del cuadro.
+- Prueba de al menos 20 minutos con autovía: embrague, cambio, dirección y frenos.
+- Desgaste de neumáticos y discos, holguras de suspensión y fugas bajo el motor.
+- Revisar el aire acondicionado: imprescindible en Valencia.
+
+**Qué preguntar al vendedor**
+- ¿Hasta cuándo tiene la ITV? ¿Pasó la última sin defectos?
+- ¿Tiene el libro de mantenimiento sellado?
+- ¿Cuándo y con cuántos km se cambió la distribución (correa o cadena)? ¿Tiene la factura?
+- ¿Cuántos propietarios ha tenido?
+- ¿Por qué lo vende y desde cuándo es suyo?
+- ¿Tiene facturas de mantenimiento? ¿Cuándo fue la última revisión y qué se hizo?
+- ¿Ha tenido algún golpe o reparación importante?
+- ¿Acepta que lo revise un mecánico de mi confianza o en un taller antes de cerrar?
+
+_Avisos de coste: cuota fija ITP: >12 años, 1.501-2.000 cc_
