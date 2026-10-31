@@ -60,7 +60,7 @@ def test_formulas_match_python(tmp_path, cfg, fiscal, rel):
     ls = synthetic()
     market = [{"uid": f"m{i}", "plataforma": "TEST", "marca": l.marca, "modelo": l.modelo, "titulo": l.titulo, "anio": l.anio,
                "km": l.km, "precio": l.precio} for i, l in enumerate(ls * 2)]
-    ventas = [{"marca": l.marca, "modelo": l.modelo, "titulo": l.titulo, "dias": 5 + 3 * i} for i, l in enumerate(ls[:40])]
+    ventas = [{"marca": l.marca, "modelo": l.modelo, "titulo": l.titulo, "dias": 5 + 3 * i} for i, l in enumerate(ls[:30] * 3)]
     res = process(ls, p, set(), market, ventas=ventas)
     assert res.filas, "deberían quedar anuncios limpios"
     # el conjunto sintético debe ejercitar los casos nuevos
@@ -83,7 +83,7 @@ def test_formulas_match_python(tmp_path, cfg, fiscal, rel):
     assert any(f["reventa"]["n_dias"] >= 3 for f in res.filas), "faltan días de venta"
     assert any(f["seguridad"]["penal_particular"] for f in res.filas), "falta particular sin garantía"
     src = tmp_path / "r.xlsx"
-    write_workbook(src, [f["listing"] for f in res.filas], res.avisos, p, None, liq_map(res.filas))
+    write_workbook(src, [f["listing"] for f in res.filas], res.avisos, p, {f["listing"].uid: f["mercado"] for f in res.filas}, liq_map(res.filas))
     outdir = tmp_path / "calc"
     subprocess.run(["soffice", "--headless", "--calc", "--convert-to", "xlsx", "--outdir", str(outdir), str(src)],
                    check=True, capture_output=True, timeout=180)

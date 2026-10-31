@@ -33,11 +33,14 @@ modelos:
   "Toyota Auris": {adac: "Toyota Auris", estado: PENDIENTE}
   "Toyota Corolla": {estado: PENDIENTE}
   "Honda Jazz": {estado: PENDIENTE}
-  "Honda Civic": {estado: PENDIENTE}
+  "Honda Civic": {estado: "PENDIENTE (8.ª gen: sin Mängelquote; ADAC 2023 por encima de la media casi todos los años, sobre todo batería; TÜV: rótulas, discos, luces)", fuente: "https://assets.adac.de/Autodatenbank/GWInfo/gw0135-honda-civic-2005-2011-bericht.pdf"}
   "Mazda 2": {adac: "Mazda 2", estado: "PENDIENTE (TÜV 2026 solo da franjas jóvenes: 2,9 % a 2-3 años; ADAC 2026 lo pone entre los mejores Kleinwagen 2016-2023)"}
   "Kia Rio": {estado: PENDIENTE}
   "Kia Ceed": {adac: "KIA Ceed/XCeed", estado: PENDIENTE}
   "Kia Picanto": {adac: "Kia Picanto", estado: PENDIENTE}
+  "Audi A3": {estado: "PENDIENTE de Mängelquote por franja (A3 8P: ADAC 2021 'nivel muy bajo de defectos y averías', TÜV mejor que la media; TÜV 2015 4,9 % sin franja clara)", fuente: "https://assets.adac.de/Autodatenbank/GWInfo/gw0091-audi-a3-2003-2013-benziner-bericht.pdf"}
+  "Alfa Romeo 147": {tuv_mq: 30.7, tuv_franja: "9 años (TÜV 2012)", tuv_media_propia: 22.2, estado: "confirmado (TÜV Report 2012: puesto 78 de 85 a 9 años, media 22,2 %)", fuente: "https://autoflotte.de/downloadfile/1085776/TUEV_Report_2012.pdf ; eje trasero 3 veces peor que la media, electrónica: https://www.autobild.de/artikel/gebrauchtwagen-test-alfa-147-ab-2001--53500.html"}
+  "Alfa Romeo 159": {tuv_mq: 9.4, tuv_franja: "3 años (TÜV 2012)", tuv_media_propia: 5.9, estado: "confirmado (TÜV Report 2012: puesto 119 de 127 a 3 años, media 5,9 %; AUTO BILD 2016: solo el 58,5 % de los de 7 años pasa sin defectos)", fuente: "https://autoflotte.de/downloadfile/1085776/TUEV_Report_2012.pdf ; https://www.autobild.de/artikel/alfa-romeo-159-gebrauchtwagen-test-10615563.html"}
   # Berlinas medianas prioritarias (01-11-2026). Sin cifra TÜV/ADAC/OCU de la generación que entra en presupuesto:
   # los TÜV 2026 encontrados son de generaciones posteriores (A4 B9, Octavia III/IV) y el ADAC solo cubre 2016-2023.
   "Honda Accord": {estado: "PENDIENTE (TÜV 2014/2016: cualitativo 'fiable'; rótulas y muelles por encima de la media desde ~9-11 años; sin cifra por franja)", fuente: "https://www.handelsblatt.com/mobilitaet/motor/der-honda-accord-als-gebrauchter-solide-aber-selten-/14733658.html ; https://www.wz.de/auto/gebrauchtwagen/purer-durchschnitt-tuev-report-zu-honda-accord_aid-29389651"}
@@ -52,7 +55,7 @@ modelos:
   "Skoda Fabia": {adac: "Skoda Fabia", estado: "PENDIENTE (ADAC 2026 entre los mejores Kleinwagen 2016-2023, sin cifra)"}
   "Skoda Octavia": {adac: "Skoda Octavia", estado: PENDIENTE}
   "Seat Ibiza": {adac: "SEAT Ibiza", estado: "PENDIENTE (ADAC 2026 entre los mejores Kleinwagen 2016-2023, sin cifra)"}
-  "Seat León": {adac: "SEAT Leon", estado: PENDIENTE}
+  "Seat León": {adac: "SEAT Leon", estado: "PENDIENTE de Mängelquote (León II 1P: ADAC 2023 'muy buena estadística de averías', TÜV en la media; iluminación por encima de la media)", fuente: "https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://www.autozeitung.de/seat-leon-erfahrungen-kaufberatung-i-ii-91760.html"}
   "Volkswagen Polo": {adac: "VW Polo", estado: "PENDIENTE (ADAC 2026 entre los mejores Kleinwagen 2016-2023, sin cifra)"}
   "Opel Corsa": {adac: "Opel Corsa", estado: PENDIENTE}
   "Opel Astra": {adac: "Opel Astra", estado: PENDIENTE}
@@ -260,6 +263,33 @@ motores:
      revisar: "Cascabeleo de cadena en frío, historial de cambio de tensor/cadena, consumo de aceite (N14)",
      estado: "probable (boletines de servicio MINI recogidos por australiancar.reviews)",
      fuente: "https://australiancar.reviews/recalls-faults-mini-r56-cooper-2007-13/"}
+  # --- Alfa Romeo (02-11-2026). Los defectos de bastidor y electrónica ya están en la Mängelquote del modelo (no se duplican).
+  - {marca: "Alfa Romeo", motor: "1.6", anio_desde: 2000, anio_hasta: 2010, ajuste: -10,
+     problema: "1.6 Twin Spark: correa de distribución con roturas conocidas y daño grave; intervalo oficial reducido a ~58.000 km (36.000 millas) o 3 años desde el 13-11-2006",
+     revisar: "Factura con fecha de correa, tensor y bomba; si no la hay, cambiarla al comprar", estado: confirmado,
+     fuente: "https://whatcar.com/alfa-romeo/147/hatchback/used-review/n207/reliability ; https://alfaworkshop.co.uk/alfa_romeo_timing_belts.shtml"}
+  - {marca: "Alfa Romeo", motor: "2.0", anio_desde: 2000, anio_hasta: 2010, ajuste: -10,
+     problema: "2.0 Twin Spark: misma correa de intervalo corto que el 1.6 TS", revisar: "Igual que 1.6 TS", estado: confirmado,
+     fuente: "https://whatcar.com/alfa-romeo/147/hatchback/used-review/n207/reliability ; https://alfaworkshop.co.uk/alfa_romeo_timing_belts.shtml"}
+  - {marca: "Alfa Romeo", motor: "1.6", anio_desde: 2000, anio_hasta: 2010, ajuste: -5,
+     problema: "Twin Spark: variador de fase (reparación habitual de precio fijo en especialista; no es una estadística)", revisar: "Ruido tipo diésel al ralentí en caliente; si se cambió con la correa",
+     estado: "probable (taller especialista)", fuente: "https://alfa.studio.silvertoad.co.uk/?p=37543"}
+  - {marca: "Alfa Romeo", motor: "2.0", anio_desde: 2000, anio_hasta: 2010, ajuste: -5,
+     problema: "Twin Spark: variador de fase", revisar: "Igual que 1.6 TS", estado: "probable (taller especialista)", fuente: "https://alfa.studio.silvertoad.co.uk/?p=37543"}
+  - {marca: "Alfa Romeo", motor: "1.9", anio_desde: 2005, anio_hasta: 2011, ajuste: -15,
+     problema: "1.9 JTS: cadena de distribución y de equilibrado que se estiran (desde ~64.000 km); cadena, guías y tensores ~999 GBP en especialista",
+     revisar: "Factura de cadena; ruido en arranque en frío; códigos de sincronización leva/cigüeñal", estado: "probable (taller especialista)",
+     fuente: "https://alfaworkshop.co.uk/alfa_romeo_timing_belts.shtml"}
+  - {marca: "Alfa Romeo", motor: "2.2", anio_desde: 2005, anio_hasta: 2011, ajuste: -15,
+     problema: "2.2 JTS: cadenas de distribución y equilibrado que se estiran (desde ~64.000 km)", revisar: "Igual que 1.9 JTS",
+     estado: "probable (taller especialista)", fuente: "https://alfaworkshop.co.uk/alfa_romeo_timing_belts.shtml"}
+  - {marca: "Alfa Romeo", motor: "2.2", anio_desde: 2005, anio_hasta: 2011, ajuste: -5,
+     problema: "2.2 JTS: lodos en el aceite que colapsan el filtro; aceite y filtro cada año", revisar: "Historial de cambios de aceite anuales",
+     estado: "probable (taller especialista)", fuente: "https://alfa.studio.silvertoad.co.uk/?p=37541"}
+  # 2.2 JTS desgaste de árbol de levas: sin fuente seria (PENDIENTE). 2.4 JTDm: bielas/correa/sobrecalentamiento (AUTO BILD) -> diésel.
+  - {marca: "Alfa Romeo", motor: "2.4 Multijet", anio_desde: 2005, anio_hasta: 2011, ajuste: -20,
+     problema: "2.4 JTDm: averías de motor por bielas rotas, correa rota o sobrecalentamiento 'no son la excepción'", revisar: "Historial completo, factura de correa, temperatura",
+     estado: confirmado, fuente: "https://www.autobild.de/artikel/alfa-romeo-159-gebrauchtwagen-test-10615563.html"}
   # --- Audi/VW gasolina (01-11-2026) ---
   - {marca: "(todas)", motor: "1.8 TFSI", anio_desde: 2007, anio_hasta: 2012, ajuste: -20,
      problema: "EA888 de 1.ª generación (CDHA/CDAB...): consumo excesivo de aceite por segmentos rascadores demasiado estrechos; la solución suele ser cambiar pistones y segmentos (Auto Bild: ~1 l/1.000 km). Sin programa europeo oficial de Kulanz",
@@ -359,3 +389,321 @@ cajas:
     revisar: "Tirones o vibración al arrancar y en maniobras, golpes al cambiar de 1.ª a 2.ª, testigo de la caja; facturas de embrague o mecatrónica"
     estado: "probable (prensa del sector)"
     fuente: "https://autonews.gasgoo.com/articles/market-industry/vw-apologizes-to-chinese-customers-for-dsg-gearbox-problem-1021311"
+
+# ---- Mantenimiento (02-11-2026): recambios por marca y distribución por marca|motor (clave = marca|motor normalizado)
+mantenimiento:
+  nota: 'Mantenimiento (dentro de Coste de uso) = media de: puntos de la marca (coste de la revisión anual en taller oficial, OCU 2026) y puntos del tipo de distribución. Marca o motor sin dato: NEUTRO.
+    El resto de marcas (Seat, Skoda, Toyota, Peugeot...) no tienen cifra en la nota de la OCU: PENDIENTE.'
+  nota_puntos: 'Supuesto (criterio): cadena 80 (sin cambio periódico, aunque algunas se estiran), correa 50, correa de intervalo corto (< 100.000 km o <= 4 años) 25. Referencias: kit de distribución + bomba
+    en Valencia 550,22 € (Tallerator vía Autofácil, 2014) https://www.autofacil.es/cuesta-cambiar-kit-distribucion/ ; Audatex 2013: premium +8,7 % de coste cada 100.000 km https://www.autofacil.es/mantener-coche-premium-cuesta-9-marca-generalista/'
+  puntos_distribucion:
+    cadena: 80
+    correa: 50
+    correa_corta: 25
+  marcas:
+    Audi:
+      puntos: 0
+      coste_revision_eur: 377
+      estado: confirmado (coste) · puntos = 50 + 100·(249 − coste)/249
+      fuente: 'OCU, nota de prensa 28-04-2026 (encuesta a 85.500 conductores): revisión anual en taller oficial, media 249 €. https://www.ocu.org/organizacion/prensa/notas-de-prensa/2026/tallerescoches280426'
+    Volkswagen:
+      puntos: 77.7
+      coste_revision_eur: 180
+      estado: confirmado (coste) · puntos = 50 + 100·(249 − coste)/249
+      fuente: 'OCU, nota de prensa 28-04-2026 (encuesta a 85.500 conductores): revisión anual en taller oficial, media 249 €. https://www.ocu.org/organizacion/prensa/notas-de-prensa/2026/tallerescoches280426'
+    Renault:
+      puntos: 77.7
+      coste_revision_eur: 180
+      estado: confirmado (coste) · puntos = 50 + 100·(249 − coste)/249
+      fuente: 'OCU, nota de prensa 28-04-2026 (encuesta a 85.500 conductores): revisión anual en taller oficial, media 249 €. https://www.ocu.org/organizacion/prensa/notas-de-prensa/2026/tallerescoches280426'
+    Hyundai:
+      puntos: 85.7
+      coste_revision_eur: 160
+      estado: confirmado (coste) · puntos = 50 + 100·(249 − coste)/249
+      fuente: 'OCU, nota de prensa 28-04-2026 (encuesta a 85.500 conductores): revisión anual en taller oficial, media 249 €. https://www.ocu.org/organizacion/prensa/notas-de-prensa/2026/tallerescoches280426'
+    Mercedes-Benz:
+      puntos: 0
+      coste_revision_eur: 490
+      estado: confirmado (coste) · puntos = 50 + 100·(249 − coste)/249
+      fuente: 'OCU, nota de prensa 28-04-2026 (encuesta a 85.500 conductores): revisión anual en taller oficial, media 249 €. https://www.ocu.org/organizacion/prensa/notas-de-prensa/2026/tallerescoches280426'
+    Lexus:
+      puntos: 14.3
+      coste_revision_eur: 338
+      estado: confirmado (coste) · puntos = 50 + 100·(249 − coste)/249
+      fuente: 'OCU, nota de prensa 28-04-2026 (encuesta a 85.500 conductores): revisión anual en taller oficial, media 249 €. https://www.ocu.org/organizacion/prensa/notas-de-prensa/2026/tallerescoches280426'
+  distribucion:
+    Seat|1.6:
+      tipo: correa
+      intervalo: '180.000 km (ADAC); AutoScout24: como muy tarde cada 5 años'
+      estado: probable (1.6 MPI 8v BGU/BSE/BSF; la ficha ADAC del A3 8P no da fila de correa)
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0229-seat-altea-2004-2015-benziner-bericht.pdf
+    Volkswagen|1.6:
+      tipo: correa
+      intervalo: '180.000 km (ADAC); AutoScout24: como muy tarde cada 5 años'
+      estado: probable (1.6 MPI 8v BGU/BSE/BSF; la ficha ADAC del A3 8P no da fila de correa)
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0229-seat-altea-2004-2015-benziner-bericht.pdf
+    Skoda|1.6:
+      tipo: correa
+      intervalo: '180.000 km (ADAC); AutoScout24: como muy tarde cada 5 años'
+      estado: probable (1.6 MPI 8v BGU/BSE/BSF; la ficha ADAC del A3 8P no da fila de correa)
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0229-seat-altea-2004-2015-benziner-bericht.pdf
+    Audi|1.6:
+      tipo: correa
+      intervalo: '180.000 km (ADAC); AutoScout24: como muy tarde cada 5 años'
+      estado: probable (1.6 MPI 8v BGU/BSE/BSF; la ficha ADAC del A3 8P no da fila de correa)
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0229-seat-altea-2004-2015-benziner-bericht.pdf
+    Seat|1.6 MPI:
+      tipo: correa
+      intervalo: '180.000 km (ADAC); AutoScout24: como muy tarde cada 5 años'
+      estado: probable (1.6 MPI 8v BGU/BSE/BSF; la ficha ADAC del A3 8P no da fila de correa)
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0229-seat-altea-2004-2015-benziner-bericht.pdf
+    Volkswagen|1.6 MPI:
+      tipo: correa
+      intervalo: '180.000 km (ADAC); AutoScout24: como muy tarde cada 5 años'
+      estado: probable (1.6 MPI 8v BGU/BSE/BSF; la ficha ADAC del A3 8P no da fila de correa)
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0229-seat-altea-2004-2015-benziner-bericht.pdf
+    Skoda|1.6 MPI:
+      tipo: correa
+      intervalo: '180.000 km (ADAC); AutoScout24: como muy tarde cada 5 años'
+      estado: probable (1.6 MPI 8v BGU/BSE/BSF; la ficha ADAC del A3 8P no da fila de correa)
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0229-seat-altea-2004-2015-benziner-bericht.pdf
+    Seat|1.4:
+      tipo: correa
+      intervalo: 150.000-180.000 km (1.4 16v MPI EA111)
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0197-seat-ibiza-2008-2017-benziner-bericht.pdf
+    Volkswagen|1.4:
+      tipo: correa
+      intervalo: 150.000-180.000 km (1.4 16v MPI EA111)
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0197-seat-ibiza-2008-2017-benziner-bericht.pdf
+    Skoda|1.4:
+      tipo: correa
+      intervalo: 150.000-180.000 km (1.4 16v MPI EA111)
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0197-seat-ibiza-2008-2017-benziner-bericht.pdf
+    Seat|1.2 TSI:
+      tipo: cadena
+      intervalo: 'sin intervalo (EA111: cadena que se estira, ver motores)'
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf
+    Seat|1.4 TSI:
+      tipo: cadena
+      intervalo: 'sin intervalo (EA111: cadena que se estira, ver motores)'
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf
+    Volkswagen|1.2 TSI:
+      tipo: cadena
+      intervalo: 'sin intervalo (EA111: cadena que se estira, ver motores)'
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf
+    Volkswagen|1.4 TSI:
+      tipo: cadena
+      intervalo: 'sin intervalo (EA111: cadena que se estira, ver motores)'
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf
+    Skoda|1.2 TSI:
+      tipo: cadena
+      intervalo: 'sin intervalo (EA111: cadena que se estira, ver motores)'
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf
+    Skoda|1.4 TSI:
+      tipo: cadena
+      intervalo: 'sin intervalo (EA111: cadena que se estira, ver motores)'
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf
+    Audi|1.2 TSI:
+      tipo: cadena
+      intervalo: 'sin intervalo (EA111: cadena que se estira, ver motores)'
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf
+    Audi|1.4 TSI:
+      tipo: cadena
+      intervalo: 'sin intervalo (EA111: cadena que se estira, ver motores)'
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf
+    Honda|1.8:
+      tipo: cadena
+      intervalo: sin intervalo fijo (R18A/R20A)
+      estado: probable
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0135-honda-civic-2005-2011-bericht.pdf ; https://jdmshop.eu/en/genuine-honda-timing-chain-14401-rna-a01
+    Honda|2.0:
+      tipo: cadena
+      intervalo: sin intervalo fijo (R18A/R20A)
+      estado: probable
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0135-honda-civic-2005-2011-bericht.pdf ; https://jdmshop.eu/en/genuine-honda-timing-chain-14401-rna-a01
+    Honda|1.8 i-VTEC:
+      tipo: cadena
+      intervalo: sin intervalo fijo (R18A/R20A)
+      estado: probable
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0135-honda-civic-2005-2011-bericht.pdf ; https://jdmshop.eu/en/genuine-honda-timing-chain-14401-rna-a01
+    Honda|2.0 i-VTEC:
+      tipo: cadena
+      intervalo: sin intervalo fijo (R18A/R20A)
+      estado: probable
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0135-honda-civic-2005-2011-bericht.pdf ; https://jdmshop.eu/en/genuine-honda-timing-chain-14401-rna-a01
+    Toyota|1.8:
+      tipo: cadena
+      intervalo: sin intervalo (familia ZZ)
+      estado: confirmado (Corolla E12); 2ZR probable
+      fuente: https://assets.adac.de/image/upload/Autodatenbank/GWInfo/gw0112-toyota-corolla-2001---2007-bericht.pdf
+    Toyota|1.8 VVT-i:
+      tipo: cadena
+      intervalo: sin intervalo (familia ZZ)
+      estado: confirmado (Corolla E12); 2ZR probable
+      fuente: https://assets.adac.de/image/upload/Autodatenbank/GWInfo/gw0112-toyota-corolla-2001---2007-bericht.pdf
+    Toyota|1.4 VVT-i:
+      tipo: cadena
+      intervalo: sin intervalo (familia ZZ)
+      estado: confirmado (Corolla E12); 2ZR probable
+      fuente: https://assets.adac.de/image/upload/Autodatenbank/GWInfo/gw0112-toyota-corolla-2001---2007-bericht.pdf
+    Toyota|1.6 VVT-i:
+      tipo: cadena
+      intervalo: sin intervalo (familia ZZ)
+      estado: confirmado (Corolla E12); 2ZR probable
+      fuente: https://assets.adac.de/image/upload/Autodatenbank/GWInfo/gw0112-toyota-corolla-2001---2007-bericht.pdf
+    Mazda|1.4:
+      tipo: cadena
+      intervalo: sin intervalo (MZR gasolina)
+      estado: confirmado (Mazda 3 BK); Mazda 2/6 probable
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0122-mazda-3-2003-2009-bericht.pdf
+    Mazda|1.6:
+      tipo: cadena
+      intervalo: sin intervalo (MZR gasolina)
+      estado: confirmado (Mazda 3 BK); Mazda 2/6 probable
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0122-mazda-3-2003-2009-bericht.pdf
+    Mazda|1.8:
+      tipo: cadena
+      intervalo: sin intervalo (MZR gasolina)
+      estado: confirmado (Mazda 3 BK); Mazda 2/6 probable
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0122-mazda-3-2003-2009-bericht.pdf
+    Mazda|2.0:
+      tipo: cadena
+      intervalo: sin intervalo (MZR gasolina)
+      estado: confirmado (Mazda 3 BK); Mazda 2/6 probable
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0122-mazda-3-2003-2009-bericht.pdf
+    Peugeot|1.4:
+      tipo: correa
+      intervalo: '150.000 km / 10 años (ADAC 207); manual 207: 240.000 normal, 180.000 severo'
+      estado: confirmado (Peugeot 207); otros PSA TU/ET probable
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0140-peugeot-207-2006-2015-benziner-bericht.pdf ; https://www.autofacil.es/consultorio/tecnico/debo-cambiar-correa-peugeot-207/58226.html
+    Peugeot|1.6:
+      tipo: correa
+      intervalo: '150.000 km / 10 años (ADAC 207); manual 207: 240.000 normal, 180.000 severo'
+      estado: confirmado (Peugeot 207); otros PSA TU/ET probable
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0140-peugeot-207-2006-2015-benziner-bericht.pdf ; https://www.autofacil.es/consultorio/tecnico/debo-cambiar-correa-peugeot-207/58226.html
+    Citroën|1.4:
+      tipo: correa
+      intervalo: '150.000 km / 10 años (ADAC 207); manual 207: 240.000 normal, 180.000 severo'
+      estado: confirmado (Peugeot 207); otros PSA TU/ET probable
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0140-peugeot-207-2006-2015-benziner-bericht.pdf ; https://www.autofacil.es/consultorio/tecnico/debo-cambiar-correa-peugeot-207/58226.html
+    Citroën|1.6:
+      tipo: correa
+      intervalo: '150.000 km / 10 años (ADAC 207); manual 207: 240.000 normal, 180.000 severo'
+      estado: confirmado (Peugeot 207); otros PSA TU/ET probable
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0140-peugeot-207-2006-2015-benziner-bericht.pdf ; https://www.autofacil.es/consultorio/tecnico/debo-cambiar-correa-peugeot-207/58226.html
+    Peugeot|1.4 VTi:
+      tipo: cadena
+      intervalo: sin intervalo (familia Prince EP)
+      estado: probable (boletines MINI de la familia Prince)
+      fuente: https://australiancar.reviews/recalls-faults-mini-r56-cooper-2007-13/
+    Peugeot|1.6 VTi:
+      tipo: cadena
+      intervalo: sin intervalo (familia Prince EP)
+      estado: probable (boletines MINI de la familia Prince)
+      fuente: https://australiancar.reviews/recalls-faults-mini-r56-cooper-2007-13/
+    Citroën|1.4 VTi:
+      tipo: cadena
+      intervalo: sin intervalo (familia Prince EP)
+      estado: probable (boletines MINI de la familia Prince)
+      fuente: https://australiancar.reviews/recalls-faults-mini-r56-cooper-2007-13/
+    Citroën|1.6 VTi:
+      tipo: cadena
+      intervalo: sin intervalo (familia Prince EP)
+      estado: probable (boletines MINI de la familia Prince)
+      fuente: https://australiancar.reviews/recalls-faults-mini-r56-cooper-2007-13/
+    Peugeot|1.6 THP:
+      tipo: cadena
+      intervalo: sin intervalo (familia Prince EP)
+      estado: probable (boletines MINI de la familia Prince)
+      fuente: https://australiancar.reviews/recalls-faults-mini-r56-cooper-2007-13/
+    Citroën|1.6 THP:
+      tipo: cadena
+      intervalo: sin intervalo (familia Prince EP)
+      estado: probable (boletines MINI de la familia Prince)
+      fuente: https://australiancar.reviews/recalls-faults-mini-r56-cooper-2007-13/
+    Renault|1.2:
+      tipo: correa
+      intervalo: 120.000 km / 5 años (D4F, F4R)
+      estado: confirmado (Clio III)
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0169-renault-clio-2005-2014-benziner-bericht.pdf
+    Renault|2.0:
+      tipo: correa
+      intervalo: 120.000 km / 5 años (D4F, F4R)
+      estado: confirmado (Clio III)
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0169-renault-clio-2005-2014-benziner-bericht.pdf
+    Dacia|1.2:
+      tipo: correa_corta
+      intervalo: 90.000 km / 4 años (D4F en Sandero II; Sandero I PENDIENTE)
+      estado: confirmado (Sandero II)
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0234-dacia-sandero-2013-2020-bericht.pdf
+    Opel|1.0:
+      tipo: cadena
+      intervalo: sin intervalo (Twinport Z10/Z12/Z14XEP)
+      estado: confirmado (Corsa D); Astra H probable
+      fuente: https://assets.adac.de/image/upload/Autodatenbank/GWInfo/gw0164-opel-corsa-d-2006-2014-benziner-bericht.pdf
+    Opel|1.2:
+      tipo: cadena
+      intervalo: sin intervalo (Twinport Z10/Z12/Z14XEP)
+      estado: confirmado (Corsa D); Astra H probable
+      fuente: https://assets.adac.de/image/upload/Autodatenbank/GWInfo/gw0164-opel-corsa-d-2006-2014-benziner-bericht.pdf
+    Opel|1.4:
+      tipo: cadena
+      intervalo: sin intervalo (Twinport Z10/Z12/Z14XEP)
+      estado: confirmado (Corsa D); Astra H probable
+      fuente: https://assets.adac.de/image/upload/Autodatenbank/GWInfo/gw0164-opel-corsa-d-2006-2014-benziner-bericht.pdf
+    Ford|1.2:
+      tipo: correa
+      intervalo: 160.000 km / 8 años (Duratec Sigma)
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0168-ford-fiesta-2008-2017-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0005-ford-focus-2004-2011-benziner-bericht.pdf
+    Ford|1.4:
+      tipo: correa
+      intervalo: 160.000 km / 8 años (Duratec Sigma)
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0168-ford-fiesta-2008-2017-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0005-ford-focus-2004-2011-benziner-bericht.pdf
+    Ford|1.6:
+      tipo: correa
+      intervalo: 160.000 km / 8 años (Duratec Sigma)
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0168-ford-fiesta-2008-2017-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0005-ford-focus-2004-2011-benziner-bericht.pdf
+    Fiat|1.2:
+      tipo: correa
+      intervalo: 120.000 km / 5 años (1.2 8v FIRE)
+      estado: confirmado
+      fuente: https://assets.adac.de/image/upload/Autodatenbank/GWInfo/gw0129-fiat-punto-2005-2018-bericht.pdf
+    Suzuki|1.0:
+      tipo: cadena
+      intervalo: sin intervalo (K10B)
+      estado: probable
+      fuente: https://classics.honestjohn.co.uk/askhj/answer/166663/suzuki-alto---cam-belt-or-chain-
+    Alfa Romeo|1.6:
+      tipo: correa_corta
+      intervalo: ~58.000 km (36.000 millas) / 3 años, oficial desde 13-11-2006
+      estado: confirmado
+      fuente: https://alfa.studio.silvertoad.co.uk/?p=37543 ; https://whatcar.com/alfa-romeo/147/hatchback/used-review/n207/reliability
+    Alfa Romeo|2.0:
+      tipo: correa_corta
+      intervalo: ~58.000 km (36.000 millas) / 3 años, oficial desde 13-11-2006
+      estado: confirmado
+      fuente: https://alfa.studio.silvertoad.co.uk/?p=37543 ; https://whatcar.com/alfa-romeo/147/hatchback/used-review/n207/reliability
+    Alfa Romeo|1.9:
+      tipo: cadena
+      intervalo: sin intervalo; estiramiento desde ~64.000 km (JTS)
+      estado: probable
+      fuente: https://alfaworkshop.co.uk/alfa_romeo_timing_belts.shtml
+    Alfa Romeo|2.2:
+      tipo: cadena
+      intervalo: sin intervalo; estiramiento desde ~64.000 km (JTS)
+      estado: probable
+      fuente: https://alfaworkshop.co.uk/alfa_romeo_timing_belts.shtml

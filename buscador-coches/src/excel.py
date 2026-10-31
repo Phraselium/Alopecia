@@ -677,8 +677,9 @@ COLUMNS = [
      '+IF(AND({neum_nuevos}<>"sí",{edad}>=RES_NEUM_EDAD),RES_NEUM,0),"")'),
     ("apto", "Presupuesto (sí / negociar / no)", "calc",
      '=IF({coste_total}<=TOTAL_MAX,"sí",IF({coste_total}<=TECHO,"negociar","no"))'),
+    ("total_r", "Puntuación redondeada (desempate)", "calc", "=ROUND({total},9)"),
     ("rank", "Puesto", "calc",
-     '=IF({apto}<>"no",COUNTIFS({R:apto},"<>no",{R:total},">"&{total})+COUNTIFS({RUP:apto},"<>no",{RUP:total},{total}),"")'),
+     '=IF({apto}<>"no",SUMPRODUCT(({R:apto}<>"no")*({R:total_r}>{total_r}))+SUMPRODUCT(({RUP:apto}<>"no")*({RUP:total_r}={total_r})),"")'),
 ]
 COL = {key: get_column_letter(i) for i, (key, *_r) in enumerate(COLUMNS, 1)}
 

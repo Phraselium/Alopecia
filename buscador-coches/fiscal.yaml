@@ -139,3 +139,12 @@ consumo_estimado:
     "Honda Accord": {valor: 8.3, fuente: "Spritmonitor 2.0 manual 2005-07: 8,23-8,42 (automático 8,65-10,0) https://www.spritmonitor.de/de/detailansicht/1417606.html"}
     "Audi A4": {valor: 8.4, fuente: "Spritmonitor 2.0 TFSI B7: 7,91 / 8,86 / 8,39 https://www.spritmonitor.de/de/detailansicht/655121.html (2.0 atmosférico 130 CV: PENDIENTE)"}
     "Skoda Octavia": {valor: 6.9, fuente: "Spritmonitor 1.6 MPI: 6,41 / 6,92 / 7,41 https://www.spritmonitor.de/de/detailansicht/669392.html"}
+
+reserva_puesta_a_punto:
+  # Solo para el "coste real estimado" de particulares (informativo, no entra en el coste total ni en la puntuación)
+  estado: "aproximado"
+  correa_eur: 550          # kit de distribución + bomba de agua, media de Valencia (Tallerator, más de 3.000 presupuestos, 2014; sin actualizar por IPC)
+  fuente_correa: "https://www.autofacil.es/cuesta-cambiar-kit-distribucion/ (Valencia: 550,22 € kit + bomba; España 481 €)"
+  neumaticos_eur: 300      # juego de 4 (205/55 R16 ~170-460 € sin montaje según marca): supuesto central con montaje
+  neumaticos_edad_min: 5   # Michelin: revisión anual desde el 5.º año; cambio como máximo a los 10 años de la fabricación
+  fuente_neumaticos: "https://www.michelin.es/auto/consejos/cambiar-neumaticos/cuanto-duran-los-neumaticos ; precio: https://www.muchoneumatico.com/comprar-neumaticos/neumaticos-205-55-r16 (probable, no verificado)"
