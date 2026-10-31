@@ -16,9 +16,10 @@ import time
 from pathlib import Path
 from typing import Optional
 from urllib.parse import urlencode, urlparse
-from urllib.robotparser import RobotFileParser
 
 import requests
+
+from .robots import Robots
 
 log = logging.getLogger("http")
 
@@ -49,23 +50,28 @@ class PoliteClient:
             "Accept-Language": cfg.get("accept_language", "es-ES,es;q=0.9"),
             "Accept": "text/html,application/json;q=0.9,*/*;q=0.8",
         })
-        self._robots: dict[str, Optional[RobotFileParser]] = {}
+        self._robots: dict[str, Optional[Robots]] = {}
         self._last_hit: dict[str, float] = {}
         self.blocked: set[str] = set()
 
     # ---------- robots.txt ----------
-    def _robots_for(self, url: str) -> Optional[RobotFileParser]:
+    def _robots_for(self, url: str) -> Optional[Robots]:
+        """robots.txt del host. None = no se pudo leer o el servidor lo niega -> se trata como prohibido.
+        Según RFC 9309, un 4xx (salvo 401/403) o una redirección que no acaba en un robots.txt = sin reglas."""
         p = urlparse(url)
         root = f"{p.scheme}://{p.netloc}"
         if root not in self._robots:
-            rp = RobotFileParser()
+            rp: Optional[Robots]
             try:
                 r = self.session.get(root + "/robots.txt", timeout=self.cfg.get("timeout_s", 30))
-                if r.status_code >= 500 or r.status_code in (401, 403):
+                if r.status_code >= 500 or r.status_code in (401, 403) or self._looks_blocked(r):
                     log.warning("robots.txt de %s devuelve %s: se trata como prohibido", root, r.status_code)
                     rp = None
+                elif r.status_code == 200 and urlparse(r.url).path == "/robots.txt" and "html" not in r.headers.get("content-type", ""):
+                    rp = Robots(r.text)
                 else:
-                    rp.parse(r.text.splitlines() if r.status_code == 200 else [])
+                    log.warning("%s no tiene robots.txt propio (HTTP %s, final %s): sin reglas", root, r.status_code, r.url)
+                    rp = Robots("")
             except requests.RequestException as e:
                 log.warning("No se pudo leer robots.txt de %s (%s): se trata como prohibido", root, e)
                 rp = None

@@ -37,3 +37,25 @@ def test_signals():
     s = extract_signals("Clio", "Se vende sin ITV. Dos propietarios.")
     assert s["itv_vigor"] is False and s["num_propietarios"] == 2
     assert extract_signals("x", "nada")["itv_vigor"] is None
+
+
+def test_robots_rfc9309():
+    from pathlib import Path
+    from src.robots import Robots
+    txt = """User-agent: *
+Disallow: /*pg=7*
+Disallow: /Detail/
+Allow: /*.js
+Disallow: /api/
+Allow: /api/public
+User-agent: BadBot
+Disallow: /
+"""
+    r = Robots(txt)
+    ua = "Mozilla/5.0 Chrome"
+    assert r.can_fetch(ua, "https://x/segunda-mano/?MaxPrice=4600")
+    assert not r.can_fetch(ua, "https://x/segunda-mano/?pg=7")
+    assert not r.can_fetch(ua, "https://x/Detail/1")
+    assert r.can_fetch(ua, "https://x/api/public/x")
+    assert not r.can_fetch(ua, "https://x/api/x")
+    assert not r.can_fetch("BadBot/1.0", "https://x/anything")
