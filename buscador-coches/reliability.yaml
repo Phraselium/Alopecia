@@ -18,42 +18,141 @@ medias_tuv_2026:
 
 modelos:
   # clave = "Marca Modelo" normalizado (ver src/normalize.py)
-  "Renault Clio":    {tuv_mq: 40.4, tuv_franja: "12-13", estado: probable, fuente: "TÜV Report 2026 vía https://www.autobild.de/artikel/tuev-report-2026-gewinner-verlierer-28424531.html (peor de su franja)"}
-  "Dacia Sandero":   {tuv_mq: 31.5, tuv_franja: "10-11", estado: "probable (edición no fechada en el resumen)", fuente: "https://www.tuev-verband.de/presse/publikationen/reporte/tuev-report-autobild"}
-  "Renault Mégane":  {tuv_mq: 31.7, tuv_franja: "10-11", estado: "probable (edición no fechada en el resumen)", fuente: "https://www.tuev-verband.de/presse/publikationen/reporte/tuev-report-autobild"}
-  "Ford Focus":      {tuv_mq: 34.8, tuv_franja: "12-13", estado: "probable (TÜV 2025; media de franja 28,1 % en esa edición)", fuente: "https://www.t-online.de/mobilitaet/aktuelles/id_100543260/tuev-report-das-sind-die-schlechtesten-kompakten-gebrauchten.html", tuv_media_propia: 28.1}
-  "Volkswagen Golf": {tuv_mq: 17.4, tuv_franja: "10-11", estado: "probable (el resumen lo marcó dudoso)", fuente: "https://www.tuvsud.com/de-de/publikationen/tuev-report/maengelzwerge-und-fehlerriesen"}
-  "Mazda 3":         {tuv_mq: 20.9, tuv_franja: "12-13", estado: "probable (sin verificar)", fuente: "https://www.tuvsud.com/de-de/publikationen/tuev-report/maengelzwerge-und-fehlerriesen"}
+  "Renault Clio":    {adac: "Renault Clio/Captur", tuv_mq: 40.4, tuv_franja: "12-13", estado: probable, fuente: "TÜV Report 2026 vía https://www.autobild.de/artikel/tuev-report-2026-gewinner-verlierer-28424531.html (peor de su franja)"}
+  "Dacia Sandero":   {adac: "Dacia Sandero", tuv_mq: 31.5, tuv_franja: "10-11", estado: "probable (edición no fechada en el resumen)", fuente: "https://www.tuev-verband.de/presse/publikationen/reporte/tuev-report-autobild"}
+  "Renault Mégane":  {adac: "Renault Mégane", tuv_mq: 31.7, tuv_franja: "10-11", estado: "probable (edición no fechada en el resumen)", fuente: "https://www.tuev-verband.de/presse/publikationen/reporte/tuev-report-autobild"}
+  "Ford Focus":      {adac: "Ford Focus", tuv_mq: 34.8, tuv_franja: "12-13", estado: "probable (TÜV 2025; media de franja 28,1 % en esa edición)", fuente: "https://www.t-online.de/mobilitaet/aktuelles/id_100543260/tuev-report-das-sind-die-schlechtesten-kompakten-gebrauchten.html", tuv_media_propia: 28.1}
+  "Volkswagen Golf": {adac: "VW Golf", tuv_mq: 17.4, tuv_franja: "10-11", estado: "probable (el resumen lo marcó dudoso)", fuente: "https://www.tuvsud.com/de-de/publikationen/tuev-report/maengelzwerge-und-fehlerriesen"}
+  "Mazda 3":         {adac: "Mazda 3", tuv_mq: 20.9, tuv_franja: "12-13", estado: "probable (sin verificar)", fuente: "https://www.tuvsud.com/de-de/publikationen/tuev-report/maengelzwerge-und-fehlerriesen"}
   # PENDIENTES (sin métrica numérica verificada para 2008-2018):
-  "Toyota Yaris": {estado: PENDIENTE}
-  "Toyota Auris": {estado: PENDIENTE}
+  "Mitsubishi Space Star": {adac: "Mitsubishi Space Star", estado: "solo ADAC"}
+  "Toyota Aygo": {adac: "Toyota Aygo", estado: "solo ADAC"}
+  "Fiat Panda": {adac: "Fiat Panda", estado: "solo ADAC"}
+  "Dacia Logan": {adac: "Dacia Logan", estado: "solo ADAC"}
+  "Toyota Yaris": {adac: "Toyota Yaris", estado: PENDIENTE}
+  "Toyota Auris": {adac: "Toyota Auris", estado: PENDIENTE}
   "Toyota Corolla": {estado: PENDIENTE}
   "Honda Jazz": {estado: PENDIENTE}
   "Honda Civic": {estado: PENDIENTE}
-  "Mazda 2": {estado: "PENDIENTE (TÜV 2026 solo da franjas jóvenes: 2,9 % a 2-3 años; ADAC 2026 lo pone entre los mejores Kleinwagen 2016-2023)"}
+  "Mazda 2": {adac: "Mazda 2", estado: "PENDIENTE (TÜV 2026 solo da franjas jóvenes: 2,9 % a 2-3 años; ADAC 2026 lo pone entre los mejores Kleinwagen 2016-2023)"}
   "Kia Rio": {estado: PENDIENTE}
-  "Kia Ceed": {estado: PENDIENTE}
-  "Kia Picanto": {estado: PENDIENTE}
-  "Hyundai i10": {estado: PENDIENTE}
-  "Hyundai i20": {estado: PENDIENTE}
-  "Hyundai i30": {estado: PENDIENTE}
-  "Skoda Fabia": {estado: "PENDIENTE (ADAC 2026 entre los mejores Kleinwagen 2016-2023, sin cifra)"}
-  "Skoda Octavia": {estado: PENDIENTE}
-  "Seat Ibiza": {estado: "PENDIENTE (ADAC 2026 entre los mejores Kleinwagen 2016-2023, sin cifra)"}
-  "Seat León": {estado: PENDIENTE}
-  "Volkswagen Polo": {estado: "PENDIENTE (ADAC 2026 entre los mejores Kleinwagen 2016-2023, sin cifra)"}
-  "Opel Corsa": {estado: PENDIENTE}
-  "Opel Astra": {estado: PENDIENTE}
-  "Peugeot 208": {estado: PENDIENTE}
-  "Peugeot 308": {estado: PENDIENTE}
-  "Citroën C3": {estado: PENDIENTE}
+  "Kia Ceed": {adac: "KIA Ceed/XCeed", estado: PENDIENTE}
+  "Kia Picanto": {adac: "Kia Picanto", estado: PENDIENTE}
+  "Hyundai i10": {adac: "Hyundai i10", estado: PENDIENTE}
+  "Hyundai i20": {adac: "Hyundai i20", estado: PENDIENTE}
+  "Hyundai i30": {adac: "Hyundai i30", estado: PENDIENTE}
+  "Skoda Fabia": {adac: "Skoda Fabia", estado: "PENDIENTE (ADAC 2026 entre los mejores Kleinwagen 2016-2023, sin cifra)"}
+  "Skoda Octavia": {adac: "Skoda Octavia", estado: PENDIENTE}
+  "Seat Ibiza": {adac: "SEAT Ibiza", estado: "PENDIENTE (ADAC 2026 entre los mejores Kleinwagen 2016-2023, sin cifra)"}
+  "Seat León": {adac: "SEAT Leon", estado: PENDIENTE}
+  "Volkswagen Polo": {adac: "VW Polo", estado: "PENDIENTE (ADAC 2026 entre los mejores Kleinwagen 2016-2023, sin cifra)"}
+  "Opel Corsa": {adac: "Opel Corsa", estado: PENDIENTE}
+  "Opel Astra": {adac: "Opel Astra", estado: PENDIENTE}
+  "Peugeot 208": {adac: "Peugeot 208", estado: PENDIENTE}
+  "Peugeot 308": {adac: "Peugeot 308", estado: PENDIENTE}
+  "Citroën C3": {adac: "Citroen C3/DS 3", estado: PENDIENTE}
   "Citroën C4": {estado: PENDIENTE}
-  "Ford Fiesta": {estado: PENDIENTE}
+  "Ford Fiesta": {adac: "Ford Fiesta (Courier)", estado: PENDIENTE}
   "Fiat Punto": {estado: PENDIENTE}
-  "Fiat 500": {estado: PENDIENTE}
-  "Nissan Micra": {estado: PENDIENTE}
-  "Suzuki Swift": {estado: "PENDIENTE (ADAC 2026 entre los mejores Kleinwagen 2016-2023, sin cifra)"}
+  "Fiat 500": {adac: "Fiat 500", estado: PENDIENTE}
+  "Nissan Micra": {adac: "Nissan Micra", estado: PENDIENTE}
+  "Suzuki Swift": {adac: "Suzuki Swift", estado: "PENDIENTE (ADAC 2026 entre los mejores Kleinwagen 2016-2023, sin cifra)"}
   "Mitsubishi Colt": {estado: PENDIENTE}
+
+adac_2025:
+  descripcion: "ADAC Pannenstatistik 2025 (averías en 2024): Pannenkennziffer = averías por 1.000 vehículos, matriculación 2015 (la más antigua de la edición)"
+  fuente: "https://assets.adac.de/image/upload/v1744279730/ADAC-eV/KOR/Text/PDF/Pannenstatistik_2025_final_nrmvls.pdf"
+  estado: "confirmado (PDF original descargado el 31-10-2026; extraído con tools/adac_extract.py, último valor de cada fila; C3/DS3 y Mégane revisados a mano)"
+  nota: "Cubre coches de 2015; para 2008-2014 es una aproximación del modelo, no de la generación exacta."
+  puntuacion: "punt_ADAC = 50 + 100·(mediana − PKZ)/mediana, acotado 0-100; mediana de todas las filas de la tabla"
+  pkz_2015:
+    "Audi A1": 6.0
+    "Audi A4": 7.6
+    "Audi A5": 11.1
+    "Audi Q5": 13.8
+    "BMW 3er-Reihe": 9.1
+    "BMW 4er-Reihe": 7.5
+    "BMW 5er-Reihe": 10.3
+    "BMW X1": 14.2
+    "BMW X3": 4.2
+    "BMW X5": 14.1
+    "Citroen Berlingo, Fiat Doblò, Peugeot Partner/Rifter": 19.5
+    "Citroen C3/DS 3": 23.7
+    "DS Automobiles DS3, Citroen C3/DS 3": 23.7
+    "Dacia Dokker": 7.5
+    "Dacia Duster": 22.9
+    "Dacia Logan": 23.1
+    "Dacia Sandero": 14.1
+    "Fiat 500": 23.6
+    "Fiat Ducato": 45.6
+    "Fiat Panda": 16.5
+    "Ford B-MAX": 17.7
+    "Ford C-MAX": 25.0
+    "Ford Fiesta (Courier)": 20.4
+    "Ford Focus": 25.2
+    "Ford Kuga": 23.6
+    "Ford Ranger": 16.7
+    "Ford Tourneo/Transit Connect": 23.5
+    "Ford Tourneo/Transit Custom": 18.6
+    "Hyundai Tucson": 18.2
+    "Hyundai i10": 18.6
+    "Hyundai i20": 21.1
+    "Hyundai i30": 16.8
+    "Hyundai ix20": 21.1
+    "KIA Ceed/XCeed": 15.4
+    "Kia Picanto": 24.4
+    "Kia Sportage": 19.7
+    "MINI MINI": 11.6
+    "Mazda 2": 6.6
+    "Mazda 3": 12.3
+    "Mazda CX-3": 9.1
+    "Mazda CX-5": 15.1
+    "Mercedes-Benz A-Klasse": 13.9
+    "Mercedes-Benz B-Klasse": 12.8
+    "Mercedes-Benz C-Klasse": 11.4
+    "Mercedes-Benz CLA": 19.3
+    "Mercedes-Benz Citan": 21.9
+    "Mercedes-Benz E-Klasse": 19.5
+    "Mercedes-Benz GLA": 10.7
+    "Mercedes-Benz GLE": 13.0
+    "Mitsubishi ASX": 8.8
+    "Mitsubishi Space Star": 25.9
+    "Nissan Micra": 18.4
+    "Nissan Qashqai": 24.9
+    "Opel ADAM": 21.0
+    "Opel Astra": 22.2
+    "Opel Corsa": 20.2
+    "Opel KARL": 20.4
+    "Opel Meriva": 26.2
+    "Opel Mokka": 20.4
+    "Opel Zafira": 30.2
+    "Peugeot 2008": 13.4
+    "Peugeot 208": 20.4
+    "Peugeot 308": 25.6
+    "Renault Clio/Captur": 26.0
+    "Renault Kangoo/Rapid": 26.8
+    "Renault Master": 19.5
+    "Renault Mégane": 28.1
+    "Renault Scénic": 29.1
+    "Renault Twingo": 20.7
+    "SEAT Ibiza": 16.8
+    "SEAT Leon": 10.0
+    "Skoda Fabia": 12.8
+    "Skoda Octavia": 10.4
+    "Skoda Rapid": 15.1
+    "Skoda Yeti": 14.0
+    "Suzuki Swift": 12.0
+    "Toyota Auris": 19.3
+    "Toyota Aygo": 12.0
+    "Toyota Yaris": 22.8
+    "VW Beetle": 11.8
+    "VW Golf": 10.5
+    "VW Nutzfahrzeuge Caddy": 16.4
+    "VW Polo": 14.9
+    "VW Tiguan": 11.4
+    "VW Touran": 20.3
+    "smart forfour": 27.5
+    "smart fortwo": 21.0
 
 marcas_ocu_2026:
   # Índice de fiabilidad OCU 2026 por marca (0-100). Solo marcas con cifra en la nota de prensa.
@@ -95,6 +194,14 @@ motores:
      problema: "A14NET: pistones/segmentos (consumo de aceite, preencendido), ventilación del cárter, cadena. Fuentes secundarias",
      revisar: "Consumo de aceite, tirones, ruido de cadena",
      estado: "probable (fuente secundaria)", fuente: "https://carwiki.de/opel-a14net-motor"}
+  - {marca: "(todas)", motor: "1.6 THP", anio_desde: 2007, anio_hasta: 2018, ajuste: -10,
+     problema: "Familia Prince EP6 turbo (PSA/BMW): estiramiento de la cadena de distribución, consumo de aceite y carbonilla en admisión. Solo fuentes secundarias",
+     revisar: "Traqueteo de cadena en arranque en frío, consumo de aceite, facturas de cadena/tensor",
+     estado: "probable (fuente secundaria)", fuente: "https://autoscore.pro/engine/1.6-thp-ep6"}
+  - {marca: "(todas)", motor: "1.6 VTi", anio_desde: 2006, anio_hasta: 2015, ajuste: 0,
+     problema: "Familia Prince EP6 atmosférico: se citan problemas de cadena y consumo de aceite, pero solo en foros. Sin ajuste hasta tener fuente seria",
+     revisar: "Ruido de cadena en frío, consumo de aceite, humo azul",
+     estado: PENDIENTE, fuente: "sin fuente de autoridad (foros)"}
   # Motores con buena fama (Toyota VVT-i/HSD, Honda i-VTEC, Mazda Skyactiv-G, Kia/Hyundai MPI, VAG MPI):
   # PENDIENTE, no se encontró fuente de autoridad. Sin ajuste positivo hasta tenerla.
 

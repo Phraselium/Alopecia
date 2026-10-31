@@ -36,3 +36,19 @@ Las mismas reglas: robots.txt con `src/robots.py` (RFC 9309), pausas de 2–5 s,
 Notas:
 - El detector de bloqueos daba un falso positivo en Autohero, que carga el SDK de captcha de AWS WAF pero sirve la página. Ahora solo cuentan los códigos 403/405/429/503, los títulos de páginas de desafío o los marcadores en páginas pequeñas.
 - Garantía legal en usados de vendedor profesional: ver `fiscal.yaml` → `garantia_legal`.
+
+---
+
+# Implementación y validación con anuncios reales (31-10-2026)
+
+| Fuente | Peticiones por ejecución | Resultado de la primera ejecución | Notas |
+|---|---|---|---|
+| OcasionPlus | unas 43 páginas de listado + 1 ficha por candidato | 10 anuncios ≤ 4.600 € (en el listado) en la provincia | Ficha completa: contado/financiado, garantía incluida (meses) y precio de la ampliación, 350 € de transferencia y preparación, 200 puntos, km certificados, 15 días o 1.000 km, propietarios, ITV, libro. Varios anuncios **solo valen financiando** (p. ej. Dacia Logan: 2.500 € financiado frente a 7.990 € al contado) |
+| Flexicar / Clicars / Autohero / Renew | 1–2 | 0 en el rango | Vigilancia con el filtro de precio del servidor |
+| AutoScout24 | 1 por marca + 1 ficha por anuncio | 29 anuncios (≤ 4.600 €, 50 km, 2008 o posterior, ≤ 220.000 km) | Comprobado que los 0 resultados son reales (p. ej. el Renault más barato del radio cuesta 4.990 €). La garantía viene como texto ("12 mes"); el "precio al contado" a veces solo aparece en la descripción → `extract_pro_signals` |
+| Coches.net | 1–6 por modelo + 1 ficha por candidato | ver `muestras.md` | **Cobertura parcial** en los modelos con más de 6 páginas en Valencia (Ibiza, León, Golf, Corsa, Mégane…): robots.txt prohíbe `pg≥7` y cualquier filtro u orden por parámetro. Queda registrado en cada ejecución |
+| Wallapop | 1 por modelo + 1 ficha por candidato | 80 anuncios | Solo rutas permitidas (`/coches-segunda-mano/{modelo}/valencia` y `/item/`). La página de modelo da unos 80 anuncios cercanos sin paginar, así que la cobertura también es parcial. `itemSeller.type` = `professional` / `normal` |
+
+Otros hallazgos:
+- `urllib.robotparser` no sirve para estos robots.txt (sin comodines); se usa `src/robots.py`.
+- La distancia se calcula con GeoNames (CP o municipio → coordenadas) y se descartan los anuncios a más de `radio_km`. Ejemplo: Gandía, a unos 58 km.

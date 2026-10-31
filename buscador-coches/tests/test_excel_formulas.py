@@ -31,7 +31,11 @@ def synthetic(n=40, seed=1):
             titulo=f"{marca} {modelo} {motor}", marca=marca, modelo=modelo, version=motor,
             anio=anio, km=rnd.randint(40000, 210000), precio=float(rnd.randint(2500, 4600)),
             vendedor=rnd.choice(["particular", "profesional", None]), num_fotos=rnd.randint(1, 15),
-            descripcion=rnd.choice(["ITV en vigor, libro de mantenimiento", "único propietario, correa cambiada", "buen estado"])))
+            descripcion=rnd.choice(["ITV en vigor, libro de mantenimiento", "único propietario, correa cambiada", "buen estado"]),
+            garantia_meses=rnd.choice([None, 12, 24]), garantia_ampliable=rnd.choice([None, True]),
+            km_certificados=rnd.choice([None, True]), revision_puntos=rnd.choice([None, 150, 200]),
+            devolucion_dias=rnd.choice([None, 7, 15]), gastos_gestion_eur=rnd.choice([None, 0.0, 350.0]),
+            gastos_incluyen_transferencia=rnd.choice([None, True, False])))
     return out
 
 
@@ -62,9 +66,14 @@ def test_formulas_match_python(tmp_path, cfg, fiscal, rel):
         assert v("s_kmedad") == pytest.approx(f["km_edad"]["score"])
         assert v("s_anuncio") == pytest.approx(f["anuncio"]["score"])
         assert v("s_uso") == pytest.approx(f["coste_uso"]["score"])
+        assert v("gar_ef") == pytest.approx(f["seguridad"]["garantia_meses"]), f["listing"].uid
+        assert v("s_seguridad") == pytest.approx(f["seguridad"]["score"]), f["listing"].uid
+        assert v("gastos_calc") == pytest.approx(f["coste"]["gastos"]), f["listing"].uid
+        assert v("tasa") == pytest.approx(f["coste"]["tasa"]), f["listing"].uid
         assert v("itp") == pytest.approx(f["coste"]["itp"]), f["listing"].uid
         assert v("coste_total") == pytest.approx(f["coste"]["total"])
         assert v("total") == pytest.approx(f["total"])
+        assert v("primer_anio") == pytest.approx(f["coste"]["primer_anio"])
         assert (v("rank") or None) == f.get("rank")
     top = wb["Top20"]
     best = min((f for f in res.filas if f.get("rank")), key=lambda f: f["rank"])

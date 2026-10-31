@@ -35,6 +35,21 @@ class Listing:
     num_propietarios: Optional[int] = None
     garantia: Optional[bool] = None
     km_justificados: Optional[bool] = None
+    # Compra a profesional / seguridad de compra
+    garantia_meses: Optional[int] = None          # garantía incluida en el precio
+    garantia_ampliable: Optional[bool] = None
+    garantia_ampliacion_eur: Optional[float] = None
+    garantia_ampliacion_meses: Optional[int] = None
+    revision_puntos: Optional[int] = None
+    km_certificados: Optional[bool] = None
+    devolucion_dias: Optional[int] = None
+    precio_contado: Optional[float] = None
+    precio_financiado: Optional[float] = None
+    solo_financiando: Optional[bool] = None       # el precio anunciado solo vale financiando
+    gastos_gestion_eur: Optional[float] = None    # gastos de gestión/preparación/transferencia del vendedor
+    gastos_incluyen_transferencia: Optional[bool] = None
+    lat: Optional[float] = None
+    lon: Optional[float] = None
     # Campos normalizados / calculados en Python
     motor_key: Optional[str] = None        # p. ej. "1.2 PureTech"
     modelo_key: Optional[str] = None       # p. ej. "Peugeot 208"

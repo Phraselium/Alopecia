@@ -89,13 +89,22 @@ def tuv_score(m: dict, medias: dict) -> Optional[float]:
     return clamp(50 + 100 * (avg - m["tuv_mq"]) / avg)
 
 
+def adac_score(m: dict, rel: dict) -> Optional[float]:
+    tbl = (rel.get("adac_2025") or {}).get("pkz_2015") or {}
+    pkz = tbl.get(m.get("adac")) if m.get("adac") else None
+    if pkz is None:
+        return None
+    ref = statistics.median(tbl.values())
+    return clamp(50 + 100 * (ref - pkz) / ref)
+
+
 def model_score(modelo_key: str, marca: str, p: Params) -> tuple[float, bool]:
     """(puntuación base, pendiente?)"""
     rel = p.rel
     ocu = (rel.get("marcas_ocu_2026") or {}).get("valores") or {}
     m = (rel.get("modelos") or {}).get(modelo_key)
     if m is not None:
-        vals = [v for v in (tuv_score(m, rel["medias_tuv_2026"]), ocu.get(marca)) if v is not None]
+        vals = [v for v in (tuv_score(m, rel["medias_tuv_2026"]), adac_score(m, rel), ocu.get(marca)) if v is not None]
         if vals:
             return sum(vals) / len(vals), False
         return p.neutro, True
@@ -157,14 +166,47 @@ def s_anuncio(l: Listing, cfg: dict) -> dict:
     return {"score": float(score)}
 
 
+def garantia_efectiva(l: Listing, p: Params) -> tuple[int, bool]:
+    """(meses, es_minimo_legal). Profesional sin garantía declarada -> mínimo legal (TRLGDCU art. 120)."""
+    if l.garantia_meses:
+        return int(l.garantia_meses), False
+    if l.vendedor == "profesional" and p.cfg["scoring"]["seguridad"].get("aplicar_minimo_legal_profesional", True):
+        return int(p.fiscal["garantia_legal"]["minimo_meses_segunda_mano"]), True
+    return 0, False
+
+
+def s_seguridad(l: Listing, p: Params) -> dict:
+    sg = p.cfg["scoring"]["seguridad"]
+    meses, legal = garantia_efectiva(l, p)
+    score = (sg["garantia"] * min(1, meses / sg["garantia_meses_full"])
+             + sg["ampliable"] * (l.garantia_ampliable is True)
+             + sg["km_certificados"] * (l.km_certificados is True)
+             + sg["revision"] * ((l.revision_puntos or 0) > 0)
+             + sg["devolucion"] * min(1, (l.devolucion_dias or 0) / sg["devolucion_dias_full"])
+             + sg["historial"] * (l.libro_mantenimiento is True))
+    return {"garantia_meses": meses, "minimo_legal": legal, "score": float(score)}
+
+
+def seguro_estimado(l: Listing, fiscal: dict):
+    s = (fiscal.get("seguro_estimado") or {}).get("segmentos") or {}
+    return float(s[l.carroceria]["central"]) if l.carroceria in s else None
+
+
+def seguro_rango(fiscal: dict) -> tuple[float, float]:
+    s = fiscal["seguro_estimado"]["segmentos"].values()
+    return float(min(x["min"] for x in s)), float(max(x["max"] for x in s))
+
+
 def s_coste_uso(l: Listing, p: Params) -> dict:
     c = p.cfg["scoring"]["coste_uso"]
     et = etiqueta(l, p.fiscal)
     s_et = float(c["puntos_etiqueta"].get(et, p.neutro)) if et else p.neutro
     s_cons = p.neutro   # consumo: PENDIENTE de fuente
-    s_seg = p.neutro    # seguro: PENDIENTE de fuente
+    seg = seguro_estimado(l, p.fiscal)
+    rng = seguro_rango(p.fiscal)
+    s_seg = p.neutro if seg is None else clamp(100 * (rng[1] - seg) / (rng[1] - rng[0]))
     score = c["peso_etiqueta"] * s_et + c["peso_consumo"] * s_cons + c["peso_seguro"] * s_seg
-    return {"etiqueta": et, "s_etiqueta": s_et, "score": score}
+    return {"etiqueta": et, "s_etiqueta": s_et, "seguro": seg, "score": score}
 
 
 def score_all(listings: list[Listing], p: Params, costes: dict[str, dict]) -> list[dict]:
@@ -178,11 +220,13 @@ def score_all(listings: list[Listing], p: Params, costes: dict[str, dict]) -> li
         ke = s_km_edad(l, p)
         an = s_anuncio(l, p.cfg)
         us = s_coste_uso(l, p)
+        sg = s_seguridad(l, p)
         total = (w["fiabilidad"] * f["score"] + w["precio"] * pr["score"] + w["km_edad"] * ke["score"]
-                 + w["anuncio"] * an["score"] + w["coste_uso"] * us["score"])
-        c = costes[l.uid]
+                 + w["anuncio"] * an["score"] + w["coste_uso"] * us["score"] + w["seguridad"] * sg["score"])
+        c = dict(costes[l.uid])
+        c["primer_anio"] = c["total"] + (us["seguro"] or 0)
         rows.append({"listing": l, "mediana": med, "nivel_mediana": nivel, "n_mediana": n,
-                     "fiabilidad": f, "precio": pr, "km_edad": ke, "anuncio": an, "coste_uso": us,
+                     "fiabilidad": f, "precio": pr, "km_edad": ke, "anuncio": an, "coste_uso": us, "seguridad": sg,
                      "total": total, "coste": c,
                      "apto": c["total"] <= p.cfg["presupuesto"]["total_max_eur"]})
     aptos = sorted((r for r in rows if r["apto"]), key=lambda r: -r["total"])

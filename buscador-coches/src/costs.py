@@ -73,12 +73,28 @@ def itp(l: Listing, fiscal: dict, anio_actual: int) -> tuple[float, list[str]]:
 
 
 def coste_total(l: Listing, fiscal: dict, anio_actual: int) -> dict:
+    """Particular: precio + ITP + tasa DGT + informe DGT.
+    Profesional: precio al contado + gastos de gestión del vendedor + (tasa DGT si los gastos no la
+    incluyen o no constan) + informe DGT. Sin ITP."""
     imp, avisos = itp(l, fiscal, anio_actual)
-    tasa = fiscal["dgt"]["tasa_transferencia_eur"] or 0
+    tasa_dgt = fiscal["dgt"]["tasa_transferencia_eur"] or 0
     inf = fiscal["dgt"]["informe_vehiculo_eur"] or 0
     for k, v in (("tasa transferencia", fiscal["dgt"]["tasa_transferencia_eur"]),
                  ("informe DGT", fiscal["dgt"]["informe_vehiculo_eur"])):
         if v is None:
             avisos.append(f"{k} PENDIENTE")
-    total = (l.precio or 0) + imp + tasa + inf
-    return {"itp": imp, "tasa": tasa, "informe": inf, "total": round(total, 2), "avisos": avisos}
+    gastos = 0.0
+    tasa = tasa_dgt
+    if l.vendedor == "profesional":
+        if l.gastos_gestion_eur is not None:
+            gastos = float(l.gastos_gestion_eur)
+            if l.gastos_incluyen_transferencia:
+                tasa = 0.0
+            else:
+                avisos.append("gastos del vendedor sin indicar si incluyen la transferencia: se suma la tasa DGT")
+        else:
+            avisos.append("gastos de gestión del vendedor no indicados: se suma la tasa DGT; preguntar el precio final")
+        if l.solo_financiando:
+            avisos.append(f"el precio anunciado ({l.precio_financiado:,.0f} €) solo vale financiando; se usa el precio al contado".replace(",", "."))
+    total = (l.precio or 0) + gastos + imp + tasa + inf
+    return {"itp": imp, "gastos": gastos, "tasa": tasa, "informe": inf, "total": round(total, 2), "avisos": avisos}

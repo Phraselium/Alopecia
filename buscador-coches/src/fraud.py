@@ -30,6 +30,9 @@ def search_filter_reasons(l: Listing, cfg: dict, motores_fiables: set[str]) -> l
         r.append(f"año {l.anio}")
     if l.km is None or l.km > f["km_max"]:
         r.append(f"km {l.km}")
+    radio = cfg["ubicacion"]["radio_km"]
+    if l.distancia_km is not None and l.distancia_km > radio:
+        r.append(f"a {l.distancia_km:.0f} km (> {radio} km)")
     if l.carroceria not in f["carrocerias"]:
         r.append(f"carrocería {l.carroceria or 'desconocida'}")
     comb = l.combustible

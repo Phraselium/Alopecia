@@ -80,6 +80,8 @@ def collect(cfg: dict, store: Store, solo: str | None, max_paginas: int | None) 
         except Exception as e:  # noqa: BLE001 - una plataforma rota no debe parar las demás
             estado, detalle = "error", repr(e)
             log.exception("Error en %s", name)
+        if getattr(src, "coverage", None):
+            detalle = (detalle + " | " if detalle else "") + "cobertura parcial: " + "; ".join(src.coverage)
         n = store.add_new(nuevos)  # se guardan los recogidos aunque la plataforma se corte a medias
         store.touch(vistos)
         store.log_run(name, started, estado, n, len(vistos), detalle)
@@ -98,6 +100,10 @@ def build_outputs(cfg: dict, fiscal: dict, rel: dict, store: Store) -> dict:
     write_workbook(BASE / out["excel"], [f["listing"] for f in res.filas], res.avisos, p)
     stats = {"limpios": len(res.limpios), "descartados": len(res.descartados),
              "plataformas": ", ".join(sorted({l.plataforma for l in res.limpios})) or "ninguna"}
+    runs = store.db.execute(
+        "SELECT plataforma, estado, detalle FROM runs WHERE id IN (SELECT MAX(id) FROM runs GROUP BY plataforma)").fetchall()
+    stats["fuentes"] = runs
+    stats["desactivadas"] = [k for k, v in cfg["fuentes"].items() if not v.get("enabled", True)]
     write_report(BASE / out["informe"], list(by_uid.values()), p, out["informe_n"], stats)
     with open(BASE / "logs" / "descartados.csv", "w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)

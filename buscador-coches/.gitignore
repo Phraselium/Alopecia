@@ -3,6 +3,3 @@ data/
 logs/
 __pycache__/
 .pytest_cache/
-# Salidas: se suben cuando haya datos reales validados
-ranking.xlsx
-informe.md

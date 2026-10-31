@@ -1,30 +1,40 @@
 # Buscador de coches de segunda mano — Valencia (≤ 5.000 € en total)
 
-## Estado
-| Parte | Estado |
-|---|---|
-| Esqueleto, normalización, limpieza, deduplicación, fraude, coste total, scoring, Excel, informe, run.py incremental | Hecho, con tests (`pytest`) |
-| Fórmulas del Excel | Verificadas: LibreOffice recalcula y coincide celda a celda con `src/scoring.py` |
-| Reconocimiento de plataformas (API/JSON/robots.txt) | **PENDIENTE**: el entorno de desarrollo no tiene salida de red |
-| Parsers de Wallapop, AutoScout24, Autocasion, Coches.net, Milanuncios | **PENDIENTE** (una a una, validando 20-30 anuncios reales) |
-| `fiscal.yaml` | ITP CV (6 % / cuotas fijas), tasas DGT, ZBE: *probable* (verificar en la fuente) |
-| `reliability.yaml` | 6 modelos con dato TÜV, 4 marcas OCU; el resto **PENDIENTE** |
+Recoge anuncios de concesionarios profesionales con garantía y de portales, los limpia y deduplica, calcula
+el coste total real (ITP o gastos del vendedor, tasas DGT) y los puntúa de 0 a 100. Entrega:
+
+- `ranking.xlsx`, con las hojas **Anuncios**, **Top20** y **Supuestos**. El scoring va en fórmulas de Excel.
+  Colores: azul = dato, negro = cálculo, verde = de otra hoja. Sin paneles inmovilizados.
+- `informe.md`, con los 10 mejores: por qué destacan, riesgos del modelo y motor, qué revisar y qué preguntar.
+- `muestras.md`, con una muestra de anuncios reales por plataforma para validar la extracción.
+- `RECONOCIMIENTO.md`, con el método y el robots.txt de cada plataforma, y cuáles están bloqueadas o sin stock.
 
 ## Uso
 ```bash
 pip install -r requirements.txt
-python run.py                    # solo anuncios nuevos + regenera ranking.xlsx e informe.md
-python run.py --solo wallapop --max-paginas 2
-python run.py --sin-red          # regenera salidas con lo ya guardado
-pytest -q
+python run.py                     # recoge SOLO anuncios nuevos de todas las fuentes activas y regenera las salidas
+python run.py --solo ocasionplus  # una fuente
+python run.py --sin-red           # regenera ranking.xlsx e informe.md con lo ya guardado
+python tools/muestras.py 25       # regenera muestras.md
+pytest -q                         # incluye recálculo del Excel con LibreOffice y comparación con Python
 ```
 
-## Estructura
-- `config.yaml` — ubicación, filtros, pesos y parámetros del scoring.
-- `fiscal.yaml`, `reliability.yaml` — datos con fuente y estado (confirmado / probable / PENDIENTE).
-- `src/http.py` — robots.txt, pausa aleatoria 2–5 s por dominio, caché en `raw/`, parada ante captcha/403/429.
-- `src/sources/` — una clase por plataforma.
-- `src/normalize.py`, `src/extract.py`, `src/dedupe.py`, `src/fraud.py`, `src/costs.py`, `src/scoring.py`.
-- `src/excel.py` — `ranking.xlsx` (Anuncios, Top20, Supuestos) con fórmulas y colores azul/negro/verde.
-- `src/report.py` — `informe.md` con los 10 mejores.
-- `data/listings.sqlite` — histórico para el modo incremental. `logs/` — log y `descartados.csv`.
+## Fuentes (31-10-2026)
+| Fuente | Tipo | Estado |
+|---|---|---|
+| OcasionPlus | Profesional con garantía | Activa (JSON-LD + RSC) |
+| Flexicar, Clicars, Autohero, Renew | Profesional con garantía | Vigilancia: hoy sin stock ≤ 4.600 € |
+| AutoScout24 | Portal | Activa (`__NEXT_DATA__`, filtros en URL) |
+| Coches.net | Portal | Activa (rutas marca/modelo/provincia; tope de 6 páginas por robots.txt) |
+| Wallapop | Portal | Activa, solo rutas permitidas por robots.txt (sin la API interna) |
+| Milanuncios, Autocasion, Spoticar | — | Bloqueadas (antibots); registradas |
+| Das WeltAuto | — | Excluida por robots.txt |
+| Toyota, Hyundai, Kia, Mazda, Honda | Programas de marca | Sin stock central accesible o sin stock en rango; ver `RECONOCIMIENTO.md` |
+
+## Configuración
+- `config.yaml`: ubicación y radio, presupuesto, filtros, pesos del scoring (6 criterios, incluido "Seguridad de compra" con un 15 %).
+- `fiscal.yaml`: ITP de la Comunitat Valenciana (cuotas fijas confirmadas en la ATV), tasas DGT, etiqueta DGT, ZBE,
+  garantía legal (TRLGDCU art. 120, RDL 7/2021) y seguro estimado. Cada dato lleva fuente y estado.
+- `reliability.yaml`: fiabilidad por modelo (TÜV, ADAC Pannenstatistik 2025, OCU por marca) y problemas de motor con fuente.
+
+Datos geográficos: GeoNames (CC BY 4.0), que se descargan solos en `data/geo/`.

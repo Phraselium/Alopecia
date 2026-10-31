@@ -9,17 +9,17 @@ anio_actual: 2026
 itp:
   descripcion: "ITP por compraventa de vehículo usado entre particulares (Comunitat Valenciana, modelo 620)"
   tipo: 0.06
-  tipo_estado: probable
+  tipo_estado: "confirmado (cuadro resumen art. 13.Tres Ley 13/1997 en atv.gva.es/es/vehiculos-faq, leído 31-10-2026: 6 % hasta 5 años y <= 2.000 cc)"
   tipo_fuente: "https://atv.gva.es/es/tarifes-itpajd ; https://atv.gva.es/es/compraventa-de-vehiculos"
   tipo_incrementado: 0.08
   tipo_incrementado_condicion: "turismos de hasta 5 años y más de 2.000 cc, o valor >= 20.000 €"
-  tipo_incrementado_estado: probable
+  tipo_incrementado_estado: confirmado
   exento_si_profesional: true   # compra a profesional: IVA o REBU incluido en precio, no ITP
   exento_si_profesional_estado: "PENDIENTE de cita oficial (práctica habitual; confirmar en la factura)"
   # Cuota fija que sustituye al porcentaje (vehículos de valor < 20.000 €, no históricos).
   # Orden: primero el tramo de más antigüedad.
   cuota_fija_valor_max_eur: 20000
-  cuotas_fijas_estado: probable
+  cuotas_fijas_estado: "confirmado (cuadro resumen de la ATV, https://atv.gva.es/es/vehiculos-faq, leído 31-10-2026)"
   cuotas_fijas_fuente: "https://atv.gva.es/es/vehiculos-faq ; Ley 13/1997 consolidada https://www.boe.es/buscar/act.php?id=BOE-A-1998-8202"
   cuotas_fijas:
     - {antiguedad_mas_de_anios: 12, cc_min: 0,    cc_max: 1500, cuota_eur: 40,  descripcion: ">12 años, hasta 1.500 cc"}
@@ -45,17 +45,17 @@ tabla_depreciacion:
 
 dgt:
   tasa_transferencia_eur: 55.70
-  tasa_transferencia_estado: "probable (sede DGT; un PDF antiguo de la DGT da 55,15 €; actualización 2026 por PGE sin verificar)"
+  tasa_transferencia_estado: "probable: la sede web DGT indica 55,70 €; el PDF oficial de importes (creado 21-12-2020) da 55,15 €, desactualizado. Se usa el más reciente."
   tasa_transferencia_fuente: "https://sede.dgt.gob.es/es/vehiculos/transferencias-de-vehiculos/"
   informe_vehiculo_eur: 8.67
-  informe_vehiculo_estado: probable
+  informe_vehiculo_estado: "probable: sede web DGT 8,67 €; el PDF de 2020 da 8,59 € (tasa 4.1)"
   informe_vehiculo_fuente: "https://sede.dgt.gob.es/es/vehiculos/informacion-de-vehiculos/informe-de-un-vehiculo/"
 
 etiqueta_dgt:
   # Reglas de asignación por combustible y año de matriculación (aproximación por año; la etiqueta
   # real depende de la norma Euro y de la fecha exacta: comprobar con la matrícula en la sede DGT).
-  fuente: "https://www.dgt.es/muevete-con-seguridad/conoce-el-estado-del-trafico/distintivos-ambientales/ (PENDIENTE de verificar desde este entorno)"
-  estado: PENDIENTE
+  fuente: "https://www.dgt.es/nuestros-servicios/tu-vehiculo/tus-vehiculos/distintivo-ambiental/"
+  estado: "confirmado (leído 31-10-2026): C = gasolina desde 01-2006, diésel desde 09-2015; B = gasolina desde 01-2001, diésel desde 2006. Con solo el año, el diésel de 2015 se trata como B (conservador)"
   gasolina_C_desde: 2006
   gasolina_B_desde: 2001
   diesel_C_desde: 2016      # Euro 6 obligatorio en matriculaciones desde 09/2015; 2015 es dudoso
@@ -64,10 +64,46 @@ etiqueta_dgt:
   glp: ECO
 
 zbe_valencia:
+  verificado: "Leído en valencia.es el 31-10-2026: solo etiqueta A; sanciones desde 01-12-2025 para los de fuera de la provincia (todo 2026); desde 01-01-2027 también los de la provincia salvo los matriculados en la ciudad; desde 01-01-2028 todos. Moratoria para afectados por la DANA y pedanías hasta 31-12-2028."
   fuente: "https://www.valencia.es/cas/actualidad/-/content/zona-bajas-emisiones-val%C3%A8ncia.-aprobaci%C3%B3n-por-el-pleno ; https://www.valencia.es/-/c%C3%A1maras-zbe"
-  estado: probable
+  estado: confirmado
   resumen: >
     Solo restringe vehículos SIN etiqueta (A). Desde dic-2025/ene-2026 los de fuera de la provincia;
     desde 01-01-2027 también los de la provincia salvo los de la ciudad; desde 01-01-2028 todos.
     B, C, ECO y CERO sin restricción en el calendario aprobado. Perímetro y posible moratoria PENDIENTES.
   restringidas_hasta_2028: [A]
+
+garantia_legal:
+  norma: "TRLGDCU (RDLeg. 1/2007), art. 120.1, en la redacción del Real Decreto-ley 7/2021, de 27 de abril"
+  fuente: "https://www.boe.es/buscar/act.php?id=BOE-A-2007-20555"
+  estado: confirmado   # texto consolidado leído en el BOE el 31-10-2026
+  texto: >
+    El empresario responde de las faltas de conformidad que se manifiesten en tres años desde la entrega.
+    En bienes de segunda mano puede pactarse un plazo menor, que no podrá ser inferior a un año desde la entrega.
+  minimo_meses_segunda_mano: 12
+  nota: "La norma vigente es el RDL 7/2021, no el RDL 24/2021. Entre particulares no aplica: rige el Código Civil (vicios ocultos)."
+
+compra_profesional:
+  # Compra a vendedor profesional: no hay ITP (IVA o REBU incluidos en el precio). Los gastos de
+  # gestión/preparación/transferencia del concesionario se suman al precio. Si no constan, se suma
+  # la tasa DGT de transferencia (supuesto conservador) y se marca para preguntar.
+  itp: 0
+  estado_itp: "PENDIENTE de cita oficial (práctica habitual: la venta del empresario tributa por IVA/REBU, no por ITP)"
+  sumar_tasa_si_gastos_desconocidos: true
+
+seguro_estimado:
+  descripcion: "Terceros ampliado, conductor de 29 años, Mislata (46920), sin siniestros, coche en la calle, valor < 5.000 €"
+  estado: "aproximado (estimación por segmento; no se han pedido presupuestos con datos personales)"
+  fecha_consulta: 2026-10-31
+  fuentes:
+    - "Rastreator, Índice mayo 2026 (vía Europa Press/Bolsamanía 14-05-2026): terceros ampliado 25-34 años 378 €/año; 35-44 años 302 €/año. https://www.bolsamania.com/noticias/mercados/economiafinanzas--el-seguro-de-coche-sube-un-3-en-2026-segun-el-comparador-rastreator--22488948.html"
+    - "Roams, abril 2026: terceros ampliado medio en Valencia 296,65 €. https://roams.es/seguros/seguro-coche/mejor-seguro-coche-valencia/"
+    - "Rankia, octubre 2026: ofertas en Valencia desde 157 € (Prima) y 179 € (Tuio). https://www.rankia.com/blog/mejores-seguros/7530927-precio-seguro-valencia"
+  notas: >
+    A los 29 años el precio debería quedar entre la media de 25-34 (378 €, que incluye recargos de
+    jóvenes) y la de 35-44 (302 €): inferencia, no cifra publicada. La diferencia utilitario/compacto
+    y el efecto de aparcar en la calle no están cuantificados en ninguna fuente encontrada (PENDIENTE):
+    el +40 € del compacto es un supuesto. Cifras por modelo: no fiables/antiguas, no se usan.
+  segmentos:
+    utilitario: {min: 170, central: 300, max: 420}
+    compacto:   {min: 190, central: 340, max: 480}

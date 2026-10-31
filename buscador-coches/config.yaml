@@ -27,12 +27,20 @@ filtros:
   cambio: indiferente          # se marcan los automáticos en la columna "automatico"
 
 fuentes:
-  # orden = orden de ejecución; enabled=false para saltar una plataforma
-  wallapop:    {enabled: true,  max_paginas: 10}
+  # orden = orden de ejecución; enabled=false para saltar una plataforma. Ver RECONOCIMIENTO.md
+  # Profesionales con garantía (prioridad)
+  ocasionplus: {enabled: true,  max_paginas: 60}
+  flexicar:    {enabled: true}     # vigilancia: sin stock <= precio máx. a 31-10-2026
+  clicars:     {enabled: true}     # vigilancia
+  autohero:    {enabled: true}     # vigilancia
+  renew:       {enabled: true}     # vigilancia
+  # Portales
   autoscout24: {enabled: true,  max_paginas: 10}
-  autocasion:  {enabled: true,  max_paginas: 10}
-  cochesnet:   {enabled: true,  max_paginas: 10}
-  milanuncios: {enabled: true,  max_paginas: 10}
+  cochesnet:   {enabled: true,  max_paginas: 6}    # robots.txt prohíbe pg>=7
+  wallapop:    {enabled: true}     # opción A: solo rutas permitidas por robots.txt
+  # Bloqueadas en el reconocimiento (31-10-2026): no se insiste
+  milanuncios: {enabled: false}    # HTTP 405 + página antibots
+  autocasion:  {enabled: false}    # desafío Cloudflare
 
 http:
   pausa_min_s: 2.0
@@ -65,12 +73,16 @@ segmentos:
   min_muestras: 4              # si hay menos, se sube de nivel (modelo+año, luego modelo)
 
 scoring:
-  pesos:                       # deben sumar 1
-    fiabilidad: 0.35
-    precio: 0.30
-    km_edad: 0.15
-    anuncio: 0.10
-    coste_uso: 0.10
+  # Pesos (suman 1). Cambio del 31-10-2026: se añade "Seguridad de compra" (15 %) y los cinco criterios
+  # anteriores (35/30/15/10/10, que sumaban 100) se escalan por 0,85 y se redondean a enteros:
+  # 29,75→30 · 25,5→25 · 12,75→12 · 8,5→9 · 8,5→9 · +15 = 100.
+  pesos:
+    fiabilidad: 0.30
+    precio: 0.25
+    km_edad: 0.12
+    anuncio: 0.09
+    coste_uso: 0.09
+    seguridad: 0.15
   precio:
     pendiente: 250             # puntos por unidad de descuento: -20% => 100, +20% => 0
   km_edad:
@@ -81,14 +93,26 @@ scoring:
     peso_km_total: 0.4
     peso_km_anio: 0.3
     peso_edad: 0.3
-  anuncio:                     # puntos que suman 100
+  anuncio:                     # puntos que suman 100 (la garantía pasa a "seguridad")
     itv: 20
     libro: 25
-    correa: 20
+    correa: 25
     propietario_unico: 15
-    garantia: 5
+    garantia: 0
     fotos: 15
     fotos_objetivo: 10
+  seguridad:                   # "Seguridad de compra": puntos que suman 100
+    garantia: 35               # proporcional a meses incluidos, hasta garantia_meses_full
+    garantia_meses_full: 24
+    ampliable: 10
+    km_certificados: 15
+    revision: 15               # revisión/inspección documentada (nº de puntos > 0)
+    devolucion: 15             # proporcional a días, hasta devolucion_dias_full
+    devolucion_dias_full: 15
+    historial: 10              # libro/historial de mantenimiento
+    # Vendedor profesional sin garantía declarada: se le asigna el mínimo legal (TRLGDCU art. 120,
+    # ver fiscal.yaml → garantia_legal) y se marca el aviso.
+    aplicar_minimo_legal_profesional: true
   coste_uso:
     peso_etiqueta: 0.5
     peso_consumo: 0.3

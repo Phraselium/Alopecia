@@ -75,3 +75,51 @@ def extract_signals(titulo: str, descripcion: str) -> dict:
         "km_justificados": tri_state(txt, "km_justificados"),
         "num_propietarios": propietarios(txt),
     }
+
+
+# ---------------------------------------------------------------------------------------------
+# Condiciones de compra a profesional (cualquier plataforma): se leen de la descripción del anuncio
+# ---------------------------------------------------------------------------------------------
+_EUR = r"(\d{1,3}(?:[.\s]\d{3})+|\d{3,6})(?:[.,]\d{2})?\s*(?:€|eur|euros)"
+
+
+def _eur(s: str) -> float:
+    return float(re.sub(r"[.\s]", "", s))
+
+
+def extract_pro_signals(text: str) -> dict:
+    """Devuelve solo las claves que encuentra (para no pisar datos estructurados de la plataforma)."""
+    t = norm_text(text)
+    out: dict = {}
+    m = re.search(r"precio\s*(?:al\s*)?contado\s*(?:actual)?\s*(?:de|:)?\s*" + _EUR, t)
+    if m:
+        out["precio_contado"] = _eur(m.group(1))
+    m = re.search(r"precio\s*(?:financiado|con financiaci[oó]n|financiando)\s*(?:de|:)?\s*" + _EUR, t)
+    if m:
+        out["precio_financiado"] = _eur(m.group(1))
+    if re.search(r"(precio|oferta)[^.]{0,60}(financiando|con financiaci[oó]n|sujet[oa] a financiaci[oó]n|financiaci[oó]n obligatoria)", t):
+        out["solo_financiando"] = True
+    m = re.search(r"(?:gastos?\s*de\s*)?(?:gesti[oó]n|transferencia|preparaci[oó]n|tramitaci[oó]n)[^.]{0,50}?" + _EUR, t)
+    if m and not re.search(r"(incluid[ao]s?|gratis)[^.]{0,20}$", t[max(0, m.start() - 30):m.start()]):
+        out["gastos_gestion_eur"] = _eur(m.group(1))
+        out["gastos_incluyen_transferencia"] = "transferencia" in m.group(0)
+    if re.search(r"(transferencia|gastos de gesti[oó]n)\s*(incluid[ao]s?|gratis|gratuita)|(incluye|incluida)\s*(la\s*)?transferencia", t):
+        out.setdefault("gastos_gestion_eur", 0.0)
+        out["gastos_incluyen_transferencia"] = True
+    m = re.search(r"garant[ií]a\s*(?:de\s*|mec[aá]nica\s*(?:de\s*)?|oficial\s*(?:de\s*)?)?(\d{1,2})\s*(mes|a[nñ]o)", t)
+    if m:
+        n = int(m.group(1))
+        out["garantia_meses"] = n * 12 if m.group(2).startswith("a") else n
+        out["garantia"] = True
+    if re.search(r"(ampliable|ampliar|extender|extensi[oó]n de)\s*(la\s*)?garant[ií]a|garant[ií]a[^.]{0,30}(ampliable|extendida|premium)", t):
+        out["garantia_ampliable"] = True
+    m = re.search(r"(\d{2,3})\s*puntos\s*(de\s*(control|revisi[oó]n|inspecci[oó]n))?", t)
+    if m and re.search(r"revis|inspecc|control|chequeo|certific", t[max(0, m.start() - 40):m.end() + 30]):
+        out["revision_puntos"] = int(m.group(1))
+    if re.search(r"(km|kilometraje|kil[oó]metros)\s*(reales\s*)?(certificad|garantizad)|certificad[oa]\s*(de\s*)?(km|kilometraje|kil[oó]metros)", t):
+        out["km_certificados"] = True
+    m = re.search(r"(\d{1,2})\s*d[ií]as\s*(de\s*)?(devoluci[oó]n|prueba|para devolver|o\s*1\.?000\s*km)", t) or \
+        re.search(r"devoluci[oó]n\s*(?:en|de|durante)?\s*(\d{1,2})\s*d[ií]as", t)
+    if m:
+        out["devolucion_dias"] = int(m.group(1))
+    return out

@@ -59,3 +59,14 @@ Disallow: /
     assert r.can_fetch(ua, "https://x/api/public/x")
     assert not r.can_fetch(ua, "https://x/api/x")
     assert not r.can_fetch("BadBot/1.0", "https://x/anything")
+
+
+def test_pro_signals():
+    from src.extract import extract_pro_signals
+    s = extract_pro_signals("Precio al contado: 12990 euros. Garantía de 12 meses ampliable. Revisión de 150 puntos. "
+                            "Kilómetros certificados. 15 días de devolución. Gastos de gestión: 290 €")
+    assert s["precio_contado"] == 12990 and s["garantia_meses"] == 12 and s["garantia_ampliable"]
+    assert s["revision_puntos"] == 150 and s["km_certificados"] and s["devolucion_dias"] == 15
+    assert s["gastos_gestion_eur"] == 290
+    assert extract_pro_signals("Transferencia incluida. Garantía 1 año")["gastos_incluyen_transferencia"]
+    assert extract_pro_signals("Garantía 1 año")["garantia_meses"] == 12
