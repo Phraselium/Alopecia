@@ -1,6 +1,6 @@
 # Mejores 10 coches de segunda mano (Valencia, ≤ 5.000 € en total)
 
-Generado el 2026-10-31 17:03. Anuncios limpios: 544, descartados: 438. Plataformas: autoscout24, cochesnet, ocasionplus, wallapop.
+Generado el 2026-10-31 17:08. Anuncios limpios: 535, descartados: 447. Plataformas: autoscout24, cochesnet, ocasionplus, wallapop.
 
 > Los datos de fiabilidad, fiscalidad y ZBE marcados como *probable* o *PENDIENTE* en la hoja Supuestos deben verificarse en la fuente antes de decidir. El coste total incluye ITP (cuota fija de la Comunitat Valenciana o tipo porcentual), la tasa de transferencia y el informe DGT.
 
@@ -16,7 +16,7 @@ Generado el 2026-10-31 17:03. Anuncios limpios: 544, descartados: 438. Plataform
 - cochesnet: ok — cobertura parcial: /toyota/segunda-mano/valencia/: 483 anuncios en 17 páginas; accesibles 6; /mazda/segunda-mano/valencia/: 201 anuncios en 7 páginas; accesibles 6; /kia/segunda-mano/valencia/: 474 anuncios en 16 páginas; accesibles 6; /hyundai/segunda-mano/valencia/: 540 anuncios en 18 páginas; accesibles 6; /skoda/segunda-mano/valencia/: 195 anuncios en 7 páginas; accesibles 6; /seat/segunda-mano/valencia/: 695 anuncios en 24 páginas; accesibles 6; /seat/ibiza/segunda-mano/valencia/: 222 anuncios en 8 páginas; accesibles 6; /seat/leon/segunda-mano/valencia/: 218 anuncios en 8 páginas; accesibles 6; /volkswagen/segunda-mano/valencia/: 1336 anuncios en 45 páginas; accesibles 6; /volkswagen/golf/segunda-mano/valencia/: 445 anuncios en 15 páginas; accesibles 6; /opel/segunda-mano/valencia/: 826 anuncios en 28 páginas; accesibles 6; /opel/corsa/segunda-mano/valencia/: 204 anuncios en 7 páginas; accesibles 6; /renault/segunda-mano/valencia/: 749 anuncios en 25 páginas; accesibles 6; /renault/megane/segunda-mano/valencia/: 181 anuncios en 7 páginas; accesibles 6; /peugeot/segunda-mano/valencia/: 1277 anuncios en 43 páginas; accesibles 6; /citroen/segunda-mano/valencia/: 808 anuncios en 27 páginas; accesibles 6; /ford/segunda-mano/valencia/: 1010 anuncios en 34 páginas; accesibles 6; /ford/focus/segunda-mano/valencia/: 270 anuncios en 9 páginas; accesibles 6; /fiat/segunda-mano/valencia/: 322 anuncios en 11 páginas; accesibles 6; /nissan/segunda-mano/valencia/: 432 anuncios en 15 páginas; accesibles 6; /audi/segunda-mano/valencia/: 1035 anuncios en 35 páginas; accesibles 6; /audi/a3/segunda-mano/valencia/: 222 anuncios en 8 páginas; accesibles 6; /mini/segunda-mano/valencia/: 238 anuncios en 8 páginas; accesibles 6; /mercedes-benz/segunda-mano/valencia/: 1611 anuncios en 54 páginas; accesibles 6; /volkswagen/segunda-mano/castellon/: 344 anuncios en 12 páginas; accesibles 6; /opel/segunda-mano/castellon/: 202 anuncios en 7 páginas; accesibles 6; /peugeot/segunda-mano/castellon/: 228 anuncios en 8 páginas; accesibles 6; /citroen/segunda-mano/castellon/: 183 anuncios en 7 páginas; accesibles 6; /audi/segunda-mano/castellon/: 224 anuncios en 8 páginas; accesibles 6; /mercedes-benz/segunda-mano/castellon/: 285 anuncios en 10 páginas; accesibles 6
 - Desactivadas por bloqueo antibots (ver RECONOCIMIENTO.md): milanuncios, autocasion
 
-**Etiqueta DGT de los 544 anuncios limpios**: confirmada en el fichero oficial de la DGT 21, según el anuncio 150, deducida por regla 373 (de ellas dudosas: 28). Descartados por etiqueta: 2.
+**Etiqueta DGT de los 535 anuncios limpios**: confirmada en el fichero oficial de la DGT 20, según el anuncio 150, deducida por regla 365 (de ellas dudosas: 28). Descartados por etiqueta: 2.
 
 ## Embudo: dónde se pierde volumen
 
@@ -26,26 +26,26 @@ Antes de guardar la ficha, cada fuente ya descarta en el listado lo que no cumpl
 |---|---|---|---|---|---|
 | vistos en listados (mercado) | 87 | 8614 | 833 | 4668 | 14202 |
 | recogidos (fichas guardadas) | 87 | 661 | 25 | 275 | 1048 |
-| pasan los filtros | 54 | 484 | 12 | 145 | 695 |
+| pasan los filtros | 53 | 484 | 12 | 139 | 688 |
 | fusionados como duplicados | 6 | 47 | 0 | 13 | 66 |
-| limpios (sin fraude) | 44 | 381 | 11 | 108 | 544 |
-| dentro de presupuesto | 33 | 305 | 9 | 92 | 439 |
-| caben negociando | 6 | 66 | 1 | 15 | 88 |
+| limpios (sin fraude) | 42 | 381 | 11 | 101 | 535 |
+| dentro de presupuesto | 32 | 305 | 9 | 85 | 431 |
+| caben negociando | 5 | 66 | 1 | 15 | 87 |
 | fuera de presupuesto (> margen) | 5 | 10 | 1 | 1 | 17 |
 
 **Motivos de descarte** (todos / solo por este motivo)
 
 | Motivo | autoscout24 | cochesnet | ocasionplus | wallapop | Total |
 |---|---|---|---|---|---|
-| diésel con penalización de motor | 17 / 15 | 111 / 90 | 6 / 3 | 59 / 43 | 193 / 151 |
-| fraude: precio anómalo (> 35 % bajo la mediana) | 3 / 3 | 46 / 39 | 1 / 1 | 22 / 19 | 72 / 62 |
-| km > máximo | 0 / 0 | 9 / 6 | 0 / 0 | 58 / 45 | 67 / 51 |
-| carrocería monovolumen | 5 / 3 | 26 / 16 | 6 / 3 | 10 / 4 | 47 / 26 |
+| diésel con penalización de motor | 17 / 13 | 111 / 90 | 6 / 3 | 59 / 40 | 193 / 146 |
+| fraude: precio anómalo (> 35 % bajo la mediana) | 4 / 4 | 46 / 39 | 1 / 1 | 23 / 20 | 74 / 64 |
+| km > máximo | 0 / 0 | 9 / 6 | 0 / 0 | 58 / 43 | 67 / 49 |
+| carrocería monovolumen | 8 / 4 | 26 / 16 | 6 / 3 | 11 / 4 | 51 / 27 |
 | carrocería cabrio | 6 / 6 | 10 / 10 | 1 / 1 | 19 / 18 | 36 / 35 |
+| carrocería suv | 2 / 1 | 10 / 9 | 0 / 0 | 14 / 7 | 26 / 17 |
 | fraude: texto sospechoso | 0 / 0 | 17 / 10 | 0 / 0 | 5 / 2 | 22 / 12 |
 | distancia > radio | 0 / 0 | 21 / 14 | 0 / 0 | 0 / 0 | 21 / 14 |
 | carrocería desconocida | 4 / 4 | 10 / 7 | 1 / 0 | 1 / 0 | 16 / 11 |
-| carrocería suv | 2 / 1 | 10 / 9 | 0 / 0 | 1 / 1 | 13 / 11 |
 | precio fuera de rango | 1 / 0 | 2 / 2 | 2 / 2 | 0 / 0 | 5 / 4 |
 | carrocería furgoneta | 0 / 0 | 3 / 0 | 0 / 0 | 0 / 0 | 3 / 0 |
 | combustible excluido | 1 / 1 | 0 / 0 | 0 / 0 | 0 / 0 | 1 / 1 |
@@ -242,7 +242,45 @@ Coste: 4.999 € al contado + gastos 0 € + ITP 40 € + tasa 55,70 € + infor
 
 _Avisos de coste: cuota fija ITP: >12 años, hasta 1.500 cc_
 
-### 6. SEAT Leon — 4.500 € (4.704 € en total)
+### 6. Peugeot 207 1.4 Confort (75 CV) — 2.900 € (3.259 € en total)
+
+**Puntuación 61.2/100** · ocasionplus · Valencia - Sagunto (Sagunto, 46500) · profesional · manual · etiqueta C · [ver anuncio](https://www.ocasionplus.com/coches-segunda-mano/peugeot-207-14-confort-con-116183km-2008-b9auzqaa)
+
+Coste: 2.900 € al contado + gastos 350 € + ITP 0 € + tasa 0,00 € + informe 8,67 € = **3.259 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **3.559 €**.
+
+**Etiqueta DGT: C** (fichero oficial de la DGT por matrícula, matrícula 8408GBN).
+
+**Por qué destaca**
+- Más aporta: precio (100/100), fiabilidad (50/100).
+- Precio 2.900 € frente a una mediana de 3.650 € en su segmento (mercado modelo+año+km, 28 anuncios): 21% por debajo.
+- 116.183 km en 18 años (6.455 km/año).
+- El anuncio menciona: ITV en vigor.
+- Seguridad de compra: garantía 12 meses (mínimo legal, no declarada en el anuncio), ampliable por 500 €, km certificados.
+
+**Riesgos de este modelo y motor**
+- No hay dato de fiabilidad con fuente para el Peugeot 207: PENDIENTE (se ha puntuado neutro).
+
+**Qué revisar en la visita**
+- Pedir el informe DGT (con la matrícula) antes de la visita: cargas, embargos, titulares, ITV y km registrados.
+- Comprobar que el número de bastidor del permiso coincide con el del coche (parabrisas y bastidor).
+- Arranque en frío (motor sin calentar): ruidos, humo y testigos del cuadro.
+- Prueba de al menos 20 minutos con autovía: embrague, cambio, dirección y frenos.
+- Desgaste de neumáticos y discos, holguras de suspensión y fugas bajo el motor.
+- Revisar el aire acondicionado: imprescindible en Valencia.
+
+**Qué preguntar al vendedor**
+- ¿Tiene el libro de mantenimiento sellado?
+- ¿Cuándo y con cuántos km se cambió la distribución (correa o cadena)? ¿Tiene la factura?
+- ¿Qué garantía da por escrito y qué cubre? (mínimo legal 1 año en usados: TRLGDCU art. 120, RDL 7/2021)
+- ¿Cuál es el precio final al contado con todos los gastos (gestión, preparación, transferencia)? ¿Exige financiar?
+- ¿Por qué lo vende y desde cuándo es suyo?
+- ¿Tiene facturas de mantenimiento? ¿Cuándo fue la última revisión y qué se hizo?
+- ¿Ha tenido algún golpe o reparación importante?
+- ¿Acepta que lo revise un mecánico de mi confianza o en un taller antes de cerrar?
+
+_Avisos de coste: vendedor profesional: sin ITP (operación con IVA/REBU, confirmar en factura)_
+
+### 7. SEAT Leon — 4.500 € (4.704 € en total)
 
 **Puntuación 60.6/100** · cochesnet · ubicación sin dato · particular · manual · etiqueta C · [ver anuncio](https://www.coches.net/seat-leon-gasolina-2007-en-castellon-71374977-covo.aspx)
 
@@ -278,44 +316,6 @@ Coste: 4.500 € al contado + gastos 0 € + ITP 140 € + tasa 55,70 € + info
 - ¿Acepta que lo revise un mecánico de mi confianza o en un taller antes de cerrar?
 
 _Avisos de coste: cilindrada desconocida: se aplica el tramo de cuota fija más alto; cuota fija ITP: >12 años, más de 2.000 cc_
-
-### 7. Peugeot 207 1.4 Confort (75 CV) — 2.900 € (3.259 € en total)
-
-**Puntuación 60.1/100** · ocasionplus · Valencia - Sagunto (Sagunto, 46500) · profesional · manual · etiqueta C · [ver anuncio](https://www.ocasionplus.com/coches-segunda-mano/peugeot-207-14-confort-con-116183km-2008-b9auzqaa)
-
-Coste: 2.900 € al contado + gastos 350 € + ITP 0 € + tasa 0,00 € + informe 8,67 € = **3.259 €**; con el seguro estimado (300 €/año, aproximado) el primer año sale por **3.559 €**.
-
-**Etiqueta DGT: C** (fichero oficial de la DGT por matrícula, matrícula 8408GBN).
-
-**Por qué destaca**
-- Más aporta: precio (96/100), fiabilidad (50/100).
-- Precio 2.900 € frente a una mediana de 3.550 € en su segmento (mercado modelo+año+km, 30 anuncios): 18% por debajo.
-- 116.183 km en 18 años (6.455 km/año).
-- El anuncio menciona: ITV en vigor.
-- Seguridad de compra: garantía 12 meses (mínimo legal, no declarada en el anuncio), ampliable por 500 €, km certificados.
-
-**Riesgos de este modelo y motor**
-- No hay dato de fiabilidad con fuente para el Peugeot 207: PENDIENTE (se ha puntuado neutro).
-
-**Qué revisar en la visita**
-- Pedir el informe DGT (con la matrícula) antes de la visita: cargas, embargos, titulares, ITV y km registrados.
-- Comprobar que el número de bastidor del permiso coincide con el del coche (parabrisas y bastidor).
-- Arranque en frío (motor sin calentar): ruidos, humo y testigos del cuadro.
-- Prueba de al menos 20 minutos con autovía: embrague, cambio, dirección y frenos.
-- Desgaste de neumáticos y discos, holguras de suspensión y fugas bajo el motor.
-- Revisar el aire acondicionado: imprescindible en Valencia.
-
-**Qué preguntar al vendedor**
-- ¿Tiene el libro de mantenimiento sellado?
-- ¿Cuándo y con cuántos km se cambió la distribución (correa o cadena)? ¿Tiene la factura?
-- ¿Qué garantía da por escrito y qué cubre? (mínimo legal 1 año en usados: TRLGDCU art. 120, RDL 7/2021)
-- ¿Cuál es el precio final al contado con todos los gastos (gestión, preparación, transferencia)? ¿Exige financiar?
-- ¿Por qué lo vende y desde cuándo es suyo?
-- ¿Tiene facturas de mantenimiento? ¿Cuándo fue la última revisión y qué se hizo?
-- ¿Ha tenido algún golpe o reparación importante?
-- ¿Acepta que lo revise un mecánico de mi confianza o en un taller antes de cerrar?
-
-_Avisos de coste: vendedor profesional: sin ITP (operación con IVA/REBU, confirmar en factura)_
 
 ### 8. Volkswagen Golf Golf 1.6 Highline Highline — 4.000 € (4.124 € en total)
 

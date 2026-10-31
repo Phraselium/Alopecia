@@ -135,21 +135,25 @@ def norm_brand(raw: Optional[str], titulo: str = "") -> Optional[str]:
 
 
 def norm_model(marca: Optional[str], raw: Optional[str], titulo: str = "") -> tuple[Optional[str], Optional[str]]:
-    """Devuelve (modelo canónico, segmento)."""
+    """Devuelve (modelo canónico, segmento). Busca en el modelo del anuncio y en el título y se queda con el
+    alias MÁS LARGO que coincida (así 'C4 Picasso' gana a 'C4' aunque el campo modelo diga solo 'C4')."""
     if not marca or marca not in MODELS:
         return (raw.strip().title() if raw else None), None
+    options = [(alias, name, seg) for name, (seg, aliases) in MODELS[marca].items() for alias in aliases]
+    best = None
     for cand in (raw, titulo):
         t = norm_text(cand)
         if not t:
             continue
-        options = [(alias, name, seg) for name, (seg, aliases) in MODELS[marca].items() for alias in aliases]
-        for alias, name, seg in sorted(options, key=lambda x: len(x[0]), reverse=True):
+        for alias, name, seg in options:
             a = strip_accents(alias)
             # alias numéricos cortos ("2", "3") solo valen si el campo es el modelo, no el título
             if len(a) <= 1 and cand is titulo:
                 continue
-            if re.search(rf"(^|[^\w]){re.escape(a)}([^\w]|$)", t):
-                return name, seg
+            if re.search(rf"(^|[^\w]){re.escape(a)}([^\w]|$)", t) and (best is None or len(a) > len(best[0])):
+                best = (a, name, seg)
+    if best:
+        return best[1], best[2]
     return (raw.strip().title() if raw else None), None
 
 
