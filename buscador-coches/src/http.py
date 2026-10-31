@@ -12,6 +12,7 @@ import hashlib
 import json
 import logging
 import random
+import re
 import time
 from pathlib import Path
 from typing import Optional
@@ -28,6 +29,10 @@ BLOCK_MARKERS = (
     "are you a robot", "eres un robot", "access denied", "acceso denegado",
     "incapsula", "distil", "akamai bot",
 )
+
+
+BLOCK_TITLES = ("just a moment", "access denied", "attention required", "pardon our interruption",
+                "un momento", "acceso denegado", "are you a robot", "verificaci", "security check", "robot check")
 
 
 class BlockedError(RuntimeError):
@@ -104,13 +109,18 @@ class PoliteClient:
 
     @staticmethod
     def _looks_blocked(resp: requests.Response) -> bool:
-        if resp.status_code in (403, 429, 503):
+        """Bloqueo = código típico de WAF, título de página de desafío, o marcadores en una página pequeña.
+        (Muchas webs reales cargan un SDK de captcha sin bloquear: no basta con encontrar la palabra.)"""
+        if resp.status_code in (403, 405, 429, 503):
             return True
-        ctype = resp.headers.get("content-type", "")
-        if "html" in ctype:
-            head = resp.text[:20000].lower()
-            return any(m in head for m in BLOCK_MARKERS)
-        return False
+        if "html" not in resp.headers.get("content-type", ""):
+            return False
+        text = resp.text
+        m = re.search(r"<title[^>]*>(.*?)</title>", text[:30000], re.S | re.I)
+        title = (m.group(1) if m else "").strip().lower()
+        if any(x in title for x in BLOCK_TITLES):
+            return True
+        return len(text) < 60000 and any(mk in text[:20000].lower() for mk in BLOCK_MARKERS)
 
     def get(self, platform: str, url: str, params: Optional[dict] = None,
             headers: Optional[dict] = None, use_cache: bool = True) -> dict:
