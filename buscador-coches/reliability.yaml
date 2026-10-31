@@ -48,6 +48,9 @@ modelos:
   "Volkswagen Polo": {adac: "VW Polo", estado: "PENDIENTE (ADAC 2026 entre los mejores Kleinwagen 2016-2023, sin cifra)"}
   "Opel Corsa": {adac: "Opel Corsa", estado: PENDIENTE}
   "Opel Astra": {adac: "Opel Astra", estado: PENDIENTE}
+  "Peugeot 107": {estado: PENDIENTE, gemelo: "Toyota Aygo"}
+  "Citroën C1": {estado: PENDIENTE, gemelo: "Toyota Aygo"}
+  "Seat Córdoba": {estado: PENDIENTE, gemelo: "Seat Ibiza"}
   "Peugeot 208": {adac: "Peugeot 208", estado: PENDIENTE}
   "Peugeot 308": {adac: "Peugeot 308", estado: PENDIENTE}
   "Citroën C3": {adac: "Citroen C3/DS 3", estado: PENDIENTE}
@@ -154,6 +157,26 @@ adac_2025:
     "smart forfour": 27.5
     "smart fortwo": 21.0
 
+plataformas_gemelas:
+  # Si un modelo no tiene dato de fiabilidad y su gemelo sí, hereda la puntuación del gemelo marcada "por plataforma".
+  - grupo: [Toyota Aygo, Peugeot 107, Citroën C1]
+    detalle: "Proyecto B-Zero de Toyota y PSA: plataforma común, fabricados en TPCA Kolín desde 2005; mismo motor de gasolina 1.0 (1KR)"
+    estado: confirmado
+    fuente: "Nota de prensa de Toyota, 01-12-2004: https://global.toyota/en/detail/221659 (\"Developed on a common platform, all three cars will begin rolling off the line at the TPCA plant in Kolín\")"
+  - grupo: [Seat Ibiza, Seat Córdoba, Volkswagen Polo, Skoda Fabia]
+    detalle: "Ibiza 6L (2002-2008), Córdoba 6L (2002-2009), Polo 9N (2001-2009) y Fabia I: plataforma PQ24 del grupo VW"
+    estado: "confirmado (Ibiza 6L-Polo 9N-Fabia); probable (Córdoba = Ibiza 6L berlina)"
+    fuente: "Auto Bild, 'Gebrauchtwagen Seat Ibiza (ab 2002)': https://www.autobild.de/artikel/gebrauchtwagen-seat-ibiza-ab-2002--53502.html (\"Teilt sich der Ibiza ... 6L ... seine Plattform mit dem Polo 9N und dem Skoda Fabia\")"
+    nota: "Ibiza, Polo y Fabia ya tienen dato propio; hereda el Córdoba (del Ibiza). El dato ADAC es de matriculaciones 2015 (generación posterior)."
+
+cajas_robotizadas:
+  # Penalización en la fiabilidad (scoring.penalizaciones.caja_robotizada). Detectadas en título/versión.
+  patron: "easy-?tronic|\\bmta\\b|dualogic|\\bmmt\\b|2-?tronic|\\betg\\d?\\b|sensodrive|\\bcmp\\b|pilotad\\w*|\\basg\\b|\\bags\\b|speedshift|softouch|selespeed|quickshift|durashift|\\bamt\\b|robotizad\\w*"
+  nombres: "Opel Easytronic (MTA), Fiat Dualogic, Toyota MMT, Peugeot 2-Tronic/ETG, Citroën SensoDrive/CMP, VW ASG, Suzuki AGS, smart speedshift/softouch, Alfa Selespeed, Renault Quickshift, Ford Durashift"
+  estado: "criterio sin fuente seria de fiabilidad (no hay datos ADAC/TÜV/OCU por tipo de caja)"
+  referencia: "km77 sobre la mala fama de las cajas robotizadas por lentitud, imprecisión y brusquedad (no es un dato de averías): https://www.km77.com/revista/?p=14315"
+  revisar: "Prueba larga en ciudad: tirones, retraso al iniciar la marcha, ruido del actuador; facturas de embrague/actuador y si se ha hecho la adaptación del embrague"
+
 marcas_ocu_2026:
   # Índice de fiabilidad OCU 2026 por marca (0-100). Solo marcas con cifra en la nota de prensa.
   fuente: "https://www.ocu.org/organizacion/prensa/notas-de-prensa/2026/fiabcoches020326 ; https://es.motor1.com/news/789821/ocu-fiabilidad-2026-japoneses-tesla/"
@@ -198,10 +221,21 @@ motores:
      problema: "Familia Prince EP6 turbo (PSA/BMW): estiramiento de la cadena de distribución, consumo de aceite y carbonilla en admisión. Solo fuentes secundarias",
      revisar: "Traqueteo de cadena en arranque en frío, consumo de aceite, facturas de cadena/tensor",
      estado: "probable (fuente secundaria)", fuente: "https://autoscore.pro/engine/1.6-thp-ep6"}
-  - {marca: "(todas)", motor: "1.6 VTi", anio_desde: 2006, anio_hasta: 2015, ajuste: 0,
-     problema: "Familia Prince EP6 atmosférico: se citan problemas de cadena y consumo de aceite, pero solo en foros. Sin ajuste hasta tener fuente seria",
-     revisar: "Ruido de cadena en frío, consumo de aceite, humo azul",
-     estado: PENDIENTE, fuente: "sin fuente de autoridad (foros)"}
+  - {marca: "(todas)", motor: "1.6 VTi", anio_desde: 2006, anio_hasta: 2015, ajuste: -10,
+     problema: "Familia Prince EP6 atmosférico (= MINI N12/N16): tensor y guías de la cadena de distribución; los boletines de MINI (SI M11 03 11) cubren también los atmosféricos producidos hasta 11-2011",
+     revisar: "Ruido de cadena en arranque en frío (primeros segundos), consumo de aceite, factura de cadena/tensor",
+     estado: "probable (boletines de servicio MINI recogidos por australiancar.reviews)",
+     fuente: "https://australiancar.reviews/recalls-faults-mini-r56-cooper-2007-13/"}
+  - {marca: "(todas)", motor: "1.4 VTi", anio_desde: 2006, anio_hasta: 2015, ajuste: -10,
+     problema: "PSA 1.4 VTi (EP3) = familia Prince (como el MINI 1.4 N12B14): tensor y guías de la cadena de distribución",
+     revisar: "Ruido de cadena en arranque en frío, consumo de aceite, factura de cadena/tensor",
+     estado: "probable (boletines de servicio MINI de la familia Prince recogidos por australiancar.reviews)",
+     fuente: "https://australiancar.reviews/recalls-faults-mini-r56-cooper-2007-13/"}
+  - {marca: "MINI", motor: "(cualquiera)", anio_desde: 2006, anio_hasta: 2013, ajuste: -10,
+     problema: "MINI R56 1.4/1.6 con motores Prince (N12/N16 atmosféricos, N14/N18 turbo): tensor de la cadena de distribución (boletines SI M11 02 07 y SI M11 03 11; producidos antes de 11-2011)",
+     revisar: "Cascabeleo de cadena en frío, historial de cambio de tensor/cadena, consumo de aceite (N14)",
+     estado: "probable (boletines de servicio MINI recogidos por australiancar.reviews)",
+     fuente: "https://australiancar.reviews/recalls-faults-mini-r56-cooper-2007-13/"}
   # --- Diésel (añadido 31-10-2026). La magnitud del ajuste es criterio; el problema tiene fuente. ---
   - {marca: "(todas)", motor: "1.6 HDi", anio_desde: 2004, anio_hasta: 2010, ajuste: -20,
      problema: "PSA DV6 16v (producido hasta 2010): fallos de inyectores, volante motor, turbo y embrague",

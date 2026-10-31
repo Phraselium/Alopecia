@@ -115,6 +115,11 @@ def build_supuestos(wb: Workbook, p: Params, names: Names) -> None:
     param("SEG_KM", "Tramo de km para mediana", cfg["segmentos"]["km_tramo"])
     param("MIN_N", "Mín. anuncios por segmento (si no, se sube de nivel)", cfg["segmentos"]["min_muestras"])
     param("PRECIO_PEND", "Puntos por unidad de descuento (50 + desc·k)", sc["precio"]["pendiente"])
+    param("KM_TOPE_DESDE", "Precio: km a partir de los que la nota tiene tope decreciente", sc["precio"].get("km_tope_desde", 10 ** 9))
+    param("KM_TOPE_PTS", "Precio: puntos de tope perdidos por cada 1.000 km por encima", sc["precio"].get("km_tope_puntos_1000", 0))
+    param("ROB_PEN", "Fiabilidad: puntos menos por caja robotizada (Easytronic/MTA, Dualogic, MMT, 2-Tronic/ETG…)",
+          (sc.get("penalizaciones") or {}).get("caja_robotizada", 0), rel["cajas_robotizadas"]["estado"],
+          rel["cajas_robotizadas"]["referencia"])
     param("KMA_IDEAL_MAX", "Km/año ideal máximo (100 puntos hasta aquí)", k["km_anio_ideal_max"])
     param("KMA_CERO", "Km/año con 0 puntos", k["km_anio_cero"])
     param("KMA_SOSP", "Km/año sospechosamente bajo", k["km_anio_sospechoso"])
@@ -325,7 +330,8 @@ def build_supuestos(wb: Workbook, p: Params, names: Names) -> None:
 
     section("7. Fiabilidad por modelo (punt. TÜV = 50 + 100·(media − MQ)/media; punt. ADAC = 50 + 100·(ref − PKZ)/ref; punt. modelo = media de TÜV, ADAC y OCU marca)")
     header(["Modelo", "Marca", "TÜV Mängelquote (%)", "Franja", "Media franja (%)", "Punt. TÜV",
-            "Fila ADAC", "ADAC PKZ 2015", "Punt. ADAC", "Punt. OCU marca", "Punt. modelo", "Pendiente", "Estado", "Fuente"])
+            "Fila ADAC", "ADAC PKZ 2015", "Punt. ADAC", "Punt. OCU marca", "Punt. modelo", "Pendiente", "Estado", "Fuente",
+            "Gemelo de plataforma", "Punt. efectiva", "Por plataforma"])
     t0 = r
     for key, m in rel["modelos"].items():
         marca = key.split(" ")[0]
@@ -348,8 +354,21 @@ def build_supuestos(wb: Workbook, p: Params, names: Names) -> None:
         ws.cell(r, 12, f'=IF(COUNT(F{r},I{r},J{r})=0,"PENDIENTE","")').font = _font(BLACK)
         ws.cell(r, 13, m.get("estado"))
         ws.cell(r, 14, m.get("fuente", ""))
+        if m.get("gemelo"):
+            ws.cell(r, 15, m["gemelo"]).font = _font(BLUE)
         r += 1
-    names.add("MOD_TBL", f"Supuestos!$A${t0}:$N${r-1}")
+    t1 = r - 1
+    for rr in range(t0, t1 + 1):
+        tbl = f"$A${t0}:$L${t1}"
+        ws.cell(rr, 16, f'=IF(AND(L{rr}="PENDIENTE",O{rr}<>""),IFERROR(IF(VLOOKUP(O{rr},{tbl},12,0)="",VLOOKUP(O{rr},{tbl},11,0),K{rr}),K{rr}),K{rr})').font = _font(BLACK)
+        ws.cell(rr, 17, f'=IF(AND(L{rr}="PENDIENTE",O{rr}<>""),IFERROR(IF(VLOOKUP(O{rr},{tbl},12,0)="","sí","no"),"no"),"no")').font = _font(BLACK)
+    names.add("MOD_TBL", f"Supuestos!$A${t0}:$Q${t1}")
+    for g in rel.get("plataformas_gemelas") or []:
+        ws.cell(r, 1, "Plataforma: " + ", ".join(g["grupo"]))
+        ws.cell(r, 2, g["detalle"])
+        ws.cell(r, 3, g["estado"])
+        ws.cell(r, 4, g["fuente"])
+        r += 1
 
     section("8. Ajustes por motor con problemas conocidos (el problema tiene fuente; la magnitud es criterio)")
     header(["Marca", "Motor", "Año desde", "Año hasta", "Ajuste (puntos)", "Problema", "Qué revisar", "Estado", "Fuente"])
@@ -412,6 +431,8 @@ COLUMNS = [
     ("matricula", "Matrícula", "data", None), ("fecha_matric", "1.ª matriculación (anuncio)", "data", None),
     ("mat_anio", "Año 1.ª matric.", "data", None), ("mat_mes", "Mes 1.ª matric.", "data", None),
     ("etq_dato", "Etiqueta DGT/anuncio", "data", None), ("etq_fuente", "Fuente etiqueta", "data", None),
+    ("anio_alt", "Año en URL/título distinto (a confirmar)", "data", None), ("dud_anio", "Etiqueta dudosa por año", "data", None),
+    ("caja_rob", "Caja robotizada", "data", None),
     ("med_merc", "Mediana de mercado del segmento (€)", "data", None), ("n_merc", "N mercado", "data", None),
     ("nivel_merc", "Nivel mediana mercado", "data", None),
     ("duplicados", "Duplicados fusionados", "data", None),
@@ -440,22 +461,26 @@ COLUMNS = [
      'IF({combustible}="electrico","CERO",IF({combustible}="gasolina",IF({ym}>=GAS_C_YM,"C",IF({ym}>=GAS_B_YM,"B","A")),'
      'IF({combustible}="diesel",IF({ym}>=DIE_C_YM,"C",IF({ym}>=DIE_B_YM,"B","A")),""))))'),
     ("etiqueta", "ETIQUETA", "etq", None),
-    ("etq_dudosa", "Etiqueta dudosa", "calc", '=IF({etq_fuente}="regla",IF(AND(N({mat_mes})=0,{frontera}=1),"sí","no"),"no")'),
+    ("etq_dudosa", "Etiqueta dudosa", "calc",
+     '=IF({dud_anio}="sí","sí",IF({etq_fuente}="regla",IF(AND(N({mat_mes})=0,{frontera}=1),"sí","no"),"no"))'),
     # fiabilidad
     ("f_base", "Fiab. base modelo", "calc",
-     "=IFERROR(VLOOKUP({modelo_key},MOD_TBL,11,0),IFERROR(VLOOKUP({marca},OCU_TBL,2,0),NEUTRO))"),
+     "=IFERROR(VLOOKUP({modelo_key},MOD_TBL,16,0),IFERROR(VLOOKUP({marca},OCU_TBL,2,0),NEUTRO))"),
     ("f_motor", "Ajuste motor", "calc",
      '=SUMIFS(MOT_AJUSTE,MOT_MOTOR,{motor},MOT_MARCA,{marca},MOT_DESDE,"<="&{anio},MOT_HASTA,">="&{anio})'
-     '+SUMIFS(MOT_AJUSTE,MOT_MOTOR,{motor},MOT_MARCA,"(todas)",MOT_DESDE,"<="&{anio},MOT_HASTA,">="&{anio})'),
+     '+SUMIFS(MOT_AJUSTE,MOT_MOTOR,{motor},MOT_MARCA,"(todas)",MOT_DESDE,"<="&{anio},MOT_HASTA,">="&{anio})'
+     '+SUMIFS(MOT_AJUSTE,MOT_MOTOR,"(cualquiera)",MOT_MARCA,{marca},MOT_DESDE,"<="&{anio},MOT_HASTA,">="&{anio})'),
     ("f_comb", "Ajuste combustible", "calc", "=SUMIFS(COMB_AJUSTE,COMB_COMB,{combustible})"),
     ("mot_doc", "Motor con fuente (nº entradas)", "calc",
      '=COUNTIFS(MOT_MOTOR,{motor},MOT_MARCA,{marca},MOT_DESDE,"<="&{anio},MOT_HASTA,">="&{anio})'
-     '+COUNTIFS(MOT_MOTOR,{motor},MOT_MARCA,"(todas)",MOT_DESDE,"<="&{anio},MOT_HASTA,">="&{anio})'),
+     '+COUNTIFS(MOT_MOTOR,{motor},MOT_MARCA,"(todas)",MOT_DESDE,"<="&{anio},MOT_HASTA,">="&{anio})'
+     '+COUNTIFS(MOT_MOTOR,"(cualquiera)",MOT_MARCA,{marca},MOT_DESDE,"<="&{anio},MOT_HASTA,">="&{anio})'),
     ("f_base_ef", "Fiab. base aplicada", "calc",
      '=IF(AND({combustible}="diesel",{mot_doc}=0),MIN({f_base},NEUTRO),{f_base})'),
-    ("s_fiab", "P. Fiabilidad", "calc", "=MAX(0,MIN(100,{f_base_ef}+{f_motor}+{f_comb}))"),
+    ("s_fiab", "P. Fiabilidad", "calc", '=MAX(0,MIN(100,{f_base_ef}+{f_motor}+{f_comb}-IF({caja_rob}="sí",ROB_PEN,0)))'),
     # precio
-    ("s_precio", "P. Precio", "calc", "=MAX(0,MIN(100,50+{descuento}*PRECIO_PEND))"),
+    ("km_tope", "Tope nota precio por km", "calc", "=100-MAX(0,{km}-KM_TOPE_DESDE)/1000*KM_TOPE_PTS"),
+    ("s_precio", "P. Precio", "calc", "=MAX(0,MIN(100,50+{descuento}*PRECIO_PEND,{km_tope}))"),
     # km y edad
     ("s_kmt", "P. km totales", "calc", "=MAX(0,100*(1-{km}/KM_MAX))"),
     ("s_kma", "P. km/año", "calc",
@@ -509,6 +534,8 @@ NOTES = {
     "marca": "Normalizada por src/normalize.py a partir del dato scrapeado.",
     "motor": "Normalizado por src/normalize.py (cilindrada + tecnología).",
     "itv": "Extraído del texto del anuncio por src/extract.py: sí / no / vacío = no lo menciona.",
+    "caja_rob": "Detectada en título/versión con el patrón de reliability.yaml → cajas_robotizadas.",
+    "anio_alt": "Año que aparece en la URL o el título y no coincide con la fecha de matriculación.",
     "mediana": "Si hay MIN_N o más anuncios de mercado del segmento (todos los vistos en los listados, también > precio máx.), "
                "usa la mediana de mercado; si no, fórmula matricial con la mediana de esta hoja (modelo+año+km, subiendo de nivel).",
     "med_merc": "Calculada en Python (src/scoring.py: market_medians) con los anuncios vistos en los listados de las plataformas "
@@ -556,6 +583,8 @@ def listing_row(l: Listing, avisos: str, mkt=None) -> dict:
         "matricula": l.matricula, "fecha_matric": l.fecha_matriculacion,
         "mat_anio": _ym(l)[0], "mat_mes": _ym(l)[1],
         "etq_dato": l.etiqueta_dgt if l.etiqueta_fuente in ("DGT", "anuncio") else None, "etq_fuente": l.etiqueta_fuente,
+        "anio_alt": l.anio_alternativo, "dud_anio": "sí" if l.etiqueta_dudosa_anio else "no",
+        "caja_rob": "sí" if l.caja_robotizada else "no",
         "gastos": l.gastos_gestion_eur, "gastos_transf": _yn(l.gastos_incluyen_transferencia), "distancia": l.distancia_km,
         "duplicados": "; ".join(l.duplicados) or None, "avisos": avisos or None,
         "descripcion": (l.descripcion or "")[:1500], "fuente": f"{l.fuente_dato or ''} {l.raw_ref or ''}".strip(),
@@ -577,7 +606,13 @@ def build_anuncios(wb: Workbook, listings: list[Listing], avisos: dict[str, str]
         for i, (key, _h, kind, tpl) in enumerate(COLUMNS, 1):
             cell = ws.cell(r, i)
             if kind == "etq":
-                if l.etiqueta_fuente in ("DGT", "anuncio"):
+                if l.etiqueta_dudosa_anio:
+                    cell.value = l.etiqueta_dgt
+                    cell.font = _font(BLUE)
+                    cell.comment = Comment(f"Año a confirmar: el anuncio dice {l.anio_alternativo} en la URL/título y "
+                                           f"{l.fecha_matriculacion or l.anio} como matriculación; se toma la peor etiqueta "
+                                           f"posible ({l.etiqueta_fuente}).", "buscador")
+                elif l.etiqueta_fuente in ("DGT", "anuncio"):
                     cell.value = l.etiqueta_dgt
                     cell.font = _font(BLUE)
                     src = (f"Fichero oficial DGT de distintivos (código {l.etiqueta_codigo_dgt}, matrícula {l.matricula})"

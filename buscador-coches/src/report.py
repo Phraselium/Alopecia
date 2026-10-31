@@ -124,7 +124,7 @@ def _etiqueta_md(f: dict, p) -> str:
         txt += " ⚠️ **Dudosa** (año frontera sin mes de matriculación): confirmar la etiqueta con la DGT antes de comprar."
     z = p.zbe["zbe_valencia"]
     if l.etiqueta_dgt == "B":
-        txt += (" ZBE de València: la ordenanza (pendiente de aprobación definitiva) solo restringe la etiqueta A; "
+        txt += (" ZBE de València: la ordenanza (pendiente de aprobación definitiva; calendario previsto) solo restringe la etiqueta A; "
                 "los B pueden circular y no hay fecha prevista para restringirlos, aunque serían el siguiente escalón lógico "
                 "si la ZBE se endurece: tenlo en cuenta si piensas quedarte el coche muchos años.")
     elif l.etiqueta_dgt == "A":
@@ -150,6 +150,10 @@ def _embudo_md(stats: dict) -> list[str]:
         out.append("| vistos en listados (mercado) | " + " | ".join(str(merc.get(p, 0)) for p in plats) + f" | {sum(merc.get(p, 0) for p in plats)} |")
     for name, c in e["etapas"]:
         out.append(f"| {name} | " + " | ".join(str(c[p]) for p in plats) + f" | {c['total']} |")
+    out += ["", "**Filtros principales** (anuncios que caen en cada filtro / solo por ese filtro)", "",
+            head.replace("Etapa", "Filtro"), sep]
+    for g, todos, solo in e.get("principales") or []:
+        out.append(f"| {g} | " + " | ".join(f"{todos[p]} / {solo[p]}" for p in plats) + f" | {todos['total']} / {solo['total']} |")
     out += ["", "**Motivos de descarte** (todos / solo por este motivo)", "", head.replace("Etapa", "Motivo"), sep]
     for cat, todos, solo in e["motivos"]:
         out.append(f"| {cat} | " + " | ".join(f"{todos[p]} / {solo[p]}" for p in plats) + f" | {todos['total']} / {solo['total']} |")
@@ -195,7 +199,13 @@ def write_report(path: Path, filas: list[dict], p: Params, top_n: int, stats: di
         fu = e.get("fuente", {})
         lines += [f"**Etiqueta DGT de los {stats.get('limpios')} anuncios limpios**: confirmada en el fichero oficial de la DGT "
                   f"{fu.get('DGT', 0)}, según el anuncio {fu.get('anuncio', 0)}, deducida por regla {fu.get('regla', 0)} "
-                  f"(de ellas dudosas: {e.get('dudosas', 0)}). Descartados por etiqueta: {e.get('descartadas', 0)}.", ""]
+                  f"(de ellas dudosas: {e.get('dudosas', 0)}). Descartados por etiqueta: {e.get('descartadas', 0)} "
+                  f"(no confirmada {e.get('no_confirmada', 0)}, dudosa {e.get('dudosas_fuera', 0)}, menor que la mínima {e.get('menor_que_minima', 0)}).", ""]
+    z = p.zbe["zbe_valencia"]
+    lines += ["> **ZBE de València**: la ordenanza está **pendiente de aprobación definitiva** (aprobación inicial 25-02-2025; "
+              f"comprobado en valencia.es el {z['consultado']}). Su calendario es **previsto**, no vigente: restringe solo la "
+              "etiqueta A (fuera de la provincia desde 12-2025; desde 1-1-2027 todos los de fuera del municipio; desde 1-1-2028 "
+              "también los de vecinos). Los B no tienen restricción ni fecha prevista. Detalle y fuentes en zbe.yaml.", ""]
     lines += _embudo_md(stats)
     lines += _ventas_md(stats.get("ventas") or [])
     lines += ["## Los mejores", ""]
@@ -220,6 +230,9 @@ def write_report(path: Path, filas: list[dict], p: Params, top_n: int, stats: di
         ]
         if l.duplicados:
             lines += ["_También publicado en: " + "; ".join(l.duplicados) + "_", ""]
+        av = [a for a in (f.get("avisos") or "").split("; ") if a]
+        if av:
+            lines += ["**Avisos**", *[f"- {a}" for a in av], ""]
         if f["coste"]["avisos"]:
             lines += ["_Avisos de coste: " + "; ".join(f["coste"]["avisos"]) + "_", ""]
     path.write_text("\n".join(lines), encoding="utf-8")

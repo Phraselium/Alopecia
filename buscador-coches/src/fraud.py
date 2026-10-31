@@ -23,8 +23,8 @@ def segmentos_admitidos(cfg: dict) -> set[str]:
 
 def motor_documentado(l: Listing, rel: dict) -> bool:
     """¿Hay una entrada en reliability.yaml → motores para este motor (marca o '(todas)') y año?"""
-    return any(e["motor"] == l.motor_key and e["marca"] in ("(todas)", l.marca) and l.anio is not None
-               and e["anio_desde"] <= l.anio <= e["anio_hasta"] for e in rel.get("motores") or [])
+    from .scoring import engine_match
+    return any(engine_match(e, l) for e in rel.get("motores") or [])
 
 
 def search_filter_reasons(l: Listing, cfg: dict, rel: dict | None = None) -> list[str]:
@@ -56,20 +56,35 @@ def search_filter_reasons(l: Listing, cfg: dict, rel: dict | None = None) -> lis
     elif comb == "diesel":
         d = f["diesel"]
         if d.get("excluir_si_penalizacion_motor", True):
-            pen = [e for e in (rel or {}).get("motores") or [] if e["motor"] == l.motor_key
-                   and e["marca"] in ("(todas)", l.marca) and l.anio is not None
-                   and e["anio_desde"] <= l.anio <= e["anio_hasta"] and e["ajuste"] < 0]
+            from .scoring import engine_match
+            pen = [e for e in (rel or {}).get("motores") or [] if engine_match(e, l) and e["ajuste"] < 0]
             if pen:
                 r.append(f"diésel con penalización de motor conocida ({l.motor_key}: {pen[0]['ajuste']})")
         if d.get("sin_fuente") == "excluir" and not motor_documentado(l, rel or {}):
             r.append(f"diésel sin fuente de fiabilidad del motor ({l.motor_key})")
-    # Distintivo ambiental: fuera los que estén por debajo de la mínima, salvo los dudosos (entran con aviso)
+    # Distintivo ambiental
     from .etiqueta import rank
     minima = f.get("etiqueta_minima", "B")
     if l.etiqueta_dgt is None:
         r.append("etiqueta desconocida")
-    elif rank(l.etiqueta_dgt) < rank(minima) and not l.etiqueta_dudosa:
-        r.append(f"etiqueta {l.etiqueta_dgt} ({l.etiqueta_fuente}) < {minima}")
+    else:
+        if l.etiqueta_dudosa and not f.get("etiqueta_permitir_dudosas", True):
+            r.append(f"etiqueta dudosa ({l.etiqueta_dgt}, {l.etiqueta_fuente})")
+        elif rank(l.etiqueta_dgt) < rank(minima) and not l.etiqueta_dudosa:
+            r.append(f"etiqueta {l.etiqueta_dgt} ({l.etiqueta_fuente}) < {minima}")
+        if f.get("etiqueta_solo_confirmada") and l.etiqueta_fuente not in ("DGT", "anuncio"):
+            r.append(f"etiqueta no confirmada (deducida por {l.etiqueta_fuente})")
+    # Vendedor
+    if f.get("solo_profesionales") and l.vendedor != "profesional":
+        r.append(f"vendedor {l.vendedor or 'desconocido'} (solo profesionales)")
+    # Averías y estado (filtro estricto con negaciones)
+    av = f.get("averias") or {}
+    if av.get("activo", True):
+        from .averias import analizar
+        res = analizar(l.titulo or "", l.descripcion or "", av.get("revisar_si_no_menciona_itv", True))
+        for cat, expr in res.descartes:
+            r.append(f"avería/estado: {cat} «{expr}»")
+        l.revisar = [f"{c}" + (f" «{e}»" if e else "") for c, e in res.revisar]
     return r
 
 

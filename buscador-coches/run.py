@@ -133,11 +133,16 @@ def build_outputs(cfg: dict, fiscal: dict, rel: dict, store: Store, allow_downlo
     from collections import Counter as _C
     stats["etiquetas"] = {"fuente": dict(_C(f["listing"].etiqueta_fuente for f in res.filas)),
                           "dudosas": sum(1 for f in res.filas if f["listing"].etiqueta_dudosa),
-                          "descartadas": sum(1 for _l, m in res.descartados if any(x.startswith("filtro: etiqueta") for x in m))}
+                          "descartadas": sum(1 for _l, m in res.descartados if any(x.startswith("filtro: etiqueta") for x in m)),
+                          "menor_que_minima": sum(1 for _l, m in res.descartados if any(x.startswith("filtro: etiqueta") and "<" in x for x in m)),
+                          "no_confirmada": sum(1 for _l, m in res.descartados if any(x.startswith("filtro: etiqueta no confirmada") for x in m)),
+                          "dudosas_fuera": sum(1 for _l, m in res.descartados if any(x.startswith("filtro: etiqueta dudosa") for x in m))}
     stats["embudo"] = res.embudo
     from collections import Counter
     stats["mercado_por_plataforma"] = dict(Counter(m["plataforma"] for m in store.market()))
     stats["ventas"] = store.sale_times()
+    for f in res.filas:
+        f["avisos"] = res.avisos.get(f["listing"].uid, "")
     write_report(BASE / out["informe"], list(by_uid.values()), p, out["informe_n"], stats)
     with open(BASE / "logs" / "descartados.csv", "w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)

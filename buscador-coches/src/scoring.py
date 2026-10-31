@@ -133,7 +133,24 @@ def adac_score(m: dict, rel: dict) -> Optional[float]:
 
 
 def model_score(modelo_key: str, marca: str, p: Params) -> tuple[float, bool]:
-    """(puntuación base, pendiente?)"""
+    """(puntuación base, pendiente?). Si el modelo no tiene dato y su gemelo de plataforma sí, hereda el del gemelo."""
+    base, pend, _ = model_score_ex(modelo_key, marca, p)
+    return base, pend
+
+
+def model_score_ex(modelo_key: str, marca: str, p: Params) -> tuple[float, bool, Optional[str]]:
+    rel = p.rel
+    m = (rel.get("modelos") or {}).get(modelo_key)
+    own, pend = _own_model_score(modelo_key, marca, p)
+    if pend and m and m.get("gemelo"):
+        g = m["gemelo"]
+        gs, gpend = _own_model_score(g, g.split(" ")[0], p)
+        if not gpend:
+            return gs, False, g
+    return own, pend, None
+
+
+def _own_model_score(modelo_key: str, marca: str, p: Params) -> tuple[float, bool]:
     rel = p.rel
     ocu = (rel.get("marcas_ocu_2026") or {}).get("valores") or {}
     m = (rel.get("modelos") or {}).get(modelo_key)
@@ -147,11 +164,17 @@ def model_score(modelo_key: str, marca: str, p: Params) -> tuple[float, bool]:
     return p.neutro, True
 
 
+def engine_match(e: dict, l: Listing) -> bool:
+    """Motor y marca ('(todas)' = cualquier marca; motor '(cualquiera)' = cualquier motor de esa marca) y año."""
+    return ((e["motor"] == l.motor_key and e["marca"] in ("(todas)", l.marca)) or
+            (e["motor"] == "(cualquiera)" and e["marca"] == l.marca)) and \
+        l.anio is not None and e["anio_desde"] <= l.anio <= e["anio_hasta"]
+
+
 def engine_adjust(l: Listing, rel: dict) -> tuple[float, list[dict]]:
     total, hits = 0.0, []
     for e in rel.get("motores") or []:
-        if e["motor"] == l.motor_key and e["marca"] in ("(todas)", l.marca) and \
-                l.anio is not None and e["anio_desde"] <= l.anio <= e["anio_hasta"]:
+        if engine_match(e, l):
             total += e["ajuste"]
             hits.append(e)
     for c in rel.get("combustibles") or []:
@@ -163,17 +186,17 @@ def engine_adjust(l: Listing, rel: dict) -> tuple[float, list[dict]]:
 
 # ---------- subpuntuaciones ----------
 def motor_doc(l: Listing, rel: dict) -> bool:
-    return any(e["motor"] == l.motor_key and e["marca"] in ("(todas)", l.marca) and l.anio is not None
-               and e["anio_desde"] <= l.anio <= e["anio_hasta"] for e in rel.get("motores") or [])
+    return any(engine_match(e, l) for e in rel.get("motores") or [])
 
 
 def s_fiabilidad(l: Listing, p: Params) -> dict:
-    base, pend = model_score(l.modelo_key or "", l.marca or "", p)
+    base, pend, gemelo = model_score_ex(l.modelo_key or "", l.marca or "", p)
     diesel_pend = l.combustible == "diesel" and not motor_doc(l, p.rel)
     base_ef = min(base, p.neutro) if diesel_pend else base
     adj, hits = engine_adjust(l, p.rel)
-    return {"base": base, "base_ef": base_ef, "pendiente": pend, "diesel_pendiente": diesel_pend,
-            "ajuste": adj, "problemas": hits, "score": clamp(base_ef + adj)}
+    rob = float((p.cfg["scoring"].get("penalizaciones") or {}).get("caja_robotizada", 0)) if l.caja_robotizada else 0.0
+    return {"base": base, "base_ef": base_ef, "pendiente": pend, "diesel_pendiente": diesel_pend, "gemelo": gemelo,
+            "ajuste": adj, "robotizada": rob, "problemas": hits, "score": clamp(base_ef + adj - rob)}
 
 
 def penal_carroceria(l: Listing, cfg: dict) -> float:
@@ -189,11 +212,18 @@ def estado_presupuesto(total: float, cfg: dict) -> str:
     return "no"
 
 
+def km_tope(l: Listing, cfg: dict) -> float:
+    pc = cfg["scoring"]["precio"]
+    return 100 - max(0, (l.km or 0) - pc.get("km_tope_desde", 10 ** 9)) / 1000 * pc.get("km_tope_puntos_1000", 0)
+
+
 def s_precio(l: Listing, mediana: Optional[float], cfg: dict) -> dict:
+    """50 + descuento·k, con un tope que baja por encima de km_tope_desde (un precio bajo no compensa muchos km)."""
+    tope = km_tope(l, cfg)
     if not mediana or l.precio is None:
-        return {"descuento": None, "score": 50.0}
+        return {"descuento": None, "tope": tope, "score": clamp(min(50.0, tope))}
     d = (mediana - l.precio) / mediana
-    return {"descuento": d, "score": clamp(50 + d * cfg["scoring"]["precio"]["pendiente"])}
+    return {"descuento": d, "tope": tope, "score": clamp(min(50 + d * cfg["scoring"]["precio"]["pendiente"], tope))}
 
 
 def s_km_edad(l: Listing, p: Params) -> dict:

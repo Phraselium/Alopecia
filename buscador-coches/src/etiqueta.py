@@ -94,13 +94,21 @@ def asignar(l: Listing, zbe: dict, dgt=None) -> Listing:
             l.etiqueta_dgt, l.etiqueta_codigo_dgt = r
             l.etiqueta_fuente, l.etiqueta_dudosa = "DGT", False
             return l
+    l.etiqueta_dudosa_anio = False
     lab = norm_label(l.etiqueta_anuncio)
     if lab:
         l.etiqueta_dgt, l.etiqueta_fuente, l.etiqueta_dudosa = lab, "anuncio", False
-        return l
-    y, m = parse_fecha(l.fecha_matriculacion)
-    if y is None:
-        y, m = l.anio, None
-    lab, dud = label_rule(l.combustible, y, m, zbe)
-    l.etiqueta_dgt, l.etiqueta_fuente, l.etiqueta_dudosa = lab, "regla" if lab else None, dud
+    else:
+        y, m = parse_fecha(l.fecha_matriculacion)
+        if y is None:
+            y, m = l.anio, None
+        lab, dud = label_rule(l.combustible, y, m, zbe)
+        l.etiqueta_dgt, l.etiqueta_fuente, l.etiqueta_dudosa = lab, "regla" if lab else None, dud
+    # Año a confirmar: si el año de la URL o del título daría otra etiqueta, se toma la peor y se marca dudosa
+    if l.anio_alternativo and l.etiqueta_dgt:
+        alt, _ = label_rule(l.combustible, l.anio_alternativo, None, zbe)
+        if alt and alt != l.etiqueta_dgt:
+            l.etiqueta_dgt = min((l.etiqueta_dgt, alt), key=rank)
+            l.etiqueta_dudosa = True
+            l.etiqueta_dudosa_anio = True
     return l

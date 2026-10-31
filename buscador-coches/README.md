@@ -46,26 +46,26 @@ Datos geográficos: GeoNames (CC BY 4.0), que se descargan solos en `data/geo/`.
 2. Escribe un mensaje a tu bot y abre `https://api.telegram.org/bot<TOKEN>/getUpdates` para ver tu `chat.id`.
 3. `cp .env.example .env` y rellena `TELEGRAM_BOT_TOKEN` y `TELEGRAM_CHAT_ID`. `.env` está en `.gitignore`, así que no se sube.
 
-Se avisa de cada anuncio **nuevo** con puntuación ≥ `alertas.umbral_puntuacion` (55 por defecto), dentro de presupuesto
+Se avisa de cada anuncio **nuevo** con puntuación ≥ `alertas.umbral_puntuacion` (alto, ver config.yaml) que pase todos los filtros (profesional, etiqueta confirmada ≥ B, averías, diésel, fraude), dentro de presupuesto
 o en el margen de negociación, y que no haya caído en los filtros de fraude. El mensaje lleva modelo, año, km, coste total,
 puntuación, avisos y enlace. Sin `.env`, las alertas solo se escriben en `logs/alertas.log`.
 
 ### Opción A: dejarlo corriendo
 ```bash
-python run.py --watch        # ejecuta, avisa y repite cada alertas.intervalo_horas (4 h)
+python run.py --watch        # ejecuta, avisa y repite cada alertas.intervalo_horas (24 h: una vez al día)
 ```
 
 ### Opción B: programarlo (recomendado; sobrevive a reinicios)
 **Linux / macOS (cron)**: `crontab -e` y añade (ajusta rutas):
 ```
-17 */4 * * * cd /ruta/a/buscador-coches && /usr/bin/python3 run.py >> logs/cron.log 2>&1
+17 8 * * * cd /ruta/a/buscador-coches && /usr/bin/python3 run.py >> logs/cron.log 2>&1   # cada día a las 8:17
 ```
 **Windows (Programador de tareas)**: en PowerShell (ajusta rutas):
 ```powershell
-schtasks /Create /TN "BuscadorCoches" /SC HOURLY /MO 4 /ST 08:17 `
+schtasks /Create /TN "BuscadorCoches" /SC DAILY /ST 08:17 `
   /TR "cmd /c cd /d C:\ruta\buscador-coches && C:\Python313\python.exe run.py >> logs\cron.log 2>&1"
 ```
-o en la interfaz: Programador de tareas → Crear tarea básica → Diariamente → Repetir cada 4 horas →
+o en la interfaz: Programador de tareas → Crear tarea básica → Diariamente (8:17) →
 Iniciar un programa: `python.exe`, argumentos `run.py`, iniciar en `C:\ruta\buscador-coches`.
 
 Cada ejecución solo abre la ficha de los anuncios nuevos. La caché de listados dura `http.cache_ttl_horas` (3 h), así que

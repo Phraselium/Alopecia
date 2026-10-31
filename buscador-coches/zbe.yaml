@@ -3,7 +3,7 @@
 
 criterios_etiqueta:
   fuente: "https://www.dgt.es/nuestros-servicios/tu-vehiculo/tus-vehiculos/distintivo-ambiental/"
-  consultado: 2026-10-31
+  consultado: "2026-10-31 17:20 UTC"
   estado: confirmado
   nota: >
     La DGT asigna la etiqueta por norma Euro; las fechas son la regla práctica que publica la propia DGT para
@@ -57,6 +57,10 @@ zbe_valencia:
     frecuentes municipales de enero de 2026 dicen que, al estar pendiente la aprobación definitiva, "no es
     posible concretar el inicio de las restricciones previstas".
   estado: "calendario PREVISTO, no definitivo (ordenanza pendiente de aprobación definitiva)"
+  comprobacion: >
+    Página municipal de la ZBE consultada el 2026-10-31 a las 17:20 UTC: "el Pleno del Ayuntamiento aprobó,
+    inicialmente, a fecha de 25 de febrero de 2025, la Ordenanza…" y "Estando pendiente el acuerdo plenario de
+    aprobación definitiva"; en la sede electrónica figura como "aprobación de la norma por el Pleno (en curso)".
   calendario_previsto:
     # (desde, hasta, a quién afecta la restricción de los coches con etiqueta A)
     - {desde: 2025-12-01, hasta: 2026-12-31, restringidos: "A matriculados fuera de la provincia de València"}

@@ -59,6 +59,30 @@ def enrich(l: Listing) -> Listing:
     return l
 
 
+_URL_YEAR = [r"-(?:gasolina|diesel|hibrido|electrico|glp|gas)\w*-((?:19|20)\d\d)-en-",   # coches.net
+             r"-((?:19|20)\d\d)-\d{6,}$",                                                   # wallapop
+             r"-km-((?:19|20)\d\d)-[a-z0-9]{6,}$"]                                            # ocasionplus
+
+
+def anio_alternativo(l: Listing):
+    """Año distinto del de matriculación que aparezca en la URL o en el título (p. ej. 'Ford Ka 2005' con fecha 2007)."""
+    from .etiqueta import parse_fecha
+    y0 = parse_fecha(l.fecha_matriculacion)[0] or l.anio
+    if not y0:
+        return None
+    cands = []
+    for rx in _URL_YEAR:
+        m = re.search(rx, (l.url or "").rstrip("/").split("?")[0])
+        if m:
+            cands.append(int(m.group(1)))
+    for m in re.finditer(r"(?<![\d\.,])((?:19[89]|20[0-2])\d)(?![\d\.,]|\s*(?:cc|cv|km|kg|€))", l.titulo or ""):
+        cands.append(int(m.group(1)))
+    for c in cands:
+        if 1990 <= c <= 2026 and c != y0:
+            return c
+    return None
+
+
 @dataclass
 class Result:
     limpios: list[Listing]
@@ -81,10 +105,20 @@ def _categoria(motivo: str) -> str:
             return cat
     if m.startswith("km no creíbles"):
         return "km no creíbles (error del anuncio)"
+    if m.startswith("etiqueta no confirmada"):
+        return "etiqueta no confirmada (regla)"
+    if m.startswith("etiqueta dudosa"):
+        return "etiqueta dudosa"
+    if m.startswith("etiqueta desconocida"):
+        return "etiqueta desconocida"
     if m.startswith("etiqueta "):
-        return "etiqueta " + m.split(" ")[1] + " (< mínima)" if "<" in m else "etiqueta desconocida"
+        return "etiqueta " + m.split(" ")[1] + " (< mínima)"
     if m.startswith("diésel con penalización"):
         return "diésel con penalización de motor"
+    if m.startswith("avería/estado: "):
+        return "avería/estado: " + m[len("avería/estado: "):].split(" «")[0]
+    if m.startswith("vendedor "):
+        return "vendedor no profesional"
     if m.startswith("carrocería"):
         return "carrocería " + m.split(" ", 1)[1]
     if m.startswith("texto:"):
@@ -124,7 +158,22 @@ def embudo(listings, descartados, deduplicados, filas) -> dict:
     rows.append(row("dentro de presupuesto", [f["listing"] for f in filas if f.get("estado") == "sí"]))
     rows.append(row("caben negociando", [f["listing"] for f in filas if f.get("estado") == "negociar"]))
     rows.append(row("fuera de presupuesto (> margen)", [f["listing"] for f in filas if f.get("estado") == "no"]))
-    return {"plataformas": plats, "etapas": rows, "motivos": detalle}
+    grupos = {"vendedor no profesional": lambda c: c == "vendedor no profesional",
+              "etiqueta (no confirmada, dudosa, < B o desconocida)": lambda c: c.startswith("etiqueta"),
+              "avería / estado del coche": lambda c: c.startswith("avería/estado"),
+              "diésel con penalización de motor": lambda c: c.startswith("diésel")}
+    principales = []
+    for g, fn in grupos.items():
+        todos, solo = [], []
+        for l, ms in filt + frau:
+            cs = {_categoria(m) for m in ms}
+            gcs = {c for c in cs if fn(c)}
+            if gcs:
+                todos.append(l)
+                if gcs == cs:
+                    solo.append(l)
+        principales.append((g, row(g, todos)[1], row(g, solo)[1]))
+    return {"plataformas": plats, "etapas": rows, "motivos": detalle, "principales": principales}
 
 
 def process(listings: list[Listing], p: Params, motores_fiables: set[str], market: Optional[list] = None,
@@ -139,6 +188,9 @@ def process(listings: list[Listing], p: Params, motores_fiables: set[str], marke
         if not l.matricula:
             from .dgt import find_plate
             l.matricula = find_plate(l.titulo, l.descripcion)
+        l.anio_alternativo = anio_alternativo(l)
+        rob = re.search((p.rel.get("cajas_robotizadas") or {}).get("patron", r"$^"), norm_text(f"{l.titulo} {l.version or ''}"))
+        l.caja_robotizada = rob.group(0) if rob else None
         asignar(l, p.zbe, dgt)
         r = search_filter_reasons(l, p.cfg, p.rel)
         if r:
@@ -175,8 +227,16 @@ def process(listings: list[Listing], p: Params, motores_fiables: set[str], marke
             a.append("diésel: motor sin fuente de fiabilidad (fiabilidad limitada a neutra)")
         if f.get("penalizacion"):
             a.append(f"carrocería {f['listing'].carroceria}: -{f['penalizacion']:.0f} puntos")
+        if f["listing"].anio_alternativo:
+            a.insert(0, f"año a confirmar: la URL/título dice {f['listing'].anio_alternativo}")
+        if f["listing"].caja_robotizada:
+            a.append(f"caja robotizada ({f['listing'].caja_robotizada}): -{f['fiabilidad']['robotizada']:.0f} en fiabilidad")
+        if f["fiabilidad"].get("gemelo"):
+            a.append(f"fiabilidad por plataforma (gemelo: {f['fiabilidad']['gemelo']})")
         if f["listing"].etiqueta_dudosa:
             a.insert(0, f"etiqueta {f['listing'].etiqueta_dgt} dudosa: confirmar etiqueta con la DGT antes de comprar")
+        if f["listing"].revisar:
+            a.append("revisar: " + ", ".join(f["listing"].revisar))
         if f["listing"].distancia_km is None:
             a.append("distancia no verificable (el anuncio solo indica la provincia): confirmar que está a <= "
                      f"{p.cfg['ubicacion']['radio_km']} km")

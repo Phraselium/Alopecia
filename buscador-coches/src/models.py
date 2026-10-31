@@ -64,6 +64,10 @@ class Listing:
     raw_ref: Optional[str] = None          # fichero de /raw del que sale
     fuente_dato: Optional[str] = None      # endpoint/método usado
     duplicados: list = field(default_factory=list)
+    revisar: list = field(default_factory=list)   # expresiones ambiguas o falta de ITV: revisar, no descartar
+    anio_alternativo: Optional[int] = None
+    caja_robotizada: Optional[str] = None
+    etiqueta_dudosa_anio: Optional[bool] = None    # dudosa porque el año de la URL/título cambia la etiqueta posible          # texto detectado (p. ej. "easytronic")        # año distinto en la URL o el título ("año a confirmar")
     descartes: list = field(default_factory=list)
 
     @property
