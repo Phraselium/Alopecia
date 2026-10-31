@@ -1,6 +1,6 @@
 # Mejores coches de segunda mano (Valencia, objetivo ≤ 5.000 € en total, techo 6.000 €)
 
-Generado el 2026-10-31 21:01. Anuncios limpios: 143, descartados: 1866. Plataformas: autoscout24, cochesnet, ocasionplus, wallapop.
+Generado el 2026-10-31 21:44. Anuncios limpios: 144, descartados: 1872. Plataformas: autoscout24, cochesnet, ocasionplus, wallapop.
 
 > Los datos de fiabilidad, seguridad, fiscalidad y ZBE marcados como *probable* o *PENDIENTE* en la hoja Supuestos deben verificarse en la fuente antes de decidir. El coste total incluye ITP (cuota fija de la Comunitat Valenciana o tipo porcentual) o los gastos del profesional, la tasa de transferencia y el informe DGT. Entre 5.000 y 6.000 € se restan 2 puntos por cada 100 € y se marca «negociar».
 
@@ -39,11 +39,11 @@ Generado el 2026-10-31 21:01. Anuncios limpios: 143, descartados: 1866. Platafor
 - autohero: ok
 - renew: ok
 - autoscout24: ok
-- cochesnet: ok — cobertura parcial: /toyota/segunda-mano/valencia/: 476 anuncios en 16 páginas; accesibles 6; /mazda/segunda-mano/valencia/: 201 anuncios en 7 páginas; accesibles 6; /kia/segunda-mano/valencia/: 471 anuncios en 16 páginas; accesibles 6; /hyundai/segunda-mano/valencia/: 535 anuncios en 18 páginas; accesibles 6; /skoda/segunda-mano/valencia/: 193 anuncios en 7 páginas; accesibles 6; /seat/segunda-mano/valencia/: 700 anuncios en 24 páginas; accesibles 6; /seat/ibiza/segunda-mano/valencia/: 228 anuncios en 8 páginas; accesibles 6; /seat/leon/segunda-mano/valencia/: 217 anuncios en 8 páginas; accesibles 6; /volkswagen/segunda-mano/valencia/: 1338 anuncios en 45 páginas; accesibles 6; /volkswagen/golf/segunda-mano/valencia/: 447 anuncios en 15 páginas; accesibles 6; /opel/segunda-mano/valencia/: 819 anuncios en 28 páginas; accesibles 6; /opel/corsa/segunda-mano/valencia/: 206 anuncios en 7 páginas; accesibles 6; /renault/segunda-mano/valencia/: 746 anuncios en 25 páginas; accesibles 6; /peugeot/segunda-mano/valencia/: 1272 anuncios en 43 páginas; accesibles 6; /citroen/segunda-mano/valencia/: 809 anuncios en 27 páginas; accesibles 6; /ford/segunda-mano/valencia/: 1010 anuncios en 34 páginas; accesibles 6; /ford/focus/segunda-mano/valencia/: 268 anuncios en 9 páginas; accesibles 6; /fiat/segunda-mano/valencia/: 318 anuncios en 11 páginas; accesibles 6; /nissan/segunda-mano/valencia/: 432 anuncios en 15 páginas; accesibles 6; /audi/segunda-mano/valencia/: 1034 anuncios en 35 páginas; accesibles 6; /audi/a3/segunda-mano/valencia/: 220 anuncios en 8 páginas; accesibles 6; /alfa-romeo/segunda-mano/valencia/: 15844 anuncios en 529 páginas; accesibles 6; /mini/segunda-mano/valencia/: 240 anuncios en 8 páginas; accesibles 6; /mercedes-benz/segunda-mano/valencia/: 1615 anuncios en 54 páginas; accesibles 6; /volkswagen/segunda-mano/castellon/: 343 anuncios en 12 páginas; accesibles 6; /opel/segunda-mano/castellon/: 200 anuncios en 7 páginas; accesibles 6; /peugeot/segunda-mano/castellon/: 229 anuncios en 8 páginas; accesibles 6; /citroen/segunda-mano/castellon/: 184 anuncios en 7 páginas; accesibles 6; /audi/segunda-mano/castellon/: 226 anuncios en 8 páginas; accesibles 6; /alfa-romeo/segunda-mano/castellon/: 3268 anuncios en 109 páginas; accesibles 6; /mercedes-benz/segunda-mano/castellon/: 285 anuncios en 10 páginas; accesibles 6
-- wallapop: ok — cobertura parcial: Toyota Yaris: página de valencia llena (80); consultados 6 municipios; Toyota Corolla: página de valencia llena (80); consultados 6 municipios; Mazda 2: página de valencia llena (79); consultados 6 municipios; Mazda 3: página de valencia llena (80); consultados 6 municipios; Kia Picanto: página de valencia llena (79); consultados 6 municipios; Kia Ceed: página de valencia llena (80); consultados 6 municipios; Hyundai i10: página de valencia llena (79); consultados 6 municipios; Hyundai i20: página de valencia llena (80); consultados 6 municipios; Hyundai i30: página de valencia llena (80); consultados 6 municipios; Skoda Fabia: página de valencia llena (80); consultados 6 municipios; Seat Ibiza: página de valencia llena (80); consultados 6 municipios; Seat León: página de valencia llena (80); consultados 6 municipios; Seat Toledo: página de valencia llena (79); consultados 6 municipios; Volkswagen Polo: página de valencia llena (80); consultados 6 municipios; Volkswagen Golf: página de valencia llena (80); consultados 6 municipios; Opel Corsa: página de valencia llena (79); consultados 6 municipios; Opel Astra: página de valencia llena (80); consultados 6 municipios; Renault Clio: página de valencia llena (80); consultados 6 municipios; Renault Mégane: página de valencia llena (80); consultados 6 municipios; Dacia Sandero: página de valencia llena (80); consultados 6 municipios; Peugeot 508: página de valencia llena (80); consultados 6 municipios; Peugeot 208: página de valencia llena (80); consultados 6 municipios; Peugeot 308: página de valencia llena (80); consultados 6 municipios; Citroën C3: página de valencia llena (80); consultados 6 municipios; Citroën C4: página de valencia llena (80); consultados 6 municipios; Ford Fiesta: página de valencia llena (79); consultados 6 municipios; Ford Focus: página de valencia llena (80); consultados 6 municipios; Fiat Panda: página de valencia llena (80); consultados 6 municipios; Fiat Punto: página de valencia llena (80); consultados 6 municipios; Fiat 500: página de valencia llena (80); consultados 6 municipios; Audi A1: página de valencia llena (80); consultados 6 municipios; Audi A3: página de valencia llena (80); consultados 6 municipios; Audi A4: página de valencia llena (80); consultados 6 municipios
+- cochesnet: ok — cobertura parcial: /toyota/segunda-mano/valencia/: 475 anuncios en 16 páginas; accesibles 6; /mazda/segunda-mano/valencia/: 199 anuncios en 7 páginas; accesibles 6; /kia/segunda-mano/valencia/: 467 anuncios en 16 páginas; accesibles 6; /hyundai/segunda-mano/valencia/: 535 anuncios en 18 páginas; accesibles 6; /skoda/segunda-mano/valencia/: 193 anuncios en 7 páginas; accesibles 6; /seat/segunda-mano/valencia/: 698 anuncios en 24 páginas; accesibles 6; /seat/ibiza/segunda-mano/valencia/: 227 anuncios en 8 páginas; accesibles 6; /seat/leon/segunda-mano/valencia/: 218 anuncios en 8 páginas; accesibles 6; /volkswagen/segunda-mano/valencia/: 1338 anuncios en 45 páginas; accesibles 6; /volkswagen/golf/segunda-mano/valencia/: 448 anuncios en 15 páginas; accesibles 6; /opel/segunda-mano/valencia/: 819 anuncios en 28 páginas; accesibles 6; /opel/corsa/segunda-mano/valencia/: 206 anuncios en 7 páginas; accesibles 6; /renault/segunda-mano/valencia/: 741 anuncios en 25 páginas; accesibles 6; /peugeot/segunda-mano/valencia/: 1273 anuncios en 43 páginas; accesibles 6; /citroen/segunda-mano/valencia/: 811 anuncios en 28 páginas; accesibles 6; /ford/segunda-mano/valencia/: 1015 anuncios en 34 páginas; accesibles 6; /fiat/segunda-mano/valencia/: 317 anuncios en 11 páginas; accesibles 6; /nissan/segunda-mano/valencia/: 432 anuncios en 15 páginas; accesibles 6; /audi/segunda-mano/valencia/: 1033 anuncios en 35 páginas; accesibles 6; /audi/a3/segunda-mano/valencia/: 220 anuncios en 8 páginas; accesibles 6; /alfa-romeo/segunda-mano/valencia/: 15844 anuncios en 529 páginas; accesibles 6; /mini/segunda-mano/valencia/: 240 anuncios en 8 páginas; accesibles 6; /mercedes-benz/segunda-mano/valencia/: 1613 anuncios en 54 páginas; accesibles 6; /volkswagen/segunda-mano/castellon/: 341 anuncios en 12 páginas; accesibles 6; /opel/segunda-mano/castellon/: 201 anuncios en 7 páginas; accesibles 6; /peugeot/segunda-mano/castellon/: 229 anuncios en 8 páginas; accesibles 6; /citroen/segunda-mano/castellon/: 184 anuncios en 7 páginas; accesibles 6; /audi/segunda-mano/castellon/: 226 anuncios en 8 páginas; accesibles 6; /alfa-romeo/segunda-mano/castellon/: 3268 anuncios en 109 páginas; accesibles 6; /mercedes-benz/segunda-mano/castellon/: 285 anuncios en 10 páginas; accesibles 6
+- wallapop: ok — cobertura parcial: Toyota Yaris: página de valencia llena (80); consultados 6 municipios; Toyota Corolla: página de valencia llena (80); consultados 6 municipios; Mazda 2: página de valencia llena (80); consultados 6 municipios; Mazda 3: página de valencia llena (80); consultados 6 municipios; Kia Picanto: página de valencia llena (78); consultados 6 municipios; Kia Ceed: página de valencia llena (80); consultados 6 municipios; Hyundai i10: página de valencia llena (80); consultados 6 municipios; Hyundai i20: página de valencia llena (80); consultados 6 municipios; Hyundai i30: página de valencia llena (80); consultados 6 municipios; Skoda Fabia: página de valencia llena (80); consultados 6 municipios; Seat Ibiza: página de valencia llena (80); consultados 6 municipios; Seat León: página de valencia llena (80); consultados 6 municipios; Seat Toledo: página de valencia llena (79); consultados 6 municipios; Volkswagen Polo: página de valencia llena (80); consultados 6 municipios; Volkswagen Golf: página de valencia llena (80); consultados 6 municipios; Opel Corsa: página de valencia llena (79); consultados 6 municipios; Opel Astra: página de valencia llena (80); consultados 6 municipios; Renault Clio: página de valencia llena (80); consultados 6 municipios; Renault Mégane: página de valencia llena (80); consultados 6 municipios; Dacia Sandero: página de valencia llena (80); consultados 6 municipios; Peugeot 508: página de valencia llena (80); consultados 6 municipios; Peugeot 208: página de valencia llena (80); consultados 6 municipios; Peugeot 308: página de valencia llena (80); consultados 6 municipios; Citroën C3: página de valencia llena (80); consultados 6 municipios; Citroën C4: página de valencia llena (80); consultados 6 municipios; Ford Fiesta: página de valencia llena (79); consultados 6 municipios; Ford Focus: página de valencia llena (80); consultados 6 municipios; Fiat Panda: página de valencia llena (80); consultados 6 municipios; Fiat Punto: página de valencia llena (80); consultados 6 municipios; Fiat 500: página de valencia llena (80); consultados 6 municipios; Audi A1: página de valencia llena (80); consultados 6 municipios; Audi A3: página de valencia llena (80); consultados 6 municipios; Audi A4: página de valencia llena (80); consultados 6 municipios
 - Desactivadas por bloqueo antibots (ver RECONOCIMIENTO.md): milanuncios, autocasion
 
-**Etiqueta DGT de los 143 anuncios limpios**: confirmada en el fichero oficial de la DGT 19, según el anuncio 67, deducida por regla 57 (de ellas dudosas: 9). Descartados por etiqueta: 292 (no confirmada 0, dudosa 0, menor que la mínima 287).
+**Etiqueta DGT de los 144 anuncios limpios**: confirmada en el fichero oficial de la DGT 19, según el anuncio 68, deducida por regla 57 (de ellas dudosas: 9). Descartados por etiqueta: 292 (no confirmada 0, dudosa 0, menor que la mínima 287).
 
 > **ZBE de València**: la ordenanza está **pendiente de aprobación definitiva** (aprobación inicial 25-02-2025; comprobado en valencia.es el 2026-10-31). Su calendario es **previsto**, no vigente: restringe solo la etiqueta A (fuera de la provincia desde 12-2025; desde 1-1-2027 todos los de fuera del municipio; desde 1-1-2028 también los de vecinos). Los B no tienen restricción ni fecha prevista. Detalle y fuentes en zbe.yaml.
 
@@ -55,23 +55,23 @@ Antes de guardar la ficha, cada fuente ya descarta en el listado lo que no cumpl
 
 | Etapa | autoscout24 | cochesnet | flexicar | ocasionplus | wallapop | Total |
 |---|---|---|---|---|---|---|
-| vistos en listados (mercado) | 191 | 9267 | 0 | 834 | 5255 | 15547 |
-| recogidos (fichas guardadas) | 191 | 1243 | 2 | 42 | 563 | 2041 |
-| pasan los filtros | 31 | 110 | 0 | 7 | 33 | 181 |
+| vistos en listados (mercado) | 191 | 9359 | 0 | 834 | 5257 | 15641 |
+| recogidos (fichas guardadas) | 191 | 1250 | 2 | 42 | 563 | 2048 |
+| pasan los filtros | 31 | 111 | 0 | 7 | 33 | 182 |
 | fusionados como duplicados | 4 | 19 | 0 | 0 | 9 | 32 |
-| limpios (sin fraude) | 26 | 87 | 0 | 7 | 23 | 143 |
-| dentro de presupuesto | 13 | 53 | 0 | 5 | 13 | 84 |
+| limpios (sin fraude) | 26 | 88 | 0 | 7 | 23 | 144 |
+| dentro de presupuesto | 13 | 54 | 0 | 5 | 13 | 85 |
 | caben negociando (objetivo < coste <= techo) | 13 | 34 | 0 | 2 | 10 | 59 |
 
 **Filtros principales** (anuncios que caen en cada filtro / solo por ese filtro)
 
 | Filtro | autoscout24 | cochesnet | flexicar | ocasionplus | wallapop | Total |
 |---|---|---|---|---|---|---|
-| vendedor no profesional | 89 / 20 | 888 / 306 | 0 / 0 | 0 / 0 | 477 / 127 | 1454 / 453 |
+| vendedor no profesional | 89 / 20 | 890 / 306 | 0 / 0 | 0 / 0 | 477 / 127 | 1456 / 453 |
 | etiqueta (no confirmada, dudosa, < B o desconocida) | 9 / 0 | 167 / 0 | 0 / 0 | 5 / 0 | 111 / 0 | 292 / 0 |
 | avería / estado del coche | 3 / 0 | 44 / 1 | 0 / 0 | 0 / 0 | 32 / 3 | 79 / 4 |
-| diésel (todos excluidos o con penalización de motor) | 86 / 19 | 613 / 91 | 0 / 0 | 18 / 4 | 304 / 23 | 1021 / 137 |
-| color excluido | 34 / 5 | 241 / 29 | 0 / 0 | 13 / 6 | 9 / 1 | 297 / 41 |
+| diésel (todos excluidos o con penalización de motor) | 86 / 19 | 619 / 93 | 0 / 0 | 18 / 4 | 304 / 23 | 1027 / 139 |
+| color excluido | 34 / 5 | 243 / 29 | 0 / 0 | 13 / 6 | 9 / 1 | 299 / 41 |
 | modelo excluido | 3 / 0 | 15 / 3 | 0 / 0 | 1 / 0 | 1 / 0 | 20 / 3 |
 | presupuesto (coste > techo) | 3 / 3 | 4 / 4 | 0 / 0 | 1 / 1 | 2 / 2 | 10 / 10 |
 
@@ -79,22 +79,22 @@ Antes de guardar la ficha, cada fuente ya descarta en el listado lo que no cumpl
 
 | Motivo | autoscout24 | cochesnet | flexicar | ocasionplus | wallapop | Total |
 |---|---|---|---|---|---|---|
-| vendedor no profesional | 89 / 20 | 888 / 306 | 0 / 0 | 0 / 0 | 477 / 127 | 1454 / 453 |
-| diésel excluido (uso urbano) | 86 / 19 | 613 / 91 | 0 / 0 | 18 / 4 | 304 / 23 | 1021 / 137 |
+| vendedor no profesional | 89 / 20 | 890 / 306 | 0 / 0 | 0 / 0 | 477 / 127 | 1456 / 453 |
+| diésel excluido (uso urbano) | 86 / 19 | 619 / 93 | 0 / 0 | 18 / 4 | 304 / 23 | 1027 / 139 |
 | etiqueta A (< mínima) | 9 / 0 | 165 / 0 | 0 / 0 | 5 / 0 | 108 / 0 | 287 / 0 |
-| color excluido (negro) | 32 / 5 | 230 / 29 | 0 / 0 | 13 / 6 | 9 / 1 | 284 / 41 |
+| color excluido (negro) | 32 / 5 | 231 / 29 | 0 / 0 | 13 / 6 | 9 / 1 | 285 / 41 |
 | km > máximo | 0 / 0 | 19 / 0 | 0 / 0 | 0 / 0 | 115 / 2 | 134 / 2 |
+| carrocería monovolumen | 14 / 2 | 43 / 3 | 0 / 0 | 8 / 3 | 14 / 0 | 79 / 8 |
 | carrocería desconocida | 26 / 5 | 42 / 6 | 0 / 0 | 4 / 0 | 7 / 0 | 79 / 11 |
-| carrocería monovolumen | 14 / 2 | 42 / 3 | 0 / 0 | 8 / 3 | 14 / 0 | 78 / 8 |
 | carrocería cabrio | 9 / 1 | 29 / 7 | 0 / 0 | 1 / 0 | 31 / 4 | 70 / 12 |
-| carrocería suv | 5 / 1 | 18 / 1 | 0 / 0 | 0 / 0 | 16 / 1 | 39 / 3 |
+| carrocería suv | 5 / 1 | 20 / 1 | 0 / 0 | 0 / 0 | 16 / 1 | 41 / 3 |
 | caja robotizada | 4 / 0 | 19 / 1 | 0 / 0 | 1 / 1 | 11 / 1 | 35 / 3 |
 | distancia > radio | 0 / 0 | 33 / 1 | 0 / 0 | 0 / 0 | 0 / 0 | 33 / 1 |
 | avería/estado: sin itv / itv desfavorable | 1 / 0 | 14 / 0 | 0 / 0 | 0 / 0 | 17 / 0 | 32 / 0 |
 | precio fuera de rango | 11 / 7 | 4 / 0 | 2 / 2 | 4 / 4 | 6 / 6 | 27 / 19 |
 | avería/estado: averia | 1 / 0 | 15 / 1 | 0 / 0 | 0 / 0 | 9 / 1 | 25 / 2 |
 | avería/estado: a reparar | 2 / 0 | 12 / 0 | 0 / 0 | 0 / 0 | 4 / 0 | 18 / 0 |
-| color excluido (marron_oscuro) | 2 / 0 | 11 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 13 / 0 |
+| color excluido (marron_oscuro) | 2 / 0 | 12 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 14 / 0 |
 | avería/estado: para piezas | 1 / 0 | 6 / 0 | 0 / 0 | 0 / 0 | 4 / 0 | 11 / 0 |
 | presupuesto (coste total > techo) | 3 / 3 | 4 / 4 | 0 / 0 | 1 / 1 | 2 / 2 | 10 / 10 |
 | avería/estado: no arranca | 1 / 0 | 4 / 0 | 0 / 0 | 0 / 0 | 3 / 0 | 8 / 0 |
@@ -119,11 +119,10 @@ Antes de guardar la ficha, cada fuente ya descarta en el listado lo que no cumpl
 
 | Modelo | Tramo de precio | Anuncios desaparecidos | Mediana de días publicados |
 |---|---|---|---|
-| VOLKSWAGEN Golf | > 5.000 € | 5 | 0.1 |
 | Opel Corsa | > 5.000 € | 5 | 0.1 |
 | MERCEDES-BENZ Clase A | > 5.000 € | 5 | 0.0 |
-| MERCEDES-BENZ Clase C | > 5.000 € | 5 | 0.0 |
 | SEAT Ibiza | ≤ 3.000 € | 4 | 0.1 |
+| VOLKSWAGEN Golf | > 5.000 € | 4 | 0.1 |
 | Toyota Yaris | > 5.000 € | 4 | 0.1 |
 | Toyota Corolla | > 5.000 € | 4 | 0.0 |
 | Hyundai i30 | > 5.000 € | 4 | 0.0 |
@@ -134,8 +133,7 @@ Antes de guardar la ficha, cada fuente ya descarta en el listado lo que no cumpl
 | OPEL Mokka | > 5.000 € | 4 | 0.0 |
 | RENAULT Captur | > 5.000 € | 4 | 0.0 |
 | PEUGEOT 2008 | > 5.000 € | 4 | 0.0 |
-| FORD Kuga | > 5.000 € | 4 | 0.0 |
-| NISSAN QASHQAI | > 5.000 € | 4 | 0.0 |
+| MERCEDES-BENZ Clase C | > 5.000 € | 4 | 0.0 |
 | RENAULT Clio | > 5.000 € | 3 | 0.1 |
 | Seat León | > 5.000 € | 3 | 0.1 |
 | Renault Clio | > 5.000 € | 3 | 0.1 |
@@ -143,12 +141,14 @@ Antes de guardar la ficha, cada fuente ya descarta en el listado lo que no cumpl
 | Nissan Micra | > 5.000 € | 3 | 0.1 |
 | TOYOTA C-HR | > 5.000 € | 3 | 0.0 |
 | OPEL Grandland | > 5.000 € | 3 | 0.0 |
-| PEUGEOT 3008 | > 5.000 € | 3 | 0.0 |
+| FORD Kuga | > 5.000 € | 3 | 0.0 |
 | AUDI Q3 | > 5.000 € | 3 | 0.0 |
 | MERCEDES-BENZ GLA | > 5.000 € | 3 | 0.0 |
 | TOYOTA Yaris | > 5.000 € | 2 | 0.1 |
 | HYUNDAI i10 | > 5.000 € | 2 | 0.1 |
 | HYUNDAI i30 | > 5.000 € | 2 | 0.1 |
+| SEAT Ibiza | 3.001–5.000 € | 2 | 0.0 |
+| SEAT León | > 5.000 € | 2 | 0.1 |
 
 _Días contados desde que el buscador vio el anuncio por primera vez (no desde su publicación real)._
 
