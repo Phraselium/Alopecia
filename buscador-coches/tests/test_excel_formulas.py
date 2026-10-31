@@ -56,6 +56,7 @@ def test_formulas_match_python(tmp_path, cfg, fiscal, rel):
     # Las fórmulas se prueban con los filtros de vendedor/etiqueta desactivados para cubrir todos los casos
     cfg["filtros"].update({"solo_profesionales": False, "modelos_excluidos": [], "excluir_cajas_robotizadas": False,
                            "color": {"excluir_activo": False, "excluidos": []}})
+    cfg["filtros"]["diesel"]["excluir_todos"] = False   # las fórmulas de diésel se siguen probando
     p = Params(cfg, fiscal, rel)
     ls = synthetic()
     market = [{"uid": f"m{i}", "plataforma": "TEST", "marca": l.marca, "modelo": l.modelo, "titulo": l.titulo, "anio": l.anio,

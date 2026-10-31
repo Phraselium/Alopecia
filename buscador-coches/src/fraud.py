@@ -53,6 +53,8 @@ def search_filter_reasons(l: Listing, cfg: dict, rel: dict | None = None) -> lis
         r.append("combustible desconocido")
     elif comb in f.get("combustibles_excluidos", []):
         r.append(f"combustible {comb}")
+    elif comb == "diesel" and (f.get("diesel") or {}).get("excluir_todos", False):
+        r.append("diésel excluido (uso urbano)")
     elif comb == "diesel":
         d = f["diesel"]
         if d.get("excluir_si_penalizacion_motor", True):

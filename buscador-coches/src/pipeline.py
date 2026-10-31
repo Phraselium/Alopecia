@@ -119,6 +119,8 @@ def _categoria(motivo: str) -> str:
         return "etiqueta desconocida"
     if m.startswith("etiqueta "):
         return "etiqueta " + m.split(" ")[1] + " (< mínima)"
+    if m.startswith("diésel excluido"):
+        return "diésel excluido (uso urbano)"
     if m.startswith("diésel con penalización"):
         return "diésel con penalización de motor"
     if m.startswith("avería/estado: "):
@@ -170,7 +172,7 @@ def embudo(listings, descartados, deduplicados, filas) -> dict:
     grupos = {"vendedor no profesional": lambda c: c == "vendedor no profesional",
               "etiqueta (no confirmada, dudosa, < B o desconocida)": lambda c: c.startswith("etiqueta"),
               "avería / estado del coche": lambda c: c.startswith("avería/estado"),
-              "diésel con penalización de motor": lambda c: c.startswith("diésel"),
+              "diésel (todos excluidos o con penalización de motor)": lambda c: c.startswith("diésel"),
               "color excluido": lambda c: c.startswith("color excluido"),
               "modelo excluido": lambda c: c.startswith("modelo excluido"),
               "presupuesto (coste > techo)": lambda c: c.startswith("presupuesto")}

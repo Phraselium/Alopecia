@@ -160,3 +160,10 @@ def test_pesos_suman_1(cfg):
     assert sum(w.values()) == pytest.approx(1.0)
     assert w == {"fiabilidad": 0.22, "precio": 0.15, "estado": 0.12, "estetica": 0.12, "seguridad_vial": 0.10,
                  "seguridad_compra": 0.10, "coste_uso": 0.09, "km_edad": 0.05, "reventa": 0.03, "color": 0.02}
+
+
+def test_diesel_excluidos_por_defecto(p):
+    l = mk(1, "Seat León 1.9 TDI", "Seat", "León", combustible="diesel", anio=2008)
+    assert "diésel excluido (uso urbano)" in search_filter_reasons(l, p.cfg, p.rel)
+    p.cfg["filtros"]["diesel"]["excluir_todos"] = False
+    assert "diésel excluido (uso urbano)" not in search_filter_reasons(l, p.cfg, p.rel)

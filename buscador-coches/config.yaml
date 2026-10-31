@@ -43,6 +43,7 @@ filtros:
     activo: true                   # filtro estricto de averías/estado en título y descripción (src/averias.py)
     revisar_si_no_menciona_itv: true
   diesel:
+    excluir_todos: true            # 02-11-2026: uso principal en trayectos urbanos cortos (filtro de partículas) -> ningún diésel
     # Diésel B o C: entran salvo que su motor tenga una penalización conocida en reliability.yaml (excluir_si_penalizacion_motor)
     excluir_si_penalizacion_motor: true
     # Diésel cuyo motor no tiene fuente de fiabilidad en reliability.yaml:

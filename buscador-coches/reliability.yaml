@@ -392,10 +392,10 @@ cajas:
 
 # ---- Mantenimiento (02-11-2026): recambios por marca y distribución por marca|motor (clave = marca|motor normalizado)
 mantenimiento:
-  nota: 'Mantenimiento (dentro de Coste de uso) = media de: puntos de la marca (coste de la revisión anual en taller oficial, OCU 2026) y puntos del tipo de distribución. Marca o motor sin dato: NEUTRO.
-    El resto de marcas (Seat, Skoda, Toyota, Peugeot...) no tienen cifra en la nota de la OCU: PENDIENTE.'
-  nota_puntos: 'Supuesto (criterio): cadena 80 (sin cambio periódico, aunque algunas se estiran), correa 50, correa de intervalo corto (< 100.000 km o <= 4 años) 25. Referencias: kit de distribución + bomba
-    en Valencia 550,22 € (Tallerator vía Autofácil, 2014) https://www.autofacil.es/cuesta-cambiar-kit-distribucion/ ; Audatex 2013: premium +8,7 % de coste cada 100.000 km https://www.autofacil.es/mantener-coche-premium-cuesta-9-marca-generalista/'
+  nota: 'Mantenimiento (dentro de Coste de uso) = media de: puntos de la marca (coste de la revisión anual en taller oficial, OCU 2026) y puntos del tipo de distribución. Marca o motor sin dato: NEUTRO. El resto de marcas (Seat, Skoda, Toyota, Peugeot...)
+    no tienen cifra en la nota de la OCU: PENDIENTE.'
+  nota_puntos: 'Supuesto (criterio): cadena 80 (sin cambio periódico, aunque algunas se estiran), correa 50, correa de intervalo corto (< 100.000 km o <= 4 años) 25. Referencias: kit de distribución + bomba en Valencia 550,22 € (Tallerator vía Autofácil,
+    2014) https://www.autofacil.es/cuesta-cambiar-kit-distribucion/ ; Audatex 2013: premium +8,7 % de coste cada 100.000 km https://www.autofacil.es/mantener-coche-premium-cuesta-9-marca-generalista/'
   puntos_distribucion:
     cadena: 80
     correa: 50
@@ -544,14 +544,16 @@ mantenimiento:
       fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0135-honda-civic-2005-2011-bericht.pdf ; https://jdmshop.eu/en/genuine-honda-timing-chain-14401-rna-a01
     Toyota|1.8:
       tipo: cadena
-      intervalo: sin intervalo (familia ZZ)
-      estado: confirmado (Corolla E12); 2ZR probable
-      fuente: https://assets.adac.de/image/upload/Autodatenbank/GWInfo/gw0112-toyota-corolla-2001---2007-bericht.pdf
+      intervalo: sin intervalo (1ZZ-FE, Avensis T25 / Corolla E12)
+      estado: 'confirmado (ADAC: sin correa en los gasolina del Corolla E12; catálogos con tensor de cadena del Avensis T25 1.8 ZZT251)'
+      fuente: 'toyota-club.net (FAQ técnica serie ZZ) https://toyota-club.net/files/faq/04-01-10_rem_1zzfe_eng.htm ; catálogos de recambios: tensor de cadena Avensis T25 1.8 VVT-i ZZT251 https://www.expertoautorecambios.es/piezas-de-repuesto-toyota/avensis-t25/17344/10514/tensor-de-cadena
+        ; ADAC Corolla E12 https://assets.adac.de/image/upload/Autodatenbank/GWInfo/gw0112-toyota-corolla-2001---2007-bericht.pdf'
     Toyota|1.8 VVT-i:
       tipo: cadena
-      intervalo: sin intervalo (familia ZZ)
-      estado: confirmado (Corolla E12); 2ZR probable
-      fuente: https://assets.adac.de/image/upload/Autodatenbank/GWInfo/gw0112-toyota-corolla-2001---2007-bericht.pdf
+      intervalo: sin intervalo (1ZZ-FE, Avensis T25 / Corolla E12)
+      estado: 'confirmado (ADAC: sin correa en los gasolina del Corolla E12; catálogos con tensor de cadena del Avensis T25 1.8 ZZT251)'
+      fuente: 'toyota-club.net (FAQ técnica serie ZZ) https://toyota-club.net/files/faq/04-01-10_rem_1zzfe_eng.htm ; catálogos de recambios: tensor de cadena Avensis T25 1.8 VVT-i ZZT251 https://www.expertoautorecambios.es/piezas-de-repuesto-toyota/avensis-t25/17344/10514/tensor-de-cadena
+        ; ADAC Corolla E12 https://assets.adac.de/image/upload/Autodatenbank/GWInfo/gw0112-toyota-corolla-2001---2007-bericht.pdf'
     Toyota|1.4 VVT-i:
       tipo: cadena
       intervalo: sin intervalo (familia ZZ)
@@ -566,22 +568,22 @@ mantenimiento:
       tipo: cadena
       intervalo: sin intervalo (MZR gasolina)
       estado: confirmado (Mazda 3 BK); Mazda 2/6 probable
-      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0122-mazda-3-2003-2009-bericht.pdf
+      fuente: 'https://assets.adac.de/Autodatenbank/GWInfo/gw0122-mazda-3-2003-2009-bericht.pdf ; Mazda 2 DY: cadena, Autodoc recomienda revisarla a 150.000 km https://club.autodoc.co.uk/manuals/engine/timing-chain/mazda/2'
     Mazda|1.6:
       tipo: cadena
       intervalo: sin intervalo (MZR gasolina)
       estado: confirmado (Mazda 3 BK); Mazda 2/6 probable
-      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0122-mazda-3-2003-2009-bericht.pdf
+      fuente: 'https://assets.adac.de/Autodatenbank/GWInfo/gw0122-mazda-3-2003-2009-bericht.pdf ; Mazda 2 DY: cadena, Autodoc recomienda revisarla a 150.000 km https://club.autodoc.co.uk/manuals/engine/timing-chain/mazda/2'
     Mazda|1.8:
       tipo: cadena
       intervalo: sin intervalo (MZR gasolina)
       estado: confirmado (Mazda 3 BK); Mazda 2/6 probable
-      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0122-mazda-3-2003-2009-bericht.pdf
+      fuente: 'https://assets.adac.de/Autodatenbank/GWInfo/gw0122-mazda-3-2003-2009-bericht.pdf ; Mazda 2 DY: cadena, Autodoc recomienda revisarla a 150.000 km https://club.autodoc.co.uk/manuals/engine/timing-chain/mazda/2'
     Mazda|2.0:
       tipo: cadena
       intervalo: sin intervalo (MZR gasolina)
       estado: confirmado (Mazda 3 BK); Mazda 2/6 probable
-      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0122-mazda-3-2003-2009-bericht.pdf
+      fuente: 'https://assets.adac.de/Autodatenbank/GWInfo/gw0122-mazda-3-2003-2009-bericht.pdf ; Mazda 2 DY: cadena, Autodoc recomienda revisarla a 150.000 km https://club.autodoc.co.uk/manuals/engine/timing-chain/mazda/2'
     Peugeot|1.4:
       tipo: correa
       intervalo: '150.000 km / 10 años (ADAC 207); manual 207: 240.000 normal, 180.000 severo'
@@ -707,6 +709,31 @@ mantenimiento:
       intervalo: sin intervalo; estiramiento desde ~64.000 km (JTS)
       estado: probable
       fuente: https://alfaworkshop.co.uk/alfa_romeo_timing_belts.shtml
+    Hyundai|1.2:
+      tipo: cadena
+      intervalo: sin intervalo (Kappa G4LA); fallos de cadena citados a 80.000-120.000 km solo en foros
+      estado: probable (ficha técnica de motor y catálogo de recambios)
+      fuente: 'https://mymotorlist.com/engines/hyundai/g4la/ ; tensor de cadena i20 (GB/IB) G4LA 1.2: https://www.motordoctor.es/tensor-de-cadena-de-distribucion/hyundai/i20/i20-gb/108806-1-2'
+    Kia|1.2:
+      tipo: cadena
+      intervalo: sin intervalo (Kappa G4LA); fallos de cadena citados a 80.000-120.000 km solo en foros
+      estado: probable (ficha técnica de motor y catálogo de recambios)
+      fuente: 'https://mymotorlist.com/engines/hyundai/g4la/ ; tensor de cadena i20 (GB/IB) G4LA 1.2: https://www.motordoctor.es/tensor-de-cadena-de-distribucion/hyundai/i20/i20-gb/108806-1-2'
+    Volkswagen|1.2:
+      tipo: cadena
+      intervalo: sin intervalo (1.2 6V/12V de 3 cilindros, p. ej. CGPA/CGPB)
+      estado: probable (catálogo de útiles de calado del fabricante NTN-SNR)
+      fuente: 'NTN-SNR, útiles de calado ''VAG 1.2 gasolina'' 6V/12V con cadena (Polo): https://eshop.ntn-snr.com/es/product/OM4010-CLA/TIMING%20TOOLS%20VAG%201.2%20PETROL'
+    Seat|1.2:
+      tipo: cadena
+      intervalo: sin intervalo (1.2 6V/12V de 3 cilindros, p. ej. CGPA/CGPB)
+      estado: probable (catálogo de útiles de calado del fabricante NTN-SNR)
+      fuente: 'NTN-SNR, útiles de calado ''VAG 1.2 gasolina'' 6V/12V con cadena (Polo): https://eshop.ntn-snr.com/es/product/OM4010-CLA/TIMING%20TOOLS%20VAG%201.2%20PETROL'
+    Skoda|1.2:
+      tipo: cadena
+      intervalo: sin intervalo (1.2 6V/12V de 3 cilindros, p. ej. CGPA/CGPB)
+      estado: probable (catálogo de útiles de calado del fabricante NTN-SNR)
+      fuente: 'NTN-SNR, útiles de calado ''VAG 1.2 gasolina'' 6V/12V con cadena (Polo): https://eshop.ntn-snr.com/es/product/OM4010-CLA/TIMING%20TOOLS%20VAG%201.2%20PETROL'
 
 # ---- Euro NCAP por generación (02-11-2026). Estrellas del espejo de la base Euro NCAP en autocentrum.pl (euroncap.com ya no
 # publica los ensayos anteriores a 2017: las URL antiguas dan 404 y su /api/search está prohibido por robots.txt) -> "probable".
