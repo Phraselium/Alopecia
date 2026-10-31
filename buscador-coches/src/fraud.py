@@ -74,6 +74,11 @@ def search_filter_reasons(l: Listing, cfg: dict, rel: dict | None = None) -> lis
             r.append(f"etiqueta {l.etiqueta_dgt} ({l.etiqueta_fuente}) < {minima}")
         if f.get("etiqueta_solo_confirmada") and l.etiqueta_fuente not in ("DGT", "anuncio"):
             r.append(f"etiqueta no confirmada (deducida por {l.etiqueta_fuente})")
+    # Modelos y cajas excluidos
+    if l.modelo_key in (f.get("modelos_excluidos") or []):
+        r.append(f"modelo excluido ({l.modelo_key})")
+    if f.get("excluir_multitronic", True) and l.multitronic == "sí":
+        r.append("caja Multitronic (Audi CVT) excluida")
     # Vendedor
     if f.get("solo_profesionales") and l.vendedor != "profesional":
         r.append(f"vendedor {l.vendedor or 'desconocido'} (solo profesionales)")

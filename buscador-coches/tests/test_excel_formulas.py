@@ -23,11 +23,12 @@ def synthetic(n=80, seed=1):
                ("Renault", "Clio", "1.2 TCe"), ("Volkswagen", "Golf", "1.4 TSI"), ("Ford", "Focus", "1.6 TDCi diésel"),
                ("Kia", "Rio", "1.2 CVVT"), ("Skoda", "Octavia Combi", "1.6 TDI"), ("Opel", "Meriva", "1.4"),
                ("Dacia", "Logan", "1.4 MPI"), ("Peugeot", "207", "1.6 HDi"), ("Opel", "Corsa", "1.2 Easytronic"),
-               ("Peugeot", "107", "1.0"), ("MINI", "MINI", "One 1.4"), ("Toyota", "Aygo", "1.0 MMT"), ("Opel", "Astra", "1.7 CDTi diésel")]
+               ("Peugeot", "107", "1.0"), ("MINI", "MINI", "One 1.4"), ("Toyota", "Aygo", "1.0 MMT"), ("Opel", "Astra", "1.7 CDTi diésel"),
+               ("Audi", "A4", "2.0 TFSI"), ("Toyota", "Avensis", "1.8 VVT-i"), ("Mazda", "6", "2.0")]
     out = []
     for i in range(n):
         marca, modelo, motor = modelos[i % len(modelos)]
-        anio = rnd.randint(2006, 2018)
+        anio = rnd.randint(2003, 2018)
         out.append(Listing(
             plataforma="TEST", id_externo=str(i),
             url=rnd.choice([f"https://example.invalid/{i}", f"https://example.invalid/x-gasolina-{anio - 1}-en-valencia-{i}-covo.aspx"]),
@@ -48,7 +49,7 @@ def synthetic(n=80, seed=1):
 
 def test_formulas_match_python(tmp_path, cfg, fiscal, rel):
     # Las fórmulas se prueban con los filtros de vendedor/etiqueta desactivados para cubrir todos los casos
-    cfg["filtros"].update({"solo_profesionales": False, "etiqueta_solo_confirmada": False, "etiqueta_permitir_dudosas": True})
+    cfg["filtros"].update({"solo_profesionales": False, "etiqueta_solo_confirmada": False, "etiqueta_permitir_dudosas": True, "modelos_excluidos": []})
     p = Params(cfg, fiscal, rel)
     res = process(synthetic(), p, set())
     assert res.filas, "deberían quedar anuncios limpios"
@@ -62,6 +63,7 @@ def test_formulas_match_python(tmp_path, cfg, fiscal, rel):
     assert any(f["fiabilidad"].get("gemelo") for f in res.filas), "falta gemelo de plataforma"
     assert any(f["listing"].etiqueta_dudosa_anio for f in res.filas), "falta dudosa por año"
     assert any(f["precio"]["tope"] < 100 for f in res.filas), "falta tope de precio por km"
+    assert any(f["estilo"]["prioritario"] for f in res.filas), "falta modelo prioritario"
     src = tmp_path / "r.xlsx"
     write_workbook(src, [f["listing"] for f in res.filas], res.avisos, p)
     outdir = tmp_path / "calc"
@@ -100,6 +102,7 @@ def test_formulas_match_python(tmp_path, cfg, fiscal, rel):
         assert v("etiqueta") == l.etiqueta_dgt, (l.uid, l.fecha_matriculacion, l.combustible)
         assert (v("etq_dudosa") == "sí") == bool(l.etiqueta_dudosa), l.uid
         assert v("s_etiqueta") == pytest.approx(f["etiqueta"]["score"]), l.uid
+        assert v("s_estilo") == pytest.approx(f["estilo"]["score"]), l.uid
     top = wb["Top20"]
     best = min((f for f in res.filas if f.get("rank")), key=lambda f: f["rank"])
     assert top["D2"].value == best["listing"].titulo

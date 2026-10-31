@@ -67,6 +67,8 @@ class Listing:
     revisar: list = field(default_factory=list)   # expresiones ambiguas o falta de ITV: revisar, no descartar
     anio_alternativo: Optional[int] = None
     caja_robotizada: Optional[str] = None
+    multitronic: Optional[str] = None             # "sí" detectada / "posible" (Audi automático sin tiptronic/quattro)
+    prioritario: Optional[bool] = None            # modelo/motor/años de la lista de preferencia de estilo
     etiqueta_dudosa_anio: Optional[bool] = None    # dudosa porque el año de la URL/título cambia la etiqueta posible          # texto detectado (p. ej. "easytronic")        # año distinto en la URL o el título ("año a confirmar")
     descartes: list = field(default_factory=list)
 

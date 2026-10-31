@@ -88,3 +88,18 @@ Wallapop), desaparecer puede significar haber salido de las páginas accesibles:
   solo de la regla.
 - `python tools/dgt_check.py` vuelve a validar la equivalencia de los códigos del fichero DGT con las etiquetas de OcasionPlus.
 - Estado de la ZBE de València: ordenanza pendiente de aprobación definitiva; calendario previsto y fuentes en `zbe.yaml`.
+
+## Berlinas medianas sobrias (01-11-2026)
+
+- Carrocerías `berlina` (segmento C) y `berlina_d` (segmento D) admitidas **sin penalización**. Familiar y monovolumen pequeño
+  siguen penalizados.
+- Criterio **Preferencia de estilo** (`scoring.pesos.estilo`, 10 % por defecto). Los modelos prioritarios
+  (`scoring.estilo.prioritarios`: Accord 2.0, Avensis 1.8, Mazda 6 1.8/2.0, Octavia II 1.6, Jetta V 1.6, A4 B7 2.0/1.8T y Exeo
+  gasolina) puntúan 100. El resto puntúa por segmento: berlina D 80 · berlina C 60 · compacto/familiar 50 · utilitario 15.
+- **Excluidos siempre**: Peugeot 107, Toyota Aygo, Citroën C1 (`filtros.modelos_excluidos`) y la caja **Multitronic** de Audi
+  (`filtros.excluir_multitronic`). Un Audi «automático» sin especificar entra con el aviso «confirmar que no es Multitronic».
+- **Penalizaciones de motor** documentadas en `reliability.yaml`: EA888 1.8 TFSI/TSI 2007-2012 y 2.0 TFSI de Audi 2009-2012, por
+  consumo de aceite (fuentes: Asghari v. VW de 2015, boletín Audi 11-24 y Auto Bild). El A4 B7 2.0 TFSI es EA113 y queda sin
+  ajuste. El 1.4 TSI Twincharger 2005-2014 se penaliza por la cadena.
+- **Coste de uso**: seguro estimado por segmento, con la berlina D en ~380 €/año. El consumo real de gasolina se toma por modelo
+  o, si no hay dato, por segmento (`fiscal.yaml → consumo_estimado`, Spritmonitor). Las dos cosas son aproximadas.

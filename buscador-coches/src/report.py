@@ -206,6 +206,10 @@ def write_report(path: Path, filas: list[dict], p: Params, top_n: int, stats: di
               f"comprobado en valencia.es el {z['consultado']}). Su calendario es **previsto**, no vigente: restringe solo la "
               "etiqueta A (fuera de la provincia desde 12-2025; desde 1-1-2027 todos los de fuera del municipio; desde 1-1-2028 "
               "también los de vecinos). Los B no tienen restricción ni fecha prevista. Detalle y fuentes en zbe.yaml.", ""]
+    ex = p.cfg["filtros"]
+    lines += [f"> **Enfoque**: prioridad a berlinas medianas sobrias (criterio *Preferencia de estilo*, "
+              f"{p.cfg['scoring']['pesos'].get('estilo', 0) * 100:.0f} %). Excluidos siempre: {', '.join(ex.get('modelos_excluidos') or []) or 'ninguno'}"
+              + ("; caja Multitronic de Audi" if ex.get("excluir_multitronic") else "") + ".", ""]
     lines += _embudo_md(stats)
     lines += _ventas_md(stats.get("ventas") or [])
     lines += ["## Los mejores", ""]
@@ -223,6 +227,9 @@ def write_report(path: Path, filas: list[dict], p: Params, top_n: int, stats: di
             f"Coste: {n(l.precio)} € al contado + gastos {n(f['coste'].get('gastos', 0))} € + ITP {n(f['coste']['itp'])} € + tasa {n(f['coste']['tasa'], 2)} € + informe {n(f['coste']['informe'], 2)} € = **{n(f['coste']['total'])} €**; "
             f"con el seguro estimado ({n(f['coste_uso']['seguro'] or 0)} €/año, aproximado) el primer año sale por **{n(f['coste']['primer_anio'])} €**.", "",
             _etiqueta_md(f, p), "",
+            f"Estilo: {'**modelo prioritario** (berlina mediana sobria)' if f['estilo']['prioritario'] else (l.carroceria or 'carrocería sin dato')} "
+            f"({f['estilo']['score']:.0f}/100) · consumo estimado "
+            + (f"{f['coste_uso']['consumo']:.1f} l/100 km (aprox., ver fiscal.yaml)" if f['coste_uso'].get('consumo') else "PENDIENTE"), "",
             "**Por qué destaca**", *[f"- {x}" for x in _why(f, p)], "",
             "**Riesgos de este modelo y motor**", *([f"- {x}" for x in risks] or ["- Sin problemas documentados con fuente para este modelo/motor (eso no significa que no los tenga)."]), "",
             "**Qué revisar en la visita**", *[f"- {x}" for x in checks + GENERIC_CHECKS], "",

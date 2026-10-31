@@ -18,7 +18,7 @@ presupuesto:
   precio_anuncio_min_eur: 800  # por debajo casi siempre es despiece/fraude
 
 filtros:
-  anio_min: 2006               # antes 2008
+  anio_min: 2002               # 2008 → 2006 → 2002 (01-11-2026): los modelos prioritarios empiezan en 2002-2003
   km_max: 220000
   km_min_creible: 1000         # menos km en un coche de más de 2 años = dato erróneo del anuncio
   # Combustible: gasolina, híbrido, GLP y diésel entran. Excluidos:
@@ -39,8 +39,13 @@ filtros:
     #   penalizar -> entra con la fiabilidad "pendiente" (tope en la puntuación neutra) ; excluir -> fuera
     sin_fuente: penalizar
   # Carrocerías: admitidas sin penalización / admitidas con penalización (puntos en scoring.penalizaciones) / el resto fuera
-  carrocerias: [utilitario, compacto]
-  carrocerias_penalizadas: [berlina, familiar, monovolumen_pequeno]
+  # Berlinas de segmento C (berlina) y D (berlina_d) sin penalización (01-11-2026: prioridad a berlinas medianas sobrias)
+  carrocerias: [utilitario, compacto, berlina, berlina_d]
+  carrocerias_penalizadas: [familiar, monovolumen_pequeno]
+  # Modelos excluidos siempre (aunque pasen el resto de filtros)
+  modelos_excluidos: [Peugeot 107, Toyota Aygo, Citroën C1]
+  # Cajas de cambio excluidas (detectadas en título/versión); ver reliability.yaml -> cajas_excluidas
+  excluir_multitronic: true
   # Fuera: suv, cabrio, monovolumen (grande), furgoneta y desconocidas
   cambio: indiferente          # se marcan los automáticos en la columna "automatico"
 
@@ -97,16 +102,16 @@ scoring:
   # anteriores (35/30/15/10/10, que sumaban 100) se escalan por 0,85 y se redondean a enteros:
   # 29,75→30 · 25,5→25 · 12,75→12 · 8,5→9 · 8,5→9 · +15 = 100.
   pesos:
-    # 01-11-2026: nuevo criterio "Etiqueta y ZBE" (6 %). La etiqueta deja de ser la mitad de "Coste de uso"
-    # (que baja de 9 a 5 y queda en consumo + seguro) y se resta 1 punto a fiabilidad y 1 a precio:
-    # 30→29 · 25→24 · 12 · 9 · 9→5 · 15 · +6 = 100.
-    fiabilidad: 0.29
-    precio: 0.24
-    km_edad: 0.12
-    anuncio: 0.09
-    coste_uso: 0.05
-    seguridad: 0.15
-    etiqueta: 0.06
+    # 01-11-2026 (b): nuevo criterio "Preferencia de estilo" (10 %). Los 7 anteriores (29/24/12/9/5/15/6) × 0,9 y
+    # redondeados para sumar 100: 26 · 22 · 11 · 8 · 4 · 14 · 5 · +10 = 100.
+    fiabilidad: 0.26
+    precio: 0.22
+    km_edad: 0.11
+    anuncio: 0.08
+    coste_uso: 0.04
+    seguridad: 0.14
+    etiqueta: 0.05
+    estilo: 0.10
   precio:
     pendiente: 250             # puntos por unidad de descuento: -20% => 100, +20% => 0
     km_tope_desde: 180000      # a partir de aquí la nota de precio tiene un tope decreciente
@@ -140,10 +145,21 @@ scoring:
     # ver fiscal.yaml → garantia_legal) y se marca el aviso.
     aplicar_minimo_legal_profesional: true
   penalizaciones:              # puntos que se restan a la PUNTUACIÓN total
-    carroceria: {berlina: 4, familiar: 3, monovolumen_pequeno: 6}
+    carroceria: {familiar: 3, monovolumen_pequeno: 6}   # berlina (C) y berlina_d: sin penalización
     caja_robotizada: 10        # puntos menos en Fiabilidad (Easytronic/MTA, Dualogic, MMT, 2-Tronic/ETG, ASG…)
     # Diésel sin fuente de fiabilidad del motor: la fiabilidad del modelo se limita a la puntuación neutra
     # (coste_uso.neutro_si_pendiente), igual que un dato "pendiente"; además se aplica el ajuste DPF.
+  estilo:                      # "Preferencia de estilo" (0-100): berlinas medianas sobrias tipo Audi A4
+    prioritario: 100           # modelo/motor/años de la lista de abajo
+    por_segmento: {berlina_d: 80, berlina: 60, compacto: 50, familiar: 50, utilitario: 15, monovolumen_pequeno: 15}
+    prioritarios:              # modelo (clave normalizada), años y motores (cilindrada en litros; vacío = cualquiera)
+      - {modelo: Honda Accord, desde: 2003, hasta: 2008, motores: ["2.0"], combustible: gasolina}
+      - {modelo: Toyota Avensis, desde: 2003, hasta: 2008, motores: ["1.8"], combustible: gasolina}
+      - {modelo: Mazda 6, desde: 2002, hasta: 2008, motores: ["1.8", "2.0"], combustible: gasolina}
+      - {modelo: Skoda Octavia, desde: 2004, hasta: 2013, motores: ["1.6"], combustible: gasolina}
+      - {modelo: Volkswagen Jetta, desde: 2005, hasta: 2010, motores: ["1.6"], combustible: gasolina}
+      - {modelo: Audi A4, desde: 2004, hasta: 2008, motores: ["2.0", "1.8"], combustible: gasolina}
+      - {modelo: Seat Exeo, desde: 2008, hasta: 2013, motores: [], combustible: gasolina}
   etiqueta:                    # "Etiqueta y ZBE" (0-100)
     puntos: {B: 40, C: 70, ECO: 100, CERO: 100, A: 0}   # B = base, C = +, ECO/CERO = ++
     penal_dudosa: 15           # etiqueta dudosa (año frontera sin mes): confirmar con la DGT

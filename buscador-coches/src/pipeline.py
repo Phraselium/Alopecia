@@ -83,6 +83,19 @@ def anio_alternativo(l: Listing):
     return None
 
 
+def es_prioritario(l: Listing, cfg: dict) -> bool:
+    for e in (cfg["scoring"].get("estilo") or {}).get("prioritarios") or []:
+        if l.modelo_key != e["modelo"] or not l.anio or not (e["desde"] <= l.anio <= e["hasta"]):
+            continue
+        if e.get("combustible") and l.combustible != e["combustible"]:
+            continue
+        mot = (l.motor_key or "").split(" ")[0]
+        if e.get("motores") and mot not in e["motores"]:
+            continue
+        return True
+    return False
+
+
 @dataclass
 class Result:
     limpios: list[Listing]
@@ -117,6 +130,10 @@ def _categoria(motivo: str) -> str:
         return "diésel con penalización de motor"
     if m.startswith("avería/estado: "):
         return "avería/estado: " + m[len("avería/estado: "):].split(" «")[0]
+    if m.startswith("modelo excluido"):
+        return "modelo excluido (Aygo/107/C1)"
+    if m.startswith("caja Multitronic"):
+        return "caja Multitronic"
     if m.startswith("vendedor "):
         return "vendedor no profesional"
     if m.startswith("carrocería"):
@@ -191,6 +208,18 @@ def process(listings: list[Listing], p: Params, motores_fiables: set[str], marke
         l.anio_alternativo = anio_alternativo(l)
         rob = re.search((p.rel.get("cajas_robotizadas") or {}).get("patron", r"$^"), norm_text(f"{l.titulo} {l.version or ''}"))
         l.caja_robotizada = rob.group(0) if rob else None
+        # VW 1.4 TSI twincharger (EA111, compresor + turbo): 1.4 TSI de 160-185 CV, o 140-150 CV hasta 2011
+        if l.motor_key == "1.4 TSI" and l.potencia_cv and l.anio and \
+                (160 <= l.potencia_cv <= 185 or (140 <= l.potencia_cv <= 150 and l.anio <= 2011)) and l.anio <= 2014:
+            l.motor_key = "1.4 TSI Twincharger"
+        txt = norm_text(f"{l.titulo} {l.version or ''}")
+        if re.search(r"multitronic|\bcvt\b", txt) and l.marca == "Audi":
+            l.multitronic = "sí"
+        elif l.marca == "Audi" and l.cambio == "automatico" and not re.search(r"tiptronic|s\s?tronic|quattro|dsg", txt):
+            l.multitronic = "posible"
+        else:
+            l.multitronic = None
+        l.prioritario = es_prioritario(l, p.cfg)
         asignar(l, p.zbe, dgt)
         r = search_filter_reasons(l, p.cfg, p.rel)
         if r:
@@ -229,6 +258,8 @@ def process(listings: list[Listing], p: Params, motores_fiables: set[str], marke
             a.append(f"carrocería {f['listing'].carroceria}: -{f['penalizacion']:.0f} puntos")
         if f["listing"].anio_alternativo:
             a.insert(0, f"año a confirmar: la URL/título dice {f['listing'].anio_alternativo}")
+        if f["listing"].multitronic == "posible":
+            a.append("Audi automático sin especificar: confirmar que NO es Multitronic (CVT)")
         if f["listing"].caja_robotizada:
             a.append(f"caja robotizada ({f['listing'].caja_robotizada}): -{f['fiabilidad']['robotizada']:.0f} en fiabilidad")
         if f["fiabilidad"].get("gemelo"):

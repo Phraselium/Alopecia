@@ -199,6 +199,14 @@ def s_fiabilidad(l: Listing, p: Params) -> dict:
             "ajuste": adj, "robotizada": rob, "problemas": hits, "score": clamp(base_ef + adj - rob)}
 
 
+def s_estilo(l: Listing, p: Params) -> dict:
+    """'Preferencia de estilo': berlinas medianas sobrias (lista de prioritarios) > berlina D > ... > utilitarios."""
+    e = p.cfg["scoring"].get("estilo") or {}
+    if l.prioritario:
+        return {"prioritario": True, "score": float(e.get("prioritario", 100))}
+    return {"prioritario": False, "score": float((e.get("por_segmento") or {}).get(l.carroceria, p.neutro))}
+
+
 def penal_carroceria(l: Listing, cfg: dict) -> float:
     return float((cfg["scoring"].get("penalizaciones") or {}).get("carroceria", {}).get(l.carroceria, 0))
 
@@ -277,6 +285,15 @@ def seguro_estimado(l: Listing, fiscal: dict):
     return float(s[l.carroceria]["central"]) if l.carroceria in s else None
 
 
+def consumo_estimado(l: Listing, fiscal: dict):
+    """l/100 km de gasolina: por modelo y, si no hay, por segmento. Otros combustibles: None (neutro)."""
+    ce = fiscal.get("consumo_estimado") or {}
+    if l.combustible != "gasolina":
+        return None
+    v = (ce.get("modelos") or {}).get(l.modelo_key) or (ce.get("segmentos") or {}).get(l.carroceria)
+    return float(v["valor"]) if v and v.get("valor") is not None else None
+
+
 def seguro_rango(fiscal: dict) -> tuple[float, float]:
     s = fiscal["seguro_estimado"]["segmentos"].values()
     return float(min(x["min"] for x in s)), float(max(x["max"] for x in s))
@@ -286,12 +303,14 @@ def s_coste_uso(l: Listing, p: Params) -> dict:
     c = p.cfg["scoring"]["coste_uso"]
     et = l.etiqueta_dgt
     s_et = 0.0  # desde 01-11-2026 la etiqueta tiene criterio propio (s_etiqueta); peso_etiqueta = 0
-    s_cons = p.neutro   # consumo: PENDIENTE de fuente
+    cons = consumo_estimado(l, p.fiscal)
+    ce = p.fiscal.get("consumo_estimado") or {}
+    s_cons = p.neutro if cons is None else clamp(100 * (ce["ref_max"] - cons) / (ce["ref_max"] - ce["ref_min"]))
     seg = seguro_estimado(l, p.fiscal)
     rng = seguro_rango(p.fiscal)
     s_seg = p.neutro if seg is None else clamp(100 * (rng[1] - seg) / (rng[1] - rng[0]))
     score = c["peso_etiqueta"] * s_et + c["peso_consumo"] * s_cons + c["peso_seguro"] * s_seg
-    return {"etiqueta": et, "s_etiqueta": s_et, "seguro": seg, "score": score}
+    return {"etiqueta": et, "s_etiqueta": s_et, "seguro": seg, "consumo": cons, "s_cons": s_cons, "score": score}
 
 
 def score_all(listings: list[Listing], p: Params, costes: dict[str, dict],
@@ -312,14 +331,15 @@ def score_all(listings: list[Listing], p: Params, costes: dict[str, dict],
         us = s_coste_uso(l, p)
         sg = s_seguridad(l, p)
         se = s_etiqueta(l, p)
+        st = s_estilo(l, p)
         pen = penal_carroceria(l, p.cfg)
         total = (w["fiabilidad"] * f["score"] + w["precio"] * pr["score"] + w["km_edad"] * ke["score"]
                  + w["anuncio"] * an["score"] + w["coste_uso"] * us["score"] + w["seguridad"] * sg["score"]
-                 + w.get("etiqueta", 0) * se["score"]) - pen
+                 + w.get("etiqueta", 0) * se["score"] + w.get("estilo", 0) * st["score"]) - pen
         c = dict(costes[l.uid])
         c["primer_anio"] = c["total"] + (us["seguro"] or 0)
         rows.append({"listing": l, "mediana": med, "nivel_mediana": nivel, "n_mediana": n, "mercado": mm,
-                     "fiabilidad": f, "precio": pr, "km_edad": ke, "anuncio": an, "coste_uso": us, "seguridad": sg, "etiqueta": se,
+                     "fiabilidad": f, "precio": pr, "km_edad": ke, "anuncio": an, "coste_uso": us, "seguridad": sg, "etiqueta": se, "estilo": st,
                      "total": total, "coste": c,
                      "penalizacion": pen, "estado": estado_presupuesto(c["total"], p.cfg),
                      "apto": estado_presupuesto(c["total"], p.cfg) != "no"})

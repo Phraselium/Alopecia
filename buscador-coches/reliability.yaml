@@ -38,6 +38,14 @@ modelos:
   "Kia Rio": {estado: PENDIENTE}
   "Kia Ceed": {adac: "KIA Ceed/XCeed", estado: PENDIENTE}
   "Kia Picanto": {adac: "Kia Picanto", estado: PENDIENTE}
+  # Berlinas medianas prioritarias (01-11-2026). Sin cifra TÜV/ADAC/OCU de la generación que entra en presupuesto:
+  # los TÜV 2026 encontrados son de generaciones posteriores (A4 B9, Octavia III/IV) y el ADAC solo cubre 2016-2023.
+  "Honda Accord": {estado: "PENDIENTE (TÜV 2014/2016: cualitativo 'fiable'; rótulas y muelles por encima de la media desde ~9-11 años; sin cifra por franja)", fuente: "https://www.handelsblatt.com/mobilitaet/motor/der-honda-accord-als-gebrauchter-solide-aber-selten-/14733658.html ; https://www.wz.de/auto/gebrauchtwagen/purer-durchschnitt-tuev-report-zu-honda-accord_aid-29389651"}
+  "Toyota Avensis": {estado: "PENDIENTE (T25: 2.º de su franja 8-9 años en el TÜV 2013, sin porcentaje; puntúa por el índice OCU de Toyota)", fuente: "https://autocreative.wordpress.com/2012/12/07/toyota-beim-tuv-report-ganz-vorne/"}
+  "Mazda 6": {estado: "PENDIENTE (GG/GY 2002-2008: sin cifra TÜV/ADAC encontrada)"}
+  "Volkswagen Jetta": {estado: "PENDIENTE (Jetta V: sin dato TÜV/ADAC/OCU)"}
+  "Audi A4": {estado: "PENDIENTE (B7 2004-2008: el TÜV 2026 de Auto Bild (20,8 % a 8-9 años) es del B9; no se usa. El dato ADAC 'Audi A4' es de matriculaciones 2015 y no se aplica al B7)", fuente: "https://www.autobild.de/artikel/audi-a4-a5-schwachstellen-maengel-staerken-28217247.html"}
+  "Seat Exeo": {estado: "PENDIENTE (gemelo del Audi A4 B7, que tampoco tiene cifra)"}
   "Hyundai i10": {adac: "Hyundai i10", estado: PENDIENTE}
   "Hyundai i20": {adac: "Hyundai i20", estado: PENDIENTE}
   "Hyundai i30": {adac: "Hyundai i30", estado: PENDIENTE}
@@ -169,6 +177,22 @@ plataformas_gemelas:
     fuente: "Auto Bild, 'Gebrauchtwagen Seat Ibiza (ab 2002)': https://www.autobild.de/artikel/gebrauchtwagen-seat-ibiza-ab-2002--53502.html (\"Teilt sich der Ibiza ... 6L ... seine Plattform mit dem Polo 9N und dem Skoda Fabia\")"
     nota: "Ibiza, Polo y Fabia ya tienen dato propio; hereda el Córdoba (del Ibiza). El dato ADAC es de matriculaciones 2015 (generación posterior)."
 
+  - grupo: [Audi A4, Seat Exeo]
+    detalle: "Seat Exeo (2008-2013) = Audi A4 B7 (plataforma PL46, motores 2.0 TFSI/TDI del A4); la línea de montaje del B7 se trasladó de Ingolstadt a Martorell"
+    estado: confirmado
+    fuente: "Nota de prensa de SEAT (02-10-2008) reproducida en https://www2020.theautochannel.com/news/2008/10/02/146068.html ; Auto Bild (10-2008): https://www.autobild.de/artikel/seat-exeo-in-paris-789600.html ; https://paultan.org/2008/10/06/seat-exeo-official-photos-and-details/"
+    nota: "Ninguno de los dos tiene cifra de fiabilidad propia: el gemelo no aporta puntos hasta tenerla."
+
+cajas_excluidas:
+  # Excluidas por defecto (config.yaml -> filtros.excluir_multitronic). Detección en src/pipeline.py:
+  #   'multitronic' o 'cvt' en un Audi -> excluido; Audi automático sin 'tiptronic/s tronic/quattro/dsg' -> aviso "posible".
+  multitronic:
+    nombre: "Audi Multitronic (CVT 01J y 0AW)"
+    problema: "Averías de la caja CVT: centralita (TCM), cuerpo de válvulas y la propia caja. En EE. UU., acuerdo colectivo de 2013 que amplió a 10 años/100.000 millas la cobertura (TCM 2003-06, cuerpo de válvulas 2003-04, caja 2002-04) en ~64.000 A4/A4 Cabrio/A6 2002-2006, sin admisión de culpa. En Europa no hay ampliación documentada; Auto Bild recoge averías frecuentes en el A4 B6 (un caso con la 3.ª caja a 38.000 km)."
+    estado: "confirmado (EE. UU.); probable (Europa, prensa); 0AW (B8): sin boletín ni dato ADAC encontrado"
+    fuente: "https://www.autoblog.com/2013/10/07/audi-cvt-settlement-covers-64000-cars/ (07-10-2013) ; boletines Audi en NHTSA: https://static.nhtsa.gov/odi/tsbs/2013/MC-10123551-9999.pdf , https://static.nhtsa.gov/odi/tsbs/2013/MC-10123545-9999.pdf ; Auto Bild A4 B6: https://www.autobild.de/artikel/audi-a4-ab-2000--44969.html (fecha PENDIENTE)"
+    revisar: "Si el anuncio dice 'automático' sin más en un Audi de tracción delantera, preguntar si es Multitronic: en ese caso, descartar."
+
 cajas_robotizadas:
   # Penalización en la fiabilidad (scoring.penalizaciones.caja_robotizada). Detectadas en título/versión.
   patron: "easy-?tronic|\\bmta\\b|dualogic|\\bmmt\\b|2-?tronic|\\betg\\d?\\b|sensodrive|\\bcmp\\b|pilotad\\w*|\\basg\\b|\\bags\\b|speedshift|softouch|selespeed|quickshift|durashift|\\bamt\\b|robotizad\\w*"
@@ -236,6 +260,27 @@ motores:
      revisar: "Cascabeleo de cadena en frío, historial de cambio de tensor/cadena, consumo de aceite (N14)",
      estado: "probable (boletines de servicio MINI recogidos por australiancar.reviews)",
      fuente: "https://australiancar.reviews/recalls-faults-mini-r56-cooper-2007-13/"}
+  # --- Audi/VW gasolina (01-11-2026) ---
+  - {marca: "(todas)", motor: "1.8 TFSI", anio_desde: 2007, anio_hasta: 2012, ajuste: -20,
+     problema: "EA888 de 1.ª generación (CDHA/CDAB...): consumo excesivo de aceite por segmentos rascadores demasiado estrechos; la solución suele ser cambiar pistones y segmentos (Auto Bild: ~1 l/1.000 km). Sin programa europeo oficial de Kulanz",
+     revisar: "Consumo de aceite (pedir registro o prueba de consumo), humo azul, factura de pistones/segmentos o de la ventilación del cárter",
+     estado: "probable (Auto Bild; boletín Audi 11-24 del 11-11-2011)",
+     fuente: "https://www.autobild.de/artikel/oel-saufende-tfsi-motoren-11525331.html ; https://static.nhtsa.gov/odi/tsbs/2013/MC-10121325-9999.pdf"}
+  - {marca: "(todas)", motor: "1.8 TSI", anio_desde: 2007, anio_hasta: 2012, ajuste: -20,
+     problema: "Mismo motor que el 1.8 TFSI (EA888 de 1.ª generación): consumo excesivo de aceite (segmentos)",
+     revisar: "Igual que 1.8 TFSI", estado: "probable (mismo motor)",
+     fuente: "https://www.autobild.de/artikel/oel-saufende-tfsi-motoren-11525331.html"}
+  - {marca: "Audi", motor: "2.0 TFSI", anio_desde: 2009, anio_hasta: 2012, ajuste: -20,
+     problema: "EA888 2.0 TFSI (CAEB/CDNC, A4 B8/A5/Q5): consumo excesivo de aceite. En EE. UU., demanda Asghari v. Volkswagen (sentencia final 29-05-2015): garantía ampliada a 8 años/80.000 millas para el CAEB (A4 2009-11, A5 2010-11, Q5 2011). Boletín Audi 11-24 (11-11-2011): presión del cárter, corregido en producción desde el MY2012. El A4 B7 2.0 TFSI (EA113, BGB/BWE) NO es EA888 y no tiene este ajuste",
+     revisar: "Consumo de aceite, humo azul, si se hizo el cambio de pistones/segmentos o la válvula PCV; en un A4 de 2008 confirmar si es B7 (EA113) o B8 (EA888)",
+     estado: "confirmado (EE. UU.); probable (Europa, Auto Bild)",
+     fuente: "https://cases.justia.com/federal/district-courts/california/cacdce/2:2013cv02529/559084/186/0.pdf (29-05-2015) ; https://static.nhtsa.gov/odi/tsbs/2013/MC-10121325-9999.pdf ; https://www.autobild.de/artikel/oel-saufende-tfsi-motoren-11525331.html"}
+  - {marca: "(todas)", motor: "1.4 TSI Twincharger", anio_desde: 2005, anio_hasta: 2014, ajuste: -25,
+     problema: "1.4 TSI con turbo + compresor (BMY, BLG, CAVD, CAVE): familia EA111 con estiramiento y salto de la cadena de distribución reconocido por VW (casos de Kulanz). Rotura/fisura de pistones por carga térmica: solo fuentes de taller (baja confianza). Embrague del compresor: PENDIENTE",
+     revisar: "Ruido de cadena en frío, factura de cadena/tensor, compresión de cilindros, consumo de aceite, tirones o ruido del compresor",
+     estado: "probable (cadena, Auto Bild); pistones: fuente secundaria",
+     fuente: "https://www.autobild.de/artikel/vw-steuerketten-kulanz-2892135.html ; pistones: https://gebrauchtwagenberater.de/probleme-beim-tsi/"}
+  # A4 B7 2.0 TFSI (EA113 BGB/BWE) y 1.8T 20v: sin fuente seria que los incluya o excluya del problema de aceite (PENDIENTE).
   # --- Diésel (añadido 31-10-2026). La magnitud del ajuste es criterio; el problema tiene fuente. ---
   - {marca: "(todas)", motor: "1.6 HDi", anio_desde: 2004, anio_hasta: 2010, ajuste: -20,
      problema: "PSA DV6 16v (producido hasta 2010): fallos de inyectores, volante motor, turbo y embrague",
@@ -302,7 +347,7 @@ combustibles:
      revisar: "Testigo DPF, regeneraciones frecuentes, EGR, si se ha anulado el filtro (ilegal en ITV)",
      estado: probable, fuente: "https://www.motor16.com/las-ultimas-noticias/filtro-particulas-diesel-averia-1500/"}
 
-# Consumo (l/100 km) y seguro: PENDIENTE (no hay fuente cargada). Se puntúan neutros.
+# Consumo real de gasolina (l/100 km). Ver la sección "consumo" de fiscal.yaml (por segmento y por modelo).
 consumo: {}
 seguro: {}
 
