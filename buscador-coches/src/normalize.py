@@ -191,7 +191,14 @@ def norm_engine(*texts: Optional[str]) -> Optional[str]:
     return f"{d} {tech}" if tech else d
 
 
+_DIESEL_TOKEN = r"\b(tdi|hdi|bluehdi|dci|crdi|cdti|tdci|jtd\w*|multijet|d-?4d|i-?dtec|i-?ctdi|cdi|ddis|dtec)\b"
+
+
 def norm_fuel(raw: Optional[str], *texts: Optional[str]) -> Optional[str]:
+    # Una sigla de motor diésel inequívoca en el título/versión manda sobre la etiqueta de la plataforma
+    # (Wallapop marca a veces "gasolina" un Alfa 159 JTD)
+    if texts and texts[0] and re.search(_DIESEL_TOKEN, norm_text(str(texts[0]))):
+        return "diesel"
     for cand in (raw, " ".join(str(t) for t in texts if t)):
         t = norm_text(cand)
         if not t:

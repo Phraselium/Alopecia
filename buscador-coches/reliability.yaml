@@ -707,3 +707,830 @@ mantenimiento:
       intervalo: sin intervalo; estiramiento desde ~64.000 km (JTS)
       estado: probable
       fuente: https://alfaworkshop.co.uk/alfa_romeo_timing_belts.shtml
+
+# ---- Euro NCAP por generación (02-11-2026). Estrellas del espejo de la base Euro NCAP en autocentrum.pl (euroncap.com ya no
+# publica los ensayos anteriores a 2017: las URL antiguas dan 404 y su /api/search está prohibido por robots.txt) -> "probable".
+# ESP de serie: fichas de equipamiento de km77 de una o dos versiones por generación ("sí" = de serie en las comprobadas).
+# Obligación: Reglamento (CE) 661/2009, art. 12.1 y 13.5 (DOUE L 200, 31-7-2009, copia del BOE: https://www.boe.es/doue/2009/200/L00001-00024.pdf):
+# ESC obligatorio en tipos nuevos M1/N1 desde 1-11-2011 y en todos los turismos nuevos matriculados desde 1-11-2014.
+euroncap_nota: "Euro NCAP cambió el protocolo en 2009 (puntuación global con asistencia a la seguridad): las estrellas anteriores y posteriores a 2009 no son comparables. Las de antes son las de adulto."
+euroncap:
+- modelo: Audi A3
+  desde: 2003
+  hasta: 2012
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 3
+  peaton: 1
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/audi/a3/2003/3-puertas/ambiente/a3-16-ambiente/datos/equipamiento
+  estado: probable (estrellas del espejo autocentrum; ESP de serie en el 1.6 Ambiente 2003 y en el Sportback 1.2 TFSI 2010; años aprox.)
+  fuente: https://www.autocentrum.pl/euroncap/audi/a3-2003/
+- modelo: Audi A4
+  desde: 2004
+  hasta: 2008
+  ensayo: 2001
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 1
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/audi/a4/2005/berlina/estandar/a4-18-t/datos/equipamiento
+  estado: probable (el B7 no tiene ensayo propio; son los datos del B6 de 2001, sin estrellas de niño; ESP de serie en el 1.8T de 2005; años aprox.)
+  fuente: https://www.autocentrum.pl/euroncap/audi/a4-2001/
+- modelo: Seat Exeo
+  desde: 2009
+  hasta: 2013
+  ensayo: 2010
+  estrellas: 4
+  protocolo: 2009+
+  adulto: null
+  nino: null
+  peaton: null
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/seat/exeo/2009/berlina/reference/exeo-reference-16-102-cv2/datos/equipamiento
+  estado: 'probable (77/81/50/57 %; Euro NCAP: ESC de serie en todas las versiones; ensayo 2010, no 2009)'
+  fuente: https://www.autocentrum.pl/euroncap/seat/exeo-1.6-reference-lhd-2010/
+- modelo: Seat León
+  desde: 2005
+  hasta: 2012
+  ensayo: 2005
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 3
+  peaton: 3
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/seat/leon/2005/5-puertas/reference/leon-14-85-cv-reference/datos/equipamiento
+  estado: probable (ESP opcional, 495 €, en el 1.4 85 CV Reference de 2007; años aprox.)
+  fuente: https://www.autocentrum.pl/euroncap/seat/leon-2005/
+- modelo: Honda Civic
+  desde: 2006
+  hasta: 2011
+  ensayo: 2006
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 4
+  peaton: 3
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/honda/civic/2009/5-puertas/comfort/civic-5p-14-i-vtec-comfort2/datos/equipamiento
+  estado: probable (VSA de serie en el Hybrid 2006 y en el 1.4 Comfort 2009; no comprobé el 5p de entrada de 2006; también hay ensayo 2007 con 4/4/3)
+  fuente: https://www.autocentrum.pl/euroncap/honda/civic-2006/
+- modelo: Mazda 3
+  desde: 2004
+  hasta: 2009
+  ensayo: 2006
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 3
+  peaton: 2
+  esp_serie: no/opcional
+  esp_fuente: https://www.km77.com/coches/mazda/mazda3/2004/5-puertas/active/3-active-16-vvt-105cv-5p/datos/equipamiento
+  estado: probable (ESP no disponible en el 1.6 Active de 2004; DSC opcional, 500 €, en el Sportsedan de 2006; el espejo fecha el ensayo en 2006)
+  fuente: https://www.autocentrum.pl/euroncap/mazda/3-2006/
+- modelo: Mazda 6
+  desde: 2002
+  hasta: 2007
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 3
+  peaton: 1
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/mazda/mazda6/2002/4-puertas/active/6-active-18-16v-4p/datos/equipamiento
+  estado: probable (DSC de serie en el 1.8 Active de 2002 y en el Wagon de 2005; hay un 2.º ensayo de 2005 con 4/4/1)
+  fuente: https://www.autocentrum.pl/euroncap/mazda/6-2003/
+- modelo: Honda Accord
+  desde: 2003
+  hasta: 2008
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 2
+  esp_serie: no/opcional
+  esp_fuente: https://www.km77.com/coches/honda/accord/2003/4-puertas/comfort/accord-4p-20-comfort-i-vtec/datos/equipamiento
+  estado: probable (no disponible en el 2.0 Comfort de 2003; de serie en el Tourer Sport de 2006; el espejo no muestra estrellas de niño)
+  fuente: https://www.autocentrum.pl/euroncap/honda/accord-2003/
+- modelo: Toyota Avensis
+  desde: 2003
+  hasta: 2008
+  ensayo: 2003
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: null
+  peaton: 1
+  esp_serie: no/opcional
+  esp_fuente: https://www.km77.com/coches/toyota/avensis/2003/berlina/sol/avensis-5p-18-vvt-i-sol/datos/equipamiento
+  estado: probable (VSC no disponible en el 1.8 Sol de 2003; de serie en el Wagon 1.8 Sol de 2006; sin estrellas de niño en el espejo)
+  fuente: https://www.autocentrum.pl/euroncap/toyota/avensis-2003/
+- modelo: Skoda Octavia
+  desde: 2004
+  hasta: 2013
+  ensayo: 2004
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 4
+  peaton: 2
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/skoda/octavia/2004/estandar/active/octavia-16-active/datos/equipamiento
+  estado: probable (ESP opcional, 495 €, en el 1.6 Active de 2004; de serie en el 1.2 TSI Active Plus de 2009)
+  fuente: https://www.autocentrum.pl/euroncap/skoda/octavia-2004/
+- modelo: Volkswagen Jetta
+  desde: 2005
+  hasta: 2010
+  ensayo: 2004
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 3
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/volkswagen/jetta/2006/4-puertas/advance/jetta-advance-14-tsi-122-cv2/datos/equipamiento
+  estado: probable (sin ensayo propio; son los datos del Golf V de 2004; ESP de serie en el 1.4 TSI Advance, sin comprobar en todas las versiones)
+  fuente: https://www.autocentrum.pl/euroncap/volkswagen/golf-1.6-trendline-2004/
+- modelo: Volkswagen Golf
+  desde: 2003
+  hasta: 2008
+  ensayo: 2004
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 3
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/volkswagen/golf/2004/3-puertas/conceptline/golf-3p-conceptline-14-75-cv/datos/equipamiento
+  estado: probable (ESP de serie incluso en el Conceptline 1.4 75 CV)
+  fuente: https://www.autocentrum.pl/euroncap/volkswagen/golf-1.6-trendline-2004/
+- modelo: Alfa Romeo 147
+  desde: 2001
+  hasta: 2010
+  ensayo: 2001
+  estrellas: 3
+  protocolo: pre-2009
+  adulto: 3
+  nino: null
+  peaton: 2
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/alfa-romeo/147/2005/5-puertas/distinctive/147-5p-16-ts-105-cv-distinctive/datos/equipamiento
+  estado: probable (VDC opcional, 613 €, en el 1.6 Distinctive de 2005; 3★ coincide con el nombre del PDF oficial euroncap_alfa-romeo_147_2001_3stars.pdf, hoy en 404)
+  fuente: https://www.autocentrum.pl/euroncap/alfa-romeo/147-2001/
+- modelo: Alfa Romeo 159
+  desde: 2005
+  hasta: 2011
+  ensayo: 2005
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 1
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/alfa-romeo/159/2006/sportwagon/distinctive/159-sportwagon-19-jtd-distinctive-120-cv/datos/equipamiento
+  estado: probable (VDC de serie; el ensayo es de 2005, no 2006)
+  fuente: https://www.autocentrum.pl/euroncap/alfa-romeo/159-2005/
+- modelo: Peugeot 207
+  desde: 2006
+  hasta: 2014
+  ensayo: 2006
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 3
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/peugeot/207/2006/3-puertas/confort/207-3p-confort-14-752/datos/equipamiento
+  estado: probable (opcional, 500 €, en el 1.4 Confort de 2006; de serie en el SW Active de 2009)
+  fuente: https://www.autocentrum.pl/euroncap/peugeot/207-2006/
+- modelo: Suzuki Alto
+  desde: 2009
+  hasta: 2014
+  ensayo: 2009
+  estrellas: 3
+  protocolo: 2009+
+  adulto: null
+  nino: null
+  peaton: null
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/suzuki/alto/2009/5-puertas/ga/alto-10-ga/datos/equipamiento
+  estado: 'probable (55/46/35/29 %; Euro NCAP: ESC opcional en unas versiones y de serie en otras; km77: 550 € en el 1.0 GA)'
+  fuente: https://www.autocentrum.pl/euroncap/suzuki/alto-1.0-gl-rhd-2009/
+- modelo: Mazda 2
+  desde: 2003
+  hasta: 2007
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 3
+  peaton: 2
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/mazda/mazda2/2003/5-puertas/active/2-active-12/datos/equipamiento
+  estado: probable (DY; ESP no disponible en el 1.2 Active de 2003 ni en el 1.4 de 2006; hay otro ensayo de 2004 con 4/3/2)
+  fuente: https://www.autocentrum.pl/euroncap/mazda/2-2003/
+- modelo: Mazda 2
+  desde: 2007
+  hasta: 2014
+  ensayo: 2007
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 2
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/mazda/mazda2/2011/5-puertas/active/2-5p-active-13-75-cv/datos/equipamiento
+  estado: probable (DE; ESP no disponible en el 1.3 Active de 2011; no comprobé otras versiones)
+  fuente: https://www.autocentrum.pl/euroncap/mazda/2-1.3-ge-2007/
+- modelo: Lancia Ypsilon
+  desde: 2003
+  hasta: 2011
+  ensayo: null
+  estrellas: null
+  protocolo: PENDIENTE
+  adulto: null
+  nino: null
+  peaton: null
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/lancia/ypsilon/2007/3-puertas/argento/ypsilon-12-60-cv-argento/datos/equipamiento
+  estado: 'PENDIENTE (Ypsilon 843: no aparece en el espejo de Euro NCAP; cars-data lo da como Not Tested; ESP no disponible en el 1.2 Argento de 2007)'
+  fuente: PENDIENTE
+- modelo: Lancia Ypsilon
+  desde: 2011
+  hasta: 2024
+  ensayo: 2015
+  estrellas: 2
+  protocolo: 2009+
+  adulto: null
+  nino: null
+  peaton: null
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/lancia/ypsilon/2011/5-puertas/30-aniversario/ypsilon-09-twinair-30-aniversario-startstop/datos/equipamiento
+  estado: 'probable (44/79/64/38 %; no se ensayó en 2011, el primer ensayo es de 2015; Euro NCAP: ESC de serie)'
+  fuente: https://www.autocentrum.pl/euroncap/lancia/ypsilon-1.2-gold-lhd-2015/
+- modelo: Dacia Sandero
+  desde: 2008
+  hasta: 2012
+  ensayo: 2008
+  estrellas: 3
+  protocolo: pre-2009
+  adulto: 3
+  nino: 4
+  peaton: 1
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/dacia/sandero/2008/estandar/ambiance/sandero-ambiance-12-16v-75-cv2/datos/equipamiento
+  estado: probable (ESP no disponible en el 1.2 Ambiance de 2008 ni en el Stepway de 2009)
+  fuente: https://www.autocentrum.pl/euroncap/dacia/sandero-1.5-dci-2008/
+- modelo: Renault Laguna
+  desde: 2001
+  hasta: 2007
+  ensayo: 2001
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: null
+  peaton: 2
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/renault/laguna/2001/berlina/authentique/laguna-16-16v-authentique/datos/equipamiento
+  estado: probable (Laguna II; ESP de serie en el 1.6 Authentique de 2001 y en el GT Expression de 2005; reensayo de 2003, también 5★)
+  fuente: https://www.autocentrum.pl/euroncap/renault/laguna-2001/
+- modelo: Renault Laguna
+  desde: 2007
+  hasta: 2015
+  ensayo: 2007
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 2
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/renault/laguna/2008/berlina/authentique/laguna-authentique-15-dci-110-cv-eco22/datos/equipamiento
+  estado: probable (Laguna III; ESP de serie en el Authentique 1.5 dCi)
+  fuente: https://www.autocentrum.pl/euroncap/renault/laguna-2007/
+- modelo: Opel Corsa
+  desde: 2000
+  hasta: 2006
+  ensayo: 2002
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 1
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/opel/corsa/2004/5-puertas/blue-line/corsa-5p-blue-line-12-16v/datos/equipamiento
+  estado: probable (Corsa C; ESP no disponible en el 1.2 Blue Line de 2004; la ficha de 2001 no trae el campo ESP)
+  fuente: https://www.autocentrum.pl/euroncap/opel/corsa-2002-2002/
+- modelo: Opel Corsa
+  desde: 2006
+  hasta: 2014
+  ensayo: 2007
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 3
+  peaton: 3
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/opel/corsa/2006/3-puertas/111-aniversario/corsa-3p-111-aniversario-12-85-cv2/datos/equipamiento
+  estado: probable (Corsa D; ESP opcional, 305 €; el espejo fecha el ensayo en 2007, no 2006)
+  fuente: https://www.autocentrum.pl/euroncap/opel/corsa-2007/
+- modelo: Citroën C2
+  desde: 2003
+  hasta: 2009
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 3
+  peaton: 2
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/citroen/c2/2003/3-puertas/audace/c2-11i-audace/datos/equipamiento
+  estado: probable (ESP no disponible en el 1.1i Audace; solo comprobé esa versión)
+  fuente: https://www.autocentrum.pl/euroncap/citroen/c2-2003/
+- modelo: Seat Ibiza
+  desde: 2002
+  hasta: 2008
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 2
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/seat/ibiza/2002/3-puertas/cool/ibiza-3p-12-12v-64-cv-cool/datos/equipamiento
+  estado: probable (6L; ESP no disponible en el 1.2 Cool de 2002 ni en el Reference de 2006; el espejo fecha el ensayo en 2003)
+  fuente: https://www.autocentrum.pl/euroncap/seat/ibiza-2003/
+- modelo: Seat Ibiza
+  desde: 2008
+  hasta: 2017
+  ensayo: 2008
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 3
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/seat/ibiza/2008/5-puertas/reference/ibiza-5p-16-16v-105-cv-reference/datos/equipamiento
+  estado: probable (6J; ESP de serie en el 1.6 Reference y el 1.4 Sport de 2008 y en el ST 1.0 de 2015; no comprobé el 1.2 de entrada)
+  fuente: https://www.autocentrum.pl/euroncap/seat/ibiza-1.4-reference-2008/
+- modelo: Toyota Yaris
+  desde: 2005
+  hasta: 2011
+  ensayo: 2005
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 3
+  peaton: 2
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/toyota/yaris/2006/3-puertas/yaris/yaris-3p-13-vvt-i-yaris4/datos/equipamiento
+  estado: 'probable (VSC opcional: 600 € en 2006, solo con Pack Aire; 450 € en 2010)'
+  fuente: https://www.autocentrum.pl/euroncap/toyota/yaris-2005/
+- modelo: Ford Fiesta
+  desde: 2002
+  hasta: 2008
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 2
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/ford/fiesta/2002/5-puertas/ambiente/fiesta-5p-ambiente-13-70-cv/datos/equipamiento
+  estado: probable (Mk6; ESP no disponible en el 1.3 Ambiente de 2002 ni de 2006; el espejo fecha el ensayo en 2003)
+  fuente: https://www.autocentrum.pl/euroncap/ford/fiesta-2003/
+- modelo: Ford Fiesta
+  desde: 2008
+  hasta: 2017
+  ensayo: 2008
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 3
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/ford/fiesta/2008/3-puertas/ambiente/fiesta-3p-ambiente-125/datos/equipamiento
+  estado: probable (Mk7; ESP opcional, 450 €, en el Ambiente de 2008; de serie en el ST-Line de 2013)
+  fuente: https://www.autocentrum.pl/euroncap/ford/fiesta-1.25-trend-2008/
+- modelo: Renault Clio
+  desde: 2005
+  hasta: 2012
+  ensayo: 2005
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 1
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/renault/clio/2006/3-puertas/authentique/clio-3p-12-16v-authentique-eco2/datos/equipamiento
+  estado: 'probable (Clio III; ESP opcional: 600 € en 2006, 362 € en 2009)'
+  fuente: https://www.autocentrum.pl/euroncap/renault/clio-2005/
+- modelo: Volkswagen Polo
+  desde: 2002
+  hasta: 2009
+  ensayo: 2002
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 1
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/volkswagen/polo/2002/3-puertas/conceptline/polo-3p-12-55-cv-conceptline/datos/equipamiento
+  estado: probable (9N; ESP+ASR+HBA opcional por 970 € en 2002; 605 € en el CrossPolo de 2006)
+  fuente: https://www.autocentrum.pl/euroncap/volkswagen/polo-2002-2002/
+- modelo: Volkswagen Polo
+  desde: 2009
+  hasta: 2017
+  ensayo: 2009
+  estrellas: 5
+  protocolo: 2009+
+  adulto: null
+  nino: null
+  peaton: null
+  esp_serie: opcional
+  esp_fuente: https://www.autocentrum.pl/euroncap/volkswagen/vw-polo-1.2-trendline-lhd-2009/
+  estado: 'probable (90/86/41/71 %; Euro NCAP 2009: ESC opcional, de serie solo en algunas versiones; km77: de serie en el Polo Cross de 2015)'
+  fuente: https://www.autocentrum.pl/euroncap/volkswagen/vw-polo-1.2-trendline-lhd-2009/
+- modelo: Ford Focus
+  desde: 2004
+  hasta: 2011
+  ensayo: 2004
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 2
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/ford/focus/2005/4-puertas/ghia/focus-4p-16-tdci-109-cv-ghia/datos/equipamiento
+  estado: probable (ESP opcional, 650 €, incluso en el Ghia 1.6 TDCi de 2005)
+  fuente: https://www.autocentrum.pl/euroncap/ford/focus-2004/
+- modelo: Renault Mégane
+  desde: 2002
+  hasta: 2008
+  ensayo: 2003
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: null
+  peaton: 2
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/renault/megane/2003/3-puertas/pack-authentique/megane-3p-15-dci-100-cv-pack-authentique/datos/equipamiento
+  estado: probable (Mégane II; ESP opcional, 600 €, en el Pack Authentique y el Confort Authentique; el espejo fecha el ensayo en 2003 y no da estrellas de niño)
+  fuente: https://www.autocentrum.pl/euroncap/renault/megane-2003/
+- modelo: Opel Astra
+  desde: 2004
+  hasta: 2010
+  ensayo: 2004
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 1
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/opel/astra/2004/5-puertas/cosmo/astra-5p-cosmo-17-cdti-100-cv/datos/equipamiento
+  estado: probable (Astra H; ESP opcional, 590 €, en el Cosmo 1.7 CDTI de 2004; ESP Plus de serie en el TwinTop de 2007)
+  fuente: https://www.autocentrum.pl/euroncap/opel/vauxhall-astra-1.6-enjoy-lhd-2004/
+- modelo: Peugeot 307
+  desde: 2001
+  hasta: 2008
+  ensayo: 2001
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 2
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/peugeot/307/2006/sw/d-sign/307-sw-d-sign-162/datos/equipamiento
+  estado: probable (de serie en el HDi 136 Speedup, una versión alta, y opcional, 573 €, en el SW D-Sign de 2006; no comprobé las versiones de entrada)
+  fuente: https://www.autocentrum.pl/euroncap/peugeot/307-2001/
+- modelo: Peugeot 308
+  desde: 2007
+  hasta: 2013
+  ensayo: 2007
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 3
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/peugeot/308/2008/3-puertas/confort/308-3p-confort-14-vti-952/datos/equipamiento
+  estado: probable (ESP de serie en el 1.4 VTi Confort de 2008 y en el SW Access de 2011; hay otro ensayo de 2009, 5★, con el protocolo nuevo)
+  fuente: https://www.autocentrum.pl/euroncap/peugeot/308-2007/
+- modelo: Citroën C3
+  desde: 2002
+  hasta: 2009
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 2
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/citroen/c3/2002/5-puertas/furio/c3-11i-furio/datos/equipamiento
+  estado: probable (C3 I; ESP no disponible en el 1.1i Furio de 2002 ni en el Cool de 2006)
+  fuente: https://www.autocentrum.pl/euroncap/citroen/c3-2003/
+- modelo: Citroën C3
+  desde: 2009
+  hasta: 2016
+  ensayo: 2009
+  estrellas: 4
+  protocolo: 2009+
+  adulto: null
+  nino: null
+  peaton: null
+  esp_serie: opcional
+  esp_fuente: https://www.autocentrum.pl/euroncap/citroen/c3-1.4-diesel-lhd-2009/
+  estado: 'probable (83/74/33/40 %; Euro NCAP 2009: ESC disponible pero no de serie en suficientes unidades; km77: de serie en el Attraction BlueHDi de 2013)'
+  fuente: https://www.autocentrum.pl/euroncap/citroen/c3-1.4-diesel-lhd-2009/
+- modelo: Toyota Corolla
+  desde: 2002
+  hasta: 2007
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 2
+  esp_serie: PENDIENTE
+  esp_fuente: https://www.km77.com/coches/toyota/corolla/2006/wagon/luna/corolla-wagon-14-d4-d-90-cv-luna/datos/equipamiento
+  estado: 'probable para las estrellas (el espejo fecha el ensayo en 2003; el resumen habla de un coche sin airbags laterales). ESP: la ficha base de 2002 no trae el campo; de serie en el Wagon Luna de 2006'
+  fuente: https://www.autocentrum.pl/euroncap/toyota/corolla-2003/
+- modelo: Toyota Auris
+  desde: 2007
+  hasta: 2012
+  ensayo: 2007
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 3
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/toyota/auris/2010/5-puertas/active/auris-5p-133-vvt-i-active/datos/equipamiento
+  estado: probable (VSC+TRC opcional, 520 €, en el 1.33 Active de 2010)
+  fuente: https://www.autocentrum.pl/euroncap/toyota/auris-2007/
+- modelo: Honda Jazz
+  desde: 2002
+  hasta: 2008
+  ensayo: 2004
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 3
+  peaton: 3
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/honda/jazz/2002/estandar/s/jazz-12-i-dsi-s/datos/equipamiento
+  estado: probable (Jazz II; el espejo fecha el ensayo en 2004; ESP no disponible en 2002 ni en 2005)
+  fuente: https://www.autocentrum.pl/euroncap/honda/jazz-1.4-se-rhd-2004/
+- modelo: Honda Jazz
+  desde: 2008
+  hasta: 2015
+  ensayo: 2009
+  estrellas: 5
+  protocolo: 2009+
+  adulto: null
+  nino: null
+  peaton: null
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/honda/jazz/2009/estandar/elegance/jazz-12-i-vtec-elegance/datos/equipamiento
+  estado: 'probable (78/79/60/71 %; Euro NCAP 2009: ESC opcional en la mayoría de países y de serie en toda Europa desde enero de 2010; km77: VSA de serie en el Elegance de 2009 y en el 1.2 de 2011)'
+  fuente: https://www.autocentrum.pl/euroncap/honda/jazz-1.4-es-lhd-2009/
+- modelo: Kia Rio
+  desde: 2005
+  hasta: 2011
+  ensayo: 2005
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 3
+  peaton: 2
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/kia/rio/2005/4-puertas/ex1/rio-14-dohc-ex1-4p/datos/equipamiento
+  estado: probable (ESP no disponible en el 1.4 EX1 de 2005)
+  fuente: https://www.autocentrum.pl/euroncap/kia/rio-2005/
+- modelo: Hyundai i20
+  desde: 2008
+  hasta: 2014
+  ensayo: 2009
+  estrellas: 5
+  protocolo: 2009+
+  adulto: null
+  nino: null
+  peaton: null
+  esp_serie: no/opcional
+  esp_fuente: https://www.km77.com/coches/hyundai/i20/2009/3-puertas/classic/i20-3p-12-classic/datos/equipamiento
+  estado: 'probable (88/83/64/86 %; Euro NCAP: ESC de serie en unas versiones y opcional en otras; km77: no disponible en el Classic de 2009, de serie en el City S de 2012)'
+  fuente: https://www.autocentrum.pl/euroncap/hyundai/i20-1.4-gl-lhd-2009/
+- modelo: Fiat Punto
+  desde: 2005
+  hasta: 2012
+  ensayo: 2005
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 3
+  peaton: 3
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/fiat/grande-punto/2006/3-puertas/active/grande-punto-3p-12-65-cv-active/datos/equipamiento
+  estado: probable (Grande Punto; ESP no disponible en el 1.2 Active de 2006; no comprobé versiones altas ni el Punto Evo)
+  fuente: https://www.autocentrum.pl/euroncap/fiat/punto-2005/
+- modelo: Skoda Fabia
+  desde: 2000
+  hasta: 2007
+  ensayo: 2000
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 2
+  esp_serie: PENDIENTE
+  esp_fuente: PENDIENTE
+  estado: 'probable para las estrellas (Fabia I); ESP PENDIENTE: no encontré la generación en km77'
+  fuente: https://www.autocentrum.pl/euroncap/skoda/fabia-1.4-classic-2000/
+- modelo: Skoda Fabia
+  desde: 2007
+  hasta: 2014
+  ensayo: 2007
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 3
+  peaton: 2
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/skoda/fabia/2007/5-puertas/urban/fabia-12-60-cv-urban/datos/equipamiento
+  estado: probable (Fabia II; ESP opcional, 385 €, en el 1.2 60 CV Urban)
+  fuente: https://www.autocentrum.pl/euroncap/skoda/fabia-2007/
+- modelo: Ford Mondeo
+  desde: 2000
+  hasta: 2007
+  ensayo: 2001
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 2
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/ford/mondeo/2001/4-puertas/ambiente/mondeo-4p-ambiente-20-tdci-115cv/datos/equipamiento
+  estado: probable (Mondeo III; ESP opcional, 650 €, en 2001 y en 2005; hay otro ensayo de 2002 con 4/2)
+  fuente: https://www.autocentrum.pl/euroncap/ford/mondeo-2001/
+- modelo: Ford Mondeo
+  desde: 2007
+  hasta: 2014
+  ensayo: 2007
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 2
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/ford/mondeo/2007/4-puertas/ambiente/mondeo-4p-ambiente-16i-123-cv/datos/equipamiento
+  estado: probable (Mondeo IV; ESP/IVD de serie en el Ambiente 1.6 de 2007)
+  fuente: https://www.autocentrum.pl/euroncap/ford/mondeo-2007/
+- modelo: Renault Twingo
+  desde: 2007
+  hasta: 2014
+  ensayo: 2007
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 2
+  esp_serie: no/opcional
+  esp_fuente: https://www.km77.com/coches/renault/twingo/2007/estandar/access/twingo-access-12-60-cv-eco2/datos/equipamiento
+  estado: 'probable (el espejo no muestra estrellas de niño, raro para 2007: conviene verificarlo; ESP no disponible en el Access de 2007, opcional por 465 € en el Emotion de 2012)'
+  fuente: https://www.autocentrum.pl/euroncap/renault/twingo-2007/
+- modelo: Fiat Panda
+  desde: 2003
+  hasta: 2012
+  ensayo: 2004
+  estrellas: 3
+  protocolo: pre-2009
+  adulto: 3
+  nino: 2
+  peaton: 1
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/fiat/panda/2003/estandar/dynamic/panda-12-dynamic-natural-power/datos/equipamiento
+  estado: probable (Panda II; el espejo fecha el ensayo en 2004; ESP no disponible en el 1.2 Dynamic; solo comprobé esa versión)
+  fuente: https://www.autocentrum.pl/euroncap/fiat/panda-2004/
+- modelo: Hyundai i10
+  desde: 2008
+  hasta: 2013
+  ensayo: 2008
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 4
+  peaton: 3
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/hyundai/i10/2008/estandar/classic/i10-11-classic2/datos/equipamiento
+  estado: probable (ESP no disponible en el 1.1 Classic de 2008 ni de 2011)
+  fuente: https://www.autocentrum.pl/euroncap/hyundai/i10-1.1-gls-2008/
+- modelo: Kia Picanto
+  desde: 2004
+  hasta: 2011
+  ensayo: 2004
+  estrellas: 3
+  protocolo: pre-2009
+  adulto: 3
+  nino: 4
+  peaton: 1
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/kia/picanto/2004/5-puertas/concept/picanto-10-concept/datos/equipamiento
+  estado: probable (ESP no disponible en el 1.0 Concept de 2004 ni de 2010)
+  fuente: https://www.autocentrum.pl/euroncap/kia/picanto-2004/
+- modelo: Kia Picanto
+  desde: 2011
+  hasta: 2017
+  ensayo: 2011
+  estrellas: 4
+  protocolo: 2009+
+  adulto: null
+  nino: null
+  peaton: null
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/kia/picanto/2011/3-puertas/basic/picanto-3p-10-basic/datos/equipamiento
+  estado: 'probable (86/83/47/43 %; Euro NCAP: ESC solo opcional y no puntuado; km77: 461 € en el Basic de 2011, de serie en 2015)'
+  fuente: https://www.autocentrum.pl/euroncap/kia/picanto-1.0-lx-lhd-2011/
+- modelo: Chevrolet Aveo
+  desde: 2006
+  hasta: 2011
+  ensayo: 2006
+  estrellas: 2
+  protocolo: pre-2009
+  adulto: 2
+  nino: 4
+  peaton: 3
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/chevrolet/aveo/2006/sedan/ls/aveo-14-16v-ls/datos/equipamiento
+  estado: 'probable (Aveo sedán T200/T250: 2★ de adulto con una tachada por riesgo en el pecho del conductor, según la prensa de 2006; autocentrum lo muestra como 1★. El Kalos/Aveo 5p de 2006 sacó 3/3/2. ESP no disponible ni en 2006 ni en 2008)'
+  fuente: https://www.autocentrum.pl/euroncap/chevrolet/aveo-2006/
+- modelo: Chevrolet Aveo
+  desde: 2011
+  hasta: 2015
+  ensayo: 2011
+  estrellas: 5
+  protocolo: 2009+
+  adulto: null
+  nino: null
+  peaton: null
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/chevrolet/aveo/2011/5-puertas/ltplus/aveo-5p-14-16v-100-cv-aut/datos/equipamiento
+  estado: 'probable (T300; 95/87/54/93 %; Euro NCAP: ESC de serie)'
+  fuente: https://www.autocentrum.pl/euroncap/chevrolet/aveo-1.2-lt-lhd-2011/
+- modelo: Nissan Micra
+  desde: 2003
+  hasta: 2010
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 2
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/nissan/micra/2003/3-puertas/visia/micra-3p-12i-65-cv-visia/datos/equipamiento
+  estado: probable (K12; ESP no disponible en el Visia de 2003 ni en el 25 Aniversario de 2008)
+  fuente: https://www.autocentrum.pl/euroncap/nissan/micra-2003/
+- modelo: Citroën C4
+  desde: 2004
+  hasta: 2010
+  ensayo: 2004
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 3
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/citroen/c4/2005/berlina/collection/c4-5p-14i-16v-90cv-collection2/datos/equipamiento
+  estado: probable (ESP opcional, 300 €, en el 1.4 Collection de 2005; no disponible en el C4 Sedán 1.6 Collection de 2008)
+  fuente: https://www.autocentrum.pl/euroncap/citroen/c4-2004/
+- modelo: Seat Altea
+  desde: 2004
+  hasta: 2015
+  ensayo: 2004
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 3
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/seat/altea/2004/estandar/sunrise/altea-14-85-cv-sunrise/datos/equipamiento
+  estado: probable (ESP opcional, 540 €, en el 1.4 Sunrise de 2004; años posteriores sin comprobar)
+  fuente: https://www.autocentrum.pl/euroncap/seat/altea-2004/
+- modelo: Opel Meriva
+  desde: 2003
+  hasta: 2010
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 1
+  esp_serie: no/opcional
+  esp_fuente: https://www.km77.com/coches/opel/meriva/2006/estandar/cosmo/meriva-cosmo-13-cdti/datos/equipamiento
+  estado: probable (Meriva A; ESP no disponible en el Cosmo 1.3 CDTI de 2003, opcional por 420 € en el de 2006)
+  fuente: https://www.autocentrum.pl/euroncap/opel/meriva-2003/
