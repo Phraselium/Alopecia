@@ -144,8 +144,107 @@ def dep_factor(seg: Optional[str], fuel: Optional[str], dep: dict) -> float:
     return k["factor5"]
 
 
-def tco(a: dict, seg, fuel, edad, cc, cv_f, cons, sup, fiscal, dep, uso) -> dict:
+# ------------------------------------------------------------------ eléctricos: recarga, batería (SOH, autonomía, alquiler)
+def precio_recarga(sup: dict, escenario: str) -> float:
+    """€/kWh de un escenario de recarga = reparto casa / pública AC / pública DC × precio de cada modo (mercado_supuestos.yaml)."""
+    rc = sup["recarga"]
+    w = rc["escenarios"][escenario]
+    return sum(w[m] * rc["precios"][m]["eur_kwh"] for m in ("casa", "publica_ac", "publica_dc"))
+
+
+def _modelo_en(a: dict, tabla: dict) -> Optional[object]:
+    """Entrada de una tabla {"Marca Modelo": valor} que corresponde al anuncio (por clave normalizada)."""
+    k = re.sub(r"[^a-z0-9]", "", norm_text(a.get("modelo_key") or ""))
+    for nombre, v in (tabla or {}).items():
+        if re.sub(r"[^a-z0-9]", "", norm_text(nombre)) == k:
+            return v
+    return None
+
+
+def soh_grupo(a: dict, fuel: Optional[str], sup: dict) -> Optional[str]:
+    """Grupo de degradación de la batería (tabla bateria.soh.grupos) o None si no es eléctrico."""
+    if fuel != "electrico":
+        return None
+    b = sup["bateria"]["soh"]
+    g = _modelo_en(a, b.get("modelos") or {})
+    if isinstance(g, list):      # [[desde, hasta, grupo], ...] por generación
+        g = next((x[2] for x in g if x[0] <= (a.get("anio") or 0) <= x[1]), None)
+    return g or b["grupo_defecto"]
+
+
+def soh(grupo: Optional[str], edad: float, km: float, sup: dict) -> Optional[float]:
+    """Estado de salud estimado: 1 − pérdida/año·edad − pérdida/10.000 km·km, con suelo (supuesto con fuente)."""
+    if not grupo:
+        return None
+    b = sup["bateria"]["soh"]
+    g = b["grupos"][grupo]
+    return max(b["minimo"], 1 - g["perdida_anual"] * edad - g["perdida_10k_km"] * (km or 0) / 10000)
+
+
+def kwh_titulo(a: dict) -> Optional[float]:
+    m = re.search(r"(\d{2,3}(?:[.,]\d)?)\s*-?\s*kwh", norm_text(f"{a.get('titulo') or ''} {a.get('version') or ''}"))
+    return float(m.group(1).replace(",", ".")) if m else None
+
+
+def autonomia_nueva(a: dict, fuel: Optional[str], sup: dict) -> tuple[Optional[float], str]:
+    """Autonomía real con la batería nueva (km): WLTP de la versión × factor real/WLTP. Versión: la del año y, si el título
+    trae los kWh, la de capacidad más cercana. Sin dato: None (PENDIENTE)."""
+    if fuel != "electrico":
+        return None, ""
+    b = sup["bateria"]
+    vers = _modelo_en(a, b["autonomia_wltp"]["modelos"]) or []
+    anio = a.get("anio") or 0
+    cand = [v for v in vers if v[0] <= anio <= v[1]]
+    if not cand:
+        return None, "PENDIENTE: modelo sin autonomía WLTP en mercado_supuestos.yaml"
+    kwh = kwh_titulo(a)
+    v = min(cand, key=lambda x: abs(x[2] - kwh)) if kwh else min(cand, key=lambda x: x[3])   # sin kWh: la de menor autonomía
+    return v[3] * b["autonomia_wltp"]["factor_real"], (f"WLTP {v[3]} km ({v[2]} kWh, {v[0]}-{v[1]})"
+                                                        f"{'' if kwh else ' — versión de menor autonomía (el título no da los kWh)'}")
+
+
+def bateria_estado(a: dict, fuel: Optional[str], sup: dict) -> Optional[str]:
+    """'propiedad' / 'alquiler' / 'no consta' para los modelos que se vendieron con batería en alquiler; None en el resto."""
+    if fuel != "electrico":
+        return None
+    al = sup["bateria"]["alquiler"]
+    rng = _modelo_en(a, al["modelos"])
+    if not rng or not (rng[0] <= (a.get("anio") or 0) <= rng[1]):
+        return None
+    t = norm_text(f"{a.get('titulo') or ''} {a.get('version') or ''} {a.get('descripcion') or ''}")
+    if any(re.search(p, t) for p in al["patrones_alquiler"]):
+        return "alquiler"
+    if any(re.search(p, t) for p in al["patrones_propiedad"]):
+        return "propiedad"
+    return "no consta"
+
+
+def cuota_bateria(estado: Optional[str], sup: dict) -> float:
+    return 12 * float(sup["bateria"]["alquiler"]["cuota_mensual_eur"]) if estado in ("alquiler", "no consta") else 0.0
+
+
+def pen_autonomia(aut: Optional[float], el: dict) -> float:
+    """Puntos que se restan a la calidad si la autonomía real estimada baja del umbral (lineal hasta el máximo)."""
+    if aut is None:
+        return 0.0
+    return el["penalizacion_max_puntos"] * max(0.0, min(1.0, (el["autonomia_umbral_km"] - aut) /
+                                                       (el["autonomia_umbral_km"] - el["autonomia_penalizacion_max_km"])))
+
+
+def vida_clave(seg: Optional[str], fuel: Optional[str], sup: dict) -> str:
+    t = sup["vida_util"]["tabla"]
+    return next(k for k in (f"{fuel}|{seg}", f"{fuel}|*", "*|*") if k in t)
+
+
+def frac_vida(km: float, edad: float, clave: str, sup: dict, uso: dict) -> float:
+    """Parte de la vida útil restante que consumen los años del cálculo (por km o por años, la mayor; máx. 1)."""
+    v = sup["vida_util"]["tabla"][clave]
+    return min(1.0, max(uso["anios"] * uso["km_anio"] / max(v["km"] - (km or 0), 1), uso["anios"] / max(v["anios"] - edad, 0.1)))
+
+
+def tco(a: dict, seg, fuel, edad, cc, cv_f, cons, sup, fiscal, dep, uso, el: Optional[dict] = None) -> dict:
     anios, km = uso["anios"], uso["km_anio"]
+    el = el or {}
     energia = (cons or 0) * km / 100 * sup["precio_energia"].get(fuel or "", sup["precio_energia"]["gasolina"])
     seg_e = seguro(seg, edad, sup)
     mant = float(sup["mantenimiento_anual"].get(fuel or "", sup["mantenimiento_anual"]["gasolina"]))
@@ -155,11 +254,24 @@ def tco(a: dict, seg, fuel, edad, cc, cv_f, cons, sup, fiscal, dep, uso) -> dict
     tasa = 0.0 if a.get("tipo_m") in ("nuevo", "km0") else float(fiscal["dgt"]["tasa_transferencia_eur"])
     impuestos = i_tp + tasa
     fac = dep_factor(seg, fuel, dep)
-    deprec = a["precio"] * (1 - fac)
-    uso_anual = energia + seg_e + mant + neum + imp_circ
+    # eléctricos: el valor residual se ajusta por la capacidad que pierde la batería en el periodo (SOH final / SOH hoy)
+    grp = soh_grupo(a, fuel, sup)
+    s_hoy = soh(grp, edad, a.get("km") or 0, sup)
+    s_fin = soh(grp, edad + anios, (a.get("km") or 0) + anios * km, sup)
+    aj_soh = (s_fin / s_hoy) ** el.get("elasticidad_valor_soh", 1.0) if s_hoy else 1.0
+    deprec_mkt = a["precio"] * (1 - fac * aj_soh)
+    # vida útil restante: la depreciación no puede ser menor que la parte de vida que se consume
+    vc = vida_clave(seg, fuel, sup)
+    fv = frac_vida(a.get("km") or 0, edad, vc, sup, uso)
+    deprec = max(deprec_mkt, a["precio"] * fv) if sup["vida_util"].get("activo", True) else deprec_mkt
+    bat = bateria_estado(a, fuel, sup)
+    cuota_bat = cuota_bateria(bat, sup)
+    uso_anual = energia + seg_e + mant + neum + imp_circ + cuota_bat
     total = impuestos + deprec + anios * uso_anual
     return {"itp": i_tp, "tasa": tasa, "energia": energia, "seguro": seg_e, "mant": mant, "neum": neum, "ivtm": imp_circ, "impuestos": impuestos,
-            "dep_factor": fac, "depreciacion": deprec, "uso_anual": uso_anual, "tco": total, "coste_anual": total / anios}
+            "dep_factor": fac, "soh_grupo": grp, "soh": s_hoy, "soh_fin": s_fin, "deprec_mkt": deprec_mkt, "vida_clave": vc, "frac_vida": fv,
+            "bat_estado": bat, "cuota_bat": cuota_bat,
+            "depreciacion": deprec, "uso_anual": uso_anual, "tco": total, "coste_anual": total / anios}
 
 
 # ------------------------------------------------------------------ calidad

@@ -125,6 +125,10 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
     perso = _load(base, "config.yaml")
     anio_actual = fiscal["anio_actual"]
     neutro = cfg["calidad"]["neutro"]
+    el = cfg.get("electricos") or {}
+    esc_def = (cfg.get("recarga") or {}).get("escenario", sup["recarga"]["escenario_defecto"])
+    p_rec = {e: M.precio_recarga(sup, e) for e in sup["recarga"]["escenarios"]}
+    sup["precio_energia"]["electrico"] = p_rec[esc_def]
     descartes = Counter()
 
     # 1. normalización
@@ -265,8 +269,11 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
         a["consumo"] = M.consumo(a, a["segmento"], a["combustible"], sup)
         a["dep_clave"] = next(k for k in (f"{a['segmento']}|{a['combustible']}", f"{a['segmento']}|*", "*|*") if dep.get(k))
         t = M.tco(a, a["segmento"], a["combustible"], a["edad"], a["cc_est"], a["cvf"], a["consumo"], sup, fiscal,
-                  {k: v for k, v in dep.items() if v}, uso)
+                  {k: v for k, v in dep.items() if v}, uso, el)
         a.update(t)
+        a["aut_nueva"], a["aut_fuente"] = M.autonomia_nueva(a, a["combustible"], sup)
+        a["autonomia"] = a["aut_nueva"] * a["soh"] if a["aut_nueva"] and a["soh"] else None
+        a["pen_aut"] = M.pen_autonomia(a["autonomia"], el) if el else 0.0
         a["fiab"], a["fiab_fuente"] = fiabilidad(a, rel, rec, neutro, ix)
         a["ncap"], a["ncap_vigencia"], a["ncap_ref"], a["ncap_asist"] = ncap(a, rel, rec, anio_actual, ix)
         a["esp"] = esp(a, rel, cfg)
@@ -292,8 +299,8 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
         s["km_edad"] = M.s_km_edad(a["km"], a["edad"], a["anio"], qc, anio_actual)
         s["reventa"] = 0.5 * M.clamp(100 * a["n_modelo"] / refs["RV_N_FULL"]) + 0.5 * float(etq_pts.get(a["etiqueta"], 0) if a["etiqueta"] else 0)
         a["s"] = s
-        a["calidad"] = sum(glob[k] * s[k] for k in glob)
-        a["calidad_intr"] = sum(intr[k] * s[k] for k in intr)
+        a["calidad"] = max(0.0, sum(glob[k] * s[k] for k in glob) - a["pen_aut"])
+        a["calidad_intr"] = max(0.0, sum(intr[k] * s[k] for k in intr) - a["pen_aut"])
         a["ratio"] = a["calidad_intr"] / (a["coste_anual"] / 1000) if a["coste_anual"] > 0 else 0
         a["franja"] = franja(a["precio"], cfg["analisis"]["franjas_precio"])
 
@@ -334,7 +341,9 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
             d = (datetime.fromisoformat(r["gone_at"]) - datetime.fromisoformat(r["first_seen"])).total_seconds() / 86400
             liq["todos"].append(d)
 
-    # 9. primas: etiqueta (C vs B, ECO vs C) y cambio automático (log-precio con FE de modelo)
+    # 9. primas: etiqueta (C vs B, ECO vs C) y cambio automático. Tres especificaciones:
+    #    "anterior"  FE(modelo) + errores HC1;  "modelo_cl"  FE(modelo) + errores agrupados por modelo;
+    #    "marca_cl"  FE(marca) + segmento + errores agrupados por modelo (la nueva principal).
     primas = {}
     sub = [a for a in ads if a["tipo_m"] in ("ocasion", "seminuevo") and a["etiqueta"] in ETQ_ORDEN and a["cambio"]
            and a["combustible"] and a["km"] > 0]
@@ -342,76 +351,140 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
         anios = sorted({a["anio"] for a in sub})[1:]
         fuels = sorted({a["combustible"] for a in sub})[1:]
         zonas = sorted({a["zona"] for a in sub})[1:]
-        names = ["km10k", "km10k2", "auto", "etq_A", "etq_C", "etq_ECO", "etq_CERO"] + [f"anio_{y}" for y in anios] + \
-                [f"fuel_{f}" for f in fuels] + [f"zona_{z}" for z in zonas]
-        X, y = [], []
+        segs_p = sorted({a["segmento"] for a in sub})[1:]
+        base_names = ["km10k", "km10k2", "auto", "etq_A", "etq_C", "etq_ECO", "etq_CERO"] + [f"anio_{y}" for y in anios] + \
+            [f"fuel_{f}" for f in fuels] + [f"zona_{z}" for z in zonas]
+        X0, y = [], []
         for a in sub:
             k = a["km"] / 10000
-            X.append([k, k * k, a["cambio"] == "automatico"] + [a["etiqueta"] == e for e in ("A", "C", "ECO", "CERO")] +
-                     [a["anio"] == yy for yy in anios] + [a["combustible"] == f for f in fuels] + [a["zona"] == z for z in zonas])
+            X0.append([k, k * k, a["cambio"] == "automatico"] + [a["etiqueta"] == e for e in ("A", "C", "ECO", "CERO")] +
+                      [a["anio"] == yy for yy in anios] + [a["combustible"] == f for f in fuels] + [a["zona"] == z for z in zonas])
             y.append(math.log(a["precio"]))
-        keep = [j for j in range(len(names)) if any(row[j] for row in X)]
-        X = [[row[j] for j in keep] for row in X]
-        names = [names[j] for j in keep]
-        r = ols(y, X, names, [a["modelo_key"] for a in sub])
-        Xa = np.asarray(X, dtype=float)
-        primas["modelo"] = {"n": r["n"], "modelos": r["grupos"], "r2_within": r["r2_within"], "k": r["k"],
-                            "especificacion": "log(precio) = FE(modelo) + FE(año) + km + km² + automático + etiqueta (base B) "
-                                              "+ combustible + zona; MCO con efectos fijos por modelo (within) y errores HC1"}
-        for nm, lab in (("auto", "Cambio automático frente a manual"), ("etq_C", "Etiqueta C frente a B")):
-            if nm in names:
-                b, s, lo, hi = coef(r, nm)
-                primas[lab] = {"b": b, "se": s, "pct": pct(b), "lo": pct(lo), "hi": pct(hi), "n_con": int(Xa[:, names.index(nm)].sum())}
-        if "etq_ECO" in names and "etq_C" in names:
-            # ECO frente a C = b_ECO - b_C, con su varianza (necesita la covarianza: se recalcula con la misma matriz)
-            i, j = names.index("etq_ECO"), names.index("etq_C")
-            V = _vcov(y, X, [a["modelo_key"] for a in sub])
-            d = float(r["beta"][i] - r["beta"][j])
-            sd = math.sqrt(max(V[i, i] + V[j, j] - 2 * V[i, j], 0))
-            primas["Etiqueta ECO frente a C"] = {"b": d, "se": sd, "pct": pct(d), "lo": pct(d - 1.96 * sd), "hi": pct(d + 1.96 * sd),
-                                                 "n_con": int(Xa[:, i].sum())}
+        mods = [a["modelo_key"] for a in sub]
+        specs = {
+            "anterior": ("FE(modelo), errores HC1", base_names, X0, mods, None),
+            "modelo_cl": ("FE(modelo), errores agrupados por modelo", base_names, X0, mods, mods),
+            "marca_cl": ("FE(marca) + segmento, errores agrupados por modelo", base_names + [f"seg_{g}" for g in segs_p],
+                         [row + [a["segmento"] == g for g in segs_p] for row, a in zip(X0, sub)], [a["marca"] for a in sub], mods),
+        }
+        for sk, (desc, names, X, groups, cl) in specs.items():
+            keep = [j for j in range(len(names)) if any(row[j] for row in X)]
+            Xk = [[row[j] for j in keep] for row in X]
+            nm = [names[j] for j in keep]
+            r = ols(y, Xk, nm, groups, cluster=cl)
+            Xa = np.asarray(Xk, dtype=float)
+            out = {"n": r["n"], "grupos": r["grupos"], "clusters": r["clusters"], "r2_within": r["r2_within"], "k": r["k"],
+                   "errores": r["errores"], "descripcion": desc,
+                   "especificacion": "log(precio) = " + ("FE(modelo)" if sk != "marca_cl" else "FE(marca) + segmento") +
+                                     " + FE(año) + km + km² + automático + etiqueta (base B) + combustible + zona; MCO within, " +
+                                     ("errores HC1" if cl is None else "errores agrupados por modelo (CR1)")}
+            for nmx, lab in (("auto", "Cambio automático frente a manual"), ("etq_C", "Etiqueta C frente a B")):
+                if nmx in nm:
+                    b, se_, lo, hi = coef(r, nmx)
+                    out[lab] = {"b": b, "se": se_, "pct": pct(b), "lo": pct(lo), "hi": pct(hi), "n_con": int(Xa[:, nm.index(nmx)].sum())}
+            if "etq_ECO" in nm and "etq_C" in nm:
+                i, j = nm.index("etq_ECO"), nm.index("etq_C")
+                V = r["V"]
+                d = float(r["beta"][i] - r["beta"][j])
+                sd = math.sqrt(max(V[i, i] + V[j, j] - 2 * V[i, j], 0))
+                out["Etiqueta ECO frente a C"] = {"b": d, "se": sd, "pct": pct(d), "lo": pct(d - 1.96 * sd), "hi": pct(d + 1.96 * sd),
+                                                  "n_con": int(Xa[:, i].sum())}
+            primas[sk] = out
+        primas["principal"] = "marca_cl"
 
     # 10. frontera eficiente, top y infravalorados (zona base: Valencia)
     cortes = cfg["analisis"]["franjas_precio"]
     fr_tags = [franja(lo, cortes) for lo in cortes[:-1]]
     # sin combustible conocido el coste de energía no se puede calcular: fuera de frontera, top e infravalorados
     base_ads = [a for a in ads if a["zona"] == "valencia" and a["combustible"]]
-    efic = set(frontera([(a["coste_anual"], a["calidad_intr"], a["uid"]) for a in base_ads]))
-    front = {"global": [a for a in base_ads if a["uid"] in efic]}
-    for f in fr_tags:
-        sub_f = [a for a in base_ads if a["franja"] == f]
-        ids = set(frontera([(a["coste_anual"], a["calidad_intr"], a["uid"]) for a in sub_f]))
-        front[f] = sorted([a for a in sub_f if a["uid"] in ids], key=lambda a: a["coste_anual"])
-    top_fr = {f: sorted([a for a in base_ads if a["franja"] == f], key=lambda a: -a["ratio"])[:5] for f in fr_tags}
+
+    def fronteras(coste):
+        out = {"global": [a for a in base_ads if a["uid"] in set(frontera([(coste(a), a["calidad_intr"], a["uid"]) for a in base_ads]))]}
+        for f in fr_tags:
+            sub_f = [a for a in base_ads if a["franja"] == f]
+            ids = set(frontera([(coste(a), a["calidad_intr"], a["uid"]) for a in sub_f]))
+            out[f] = sorted([a for a in sub_f if a["uid"] in ids], key=coste)
+        return out
+
+    def tops(coste, n=5):
+        return {f: sorted([a for a in base_ads if a["franja"] == f], key=lambda a: -(a["calidad_intr"] / (coste(a) / 1000)))[:n]
+                for f in fr_tags}
+
+    front = fronteras(lambda a: a["coste_anual"])
+    top_fr = tops(lambda a: a["coste_anual"])
     top_seg = {s_: sorted([a for a in base_ads if a["segmento"] == s_], key=lambda a: -a["ratio"])[:5] for s_ in cfg["analisis"]["segmentos_top"]}
-    # infravalorados: log precio frente a calidad intrínseca + edad + km + segmento + combustible + tipo (sin FE de modelo)
+
+    # escenarios de recarga: solo cambia la energía de los eléctricos (la calidad intrínseca no depende del coste)
+    escenarios = {}
+    for e, pe in p_rec.items():
+        def c_esc(a, pe=pe):
+            if a["combustible"] != "electrico":
+                return a["coste_anual"]
+            return a["coste_anual"] + (pe - p_rec[esc_def]) * (a["consumo"] or 0) * uso["km_anio"] / 100
+        escenarios[e] = {"precio": pe, "defecto": e == esc_def, "frontera": fronteras(c_esc), "top": tops(c_esc), "coste": c_esc}
+        for a in base_ads:
+            a.setdefault("coste_esc", {})[e] = c_esc(a)
+
+    # sensibilidad: ±x % en energía, seguro y depreciación -> Top 5 por franja
+    sens_cfg = cfg.get("sensibilidad") or {"variacion": 0.2, "factores": ["energia", "seguro", "depreciacion"]}
+    dv = sens_cfg["variacion"]
+    comp = {"energia": lambda a: a["energia"], "seguro": lambda a: a["seguro"],
+            "depreciacion": lambda a: a["depreciacion"] / uso["anios"]}
+    sens = {"variacion": dv, "base": {f: [a["uid"] for a in v] for f, v in top_fr.items()}, "casos": {}}
+    for fac in sens_cfg["factores"]:
+        for sg in (+1, -1):
+            def c_s(a, fac=fac, sg=sg):
+                return a["coste_anual"] + sg * dv * comp[fac](a)
+            t = tops(c_s)
+            sens["casos"][f"{fac} {'+' if sg > 0 else '−'}{int(dv * 100)} %"] = {
+                f: {"uids": [a["uid"] for a in v], "coste": [c_s(a) for a in v],
+                    "entran": [a["uid"] for a in v if a["uid"] not in sens["base"][f]],
+                    "salen": [u for u in sens["base"][f] if u not in {a["uid"] for a in v}]} for f, v in t.items()}
+
+    # infravalorados: log precio frente a calidad intrínseca + edad + km + segmento + combustible + tipo.
+    #   anterior: sin efectos fijos, errores HC1;  nueva: FE(marca), errores agrupados por modelo.
     segs = sorted({a["segmento"] for a in base_ads})[1:]
     fus = sorted({a["combustible"] or "sin" for a in base_ads})[1:]
     tps = sorted({a["tipo_m"] for a in base_ads})[1:]
-    names_i = ["const", "calidad_intr", "edad", "edad2", "km10k"] + [f"seg_{s_}" for s_ in segs] + [f"fuel_{f}" for f in fus] + [f"tipo_{t}" for t in tps]
-    Xi = [[1, a["calidad_intr"], a["edad"], a["edad"] ** 2, a["km"] / 10000] + [a["segmento"] == s_ for s_ in segs] +
+    names_i = ["calidad_intr", "edad", "edad2", "km10k"] + [f"seg_{s_}" for s_ in segs] + [f"fuel_{f}" for f in fus] + [f"tipo_{t}" for t in tps]
+    Xi = [[a["calidad_intr"], a["edad"], a["edad"] ** 2, a["km"] / 10000] + [a["segmento"] == s_ for s_ in segs] +
           [(a["combustible"] or "sin") == f for f in fus] + [a["tipo_m"] == t for t in tps] for a in base_ads]
     yi = [math.log(a["precio"]) for a in base_ads]
-    ri = ols(yi, Xi, names_i)
-    for a, e in zip(base_ads, ri["resid"]):
-        a["resid_valor"] = float(e)
+    ri_ant = ols(yi, [[1] + row for row in Xi], ["const"] + names_i)
+    ri = ols(yi, Xi, names_i, [a["marca"] for a in base_ads], cluster=[a["modelo_key"] for a in base_ads])
+    for a, e0, e1 in zip(base_ads, ri_ant["resid"], ri["resid"]):
+        a["resid_valor_ant"], a["resid_valor"] = float(e0), float(e1)
     gm = defaultdict(list)
     for a in base_ads:
         if a.get("modelo") and a["modelo_key"] != a["marca"]:     # sin modelo identificado no se agrupa
             gm[a["modelo_key"]].append(a)
-    infra = []
     ci = cfg.get("infravalorados") or {}
-    for mk, lst in gm.items():
-        lst = [x for x in lst if x["edad"] <= ci.get("edad_max", 99) and x["segmento"] not in (ci.get("excluir_segmentos") or [])]
-        if len(lst) >= ci.get("min_anuncios", mn):
-            med_r = st.median(x["resid_valor"] for x in lst)
-            infra.append({"modelo": mk, "n": len(lst), "resid": med_r, "pct": math.exp(med_r) - 1,
-                          "calidad_intr": st.median(x["calidad_intr"] for x in lst), "precio_mediano": st.median(x["precio"] for x in lst),
-                          "segmento": Counter(x["segmento"] for x in lst).most_common(1)[0][0]})
-    infra.sort(key=lambda d: d["resid"])
-    b_q = coef(ri, "calidad_intr")
-    reg_infra = {"n": ri["n"], "k": ri["k"], "r2": ri["r2"], "b_calidad": b_q,
-                 "especificacion": "log(precio) = a + b·calidad intrínseca + edad + edad² + km + segmento + combustible + tipo; MCO con errores HC1"}
+
+    def lista_infra(campo):
+        out = []
+        for mk, lst in gm.items():
+            lst = [x for x in lst if x["edad"] <= ci.get("edad_max", 99) and x["segmento"] not in (ci.get("excluir_segmentos") or [])]
+            if len(lst) >= ci.get("min_anuncios", mn):
+                med_r = st.median(x[campo] for x in lst)
+                out.append({"modelo": mk, "marca": lst[0]["marca"], "n": len(lst), "resid": med_r, "pct": math.exp(med_r) - 1,
+                            "calidad_intr": st.median(x["calidad_intr"] for x in lst), "precio_mediano": st.median(x["precio"] for x in lst),
+                            "segmento": Counter(x["segmento"] for x in lst).most_common(1)[0][0]})
+        out.sort(key=lambda d: d["resid"])
+        return out
+    infra, infra_ant = lista_infra("resid_valor"), lista_infra("resid_valor_ant")
+    pos_ant = {d["modelo"]: i for i, d in enumerate(infra_ant, 1)}
+    pos_new = {d["modelo"]: i for i, d in enumerate(infra, 1)}
+    for i, d in enumerate(infra, 1):
+        d["pos_ant"] = pos_ant.get(d["modelo"])
+    for d in infra_ant:
+        d["pos_nueva"] = pos_new.get(d["modelo"])
+    reg_infra = {"n": ri["n"], "k": ri["k"], "r2": ri["r2_within"], "b_calidad": coef(ri, "calidad_intr"), "marcas": ri["grupos"],
+                 "clusters": ri["clusters"],
+                 "especificacion": "log(precio) = FE(marca) + b·calidad intrínseca + edad + edad² + km + segmento + combustible + tipo; "
+                                   "MCO within, errores agrupados por modelo (CR1)"}
+    reg_infra_ant = {"n": ri_ant["n"], "k": ri_ant["k"], "r2": ri_ant["r2"], "b_calidad": coef(ri_ant, "calidad_intr"),
+                     "especificacion": "log(precio) = a + b·calidad intrínseca + edad + edad² + km + segmento + combustible + tipo; "
+                                       "MCO con errores HC1 (sin efectos fijos)"}
 
     resumen = (f"anuncios={len(rows)} limpios={len(ads)} valencia={len(base_ads)} "
                f"descartados={sum(descartes.values())}")
@@ -419,24 +492,7 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
             "dep": {k: v for k, v in dep.items() if v}, "curvas_seg": curvas_seg, "curvas_marca": curvas_marca,
             "precios": precios, "oferta": oferta, "med_seg": med_seg, "liquidez": liq, "primas": primas,
             "frontera": front, "top_franja": top_fr, "top_segmento": top_seg, "infravalorados": infra, "reg_infra": reg_infra,
+            "infravalorados_ant": infra_ant, "reg_infra_ant": reg_infra_ant, "escenarios": escenarios, "escenario_defecto": esc_def,
+            "sensibilidad": sens, "electricos": el, "base_ads": base_ads,
             "refs": refs, "pesos": (glob, intr), "resumen": resumen, "n_total": len(rows), "etq_pts": etq_pts}
 
-
-def _vcov(y, X, groups):
-    """Matriz de covarianzas HC1 del modelo within (para contrastes entre coeficientes)."""
-    y = np.asarray(y, dtype=float)
-    X = np.asarray(X, dtype=float)
-    idx = {}
-    gid = np.array([idx.setdefault(x, len(idx)) for x in groups])
-    g = len(idx)
-    for Mx in (y[:, None], X):
-        sums = np.zeros((g, Mx.shape[1]))
-        np.add.at(sums, gid, Mx)
-        cnt = np.bincount(gid, minlength=g)[:, None]
-        Mx -= (sums / cnt)[gid]
-    XtX_inv = np.linalg.pinv(X.T @ X)
-    beta = XtX_inv @ X.T @ y
-    e = y - X @ beta
-    n, k = X.shape
-    meat = (X * (e ** 2)[:, None]).T @ X
-    return XtX_inv @ meat @ XtX_inv * (n / max(n - k - g, 1))

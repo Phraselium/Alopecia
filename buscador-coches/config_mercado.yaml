@@ -78,6 +78,16 @@ filtros:
   km_max_creible: 600000       # más km: error del anuncio
   km_anio_max_creible: 70000   # más km/año (con 1 año o más): error del anuncio (p. ej. 3.850.000 km)
   precio_min_reciente: {anios: 3, eur: 3000}   # coche de <= 3 años por menos: cuota, reserva o error
+electricos:                    # criterios del perfil mercado para coches eléctricos (configurables)
+  autonomia_umbral_km: 200     # autonomía real estimada (WLTP × factor real × SOH) por debajo de la cual se penaliza la calidad
+  autonomia_penalizacion_max_km: 100   # con esta autonomía o menos, la penalización es la máxima
+  penalizacion_max_puntos: 15  # puntos que se restan a la calidad global y a la intrínseca (lineal entre umbral y máximo)
+  elasticidad_valor_soh: 1.0   # valor residual × (SOH final / SOH hoy)^e; 1 = proporcional a la capacidad que conserva la batería
+recarga:
+  escenario: mixta             # casa | mixta | publica (precios y reparto en mercado_supuestos.yaml → recarga)
+sensibilidad:
+  variacion: 0.20              # ± sobre cada componente del coste anual
+  factores: [energia, seguro, depreciacion]
 infravalorados:
   edad_max: 15                 # el modelo de valor ajusta mal los coches muy viejos
   min_anuncios: 8

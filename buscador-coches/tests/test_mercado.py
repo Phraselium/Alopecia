@@ -132,13 +132,87 @@ def synthetic(n=600, seed=3):
                     "ubicacion": None, "cp": None, "url": f"https://example.invalid/{i}", "generacion": None,
                     "consumo_wltp": rnd.choice([None, 4.8, 6.1]), "co2": None, "descripcion": None, "raw_ref": None,
                     "first_seen": "2026-10-01T00:00:00", "gone_at": None})
+    # eléctricos con batería por aire y con batería que pudo ser de alquiler
+    for i, (md, anio, km, tit) in enumerate([("Leaf", 2014, 90000, "Nissan Leaf Acenta 24kWh"), ("Leaf", 2020, 40000, "Nissan Leaf 40 kWh"),
+                                             ("Zoe", 2016, 60000, "Renault Zoe Intens bateria en propiedad"),
+                                             ("Zoe", 2017, 50000, "Renault Zoe Life 40"), ("Zoe", 2015, 70000, "Renault Zoe Zen")] * 3):
+        mk = "Nissan" if md == "Leaf" else "Renault"
+        out.append({"uid": f"EV:{i}", "plataforma": "autoscout24", "zona": "valencia", "tipo": "ocasion", "marca": mk, "modelo": md,
+                    "version": None, "titulo": tit, "anio": anio, "mes": None, "km": km, "precio": 7000 + 300 * i, "precio_financiado": None,
+                    "combustible": "Eléctrico", "cambio": "Automático", "cv": 109, "cc": None, "carroceria_raw": None, "etiqueta": "CERO",
+                    "vendedor": "profesional", "garantia_meses": None, "ubicacion": None, "cp": None, "url": f"https://example.invalid/ev{i}",
+                    "generacion": None, "consumo_wltp": None, "co2": None, "descripcion": None, "raw_ref": None,
+                    "first_seen": "2026-10-01T00:00:00", "gone_at": None})
     return out
+
+
+def test_cluster_cr1_a_mano():
+    rnd = np.random.default_rng(5)
+    n, g = 300, 12
+    grp = rnd.integers(0, g, n)
+    x = rnd.normal(size=n) + 0.3 * grp
+    y = 1.5 * x + rnd.normal(size=n) + grp * 0.5 + rnd.normal(size=g)[grp]
+    r = ols(y, x[:, None], ["x"], list(grp), cluster=list(grp))
+    X = x[:, None].astype(float).copy()
+    yy = y.astype(float).copy()
+    for M_ in (yy[:, None], X):
+        for k in range(g):
+            M_[grp == k] -= M_[grp == k].mean(axis=0)
+    XtXi = np.linalg.inv(X.T @ X)
+    e = yy - X @ (XtXi @ X.T @ yy)
+    meat = sum(np.outer(X[grp == k].T @ e[grp == k], X[grp == k].T @ e[grp == k]) for k in range(g))
+    V = XtXi @ meat @ XtXi * g / (g - 1) * (n - 1) / (n - 1)
+    assert r["se"][0] == pytest.approx(math.sqrt(V[0, 0]), rel=1e-6) and r["clusters"] == g
+
+
+def test_bateria_vida_recarga(mcfg):
+    from src.mercado import model as M
+    sup = yaml.safe_load((BASE / "mercado_supuestos.yaml").read_text(encoding="utf-8"))
+    leaf = {"modelo_key": "Nissan Leaf", "anio": 2014, "titulo": "Nissan Leaf 24kWh", "km": 80000}
+    assert M.soh_grupo(leaf, "electrico", sup) != sup["bateria"]["soh"]["grupo_defecto"]
+    s_l = M.soh(M.soh_grupo(leaf, "electrico", sup), 12, 80000, sup)
+    s_t = M.soh(sup["bateria"]["soh"]["grupo_defecto"], 12, 80000, sup)
+    assert s_l < s_t and M.soh(None, 3, 0, sup) is None
+    assert M.kwh_titulo({"titulo": "Ford Mustang Mach-E Batería 75.7Kwh"}) == 75.7
+    zoe = {"modelo_key": "Renault Zoe", "anio": 2016, "titulo": "Renault Zoe Intens"}
+    assert M.bateria_estado(zoe, "electrico", sup) == "no consta"
+    assert M.bateria_estado(dict(zoe, titulo="Renault Zoe batería en propiedad"), "electrico", sup) == "propiedad"
+    assert M.bateria_estado(dict(zoe, titulo="Renault Zoe con alquiler de batería"), "electrico", sup) == "alquiler"
+    assert M.bateria_estado(dict(zoe, anio=2025), "electrico", sup) is None
+    assert M.cuota_bateria("no consta", sup) == 12 * sup["bateria"]["alquiler"]["cuota_mensual_eur"]
+    el = mcfg["electricos"]
+    assert M.pen_autonomia(None, el) == 0 and M.pen_autonomia(el["autonomia_umbral_km"] + 1, el) == 0
+    assert M.pen_autonomia(el["autonomia_penalizacion_max_km"] - 1, el) == el["penalizacion_max_puntos"]
+    uso = mcfg["uso"]
+    k = M.vida_clave("utilitario", "gasolina", sup)
+    v = sup["vida_util"]["tabla"][k]
+    assert M.frac_vida(0, 0, k, sup, uso) < 0.5 and M.frac_vida(v["km"], 5, k, sup, uso) == 1.0
+    w = sup["recarga"]["escenarios"]
+    for e in w:
+        assert abs(sum(w[e].values()) - 1) < 1e-9
+    assert M.precio_recarga(sup, "casa") < M.precio_recarga(sup, "publica")
 
 
 def test_analisis_sintetico(mcfg):
     res = run_analysis(synthetic(), mcfg, BASE)
     assert res["ads"] and res["dep"]["*|*"]["b_edad"] < 0              # el valor cae con la edad
-    assert "Cambio automático frente a manual" in res["primas"]
+    for sk in ("anterior", "modelo_cl", "marca_cl"):
+        assert "Cambio automático frente a manual" in res["primas"][sk]
+    assert res["primas"]["marca_cl"]["clusters"] == res["primas"]["modelo_cl"]["grupos"] and res["primas"]["anterior"]["clusters"] is None
+    # escenarios de recarga: misma frontera de calidad, distinto coste solo para eléctricos
+    pc = {e: d["precio"] for e, d in res["escenarios"].items()}
+    assert pc["casa"] < pc["mixta"] < pc["publica"] and res["escenarios"]["mixta"]["defecto"]
+    # sensibilidad: 6 casos, cada franja con <= 5 coches
+    assert len(res["sensibilidad"]["casos"]) == 6
+    assert all(len(d[f]["uids"]) <= 5 for d in res["sensibilidad"]["casos"].values() for f in d)
+    # eléctricos: SOH entre el suelo y 1; el Leaf (aire) se degrada más deprisa; Zoe sin dato -> cuota
+    ev = [a for a in res["ads"] if a["combustible"] == "electrico"]
+    assert ev and all(0.6 <= a["soh"] <= 1 for a in ev)
+    zoe = [a for a in res["ads"] if a["modelo_key"] == "Renault Zoe"]
+    assert {a["bat_estado"] for a in zoe} == {"propiedad", "no consta"}
+    assert all((a["cuota_bat"] > 0) == (a["bat_estado"] == "no consta") for a in zoe)
+    # vida útil: la depreciación nunca es menor que la de mercado
+    assert all(a["depreciacion"] >= a["deprec_mkt"] - 1e-9 for a in res["ads"])
     for f, lst in res["frontera"].items():
         if f == "global":
             continue
