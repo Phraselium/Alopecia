@@ -399,7 +399,8 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
     base_ads = [a for a in ads if a["zona"] == "valencia" and a["combustible"]]
 
     def fronteras(coste):
-        out = {"global": [a for a in base_ads if a["uid"] in set(frontera([(coste(a), a["calidad_intr"], a["uid"]) for a in base_ads]))]}
+        ids_g = set(frontera([(coste(a), a["calidad_intr"], a["uid"]) for a in base_ads]))
+        out = {"global": [a for a in base_ads if a["uid"] in ids_g]}
         for f in fr_tags:
             sub_f = [a for a in base_ads if a["franja"] == f]
             ids = set(frontera([(coste(a), a["calidad_intr"], a["uid"]) for a in sub_f]))
