@@ -1,0 +1,1562 @@
+# Fiabilidad y seguridad de coches recientes (perfil mercado). Fuentes por fila. Consulta 01-11-2026.
+fecha_consulta: '2026-11-01'
+nota: 'Euro NCAP: ''desde/hasta'' = periodo en que esa calificación es la última publicada para el modelo (no años de fabricación). Caducada = etiqueta RATING_EXPIRED de euroncap.com (en la práctica, ensayos de 2019 o antes). TÜV 2026: % de defectos graves
+  por franja de edad (Auto Bild, que coedita el informe); una franja puede mezclar generaciones. OCU 2026: índice por marca (confirmado en la nota oficial o probable vía motor.es). ADAC 2026: solo mejor/peor de su clase (la tabla por modelo y año se carga
+  desde /bff, prohibido por robots.txt).'
+euroncap_recientes:
+- modelo: Seat Ibiza
+  desde: 2017
+  hasta: 2022
+  ensayo: 2017
+  estrellas: 5
+  adulto: 95
+  nino: 77
+  peaton: 76
+  asistencia: 60
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/seat/ibiza/0675/
+- modelo: Seat Ibiza
+  desde: 2022
+  hasta: 2026
+  ensayo: 2022
+  estrellas: 5
+  adulto: 83
+  nino: 82
+  peaton: 66
+  asistencia: 70
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/seat/ibiza/0932/
+- modelo: Seat Arona
+  desde: 2017
+  hasta: 2022
+  ensayo: 2017
+  estrellas: 5
+  adulto: 95
+  nino: 80
+  peaton: 77
+  asistencia: 60
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/seat/arona/0698/
+- modelo: Seat Arona
+  desde: 2022
+  hasta: 2026
+  ensayo: 2022
+  estrellas: 5
+  adulto: 83
+  nino: 83
+  peaton: 65
+  asistencia: 70
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/seat/arona/0942/
+- modelo: Seat León
+  desde: 2020
+  hasta: 2025
+  ensayo: 2020
+  estrellas: 5
+  adulto: 92
+  nino: 88
+  peaton: 71
+  asistencia: 80
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/seat/leon/0801/
+- modelo: Seat León
+  desde: 2025
+  hasta: 2026
+  ensayo: 2025
+  estrellas: 5
+  adulto: 88
+  nino: 86
+  peaton: 81
+  asistencia: 77
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/seat/leon/1122pm/
+- modelo: Cupra León
+  desde: 2020
+  hasta: 2025
+  ensayo: 2020
+  estrellas: 5
+  adulto: 91
+  nino: 88
+  peaton: 71
+  asistencia: 80
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/cupra/leon/0801pm/
+- modelo: Cupra León
+  desde: 2025
+  hasta: 2026
+  ensayo: 2025
+  estrellas: 5
+  adulto: 88
+  nino: 86
+  peaton: 82
+  asistencia: 77
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/cupra/leon/1122/
+- modelo: Cupra Formentor
+  desde: 2021
+  hasta: 2025
+  ensayo: 2021
+  estrellas: 5
+  adulto: 93
+  nino: 88
+  peaton: 68
+  asistencia: 80
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/cupra/formentor/0862/
+- modelo: Cupra Formentor
+  desde: 2025
+  hasta: 2026
+  ensayo: 2025
+  estrellas: 5
+  adulto: 91
+  nino: 86
+  peaton: 79
+  asistencia: 77
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/cupra/formentor/1120/
+- modelo: Seat Ateca
+  desde: 2016
+  hasta: 2026
+  ensayo: 2016
+  estrellas: 5
+  adulto: 93
+  nino: 84
+  peaton: 71
+  asistencia: 60
+  vigente: false
+  estado: probable
+  fuente: resumen de búsqueda (carscoops/autobiz.ie); ficha no está en el sitemap de euroncap.com
+- modelo: Volkswagen Polo
+  desde: 2017
+  hasta: 2022
+  ensayo: 2017
+  estrellas: 5
+  adulto: 96
+  nino: 85
+  peaton: 76
+  asistencia: 59
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/volkswagen/polo/0692/
+- modelo: Volkswagen Polo
+  desde: 2022
+  hasta: 2026
+  ensayo: 2022
+  estrellas: 5
+  adulto: 94
+  nino: 80
+  peaton: 70
+  asistencia: 70
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/volkswagen/polo/0890/
+- modelo: Volkswagen T-Roc
+  desde: 2017
+  hasta: 2025
+  ensayo: 2017
+  estrellas: 5
+  adulto: 96
+  nino: 87
+  peaton: 79
+  asistencia: 71
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/volkswagen/t-roc/0694/
+- modelo: Volkswagen T-Roc
+  desde: 2025
+  hasta: 2026
+  ensayo: 2025
+  estrellas: 5
+  adulto: 91
+  nino: 87
+  peaton: 87
+  asistencia: 77
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/volkswagen/t-roc/1114/
+- modelo: Volkswagen T-Cross
+  desde: 2019
+  hasta: 2025
+  ensayo: 2019
+  estrellas: 5
+  adulto: 97
+  nino: 86
+  peaton: 81
+  asistencia: 80
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/volkswagen/t-cross/0765/
+- modelo: Volkswagen T-Cross
+  desde: 2025
+  hasta: 2026
+  ensayo: 2025
+  estrellas: 3
+  adulto: 74
+  nino: 81
+  peaton: 60
+  asistencia: 57
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/volkswagen/t-cross/1134/
+- modelo: Volkswagen Golf
+  desde: 2019
+  hasta: 2022
+  ensayo: 2019
+  estrellas: 5
+  adulto: 95
+  nino: 89
+  peaton: 76
+  asistencia: 78
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/volkswagen/golf/0805/
+- modelo: Volkswagen Golf
+  desde: 2022
+  hasta: 2025
+  ensayo: 2022
+  estrellas: 5
+  adulto: 88
+  nino: 87
+  peaton: 74
+  asistencia: 82
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/volkswagen/golf/0913/
+- modelo: Volkswagen Golf
+  desde: 2025
+  hasta: 2026
+  ensayo: 2025
+  estrellas: 5
+  adulto: 80
+  nino: 86
+  peaton: 85
+  asistencia: 79
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/volkswagen/golf/1115/
+- modelo: Volkswagen Tiguan
+  desde: 2024
+  hasta: 2026
+  ensayo: 2024
+  estrellas: 5
+  adulto: 83
+  nino: 88
+  peaton: 84
+  asistencia: 78
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/volkswagen/tiguan/1033/
+- modelo: Toyota Yaris
+  desde: 2017
+  hasta: 2020
+  ensayo: 2017
+  estrellas: 5
+  adulto: 83
+  nino: 80
+  peaton: 63
+  asistencia: 57
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/toyota/yaris/0714/
+- modelo: Toyota Yaris
+  desde: 2020
+  hasta: 2025
+  ensayo: 2020
+  estrellas: 5
+  adulto: 86
+  nino: 81
+  peaton: 78
+  asistencia: 85
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/toyota/yaris/0821/
+- modelo: Toyota Yaris
+  desde: 2025
+  hasta: 2026
+  ensayo: 2025
+  estrellas: 4
+  adulto: 72
+  nino: 84
+  peaton: 83
+  asistencia: 72
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/toyota/yaris/1174/
+- modelo: Toyota Yaris Cross
+  desde: 2021
+  hasta: 2025
+  ensayo: 2021
+  estrellas: 5
+  adulto: 86
+  nino: 84
+  peaton: 78
+  asistencia: 81
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/toyota/yaris+cross/0875/
+- modelo: Toyota Yaris Cross
+  desde: 2025
+  hasta: 2026
+  ensayo: 2025
+  estrellas: 4
+  adulto: 79
+  nino: 85
+  peaton: 83
+  asistencia: 76
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/toyota/yaris+cross/1164/
+- modelo: Toyota Corolla
+  desde: 2019
+  hasta: 2026
+  ensayo: 2019
+  estrellas: 5
+  adulto: 95
+  nino: 84
+  peaton: 86
+  asistencia: 77
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/toyota/corolla/0762/
+- modelo: Toyota C-HR
+  desde: 2017
+  hasta: 2024
+  ensayo: 2017
+  estrellas: 5
+  adulto: 95
+  nino: 77
+  peaton: 76
+  asistencia: 78
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/toyota/c-hr/0663/
+- modelo: Toyota C-HR
+  desde: 2024
+  hasta: 2026
+  ensayo: 2024
+  estrellas: 5
+  adulto: 85
+  nino: 86
+  peaton: 86
+  asistencia: 79
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/toyota/c-hr/1042/
+- modelo: Toyota C-HR+
+  desde: 2026
+  hasta: 2026
+  ensayo: 2025
+  estrellas: 5
+  adulto: 88
+  nino: 85
+  peaton: 80
+  asistencia: 79
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/toyota/c-hr/1206/
+- modelo: Toyota RAV4
+  desde: 2019
+  hasta: 2026
+  ensayo: 2019
+  estrellas: 5
+  adulto: 93
+  nino: 87
+  peaton: 85
+  asistencia: 77
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/toyota/rav4/0764/
+- modelo: Dacia Sandero
+  desde: 2021
+  hasta: 2026
+  ensayo: 2021
+  estrellas: 2
+  adulto: 70
+  nino: 72
+  peaton: 41
+  asistencia: 42
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/dacia/sandero/0861p2/
+- modelo: Dacia Duster
+  desde: 2017
+  hasta: 2024
+  ensayo: 2017
+  estrellas: 3
+  adulto: 71
+  nino: 66
+  peaton: 56
+  asistencia: 37
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/dacia/duster/0712/
+- modelo: Dacia Duster
+  desde: 2024
+  hasta: 2026
+  ensayo: 2024
+  estrellas: 3
+  adulto: 70
+  nino: 84
+  peaton: 60
+  asistencia: 57
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/dacia/duster/1075/
+- modelo: Dacia Jogger
+  desde: 2022
+  hasta: 2026
+  ensayo: 2021
+  estrellas: 1
+  adulto: 70
+  nino: 69
+  peaton: 41
+  asistencia: 39
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/dacia/jogger/0947/
+- modelo: Renault Clio
+  desde: 2019
+  hasta: 2025
+  ensayo: 2019
+  estrellas: 5
+  adulto: 96
+  nino: 89
+  peaton: 72
+  asistencia: 75
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/renault/clio/0753/
+- modelo: Renault Clio
+  desde: 2025
+  hasta: 2026
+  ensayo: 2025
+  estrellas: 4
+  adulto: 79
+  nino: 82
+  peaton: 80
+  asistencia: 73
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/renault/clio/1189/
+- modelo: Renault Captur
+  desde: 2019
+  hasta: 2024
+  ensayo: 2019
+  estrellas: 5
+  adulto: 96
+  nino: 83
+  peaton: 75
+  asistencia: 74
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/renault/captur/0807/
+- modelo: Renault Captur
+  desde: 2024
+  hasta: 2026
+  ensayo: 2024
+  estrellas: 4
+  adulto: 76
+  nino: 80
+  peaton: 76
+  asistencia: 69
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/renault/captur/1082/
+- modelo: Renault Mégane E-Tech
+  desde: 2022
+  hasta: 2026
+  ensayo: 2022
+  estrellas: 5
+  adulto: 85
+  nino: 88
+  peaton: 65
+  asistencia: 79
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/renault/megane+e-tech/0921/
+- modelo: Renault Austral
+  desde: 2022
+  hasta: 2026
+  ensayo: 2022
+  estrellas: 5
+  adulto: 88
+  nino: 83
+  peaton: 69
+  asistencia: 87
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/renault/austral/0943/
+- modelo: Peugeot 208
+  desde: 2019
+  hasta: 2026
+  ensayo: 2019
+  estrellas: 4
+  adulto: 91
+  nino: 86
+  peaton: 56
+  asistencia: 71
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/peugeot/208/0777/
+- modelo: Peugeot 2008
+  desde: 2019
+  hasta: 2026
+  ensayo: 2019
+  estrellas: 4
+  adulto: 91
+  nino: 84
+  peaton: 62
+  asistencia: 68
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/peugeot/2008/0799/
+- modelo: Peugeot 308
+  desde: 2022
+  hasta: 2026
+  ensayo: 2022
+  estrellas: 4
+  adulto: 76
+  nino: 84
+  peaton: 68
+  asistencia: 65
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/peugeot/308/0919/
+- modelo: Peugeot 3008
+  desde: 2025
+  hasta: 2026
+  ensayo: 2025
+  estrellas: 4
+  adulto: 80
+  nino: 85
+  peaton: 79
+  asistencia: 62
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/peugeot/3008/1141/
+- modelo: Citroën C3
+  desde: 2017
+  hasta: 2026
+  ensayo: 2017
+  estrellas: 4
+  adulto: 88
+  nino: 83
+  peaton: 59
+  asistencia: 58
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/citroen/c3/0661/
+- modelo: Citroën C4
+  desde: 2021
+  hasta: 2026
+  ensayo: 2021
+  estrellas: 4
+  adulto: 80
+  nino: 83
+  peaton: 57
+  asistencia: 63
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/citroen/c4/0857/
+- modelo: Opel Corsa
+  desde: 2019
+  hasta: 2026
+  ensayo: 2019
+  estrellas: 4
+  adulto: 84
+  nino: 86
+  peaton: 66
+  asistencia: 69
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/opel/corsa/0784/
+- modelo: Opel Mokka
+  desde: 2021
+  hasta: 2026
+  ensayo: 2021
+  estrellas: 4
+  adulto: 73
+  nino: 75
+  peaton: 58
+  asistencia: 64
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/opel/mokka/0859/
+- modelo: Opel Astra
+  desde: 2022
+  hasta: 2026
+  ensayo: 2022
+  estrellas: 4
+  adulto: 80
+  nino: 82
+  peaton: 67
+  asistencia: 66
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/opel/astra/0915/
+- modelo: Hyundai i20
+  desde: 2021
+  hasta: 2026
+  ensayo: 2021
+  estrellas: 4
+  adulto: 76
+  nino: 82
+  peaton: 76
+  asistencia: 67
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/hyundai/i20/0891pm/
+- modelo: Hyundai Kona
+  desde: 2017
+  hasta: 2023
+  ensayo: 2017
+  estrellas: 5
+  adulto: 87
+  nino: 85
+  peaton: 62
+  asistencia: 60
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/hyundai/kona/0709/
+- modelo: Hyundai Kona
+  desde: 2023
+  hasta: 2026
+  ensayo: 2023
+  estrellas: 4
+  adulto: 80
+  nino: 83
+  peaton: 64
+  asistencia: 60
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/hyundai/kona/1051/
+- modelo: Hyundai Tucson
+  desde: 2021
+  hasta: 2026
+  ensayo: 2021
+  estrellas: 5
+  adulto: 86
+  nino: 87
+  peaton: 66
+  asistencia: 70
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/hyundai/tucson/0895/
+- modelo: Kia Picanto
+  desde: 2017
+  hasta: 2026
+  ensayo: 2017
+  estrellas: 3
+  adulto: 79
+  nino: 64
+  peaton: 54
+  asistencia: 25
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/kia/picanto/0687/
+- modelo: Kia Stonic
+  desde: 2017
+  hasta: 2026
+  ensayo: 2017
+  estrellas: 3
+  adulto: 85
+  nino: 84
+  peaton: 62
+  asistencia: 25
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/kia/stonic/0678pm/
+- modelo: Kia Ceed
+  desde: 2019
+  hasta: 2026
+  ensayo: 2019
+  estrellas: 4
+  adulto: 88
+  nino: 85
+  peaton: 52
+  asistencia: 68
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/kia/ceed/0757/
+- modelo: Kia Niro
+  desde: 2022
+  hasta: 2026
+  ensayo: 2022
+  estrellas: 4
+  adulto: 91
+  nino: 84
+  peaton: 75
+  asistencia: 60
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/kia/niro/1000/
+- modelo: Kia Sportage
+  desde: 2022
+  hasta: 2026
+  ensayo: 2022
+  estrellas: 5
+  adulto: 87
+  nino: 86
+  peaton: 66
+  asistencia: 72
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/kia/sportage/0951/
+- modelo: MG ZS
+  desde: 2017
+  hasta: 2024
+  ensayo: 2017
+  estrellas: 3
+  adulto: 71
+  nino: 51
+  peaton: 59
+  asistencia: 29
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/mg/zs/0707/
+- modelo: MG ZS EV
+  desde: 2019
+  hasta: 2026
+  ensayo: 2019
+  estrellas: 5
+  adulto: 90
+  nino: 85
+  peaton: 64
+  asistencia: 70
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/mg/zs+ev/0797/
+- modelo: MG ZS Hybrid
+  desde: 2024
+  hasta: 2026
+  ensayo: 2024
+  estrellas: 4
+  adulto: 75
+  nino: 82
+  peaton: 73
+  asistencia: 76
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/mg/zs+hybrid/1062/
+- modelo: MG 4
+  desde: 2022
+  hasta: 2026
+  ensayo: 2022
+  estrellas: 5
+  adulto: 83
+  nino: 80
+  peaton: 75
+  asistencia: 78
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/mg/4+electric/1001/
+- modelo: MG4 EV Urban
+  desde: 2025
+  hasta: 2026
+  ensayo: 2025
+  estrellas: 5
+  adulto: 87
+  nino: 85
+  peaton: 85
+  asistencia: 80
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/mg/mg4+ev+urban/1156/
+- modelo: MG HS
+  desde: 2019
+  hasta: 2024
+  ensayo: 2019
+  estrellas: 5
+  adulto: 92
+  nino: 81
+  peaton: 64
+  asistencia: 76
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/mg/hs/0795/
+- modelo: MG HS
+  desde: 2024
+  hasta: 2026
+  ensayo: 2024
+  estrellas: 5
+  adulto: 90
+  nino: 85
+  peaton: 83
+  asistencia: 74
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/mg/hs/1061/
+- modelo: Tesla Model 3
+  desde: 2019
+  hasta: 2025
+  ensayo: 2019
+  estrellas: 5
+  adulto: 96
+  nino: 86
+  peaton: 74
+  asistencia: 94
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/tesla/model+3/0766/
+- modelo: Tesla Model 3
+  desde: 2025
+  hasta: 2026
+  ensayo: 2025
+  estrellas: 5
+  adulto: 90
+  nino: 93
+  peaton: 89
+  asistencia: 87
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/tesla/model+3/1110/
+- modelo: Tesla Model Y
+  desde: 2022
+  hasta: 2025
+  ensayo: 2022
+  estrellas: 5
+  adulto: 97
+  nino: 87
+  peaton: 82
+  asistencia: 98
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/tesla/model+y/0961/
+- modelo: Tesla Model Y
+  desde: 2025
+  hasta: 2026
+  ensayo: 2025
+  estrellas: 5
+  adulto: 91
+  nino: 93
+  peaton: 86
+  asistencia: 92
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/tesla/model+y/1181/
+- modelo: Nissan Qashqai
+  desde: 2021
+  hasta: 2025
+  ensayo: 2021
+  estrellas: 5
+  adulto: 91
+  nino: 91
+  peaton: 70
+  asistencia: 95
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/nissan/qashqai/0906/
+- modelo: Nissan Qashqai
+  desde: 2025
+  hasta: 2026
+  ensayo: 2025
+  estrellas: 4
+  adulto: 78
+  nino: 85
+  peaton: 65
+  asistencia: 62
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/nissan/qashqai/1212/
+- modelo: Nissan Juke
+  desde: 2019
+  hasta: 2026
+  ensayo: 2019
+  estrellas: 5
+  adulto: 94
+  nino: 85
+  peaton: 81
+  asistencia: 73
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/nissan/juke/0798/
+- modelo: Ford Puma
+  desde: 2019
+  hasta: 2022
+  ensayo: 2019
+  estrellas: 5
+  adulto: 94
+  nino: 84
+  peaton: 77
+  asistencia: 74
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/ford/puma/0791/
+- modelo: Ford Puma
+  desde: 2022
+  hasta: 2026
+  ensayo: 2022
+  estrellas: 4
+  adulto: 75
+  nino: 84
+  peaton: 70
+  asistencia: 69
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/ford/puma/0986/
+- modelo: Ford Focus
+  desde: 2018
+  hasta: 2019
+  ensayo: 2018
+  estrellas: 5
+  adulto: 85
+  nino: 87
+  peaton: 72
+  asistencia: 75
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/ford/focus/0724/
+- modelo: Ford Focus
+  desde: 2019
+  hasta: 2026
+  ensayo: 2019
+  estrellas: 5
+  adulto: 96
+  nino: 87
+  peaton: 72
+  asistencia: 75
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/ford/focus/0814/
+- modelo: Ford Kuga
+  desde: 2019
+  hasta: 2026
+  ensayo: 2019
+  estrellas: 5
+  adulto: 92
+  nino: 86
+  peaton: 82
+  asistencia: 73
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/ford/kuga/0792/
+- modelo: Skoda Fabia
+  desde: 2021
+  hasta: 2026
+  ensayo: 2021
+  estrellas: 5
+  adulto: 85
+  nino: 81
+  peaton: 70
+  asistencia: 71
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/skoda/fabia/0876/
+- modelo: Skoda Octavia
+  desde: 2019
+  hasta: 2022
+  ensayo: 2019
+  estrellas: 5
+  adulto: 92
+  nino: 88
+  peaton: 73
+  asistencia: 79
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/skoda/octavia/0785/
+- modelo: Skoda Octavia
+  desde: 2022
+  hasta: 2025
+  ensayo: 2022
+  estrellas: 5
+  adulto: 89
+  nino: 84
+  peaton: 68
+  asistencia: 81
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/skoda/octavia/0939/
+- modelo: Skoda Octavia
+  desde: 2025
+  hasta: 2026
+  ensayo: 2025
+  estrellas: 5
+  adulto: 85
+  nino: 82
+  peaton: 81
+  asistencia: 80
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/skoda/octavia/1143/
+- modelo: Skoda Kamiq
+  desde: 2019
+  hasta: 2026
+  ensayo: 2019
+  estrellas: 5
+  adulto: 96
+  nino: 85
+  peaton: 80
+  asistencia: 76
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/skoda/kamiq/0778/
+- modelo: Mazda CX-30
+  desde: 2019
+  hasta: 2026
+  ensayo: 2019
+  estrellas: 5
+  adulto: 99
+  nino: 86
+  peaton: 80
+  asistencia: 77
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/mazda/cx-30/0812/
+- modelo: Mazda 3
+  desde: 2019
+  hasta: 2026
+  ensayo: 2019
+  estrellas: 5
+  adulto: 98
+  nino: 87
+  peaton: 81
+  asistencia: 73
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/mazda/3/0758/
+- modelo: Fiat 500
+  desde: 2017
+  hasta: 2026
+  ensayo: 2017
+  estrellas: 3
+  adulto: 66
+  nino: 49
+  peaton: 53
+  asistencia: 27
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/fiat/500/0662/
+- modelo: Fiat 500e
+  desde: 2021
+  hasta: 2026
+  ensayo: 2021
+  estrellas: 4
+  adulto: 76
+  nino: 80
+  peaton: 67
+  asistencia: 67
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/fiat/500e/0911/
+- modelo: Fiat Panda
+  desde: 2018
+  hasta: 2026
+  ensayo: 2018
+  estrellas: 0
+  adulto: 45
+  nino: 16
+  peaton: 47
+  asistencia: 7
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/fiat/panda/0746/
+- modelo: BYD Atto 3
+  desde: 2022
+  hasta: 2026
+  ensayo: 2022
+  estrellas: 5
+  adulto: 91
+  nino: 89
+  peaton: 69
+  asistencia: 74
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/byd/atto+3/0992/
+- modelo: BMW Serie 1
+  desde: 2019
+  hasta: 2025
+  ensayo: 2019
+  estrellas: 5
+  adulto: 83
+  nino: 87
+  peaton: 76
+  asistencia: 72
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/bmw/1+series/0780/
+- modelo: BMW Serie 1
+  desde: 2025
+  hasta: 2026
+  ensayo: 2025
+  estrellas: 4
+  adulto: 78
+  nino: 84
+  peaton: 85
+  asistencia: 80
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/bmw/1+series/1125/
+- modelo: Mercedes-Benz Clase A
+  desde: 2018
+  hasta: 2026
+  ensayo: 2018
+  estrellas: 5
+  adulto: 96
+  nino: 91
+  peaton: 92
+  asistencia: 75
+  vigente: false
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/mercedes-benz/a-class/0739/
+- modelo: Audi A3
+  desde: 2020
+  hasta: 2025
+  ensayo: 2020
+  estrellas: 5
+  adulto: 89
+  nino: 81
+  peaton: 68
+  asistencia: 73
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/audi/a3/0786/
+- modelo: Audi A3
+  desde: 2025
+  hasta: 2026
+  ensayo: 2025
+  estrellas: 5
+  adulto: 86
+  nino: 81
+  peaton: 76
+  asistencia: 74
+  vigente: true
+  estado: confirmado
+  fuente: https://www.euroncap.com/assessments/audi/a3/1149/
+tuv_2026:
+  medias:
+    2-3: 6.5
+    4-5: 10.0
+    6-7: 13.6
+    8-9: 18.3
+    10-11: 22.9
+    12-13: 28.4
+  fuente_medias: https://www.tuev-verband.de/fileadmin/user_upload/Content_local/2025_TUEV-Verband_TUV-Report_2026_Praesentation.pdf
+  modelos:
+    Seat Ibiza:
+      2-3: 7.5
+      4-5: 10.4
+      6-7: 12.9
+      8-9: 21.5
+      fuente: https://www.autobild.de/artikel/seat-ibiza-gebraucht-tuev-report-2026-28137621.html
+      estado: confirmado
+    Seat Arona:
+      2-3: 8.3
+      4-5: 9.6
+      6-7: 10.4
+      fuente: https://www.autobild.de/artikel/seat-arona-gebraucht-tuev-report-2026-28199257.html
+      estado: confirmado
+    Seat León:
+      2-3: 9.3
+      4-5: 9.9
+      6-7: 12.3
+      8-9: 15.9
+      fuente: https://www.autobild.de/artikel/seat-cupra-leon-im-tuev-check-2026--28090849.html
+      estado: confirmado
+    Cupra León:
+      2-3: 9.3
+      4-5: 9.9
+      6-7: 12.3
+      8-9: 15.9
+      fuente: https://www.autobild.de/artikel/seat-cupra-leon-im-tuev-check-2026--28090849.html
+      estado: confirmado
+    Cupra Formentor:
+      2-3: 5.9
+      fuente: https://www.autobild.de/artikel/cupra-formentor-gebraucht-tuev-report-2026-28077311.html
+      estado: confirmado
+    Seat Ateca:
+      2-3: 5.5
+      4-5: 6.9
+      6-7: 9.1
+      8-9: 11.1
+      fuente: https://www.autobild.de/artikel/seat-ateca-im-tuev-check-2026--28215031.html
+      estado: confirmado
+    Volkswagen Polo:
+      2-3: 6.9
+      4-5: 6.9
+      6-7: 10.7
+      8-9: 17.5
+      fuente: https://www.autobild.de/artikel/vw-polo-im-tuev-check-2026--28310671.html
+      estado: confirmado
+    Volkswagen T-Roc:
+      2-3: 3.0
+      4-5: 4.0
+      6-7: 6.7
+      fuente: https://www.autobild.de/artikel/vw-t-roc-im-tuev-check-2026--28071449.html
+      estado: confirmado
+    Volkswagen T-Cross:
+      2-3: 5.7
+      4-5: 8.2
+      fuente: https://www.autobild.de/artikel/vw-t-cross-im-tuev-check-2026--28162641.html
+      estado: confirmado
+    Volkswagen Golf:
+      2-3: 6.6
+      4-5: 6.6
+      6-7: 9.7
+      8-9: 14.1
+      fuente: https://www.autobild.de/artikel/vw-golf-generationen-6-bis-8-im-tuev-check-2026--28207053.html
+      estado: confirmado
+    Volkswagen Tiguan:
+      2-3: 5.7
+      4-5: 7.3
+      6-7: 9.6
+      8-9: 19.7
+      fuente: https://www.autobild.de/artikel/vw-tiguan-im-tuev-check-2026--28280027.html
+      estado: confirmado
+    Toyota Yaris Cross:
+      2-3: 3.2
+      fuente: https://www.autobild.de/artikel/toyota-yaris-cross-im-tuev-check-2026--28480503.html
+      estado: probable
+    Dacia Sandero:
+      2-3: 7.8
+      4-5: 14.4
+      6-7: 19.3
+      8-9: 27.8
+      fuente: https://www.autobild.de/artikel/dacia-sandero-tuev-report-2026-28115371.html
+      estado: confirmado
+    Dacia Duster:
+      2-3: 7.4
+      4-5: 16.8
+      6-7: 23.5
+      8-9: 29.8
+      fuente: https://www.autobild.de/artikel/dacia-duster-im-tuev-check-2026--28126757.html
+      estado: confirmado
+    Renault Clio:
+      2-3: 6.8
+      4-5: 11.6
+      6-7: 16.5
+      8-9: 24.8
+      fuente: https://www.autobild.de/artikel/renault-clio-im-tuev-check-2026--28318699.html
+      estado: confirmado
+    Renault Captur:
+      2-3: 4.3
+      4-5: 7.4
+      6-7: 9.9
+      8-9: 16.2
+      fuente: https://www.autobild.de/artikel/renault-captur-tuev-report-2026-28265677.html
+      estado: confirmado
+    Renault Mégane:
+      2-3: 11.8
+      4-5: 11.2
+      6-7: 15.7
+      8-9: 19.9
+      fuente: https://www.autobild.de/artikel/renault-megane-im-tuev-check-2026--28328939.html
+      estado: confirmado
+    Peugeot 208:
+      2-3: 5.6
+      4-5: 7.7
+      6-7: 15.5
+      8-9: 19.9
+      fuente: https://www.autobild.de/artikel/peugeot-207-208-im-tuev-check-2026--28327317.html
+      estado: confirmado
+    Peugeot 2008:
+      2-3: 6.1
+      4-5: 5.4
+      6-7: 17.1
+      8-9: 21.7
+      fuente: https://www.autobild.de/artikel/peugeot-2008-gebrauchtwagen-check-tuev-schwachstellen-maengel-staerken-28135959.html
+      estado: confirmado
+    Peugeot 308:
+      4-5: 11.1
+      6-7: 15.9
+      8-9: 22.1
+      fuente: https://www.autobild.de/artikel/peugeot-308-gebraucht-tuev-report-2026-28203287.html
+      estado: confirmado
+    Citroën C3:
+      2-3: 6.4
+      4-5: 11.2
+      6-7: 16.6
+      8-9: 22.7
+      fuente: https://www.autobild.de/artikel/citroen-c3-im-tuev-check-2026--28357859.html
+      estado: confirmado
+    Opel Corsa:
+      2-3: 6.4
+      4-5: 8.5
+      6-7: 15.0
+      8-9: 19.6
+      fuente: https://www.autobild.de/artikel/opel-corsa-im-tuev-check-2026--28102887.html
+      estado: confirmado
+    Opel Mokka:
+      2-3: 7.8
+      4-5: 9.2
+      6-7: 12.2
+      8-9: 17.2
+      fuente: https://www.autobild.de/artikel/opel-mokka-im-tuev-check-2026--28230101.html
+      estado: confirmado
+    Opel Astra:
+      2-3: 9.9
+      4-5: 10.8
+      6-7: 13.7
+      8-9: 15.8
+      fuente: https://www.autobild.de/artikel/opel-astra-gebrauchtwagen-check-schwachstellen-und-maengel-laut-tuev-report-28118347.html
+      estado: confirmado
+    Hyundai i20:
+      2-3: 5.4
+      4-5: 8.5
+      6-7: 12.2
+      8-9: 14.4
+      fuente: https://www.autobild.de/artikel/hyundai-i20-im-tuev-check-2026--28350573.html
+      estado: confirmado
+    Hyundai Kona:
+      2-3: 5.9
+      4-5: 7.7
+      6-7: 9.8
+      fuente: https://www.autobild.de/artikel/hyundai-kona-gebraucht-tuev-report-2026-28181605.html
+      estado: confirmado
+    Hyundai Tucson:
+      2-3: 4.5
+      4-5: 10.6
+      6-7: 15.2
+      8-9: 19.2
+      fuente: https://www.autobild.de/artikel/hyundai-tucson-ix35-im-tuev-check-28230981.html
+      estado: confirmado
+    Kia Picanto:
+      2-3: 4.8
+      4-5: 7.5
+      6-7: 9.6
+      8-9: 21.7
+      fuente: https://www.autobild.de/artikel/kia-picanto-tuev-report-2026-28308189.html
+      estado: confirmado
+    Kia Ceed:
+      2-3: 6.5
+      4-5: 10.0
+      6-7: 14.2
+      8-9: 20.4
+      fuente: https://www.autobild.de/artikel/kia-ceed-im-tuev-check-2026-schwachstellen-maengel-probleme-28259965.html
+      estado: confirmado
+    Kia Sportage:
+      2-3: 4.0
+      4-5: 10.6
+      6-7: 14.6
+      8-9: 18.3
+      fuente: https://www.autobild.de/artikel/kia-sportage-tuev-check-2026-28294795.html
+      estado: confirmado
+    Tesla Model 3:
+      2-3: 13.1
+      4-5: 21.0
+      fuente: https://www.autobild.de/artikel/tesla-model-3-schwachstellen-maengel-staerken-tuev-report-28280563.html
+      estado: confirmado
+    Tesla Model Y:
+      2-3: 17.3
+      fuente: https://www.autobild.de/artikel/tesla-model-y-im-tuev-check-2026--28477195.html
+      estado: confirmado
+    Nissan Qashqai:
+      2-3: 5.0
+      4-5: 8.1
+      6-7: 13.0
+      8-9: 19.7
+      fuente: https://www.autobild.de/artikel/nissan-qashqai-im-tuev-check-2026--28242167.html
+      estado: confirmado
+    Ford Puma:
+      2-3: 5.2
+      4-5: 7.0
+      fuente: https://www.autobild.de/artikel/ford-puma-im-tuev-check-2026--28479377.html
+      estado: confirmado
+    Ford Focus:
+      2-3: 9.4
+      4-5: 12.6
+      fuente: https://www.autobild.de/artikel/tuev-report-2026-ford-28789017.html
+      estado: confirmado
+    Ford Kuga:
+      2-3: 8.3
+      4-5: 10.6
+      6-7: 14.3
+      8-9: 17.0
+      fuente: https://www.autobild.de/artikel/ford-kuga-im-tuev-check-2026--28150413.html
+      estado: confirmado
+    Skoda Fabia:
+      2-3: 5.5
+      4-5: 9.1
+      6-7: 14.0
+      8-9: 16.7
+      fuente: https://www.autobild.de/artikel/skoda-fabia-im-tuev-check-2026--28245289.html
+      estado: confirmado
+    Skoda Octavia:
+      2-3: 6.9
+      4-5: 10.1
+      6-7: 12.4
+      8-9: 16.5
+      fuente: https://www.autobild.de/artikel/skoda-octavia-im-tuev-check-2026--28080923.html
+      estado: confirmado
+    Skoda Kamiq:
+      2-3: 8.4
+      4-5: 12.2
+      fuente: https://www.autobild.de/artikel/skoda-kamiq-im-tuev-check-2026--28227113.html
+      estado: confirmado
+    Mazda 3:
+      2-3: 5.3
+      4-5: 8.4
+      6-7: 13.1
+      8-9: 15.2
+      fuente: https://www.autobild.de/artikel/mazda3-im-tuev-check-2026--28176087.html
+      estado: confirmado
+    Fiat 500:
+      2-3: 6.4
+      4-5: 10.6
+      6-7: 15.3
+      8-9: 23.5
+      fuente: https://www.autobild.de/artikel/fiat-500-im-tuev-check-2026--28224929.html
+      estado: confirmado
+    Fiat Panda:
+      2-3: 7.7
+      4-5: 12.4
+      6-7: 17.1
+      8-9: 22.9
+      fuente: https://www.autobild.de/artikel/fiat-panda-gebraucht-tuev-report-2026-28302135.html
+      estado: confirmado
+    BMW Serie 1:
+      2-3: 3.3
+      4-5: 18.6
+      6-7: 13.9
+      8-9: 18.8
+      fuente: https://www.autobild.de/artikel/bmw-1er-2er-im-tuev-check-2026--28210921.html
+      estado: confirmado
+    Mercedes-Benz Clase A:
+      2-3: 4.6
+      4-5: 7.2
+      6-7: 10.7
+      8-9: 12.7
+      fuente: https://www.autobild.de/artikel/mercedes-a-klasse-im-tuev-check-2026--28110171.html
+      estado: confirmado
+    Audi A3:
+      2-3: 4.5
+      4-5: 6.5
+      6-7: 8.5
+      8-9: 12.3
+      fuente: https://www.autobild.de/artikel/audi-a3-im-tuev-check-2026--28123347.html
+      estado: confirmado
+adac_2026:
+  fuente: https://www.adac.de/rund-ums-fahrzeug/unfall-schaden-panne/adac-pannenstatistik-2026/
+  alcance: averías de 2025; vehículos con primera matriculación 2016-2023; 158 series de 27 marcas
+  pkz_por_modelo_y_anio: PENDIENTE
+  mejores_de_su_clase:
+  - Seat Arona
+  - Seat Ibiza
+  - Skoda Fabia
+  - Skoda Kamiq
+  - VW Polo
+  - VW T-Cross
+  - Audi A3
+  - BMW Serie 1
+  - Cupra Formentor
+  - Cupra León
+  - Mercedes Clase A
+  - MG 4
+  - Renault Austral
+  - Seat Ateca
+  - Seat León
+  - VW Golf
+  - VW T-Roc
+  - VW Tiguan
+  - Tesla Model 3
+  - Tesla Model Y
+  peores_de_su_clase:
+    Toyota Yaris: 2021-2023
+    Toyota Yaris Cross: 2022-2023
+    Nissan Qashqai: '2019'
+    Toyota Corolla: '2023'
+    Toyota C-HR: 2020-2022
+    Mazda 3: '2020'
+    Mazda CX-30: '2020'
+    Ford Kuga: '2021'
+    Toyota RAV4: 2017-2022
+  sin_clasificar_extremo: 'resto de modelos de la lista: PENDIENTE (intermedios o no evaluados)'
+  pkz_destacadas:
+    BMW i3 (3 años): 0.4
+    Tesla Model 3 (3 años): 0.7
+    Mini y BMW X2 (3 años, combustión): 0.8
+    media eléctricos 4 años: 6.5
+    media combustión 4 años: 12.5
+ocu_2026_marcas:
+  BMW: 87
+  Hyundai: 87
+  Mini: 87
+  Lancia: 87
+  Nissan: 87
+  Mercedes-Benz: 84
+  Audi: 84
+  Cupra: 84
+  Dacia: 84
+  Seat: 84
+  Porsche: 84
+  Skoda: 82
+  Fiat: 82
+  Volvo: 82
+  Volkswagen: 82
+  Renault: 82
+  Jeep: 82
+  Polestar: 82
+  Ford: 80
+  Alfa Romeo: 80
+  Jaguar: 80
+  Opel: 80
+  Peugeot: 76
+  Citroën: 76
+  DS Automobiles: 76
+  Lynk & Co: 76
+  Lexus: 93
+  Subaru: 91
+  Toyota: 91
+  Suzuki: 91
+  Tesla: 89
+  BYD: 89
+  Honda: 89
+  Mazda: 89
+  Kia: 89
+  Mitsubishi: 89
+  Smart: 89
+  MG: 72
+  Land Rover: 64
+ocu_fuentes:
+  oficial: https://www.ocu.org/organizacion/prensa/notas-de-prensa/2026/fiabcoches020326
+  tabla: https://www.motor.es/noticias/ocu-ranking-fiabilidad-coches-2026-mg-2026112948.html
+  confirmadas:
+  - BYD
+  - Honda
+  - Kia
+  - Land Rover
+  - Lexus
+  - MG
+  - Mazda
+  - Mitsubishi
+  - Smart
+  - Subaru
+  - Suzuki
+  - Tesla
+  - Toyota
+  probables:
+  - Alfa Romeo
+  - Audi
+  - BMW
+  - Citroën
+  - Cupra
+  - DS Automobiles
+  - Dacia
+  - Fiat
+  - Ford
+  - Hyundai
+  - Jaguar
+  - Jeep
+  - Lancia
+  - Lynk & Co
+  - Mercedes-Benz
+  - Mini
+  - Nissan
+  - Opel
+  - Peugeot
+  - Polestar
+  - Porsche
+  - Renault
+  - Seat
+  - Skoda
+  - Volkswagen
+  - Volvo

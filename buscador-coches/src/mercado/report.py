@@ -66,4 +66,20 @@ def write_report(path: Path, res: dict, store) -> None:
         d = res["primas"].get(lab)
         if d:
             L.append(f"| {lab} | {d['pct']:+.1%} | {d['lo']:+.1%} a {d['hi']:+.1%} |")
+    cov = lambda f: sum(1 for a in ads if f(a)) / max(len(ads), 1)  # noqa: E731
+    L += ["", "## Cobertura de los datos y pendientes", "",
+          f"- Euro NCAP de la generación: {cov(lambda a: a['ncap'] is not None):.0%} de los anuncios; "
+          f"TÜV 2026 de su franja de edad: {cov(lambda a: 'TÜV 2026' in a['fiab_fuente']):.0%}; OCU 2026 de la marca: "
+          f"{cov(lambda a: 'OCU' in a['fiab_fuente']):.0%}; consumo WLTP del anuncio: {cov(lambda a: bool(a.get('consumo_wltp'))):.0%}; "
+          f"cambio conocido: {cov(lambda a: bool(a['cambio'])):.0%}.",
+          "- Sin fuente o PENDIENTE: seguro por segmento con perfil estándar (supuesto calibrado con CHECK24/Kelisto); "
+          "precio del juego de neumáticos (supuesto con precios de ensayos OCU); mantenimiento en € por motorización (OCU + "
+          "proporciones de Solera); consumo real de eléctricos (sin OBFCM) y consumos por defecto salvo gasolina; ADAC 2026 por "
+          "modelo y año (solo mejor/peor de su clase); Euro NCAP y TÜV de muchos premium (BMW, Audi Q, Citroën C5 Aircross…).",
+          "- Ayudas a la conducción y equipamiento: los listados no los traen y no se abren fichas (coste de ~20 h por "
+          "ejecución con las pausas obligatorias): se aproxima con el % de asistencia a la seguridad de Euro NCAP cuando hay ensayo.",
+          "- Garantía restante: solo los meses que publica Coches.net; nuevos y km 0 = 36 meses legales; profesional = 12.",
+          "- Liquidez: se mide con varias ejecuciones (python run_mercado.py --watch).",
+          "- Nuevos: Coches.net solo deja ver 180 de ~7.300 (ruta nacional, pg <= 6); AutoScout24 no tiene nuevos en el radio.",
+          "- Flexicar: 12 de ~1.183 (el resto se carga desde /api/, prohibido por robots.txt).", ""]
     path.write_text("\n".join(L) + "\n", encoding="utf-8")

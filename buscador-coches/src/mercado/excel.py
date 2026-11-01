@@ -153,7 +153,8 @@ COLUMNS = [
     ("cc_est", "Cilindrada (cc)", "data", None), ("segmento", "Segmento", "data", None), ("etiqueta", "Etiqueta", "data", None),
     ("etq_fuente", "Fuente etiqueta", "data", None), ("vendedor", "Vendedor", "data", None), ("gar_anuncio", "Garantía del anuncio (meses)", "data", None),
     ("consumo_wltp", "Consumo WLTP del anuncio (l/100)", "data", None), ("ncap", "Euro NCAP (estrellas)", "data", None),
-    ("ncap_vig", "Euro NCAP vigente", "data", None), ("esp", "ESP", "data", None), ("fiab", "Fiabilidad (0-100)", "data", None),
+    ("ncap_vig", "Euro NCAP vigente", "data", None), ("ncap_asist", "Ayudas a la conducción (Euro NCAP, % safety assist)", "data", None),
+    ("esp", "ESP", "data", None), ("fiab", "Fiabilidad (0-100)", "data", None),
     ("mediana", "Mediana de mercado (€)", "data", None), ("nivel_med", "Nivel de la mediana", "data", None),
     ("n_modelo", "Anuncios del modelo", "data", None), ("dep_clave", "Clave de depreciación", "data", None), ("url", "Enlace", "data", None),
     # ---- coste total de propiedad
@@ -243,7 +244,7 @@ def row_data(a: dict) -> dict:
             "modelo_key": a["modelo_key"], "titulo": a.get("titulo"), "anio": a["anio"], "km": a["km"], "precio": a["precio"],
             "combustible": a["combustible"], "cambio": a["cambio"], "cv": a.get("cv"), "cc_est": a["cc_est"], "segmento": a["segmento"],
             "etiqueta": a["etiqueta"], "etq_fuente": a.get("etiqueta_fuente"), "vendedor": a.get("vendedor"),
-            "gar_anuncio": a.get("garantia_meses"), "consumo_wltp": a.get("consumo_wltp"), "ncap": a["ncap"], "ncap_vig": a["ncap_vigencia"] or None,
+            "gar_anuncio": a.get("garantia_meses"), "consumo_wltp": a.get("consumo_wltp"), "ncap": a["ncap"], "ncap_vig": a["ncap_vigencia"] or None, "ncap_asist": a.get("ncap_asist"),
             "esp": a["esp"], "fiab": a["fiab"], "mediana": a["mediana"], "nivel_med": a["nivel_mediana"] or None,
             "n_modelo": a["n_modelo"], "dep_clave": a["dep_clave"], "url": a.get("url")}
 

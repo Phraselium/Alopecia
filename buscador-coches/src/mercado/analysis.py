@@ -53,13 +53,29 @@ def franja_tuv(edad: float) -> str:
     return "12-13"
 
 
-def fiabilidad(a: dict, rel: dict, rec: dict, neutro: float) -> tuple[float, str]:
+def nk(x: str) -> str:
+    """Clave normalizada para cruzar nombres de modelo/marca de distintas fuentes ('Mazda Cx-30' = 'Mazda CX-30')."""
+    import re as _re
+    t = norm_text(x or "").replace("mercedes benz", "mercedes-benz").replace("ds automobiles", "ds")
+    return _re.sub(r"[^a-z0-9]", "", t)
+
+
+def indices(rel: dict, rec: dict) -> dict:
+    ocu = {nk(k): v for k, v in ((rel.get("marcas_ocu_2026") or {}).get("valores") or {}).items()}
+    ocu.update({nk(k): v for k, v in (rec.get("ocu_2026_marcas") or {}).items()})
+    return {"tuv": {nk(k): v for k, v in ((rec.get("tuv_2026") or {}).get("modelos") or {}).items()},
+            "ocu": ocu,
+            "ncap": [dict(e, _k=nk(e["modelo"])) for e in (rec.get("euroncap_recientes") or []) + (rel.get("euroncap") or [])]}
+
+
+def fiabilidad(a: dict, rel: dict, rec: dict, neutro: float, ix: dict | None = None) -> tuple[float, str]:
     """Media de las fuentes que aplican a la GENERACIÓN/EDAD del anuncio + ajustes por motor documentados."""
     from ..scoring import engine_adjust
     from ..models import Listing
+    ix = ix or indices(rel, rec)
     vals, src = [], []
     tuv = (rec.get("tuv_2026") or {})
-    mods = (tuv.get("modelos") or {}).get(a["modelo_key"]) or {}
+    mods = ix["tuv"].get(nk(a["modelo_key"])) or {}
     fr = franja_tuv(a["edad"])
     if fr in mods and (tuv.get("medias") or {}).get(fr):
         avg = tuv["medias"][fr]
@@ -71,10 +87,8 @@ def fiabilidad(a: dict, rel: dict, rec: dict, neutro: float) -> tuple[float, str
         if avg:
             vals.append(M.clamp(50 + 100 * (avg - m_old["tuv_mq"]) / avg))
             src.append("TÜV (reliability.yaml)")
-    ocu = dict((rel.get("marcas_ocu_2026") or {}).get("valores") or {})
-    ocu.update(rec.get("ocu_2026_marcas") or {})
-    if a["marca"] in ocu:
-        vals.append(float(ocu[a["marca"]]))
+    if nk(a["marca"]) in ix["ocu"]:
+        vals.append(float(ix["ocu"][nk(a["marca"])]))
         src.append("OCU 2026 marca")
     base = sum(vals) / len(vals) if vals else neutro
     li = Listing(plataforma="", id_externo="", url="", titulo="", marca=a["marca"], anio=a["anio"], combustible=a["combustible"])
@@ -83,13 +97,15 @@ def fiabilidad(a: dict, rel: dict, rec: dict, neutro: float) -> tuple[float, str
     return M.clamp(base + adj), (" + ".join(src) or "PENDIENTE (neutro)") + (f"; ajuste motor/combustible {adj:+.0f}" if adj else "")
 
 
-def ncap(a: dict, rel: dict, rec: dict, anio_actual: int) -> tuple[float | None, str, str]:
-    for e in (rec.get("euroncap_recientes") or []) + (rel.get("euroncap") or []):
-        if e.get("modelo") == a["modelo_key"] and a["anio"] and e["desde"] <= a["anio"] <= e["hasta"] and e.get("estrellas"):
+def ncap(a: dict, rel: dict, rec: dict, anio_actual: int, ix: dict | None = None):
+    ix = ix or indices(rel, rec)
+    k = nk(a["modelo_key"])
+    for e in ix["ncap"]:
+        if e["_k"] == k and a["anio"] and e["desde"] <= a["anio"] <= e["hasta"] and e.get("estrellas") is not None:
             ens = e.get("ensayo") or e["desde"]
-            vig = "vigente" if anio_actual - ens <= 6 else "caducada (> 6 años)"
-            return float(e["estrellas"]), vig, f"Euro NCAP {ens}: {e['estrellas']}★ ({vig}); {e.get('fuente', '')}"
-    return None, "", ""
+            vig = ("vigente" if e["vigente"] else "caducada") if "vigente" in e else ("vigente" if anio_actual - ens <= 6 else "caducada (> 6 años)")
+            return float(e["estrellas"]), vig, f"Euro NCAP {ens}: {e['estrellas']}★ ({vig}); asistencia {e.get('asistencia', '?')} %; {e.get('fuente', '')}", e.get("asistencia")
+    return None, "", "", None
 
 
 def esp(a: dict, rel: dict, cfg: dict) -> str | None:
@@ -234,6 +250,7 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
             curvas_marca.append(r)
 
     # 5. coste total de propiedad y calidad
+    ix = indices(rel, rec)
     n_mod = Counter(a["modelo_key"] for a in ads)
     for a in ads:
         a["cc_est"], a["cc_fuente"] = M.cc_estimada(a, sup, a["segmento"])
@@ -243,8 +260,8 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
         t = M.tco(a, a["segmento"], a["combustible"], a["edad"], a["cc_est"], a["cvf"], a["consumo"], sup, fiscal,
                   {k: v for k, v in dep.items() if v}, uso)
         a.update(t)
-        a["fiab"], a["fiab_fuente"] = fiabilidad(a, rel, rec, neutro)
-        a["ncap"], a["ncap_vigencia"], a["ncap_ref"] = ncap(a, rel, rec, anio_actual)
+        a["fiab"], a["fiab_fuente"] = fiabilidad(a, rel, rec, neutro, ix)
+        a["ncap"], a["ncap_vigencia"], a["ncap_ref"], a["ncap_asist"] = ncap(a, rel, rec, anio_actual, ix)
         a["esp"] = esp(a, rel, cfg)
         a["n_modelo"] = n_mod[a["modelo_key"]]
     usos = sorted(a["uso_anual"] for a in ads)
