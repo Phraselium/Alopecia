@@ -173,12 +173,16 @@ def soh_grupo(a: dict, fuel: Optional[str], sup: dict) -> Optional[str]:
 
 
 def soh(grupo: Optional[str], edad: float, km: float, sup: dict) -> Optional[float]:
-    """Estado de salud estimado: 1 − pérdida/año·edad − pérdida/10.000 km·km, con suelo (supuesto con fuente)."""
+    """Estado de salud estimado (mercado_supuestos.yaml → bateria.soh): el menor de SOH por tiempo (1 − pérdida/año·edad) y
+    SOH por km (caída inicial en los primeros km_inicial + pérdida por cada 10.000 km después), con suelo."""
     if not grupo:
         return None
     b = sup["bateria"]["soh"]
     g = b["grupos"][grupo]
-    return max(b["minimo"], 1 - g["perdida_anual"] * edad - g["perdida_10k_km"] * (km or 0) / 10000)
+    km = km or 0
+    ki = b["km_inicial"]
+    por_km = 1 - g["perdida_inicial"] * min(km, ki) / ki - g["perdida_10k_km"] * max(0, km - ki) / 10000
+    return max(b["minimo"], min(1 - g["perdida_anual"] * edad, por_km))
 
 
 def kwh_titulo(a: dict) -> Optional[float]:
@@ -187,40 +191,54 @@ def kwh_titulo(a: dict) -> Optional[float]:
 
 
 def autonomia_nueva(a: dict, fuel: Optional[str], sup: dict) -> tuple[Optional[float], str]:
-    """Autonomía real con la batería nueva (km): WLTP de la versión × factor real/WLTP. Versión: la del año y, si el título
-    trae los kWh, la de capacidad más cercana. Sin dato: None (PENDIENTE)."""
+    """Autonomía real con la batería nueva (km) de la versión: la del año; si el título encaja con un patrón de versión
+    (Long Range, Performance…) o trae los kWh, la más parecida; si no, la de menor autonomía (prudente). Real de
+    ev-database si la hay; si no, WLTP × factor real/WLTP o NEDC × factor real/NEDC. Sin dato: None (PENDIENTE)."""
     if fuel != "electrico":
         return None, ""
-    b = sup["bateria"]
-    vers = _modelo_en(a, b["autonomia_wltp"]["modelos"]) or []
+    aw = sup["bateria"]["autonomia_wltp"]
+    vers = _modelo_en(a, aw["modelos"]) or []
     anio = a.get("anio") or 0
-    cand = [v for v in vers if v[0] <= anio <= v[1]]
+    cand = [v for v in vers if v["desde"] <= anio <= v["hasta"]]
     if not cand:
-        return None, "PENDIENTE: modelo sin autonomía WLTP en mercado_supuestos.yaml"
+        return None, "PENDIENTE: modelo o año sin autonomía en mercado_supuestos.yaml"
+
+    def km_real(v):
+        return v.get("real") or (v["wltp"] * aw["factor_real"] if v.get("wltp") else (v["nedc"] * aw["factor_real_nedc"] if v.get("nedc") else None))
+    cand = [v for v in cand if km_real(v)]
+    if not cand:
+        return None, "PENDIENTE: versión sin autonomía"
+    t = norm_text(f"{a.get('titulo') or ''} {a.get('version') or ''}")
+    con_p = [v for v in cand if v.get("patron") and re.search(v["patron"], t)]
+    pool = con_p or [v for v in cand if not v.get("patron")] or cand
     kwh = kwh_titulo(a)
-    v = min(cand, key=lambda x: abs(x[2] - kwh)) if kwh else min(cand, key=lambda x: x[3])   # sin kWh: la de menor autonomía
-    return v[3] * b["autonomia_wltp"]["factor_real"], (f"WLTP {v[3]} km ({v[2]} kWh, {v[0]}-{v[1]})"
-                                                        f"{'' if kwh else ' — versión de menor autonomía (el título no da los kWh)'}")
+    v = min(pool, key=lambda x: abs(x["kwh"] - kwh)) if kwh else min(pool, key=km_real)
+    km = km_real(v)
+    org = "real ev-database" if v.get("real") else ("WLTP × factor" if v.get("wltp") else "NEDC × factor")
+    nota = "" if (kwh or con_p or len(pool) == 1) else " — versión de menor autonomía del año (el título no la identifica)"
+    return km, f"{km:.0f} km ({org}; {v['kwh']} kWh, {v['desde']}-{v['hasta']}){nota}"
 
 
-def bateria_estado(a: dict, fuel: Optional[str], sup: dict) -> Optional[str]:
-    """'propiedad' / 'alquiler' / 'no consta' para los modelos que se vendieron con batería en alquiler; None en el resto."""
+def bateria_estado(a: dict, fuel: Optional[str], sup: dict) -> tuple[Optional[str], float]:
+    """('propiedad' | 'alquiler' | 'no consta', €/mes) para los modelos y años que se vendieron con batería en alquiler;
+    (None, 0) en el resto. Se mira primero la propiedad ('sin alquiler de batería' contiene 'alquiler de batería')."""
     if fuel != "electrico":
-        return None
+        return None, 0.0
     al = sup["bateria"]["alquiler"]
-    rng = _modelo_en(a, al["modelos"])
-    if not rng or not (rng[0] <= (a.get("anio") or 0) <= rng[1]):
-        return None
+    tramos = _modelo_en(a, al["modelos"]) or []
+    t_ = next((x for x in tramos if x[0] <= (a.get("anio") or 0) <= x[1]), None)
+    if not t_:
+        return None, 0.0
     t = norm_text(f"{a.get('titulo') or ''} {a.get('version') or ''} {a.get('descripcion') or ''}")
-    if any(re.search(p, t) for p in al["patrones_alquiler"]):
-        return "alquiler"
     if any(re.search(p, t) for p in al["patrones_propiedad"]):
-        return "propiedad"
-    return "no consta"
+        return "propiedad", float(t_[2])
+    if any(re.search(p, t) for p in al["patrones_alquiler"]):
+        return "alquiler", float(t_[2])
+    return "no consta", float(t_[2])
 
 
-def cuota_bateria(estado: Optional[str], sup: dict) -> float:
-    return 12 * float(sup["bateria"]["alquiler"]["cuota_mensual_eur"]) if estado in ("alquiler", "no consta") else 0.0
+def cuota_bateria(estado: Optional[str], cuota_mes: float) -> float:
+    return 12 * float(cuota_mes or 0) if estado in ("alquiler", "no consta") else 0.0
 
 
 def pen_autonomia(aut: Optional[float], el: dict) -> float:
@@ -264,13 +282,13 @@ def tco(a: dict, seg, fuel, edad, cc, cv_f, cons, sup, fiscal, dep, uso, el: Opt
     vc = vida_clave(seg, fuel, sup)
     fv = frac_vida(a.get("km") or 0, edad, vc, sup, uso)
     deprec = max(deprec_mkt, a["precio"] * fv) if sup["vida_util"].get("activo", True) else deprec_mkt
-    bat = bateria_estado(a, fuel, sup)
-    cuota_bat = cuota_bateria(bat, sup)
+    bat, cuota_mes = bateria_estado(a, fuel, sup)
+    cuota_bat = cuota_bateria(bat, cuota_mes)
     uso_anual = energia + seg_e + mant + neum + imp_circ + cuota_bat
     total = impuestos + deprec + anios * uso_anual
     return {"itp": i_tp, "tasa": tasa, "energia": energia, "seguro": seg_e, "mant": mant, "neum": neum, "ivtm": imp_circ, "impuestos": impuestos,
             "dep_factor": fac, "soh_grupo": grp, "soh": s_hoy, "soh_fin": s_fin, "deprec_mkt": deprec_mkt, "vida_clave": vc, "frac_vida": fv,
-            "bat_estado": bat, "cuota_bat": cuota_bat,
+            "bat_estado": bat, "cuota_bat_mes": cuota_mes if bat else None, "cuota_bat": cuota_bat,
             "depreciacion": deprec, "uso_anual": uso_anual, "tco": total, "coste_anual": total / anios}
 
 

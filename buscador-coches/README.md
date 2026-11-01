@@ -212,7 +212,15 @@ python tools/verify_mercado.py           # recalcula mercado.xlsx con LibreOffic
 - Impuestos: ITP o tasa.
 - Depreciación estimada con los propios datos.
 - Seguro, energía (WLTP más el desfase real del ICCT, o consumo por defecto), mantenimiento, neumáticos e IVTM de València.
-- Caballos fiscales según el RGV. La parte de uso anual (energía, seguro, mantenimiento, neumáticos e IVTM) se multiplica por los 5 años.
+- Caballos fiscales según el RGV. La parte de uso anual (energía, seguro, mantenimiento, neumáticos, IVTM y, si procede, alquiler de batería) se multiplica por los 5 años.
+- Vida útil restante: la depreciación es como mínimo la parte de vida útil (km o años, la que se agote antes) que consumen los 5 años. Vida útil por combustible en `mercado_supuestos.yaml → vida_util` (Sigrauto, ICCT; por segmento PENDIENTE).
+
+**Eléctricos** (`config_mercado.yaml → electricos, recarga`; cifras con fuente en `mercado_supuestos.yaml → recarga, bateria`)
+- Escenarios de recarga casa / mixta / pública con precios de Eurostat y la CNMC; por defecto «mixta». La hoja Frontera y el informe muestran la frontera en los tres.
+- Estado de salud de la batería (SOH) por edad y km, con un grupo más rápido para las baterías refrigeradas por aire (Leaf, Zoe…): Geotab, P3/Aviloo y ADAC.
+- Autonomía real = autonomía con la batería nueva de la versión (ev-database, WLTP o NEDC) × SOH. Por debajo de 200 km se resta calidad (hasta 15 puntos con 100 km o menos).
+- Valor residual × (SOH final / SOH hoy).
+- Batería en alquiler (Renault ZE, smart ED 451, Leaf 2013-2017): si el título no dice que la batería es en propiedad, se suma la cuota con fuente al coste de uso y se marca.
 
 **Calidad**
 - Mismos criterios y pesos que el perfil personal, sin estética ni color, renormalizados.
@@ -222,6 +230,7 @@ python tools/verify_mercado.py           # recalcula mercado.xlsx con LibreOffic
 - Medianas por modelo, generación, año y km.
 - Depreciación por segmento, combustible y marca: MCO con efectos fijos de modelo y errores HC1.
 - Oferta y liquidez.
-- Primas de etiqueta y de cambio automático (efectos fijos de modelo y año, errores HC1).
-- Frontera eficiente y top 5 por franja y por segmento.
-- Infravalorados: residuo de un modelo de valor.
+- Primas de etiqueta y de cambio automático: especificación nueva con efecto fijo de marca y errores agrupados por modelo (CR1), comparada con la anterior (efecto fijo de modelo y errores HC1) y con efecto fijo de modelo y errores agrupados.
+- Frontera eficiente y top 5 por franja y por segmento, en los tres escenarios de recarga.
+- Sensibilidad del Top 5 a ±20 % en energía, seguro y depreciación (hoja Sensibilidad).
+- Infravalorados: residuo de un modelo de valor con efecto fijo de marca y errores agrupados por modelo, comparado con la especificación anterior (sin efectos fijos).

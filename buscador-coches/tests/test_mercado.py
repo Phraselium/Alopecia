@@ -175,11 +175,23 @@ def test_bateria_vida_recarga(mcfg):
     assert s_l < s_t and M.soh(None, 3, 0, sup) is None
     assert M.kwh_titulo({"titulo": "Ford Mustang Mach-E Batería 75.7Kwh"}) == 75.7
     zoe = {"modelo_key": "Renault Zoe", "anio": 2016, "titulo": "Renault Zoe Intens"}
-    assert M.bateria_estado(zoe, "electrico", sup) == "no consta"
-    assert M.bateria_estado(dict(zoe, titulo="Renault Zoe batería en propiedad"), "electrico", sup) == "propiedad"
-    assert M.bateria_estado(dict(zoe, titulo="Renault Zoe con alquiler de batería"), "electrico", sup) == "alquiler"
-    assert M.bateria_estado(dict(zoe, anio=2025), "electrico", sup) is None
-    assert M.cuota_bateria("no consta", sup) == 12 * sup["bateria"]["alquiler"]["cuota_mensual_eur"]
+    assert M.bateria_estado(zoe, "electrico", sup) == ("no consta", 79.0)
+    assert M.bateria_estado(dict(zoe, titulo="Renault Zoe batería en propiedad"), "electrico", sup)[0] == "propiedad"
+    assert M.bateria_estado(dict(zoe, titulo="Renault Zoe sin alquiler de batería"), "electrico", sup)[0] == "propiedad"
+    assert M.bateria_estado(dict(zoe, titulo="Renault Zoe con alquiler de batería"), "electrico", sup)[0] == "alquiler"
+    assert M.bateria_estado(dict(zoe, titulo="RENAULT ZOE Intens R135 Bateria 50kWh Flex", anio=2020), "electrico", sup)[0] == "alquiler"
+    assert M.bateria_estado(dict(zoe, anio=2025), "electrico", sup) == (None, 0.0)
+    assert M.cuota_bateria("no consta", 79) == 948 and M.cuota_bateria("propiedad", 79) == 0
+    # autonomía: Tesla Long Range por patrón; Leaf por kWh del título; modelo sin dato -> PENDIENTE
+    m3 = {"modelo_key": "Tesla Model 3", "anio": 2021, "titulo": "Tesla Model 3 Long Range AWD"}
+    assert M.autonomia_nueva(m3, "electrico", sup)[0] == 470
+    assert M.autonomia_nueva(dict(m3, titulo="Tesla Model 3 Standard Plus"), "electrico", sup)[0] == 350
+    assert M.autonomia_nueva(dict(leaf, anio=2020, titulo="Nissan Leaf e+ 62kWh"), "electrico", sup)[0] == 345
+    assert M.autonomia_nueva({"modelo_key": "Marca Inventada", "anio": 2020}, "electrico", sup)[0] is None
+    # SOH: con pocos km manda la edad; con muchos km y poca edad mandan los km
+    g = sup["bateria"]["soh"]["grupos"]["liquida"]
+    assert M.soh("liquida", 4, 1000, sup) == pytest.approx(1 - 4 * g["perdida_anual"])
+    assert M.soh("liquida", 1, 130000, sup) == pytest.approx(1 - g["perdida_inicial"] - 10 * g["perdida_10k_km"])
     el = mcfg["electricos"]
     assert M.pen_autonomia(None, el) == 0 and M.pen_autonomia(el["autonomia_umbral_km"] + 1, el) == 0
     assert M.pen_autonomia(el["autonomia_penalizacion_max_km"] - 1, el) == el["penalizacion_max_puntos"]

@@ -148,8 +148,9 @@ def build_supuestos(wb, res, names: Names):
         c.font = _font(GREEN)
     bt = sup["bateria"]
     so = bt["soh"]
-    table("SOH_TBL", [[g, d["perdida_anual"], d["perdida_10k_km"], d.get("descripcion", "")] for g, d in so["grupos"].items()],
-          ["Grupo de batería", "Pérdida de SOH por año", "Pérdida de SOH por 10.000 km", "Qué incluye"], f"{so['estado']} — {so['fuente']}")
+    table("SOH_TBL", [[g, d["perdida_anual"], d["perdida_inicial"], d["perdida_10k_km"], d.get("descripcion", "")] for g, d in so["grupos"].items()],
+          ["Grupo de batería", "Pérdida de SOH por año", "Caída inicial (hasta SOH_KM_INI)", "Pérdida por 10.000 km después", "Qué incluye"],
+          f"{so['estado']} — {so['fuente']}")
     param("SOH_MIN", "SOH mínimo del modelo lineal (suelo)", so["minimo"], so["estado"], so["fuente"])
     e = res["electricos"]
     param("SOH_ELAST", "Elasticidad del valor residual al SOH (valor final × (SOH final / SOH hoy)^e)", e["elasticidad_valor_soh"],
@@ -157,10 +158,12 @@ def build_supuestos(wb, res, names: Names):
     param("AUT_UMBRAL", "Autonomía real por debajo de la cual se penaliza la calidad (km)", e["autonomia_umbral_km"], "criterio configurable", "config_mercado.yaml → electricos")
     param("AUT_CERO", "Autonomía con la penalización máxima (km)", e["autonomia_penalizacion_max_km"], "criterio configurable", "config_mercado.yaml → electricos")
     param("AUT_PEN_MAX", "Penalización máxima de calidad por autonomía (puntos)", e["penalizacion_max_puntos"], "criterio configurable", "config_mercado.yaml → electricos")
-    param("AUT_FACTOR", "Autonomía real / WLTP (solo informativo: ya aplicado en la columna 'Autonomía nueva')", bt["autonomia_wltp"]["factor_real"],
+    param("AUT_FACTOR", "Autonomía real / WLTP si falta la real (informativo: ya aplicado en la columna 'Autonomía nueva')", bt["autonomia_wltp"]["factor_real"],
           bt["autonomia_wltp"]["estado"], bt["autonomia_wltp"]["fuente"])
+    param("SOH_KM_INI", "Km de la caída inicial de SOH", so["km_inicial"], so["estado"], so["fuente"])
     al = bt["alquiler"]
-    param("BAT_CUOTA", "Cuota mensual del alquiler de batería (€/mes) si es de alquiler o no consta", al["cuota_mensual_eur"], al["estado"], al["fuente"])
+    ws.cell(r, 1, "Alquiler de batería (cuota €/mes por modelo y año en la columna 'Cuota alquiler batería' de Anuncios): " + al["fuente"])
+    r += 1
     vu = sup["vida_util"]
     param("VIDA_ACTIVO", "Penalización por vida útil restante activa (1 = sí)", 1 if vu.get("activo", True) else 0, "supuesto configurable", "mercado_supuestos.yaml → vida_util")
     table("VIDA_TBL", [[k2, d["km"], d["anios"], d.get("nota", "")] for k2, d in vu["tabla"].items()],
@@ -194,7 +197,8 @@ COLUMNS = [
     ("mediana", "Mediana de mercado (€)", "data", None), ("nivel_med", "Nivel de la mediana", "data", None),
     ("n_modelo", "Anuncios del modelo", "data", None), ("dep_clave", "Clave de depreciación", "data", None),
     ("soh_grupo", "Grupo de batería (SOH)", "data", None), ("aut_nueva", "Autonomía real con batería nueva (km)", "data", None),
-    ("bat_estado", "Batería (propiedad / alquiler / no consta)", "data", None), ("vida_clave", "Clave de vida útil", "data", None),
+    ("bat_estado", "Batería (propiedad / alquiler / no consta)", "data", None),
+    ("cuota_bat_mes", "Cuota alquiler batería (€/mes)", "data", None), ("vida_clave", "Clave de vida útil", "data", None),
     ("url", "Enlace", "data", None),
     # ---- coste total de propiedad
     ("edad", "Edad (años)", "calc", "=MAX(0,ANIO_ACTUAL-{anio})"),
@@ -219,9 +223,9 @@ COLUMNS = [
     ("tasa", "Tasa DGT (€)", "calc", '=IF(OR({tipo}="nuevo",{tipo}="km0"),0,TASA_DGT)'),
     ("dep_f", "Factor de valor a 5 años", "calc", "=VLOOKUP({dep_clave},DEP_TBL,2,0)"),
     ("soh", "SOH batería hoy", "calc",
-     '=IF({soh_grupo}="","",MAX(SOH_MIN,1-VLOOKUP({soh_grupo},SOH_TBL,2,0)*{edad}-VLOOKUP({soh_grupo},SOH_TBL,3,0)*{km}/10000))'),
+     '=IF({soh_grupo}="","",MAX(SOH_MIN,MIN(1-VLOOKUP({soh_grupo},SOH_TBL,2,0)*{edad},1-VLOOKUP({soh_grupo},SOH_TBL,3,0)*MIN({km},SOH_KM_INI)/SOH_KM_INI-VLOOKUP({soh_grupo},SOH_TBL,4,0)*MAX(0,{km}-SOH_KM_INI)/10000)))'),
     ("soh_fin", "SOH batería al final", "calc",
-     '=IF({soh_grupo}="","",MAX(SOH_MIN,1-VLOOKUP({soh_grupo},SOH_TBL,2,0)*({edad}+ANIOS)-VLOOKUP({soh_grupo},SOH_TBL,3,0)*({km}+ANIOS*KM_ANIO)/10000))'),
+     '=IF({soh_grupo}="","",MAX(SOH_MIN,MIN(1-VLOOKUP({soh_grupo},SOH_TBL,2,0)*({edad}+ANIOS),1-VLOOKUP({soh_grupo},SOH_TBL,3,0)*MIN({km}+ANIOS*KM_ANIO,SOH_KM_INI)/SOH_KM_INI-VLOOKUP({soh_grupo},SOH_TBL,4,0)*MAX(0,{km}+ANIOS*KM_ANIO-SOH_KM_INI)/10000)))'),
     ("autonomia", "Autonomía real estimada hoy (km)", "calc", '=IF(OR({soh}="",N({aut_nueva})=0),"",{aut_nueva}*{soh})'),
     ("pen_aut", "Penalización por autonomía (puntos)", "calc",
      '=IF({autonomia}="",0,AUT_PEN_MAX*MAX(0,MIN(1,(AUT_UMBRAL-{autonomia})/(AUT_UMBRAL-AUT_CERO))))'),
@@ -229,7 +233,7 @@ COLUMNS = [
     ("frac_vida", "Vida útil restante que se consume", "calc",
      "=MIN(1,MAX(ANIOS*KM_ANIO/MAX(VLOOKUP({vida_clave},VIDA_TBL,2,0)-{km},1),ANIOS/MAX(VLOOKUP({vida_clave},VIDA_TBL,3,0)-{edad},0.1)))"),
     ("deprec", "Depreciación 5 años (€)", "calc", "=IF(VIDA_ACTIVO=1,MAX({deprec_mkt},{precio}*{frac_vida}),{deprec_mkt})"),
-    ("cuota_bat", "Alquiler de batería €/año", "calc", '=IF(OR({bat_estado}="alquiler",{bat_estado}="no consta"),12*BAT_CUOTA,0)'),
+    ("cuota_bat", "Alquiler de batería €/año", "calc", '=IF(OR({bat_estado}="alquiler",{bat_estado}="no consta"),12*{cuota_bat_mes},0)'),
     ("uso_anual", "Coste de uso €/año", "calc", "={energia}+{seguro}+{mant}+{neum}+{ivtm}+{cuota_bat}"),
     ("tco", "COSTE TOTAL 5 AÑOS (€)", "calc", "={itp}+{tasa}+{deprec}+ANIOS*{uso_anual}"),
     ("coste_anual", "Coste anual (€)", "calc", "={tco}/ANIOS"),
@@ -285,10 +289,12 @@ NOTES = {
     "dep_clave": "Clave de la tabla DEP_TBL (Supuestos) con la depreciación estimada para su segmento y combustible.",
     "soh_grupo": "Solo eléctricos: grupo de degradación de la batería (refrigeración líquida, por aire…) según el modelo y la generación "
                  "(mercado_supuestos.yaml → bateria.soh, con fuentes). Tabla SOH_TBL en Supuestos.",
-    "aut_nueva": "Solo eléctricos: autonomía WLTP de la versión (por año y, si el título da los kWh, la capacidad más cercana) × AUT_FACTOR "
-                 "(real/WLTP). Fuente de cada celda en su nota. Vacío = PENDIENTE (modelo sin dato).",
+    "aut_nueva": "Solo eléctricos: autonomía real con la batería nueva de la versión (año; patrón o kWh del título): real de ev-database o WLTP × AUT_FACTOR "
+                 "(NEDC × 0,68 si solo hay NEDC). Fuente en la nota de cada celda. Vacío = PENDIENTE (modelo sin dato).",
     "bat_estado": "Solo modelos vendidos con batería en alquiler (Renault ZE…): 'alquiler' o 'propiedad' si el título lo dice; si no, "
                   "'no consta' y se suma la cuota (criterio prudente). A nivel de listado no hay descripción completa.",
+    "cuota_bat_mes": "Cuota mensual del alquiler de batería del modelo y año con 12.000 km/año (mercado_supuestos.yaml → bateria.alquiler, "
+                     "con fuente y fecha). Se suma × 12 al coste de uso si la batería es de alquiler o no consta.",
     "vida_clave": "Clave de VIDA_TBL (Supuestos): vida útil esperada por combustible y segmento.",
     "etiqueta": "Etiqueta del anuncio o, si no la trae, la regla de la DGT por combustible y año (la peor posible).",
 }
@@ -306,7 +312,7 @@ def row_data(a: dict) -> dict:
             "gar_anuncio": a.get("garantia_meses"), "consumo_wltp": a.get("consumo_wltp"), "ncap": a["ncap"], "ncap_vig": a["ncap_vigencia"] or None, "ncap_asist": a.get("ncap_asist"),
             "esp": a["esp"], "fiab": a["fiab"], "mediana": a["mediana"], "nivel_med": a["nivel_mediana"] or None,
             "n_modelo": a["n_modelo"], "dep_clave": a["dep_clave"], "soh_grupo": a.get("soh_grupo"),
-            "aut_nueva": round(a["aut_nueva"], 6) if a.get("aut_nueva") else None, "bat_estado": a.get("bat_estado"),
+            "aut_nueva": round(a["aut_nueva"], 6) if a.get("aut_nueva") else None, "bat_estado": a.get("bat_estado"), "cuota_bat_mes": a.get("cuota_bat_mes"),
             "vida_clave": a["vida_clave"], "url": a.get("url")}
 
 

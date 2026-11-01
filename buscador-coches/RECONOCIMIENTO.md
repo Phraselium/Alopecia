@@ -99,3 +99,24 @@ Hyundai/Kia CRDi y Suzuki 1.3 DDiS. Entran con la fiabilidad limitada a neutra (
 | OcasionPlus | Prohíbe los filtros por parámetro | `/coches-segunda-mano/valencia?page=N` (`vehicleList` del payload RSC) | Todo el stock de Valencia (unos 830 coches). |
 | Flexicar | Prohíbe `/api/` | Solo la primera página; `?page=` se ignora | 12 de unos 1.183 coches. |
 | Webs de marca | — | Ninguna | Das WeltAuto: Disallow total. Spoticar: 403. Toyota: sin paginación documentada. Hyundai Promise: 4 coches. Kia y Mazda: sin stock central. |
+
+## Perfil mercado: fuentes de eléctricos, recarga y vida útil (01-11-2026)
+
+- **Accesibles y usadas:**
+  - Eurostat nrg_pc_204 (API), CNMC E/CNMC/003/22 (PDF), REE apidatos (PVPC horario, solo como contraste).
+  - Sigrauto, DGT Anuario 2024, ANFAC 2025, ICCT 2025, Ricardo-AEA 2015.
+  - Geotab (blog y nota de prensa), Aviloo/P3 y ADAC a través de los medios citados en `mercado_supuestos.yaml`.
+  - Portada de ev-database.org, evkx.net y evspecifications.com.
+- **Bloqueadas o sin acceso (registrado, sin saltarse el bloqueo):**
+  - Por la red de la sesión: tesla.com, iberdrola.es, geotab.com (en parte), link.springer.com, tarifasgasluz.com, ecomento.de.
+  - Por Cloudflare o antibots (403): endesaxway.es, iea.org, electrive.com, fleetnews.co.uk.
+  - Fichas por coche de ev-database.org: «Request blocked».
+- **PENDIENTE:**
+  - Datos de baja en España: edad media de baja de turismos por combustible y segmento, y km medio a la baja.
+  - Reparto de la energía recargada entre casa y recarga pública en España.
+  - Tarifas oficiales de recarga de Iberdrola, Endesa X Way, Tesla y Zunder.
+  - Batería: SOH con cifra para Zoe, smart EQ y e-Golf.
+  - Autonomías que faltan: muchos modelos recientes y premium (sin fila: no se penalizan).
+  - Alquiler de batería:
+    - Tarifas actuales de Mobilize y procedimiento de subrogación en España.
+    - Fecha de fin del alquiler en Kangoo ZE, Twizy y Leaf.
