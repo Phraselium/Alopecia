@@ -4,3 +4,6 @@ logs/
 __pycache__/
 .pytest_cache/
 .env
+
+# Datos personales y entregables con datos personales (solo locales)
+privado/
