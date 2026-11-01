@@ -1,0 +1,246 @@
+# Supuestos del coste total de propiedad (perfil mercado). Cada cifra con estado y fuente. EDITABLE.
+# BORRADOR: se completa con las fuentes del agente de coste total (ver "estado" de cada bloque).
+fecha_consulta: 2026-11-01
+
+precio_energia:            # €/l (gasolina, diésel, GLP) y €/kWh (eléctrico)
+  gasolina: 1.717          # media de 612 estaciones de la provincia de Valencia (Geoportal MITECO, 01-11-2026 18:49)
+  diesel: 1.859            # gasóleo A, 624 estaciones (misma fuente)
+  hibrido: 1.717
+  phev: 1.717              # PHEV: se calcula como gasolina con el consumo real del ICCT (sin recarga a diario)
+  glp: 1.055               # 49 estaciones (misma fuente)
+  gnc: 1.45                # SUPUESTO (el Geoportal da €/kg; no calculado)
+  electrico: 0.33834       # SE SUSTITUYE al cargar por el €/kWh del escenario de recarga activo (sección recarga; mixta = 0,6·0,2739 + 0,2·0,38 + 0,2·0,49)
+  estado: "confirmado (carburantes y precios eléctricos); el reparto de recarga por escenario es un supuesto"
+  fuente: "https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/FiltroProvincia/46 ; Eurostat nrg_pc_204 (2026-S1) ; CNMC E/CNMC/003/22 (https://www.cnmc.es/sites/default/files/6653179.pdf, pág. 124)"
+
+desfase_wltp_real:         # consumo real = WLTP × (1 + desfase). ICCT (jun-2026) con datos OBFCM de la UE, 2023
+  gasolina: 0.194
+  diesel: 0.185
+  hibrido: 0.194           # el ICCT no separa HEV de combustión: se aplica el de gasolina
+  glp: 0.194               # SUPUESTO = gasolina
+  gnc: 0.194               # SUPUESTO = gasolina
+  phev: 3.87               # PHEV de gasolina: consumo real 4,87 veces el WLTP (2023)
+  estado: confirmado (salvo GLP/GNC, supuesto); eléctricos sin dato OBFCM (PENDIENTE)
+  fuente: "https://theicct.org/publication/real-world-co2-emission-values-vehicles-europe-jun26/ (2026-06-02)"
+
+consumo_por_defecto:       # si el anuncio no trae WLTP. l/100 km REALES (kWh/100 km en eléctricos)
+  gasolina: {utilitario: 6.3, compacto: 7.4, berlina: 7.6, familiar: 7.6, suv: 7.8, monovolumen: 7.6, otros: 7.5}
+  diesel:   {utilitario: 5.0, compacto: 5.5, berlina: 5.8, familiar: 5.8, suv: 6.3, monovolumen: 6.0, otros: 6.0}
+  hibrido:  {utilitario: 4.6, compacto: 5.0, berlina: 5.3, familiar: 5.3, suv: 5.8, monovolumen: 5.6, otros: 5.4}
+  phev:     {otros: 6.5}
+  glp:      {otros: 9.0}
+  gnc:      {otros: 6.0}
+  electrico: {utilitario: 15.5, compacto: 16.5, berlina: 17.0, familiar: 17.5, suv: 19.0, otros: 18.0}
+  estado: "gasolina: aproximado (Spritmonitor, ver fiscal.yaml consumo_estimado del perfil personal); resto SUPUESTO sin fuente"
+  fuente: "fiscal.yaml -> consumo_estimado (gasolina); el resto, supuesto propio"
+
+seguro:                    # €/año, perfil estándar (40 años, > 15 años de carnet, sin siniestros). SUPUESTO calibrado:
+  # CHECK24 (mayo 2026): prima media de las pólizas CONTRATADAS 390 €/año (todas las modalidades). Kelisto 2T-2026 (presupuestos
+  # pedidos, sesgado por jóvenes): terceros ampliado 566,89 €; todo riesgo sin franquicia 3.165,91 €. Sin desglose por segmento
+  # ni por perfil (PENDIENTE). Se usa 390 € en terceros ampliado (coches de más de 3 años) y el doble en todo riesgo con
+  # franquicia (hasta 3 años), con un multiplicador por segmento (supuesto).
+  todo_riesgo_hasta_anios: 3
+  todo_riesgo: {utilitario: 700, compacto: 780, berlina: 860, familiar: 820, suv: 860, monovolumen: 780, otros: 780}
+  terceros_ampliado: {utilitario: 350, compacto: 390, berlina: 430, familiar: 410, suv: 430, monovolumen: 390, otros: 390}
+  estado: SUPUESTO calibrado con CHECK24 y Kelisto
+  fuente: "https://seguros.check24.es/wp-content/uploads/2026/06/NdP_La-prima-media-del-seguro-de-coche-baja-en-mayo-hasta-los-390-euros-un-53-menos-que-hace-un-ano.pdf ; https://assets.kelisto.es/press-releases/el-precio-de-los-seguros-de-coche-alcanza-su-maximo-historico-en-el-segundo-trimestre-de-2026.pdf"
+
+mantenimiento_anual:       # €/año = revisión anual media (OCU 2026: 249 €) tomada como gasolina; resto con las diferencias de Solera
+  gasolina: 249            # OCU 2026, revisión media en taller oficial
+  diesel: 224              # Solera 2024: un eléctrico cuesta -21 % que un diésel y -29 % que un gasolina -> 249·0,71/0,79
+  hibrido: 236             # Solera: eléctrico -25 % que un híbrido -> 249·0,71/0,75
+  phev: 236                # SUPUESTO = híbrido
+  electrico: 177           # 249 · (1 - 0,29)
+  glp: 249                 # SUPUESTO = gasolina
+  gnc: 249                 # SUPUESTO = gasolina
+  estado: "OCU confirmado (revisión); proporciones de Solera probables; solo revisión, sin averías"
+  fuente: "https://www.ocu.org/organizacion/prensa/notas-de-prensa/2026/tallerescoches280426 ; https://www.hibridosyelectricos.com/coches/segun-talleres-por-ahora-solo-en-esto-son-mas-rentables-coches-electricos-que-combustion_75238_102.html"
+
+neumaticos:
+  duracion_km: 42000       # OCU (encuesta): Michelin 44.187 km, Continental 41.943 km
+  juego: {utilitario: 280, compacto: 350, berlina: 400, familiar: 380, suv: 540, monovolumen: 400, otros: 400}
+  estado: "duración confirmada (OCU); precio del juego SUPUESTO: 4 × ~88 € en 205/55 R16 y 4 × ~135 € en 215/55 R17 (precios de ensayos OCU 2023-2024), sin montaje; utilitario sin dato"
+  fuente: "https://www.ocu.org/coches/neumaticos/informe/mejores-marcas-neumaticos ; https://www.ocu.org/organizacion/prensa/notas-de-prensa/2023/neumaticos200423 ; https://www.ocu.org/organizacion/prensa/notas-de-prensa/2024/neumaticos250424"
+
+ivtm:                      # Ayuntamiento de València, ordenanza del IVTM (BOP 31-12-2024, mantenida para 2026). [CVF hasta, cuota €]
+  tramos: [[8, 21.20], [12, 58.87], [16, 128.05], [20, 167.27], [100000, 219.01]]
+  cuota_sin_dato: 58.87    # SUPUESTO: tramo 8-11,99 CVF si no hay cilindrada
+  bonificacion: {electrico: 0.75, hibrido: 0.75, phev: 0.75, glp: 0.75, gnc: 0.75}   # art. 7, sin límite de años en el texto
+  estado: confirmado (cuotas y bonificaciones); vigencia 2026 probable
+  fuente: "https://sede.valencia.es/sede/descarga/doc/DOCUMENT_1_20250007834765 ; https://www.valencia.es/cas/actualidad/-/content/pleno-aprueba-ordenanzas-fiscales-de-2026"
+
+cvf:
+  formula: "CVF = 0,08 · (0,785·D²·R)^0,6 · N (RD 2822/1998, Anexo V); 0,785·D²·R = cilindrada de un cilindro -> 0,08·(cc/N)^0,6·N; eléctricos kW/5,152"
+  fuente: "https://www.boe.es/buscar/act.php?id=BOE-A-1999-1826"
+  cilindros: "SUPUESTO por cilindrada: < 1.100 cc 3; < 2.600 cc 4; < 3.600 cc 6; resto 8"
+
+matriculacion:
+  incluida_en_precio_nuevos: true   # probable (TRLGDCU art. 20.1.c: precio final completo con impuestos)
+  fuente: "https://www.boe.es/buscar/act.php?id=BOE-A-2007-20555 ; tipos IEDMT: Ley 38/1992 art. 70 y Ley 13/1997 GV art. 17 (16 % en >= 200 g/km)"
+
+contraste_depreciacion:    # para comparar con la depreciación estimada con los propios datos
+  ganvam_dat_valor_residual_3_anios: {hibrido: 68.0, gasolina: 60.2, diesel: 58.3, electrico: 48.0, fuente: "https://www.hibridosyelectricos.com/coches/con-21352-media-estos-son-coches-menos-valor-reventa-pierden-venderse-en-espana_85816_102.html (2026-03-25, probable)"}
+  ocu_beuc_perdida_3_anios: {electrico: 50, phev: 39, diesel: 36, gasolina: 33, fuente: "https://www.ocu.org/organizacion/prensa/notas-de-prensa/2025/cocheselectricos090425 (2025-04-09)"}
+
+cc_por_defecto: {utilitario: 1200, compacto: 1500, berlina: 1800, familiar: 1600, suv: 1600, monovolumen: 1600, otros: 1600}
+
+# Segmento de modelos recientes que no están en la tabla del perfil personal (src/normalize.py MODELS)
+segmentos_modelo:
+  Seat Arona: suv
+  Seat Ateca: suv
+  Seat Tarraco: suv
+  Cupra Formentor: suv
+  Cupra Born: compacto
+  Volkswagen T-Roc: suv
+  Volkswagen T-Cross: suv
+  Volkswagen Taigo: suv
+  Toyota Yaris Cross: suv
+  Toyota C-HR: suv
+  Toyota RAV4: suv
+  Renault Captur: suv
+  Renault Arkana: suv
+  Renault Austral: suv
+  Renault Kadjar: suv
+  Peugeot 2008: suv
+  Peugeot 3008: suv
+  Peugeot 5008: suv
+  Citroën C3 Aircross: suv
+  Citroën C5 Aircross: suv
+  Citroën C4: compacto
+  Opel Mokka: suv
+  Opel Crossland: suv
+  Opel Grandland: suv
+  Hyundai Kona: suv
+  Hyundai Tucson: suv
+  Hyundai Bayon: suv
+  Kia Stonic: suv
+  Kia Sportage: suv
+  Kia Niro: suv
+  Kia Xceed: suv
+  Mg Zs: suv
+  Mg Hs: suv
+  Mg Mg4: compacto
+  Mg 4: compacto
+  Tesla Model 3: berlina
+  Tesla Model Y: suv
+  Nissan Qashqai: suv
+  Nissan Juke: suv
+  Ford Puma: suv
+  Ford Kuga: suv
+  Skoda Kamiq: suv
+  Skoda Karoq: suv
+  Skoda Kodiaq: suv
+  Skoda Scala: compacto
+  Mazda Cx-30: suv
+  Mazda Cx-5: suv
+  Mazda Cx-3: suv
+  Dacia Duster: suv
+  Dacia Jogger: monovolumen
+  Dacia Spring: utilitario
+  Byd Atto 3: suv
+  Jeep Renegade: suv
+  Jeep Compass: suv
+  Fiat 500X: suv
+  Suzuki Vitara: suv
+  Mini Countryman: suv
+  Audi Q2: suv
+  Audi Q3: suv
+  Audi Q5: suv
+  Bmw X1: suv
+  Bmw X3: suv
+  Bmw Serie 1: compacto
+  Bmw Serie 3: berlina
+  Mercedes-Benz Gla: suv
+  Mercedes-Benz Glc: suv
+  Mercedes-Benz Clase C: berlina
+  Volvo Xc40: suv
+  Volvo Xc60: suv
+
+# ==== ELÉCTRICOS (recarga y batería) Y VIDA ÚTIL ====
+recarga:                   # eléctricos: €/kWh de cada modo de recarga y reparto por escenario (consultado 01-11-2026)
+  escenario_defecto: mixta
+  precios:
+    casa: {eur_kwh: 0.2739, fecha: "2026-S1", fuente: "Eurostat nrg_pc_204, España, media de todas las bandas (TOT_KWH), todos los impuestos (actualizado 19-10-2026). Sin tarifa valle específica: con valle (PVPC P3 ≈ 0,13-0,16 €/kWh, cálculo propio con REE, impuestos supuestos) o tarifas de VE sería menor"}
+    publica_ac: {eur_kwh: 0.38, fecha: "2025-07-01", fuente: "CNMC E/CNMC/003/22 (aprobado 09-06-2026), Figura 15, con datos ICCT; https://www.cnmc.es/sites/default/files/6653179.pdf"}
+    publica_dc: {eur_kwh: 0.49, fecha: "2025-07-01", fuente: "CNMC E/CNMC/003/22, Figura 15 (rápida DC; > 150 kW 0,55-0,70 €/kWh en dic-2025, pág. 124)"}
+  escenarios:                # reparto de la ENERGÍA recargada (supuesto: no hay dato de reparto de energía para España)
+    casa: {casa: 0.90, publica_ac: 0.05, publica_dc: 0.05}
+    mixta: {casa: 0.60, publica_ac: 0.20, publica_dc: 0.20}
+    publica: {casa: 0.00, publica_ac: 0.50, publica_dc: 0.50}
+  fuente_reparto: "SUPUESTO. Mixta 60 % privada: límite inferior del 60-80 % de BCG 2023 (nota 194 de la CNMC) y gridX 2025 (53 % de sesiones en casa + 15 % en el trabajo); el 84 % de usuarios españoles recarga habitualmente en casa (Chargemap 2025, nota 131 de la CNMC)"
+bateria:
+  soh:                       # estado de salud (capacidad útil / nueva) estimado por edad y km; consultado 01-11-2026
+    estado: "cifras confirmadas (Geotab, P3/Aviloo, ADAC); combinarlas (el menor de los dos SOH) y aplicar el ajuste de clima cálido a Valencia es SUPUESTO"
+    fuente: "Geotab 2025 (22.700 VE, 21 modelos): 2,3 %/año de media (incluye la caída inicial), clima cálido +0,4 %/año — https://www.geotab.com/press-release/ev-battery-health-degradation-fast-charging-study/ ; Geotab 2019: Nissan Leaf 2015 (aire) 4,2 %/año frente a 2,3 % con refrigeración líquida — https://www.maakindustrie.nl/en/artikelen/gemiddeld-23-capaciteitsverlies-per-jaar-voor-elektrische-voertuigen ; P3/Aviloo (más de 7.000 VE): ~95 % a 30.000 km, ~90 % a 100.000 km — https://www.auto-motor-und-sport.de/tech-zukunft/alternative-antriebe/elektroauto-akku-batterie-haltbarkeit-studie-v1/ ; Aviloo 2026: Leaf ZE1 91,2 % a 50.000 km y 86,7 % a 150.000 km, Zoe en el grupo peor — https://evpowered.co.uk/news/which-ev-batteries-last-longest-global-study-reveals-best-and-worst-models-for-battery-life/ ; ADAC ID.3: 93 % a 102.505 km, 89 % a 220.158 km"
+    formula: "SOH = MAX(suelo, MIN(1 − pérdida_anual·edad, 1 − pérdida_inicial·MIN(km, km_inicial)/km_inicial − pérdida_10k·MAX(0, km − km_inicial)/10.000))"
+    minimo: 0.60              # suelo del modelo (supuesto; las garantías cubren el 70 % a 8 años/160.000 km y Euro 7 exige el 72 %)
+    km_inicial: 30000         # caída inicial (formación de la capa SEI), P3/Aviloo
+    grupo_defecto: liquida
+    grupos:
+      liquida: {perdida_anual: 0.027, perdida_inicial: 0.05, perdida_10k_km: 0.004, descripcion: "refrigeración líquida: Geotab 2,3 %/año + 0,4 por clima cálido (Valencia, supuesto); 5 puntos en 30.000 km (P3) y 0,4 por 10.000 km (Aviloo/ADAC 0,33-0,46)"}
+      aire: {perdida_anual: 0.046, perdida_inicial: 0.08, perdida_10k_km: 0.0046, descripcion: "refrigeración por aire o batería pequeña del grupo peor de Aviloo (Leaf, Zoe, Renault ZE): Geotab Leaf 4,2 %/año + 0,4 por clima; Aviloo Leaf ZE1 ~8,8 puntos a 50.000 km y 0,46 por 10.000 km"}
+    modelos: {"Nissan Leaf": aire, "Renault Zoe": aire, "Renault Fluence": aire, "Renault Kangoo": aire}
+  autonomia_wltp:            # autonomía con la batería nueva por versión (año y kWh; patrón del título para Tesla)
+    estado: "real = autonomía real de ev-database.org (portada, 01-11-2026); WLTP de evkx.net / evspecifications.com; los anteriores a 2018 se homologaron en NEDC. Modelos sin fila: PENDIENTE (sin penalización)"
+    fuente: "https://ev-database.org/ ; https://evkx.net/ ; https://www.evspecifications.com/en/model-driving-range/78033bc ; motorpasion.com, hibridosyelectricos.com, km77.com, prensa BMW"
+    factor_real: 0.81         # real/WLTP si la versión no tiene autonomía real: mediana de las versiones con ambas cifras (Leaf 40 0,87; Zoe 50 0,80; e-Golf 0,82; Kona 64 0,81; MG4 51 0,86; Model Y 0,76)
+    factor_real_nedc: 0.68    # real/NEDC si solo hay NEDC: Leaf 24 kWh 0,68; Zoe 22 kWh 0,67; smart 451 0,70
+    modelos:
+      "Tesla Model 3": [{desde: 2019, hasta: 2020, kwh: 55, wltp: 409, real: 320}, {desde: 2021, hasta: 2021, kwh: 55, wltp: 430, real: 350}, {desde: 2021, hasta: 2023, kwh: 60, wltp: 491, real: 400}, {desde: 2024, hasta: 2026, kwh: 60, wltp: 513, real: 440}, {desde: 2019, hasta: 2023, kwh: 75, wltp: 602, real: 470, patron: "long range|gran autonomia|\\blr\\b|awd|dual motor|traccion total"}, {desde: 2024, hasta: 2026, kwh: 78, wltp: 678, real: 540, patron: "long range|gran autonomia|\\blr\\b|awd|dual motor|traccion total"}, {desde: 2019, hasta: 2020, kwh: 75, wltp: 530, real: 440, patron: "performance"}, {desde: 2021, hasta: 2023, kwh: 79, wltp: 547, real: 465, patron: "performance"}, {desde: 2024, hasta: 2026, kwh: 79, wltp: 528, real: 490, patron: "performance"}]
+      "Tesla Model Y": [{desde: 2022, hasta: 2026, kwh: 60, wltp: 455, real: 345}, {desde: 2022, hasta: 2026, kwh: 75, wltp: 533, real: 445, patron: "long range|gran autonomia|\\blr\\b|awd|dual motor|traccion total"}, {desde: 2022, hasta: 2026, kwh: 75, wltp: 514, real: 430, patron: "performance"}]
+      "Nissan Leaf": [{desde: 2011, hasta: 2013, kwh: 24, real: 125, nedc: 199}, {desde: 2013, hasta: 2017, kwh: 24, real: 135, nedc: 199}, {desde: 2016, hasta: 2018, kwh: 30, real: 170, nedc: 250}, {desde: 2018, hasta: 2024, kwh: 40, wltp: 270, real: 235}, {desde: 2019, hasta: 2024, kwh: 62, wltp: 385, real: 345}]
+      "Renault Zoe": [{desde: 2013, hasta: 2017, kwh: 22, real: 140, nedc: 210}, {desde: 2016, hasta: 2019, kwh: 41, wltp: 300, real: 250}, {desde: 2019, hasta: 2024, kwh: 52, wltp: 395, real: 315}]
+      "Renault Fluence": [{desde: 2011, hasta: 2014, kwh: 22, nedc: 185}]
+      "Renault Kangoo": [{desde: 2011, hasta: 2017, kwh: 22, nedc: 170}, {desde: 2017, hasta: 2022, kwh: 33, real: 160, nedc: 270}, {desde: 2022, hasta: 2025, kwh: 45, wltp: 290, real: 225}]
+      "smart fortwo": [{desde: 2012, hasta: 2016, kwh: 17.6, real: 102, nedc: 145}, {desde: 2017, hasta: 2024, kwh: 17.6, wltp: 132, real: 97, nedc: 160}]
+      "smart forfour": [{desde: 2017, hasta: 2022, kwh: 17.6, wltp: 132, real: 97, nedc: 160}]
+      "Volkswagen Golf": [{desde: 2014, hasta: 2016, kwh: 24.2, real: 125, nedc: 190}, {desde: 2017, hasta: 2021, kwh: 35.8, wltp: 232, real: 190, nedc: 300}]
+      "Volkswagen Up": [{desde: 2013, hasta: 2019, kwh: 18.7, real: 97}, {desde: 2019, hasta: 2023, kwh: 32.3, wltp: 258, real: 205}]
+      "Volkswagen E-Up": [{desde: 2013, hasta: 2019, kwh: 18.7, real: 97}, {desde: 2019, hasta: 2023, kwh: 32.3, wltp: 258, real: 205}]
+      "Volkswagen Id.3": [{desde: 2020, hasta: 2024, kwh: 45, wltp: 350, real: 275}, {desde: 2020, hasta: 2024, kwh: 58, wltp: 427, real: 350}, {desde: 2020, hasta: 2024, kwh: 77, wltp: 553, real: 452}]
+      "Volkswagen Id.4": [{desde: 2021, hasta: 2023, kwh: 52, wltp: 345, real: 285}, {desde: 2021, hasta: 2023, kwh: 77, wltp: 517, real: 410}]
+      "Hyundai Kona": [{desde: 2018, hasta: 2023, kwh: 39, wltp: 305, real: 245}, {desde: 2018, hasta: 2023, kwh: 64, wltp: 484, real: 390}]
+      "Hyundai Ioniq": [{desde: 2016, hasta: 2019, kwh: 28, real: 190, nedc: 280}, {desde: 2019, hasta: 2022, kwh: 38.3, wltp: 311, real: 250}]
+      "Kia E-Niro": [{desde: 2019, hasta: 2022, kwh: 39.2, wltp: 289, real: 235}, {desde: 2019, hasta: 2022, kwh: 64, wltp: 455, real: 375}]
+      "Kia Niro": [{desde: 2019, hasta: 2022, kwh: 39.2, wltp: 289, real: 235}, {desde: 2019, hasta: 2022, kwh: 64, wltp: 455, real: 375}, {desde: 2022, hasta: 2025, kwh: 64.8, wltp: 463, real: 385}]
+      "Kia Soul": [{desde: 2014, hasta: 2017, kwh: 27, real: 155}, {desde: 2017, hasta: 2019, kwh: 30, real: 170}, {desde: 2019, hasta: 2024, kwh: 39.2, wltp: 276, real: 230}, {desde: 2019, hasta: 2024, kwh: 64, wltp: 452, real: 370}]
+      "Peugeot 208": [{desde: 2020, hasta: 2023, kwh: 50, real: 282}, {desde: 2023, hasta: 2026, kwh: 51, wltp: 400, real: 310}]
+      "Peugeot E-208": [{desde: 2020, hasta: 2023, kwh: 50, real: 282}, {desde: 2023, hasta: 2026, kwh: 51, wltp: 400, real: 310}]
+      "Peugeot 2008": [{desde: 2020, hasta: 2023, kwh: 50, real: 265}, {desde: 2023, hasta: 2026, kwh: 54, wltp: 406, real: 300}]
+      "Opel Corsa": [{desde: 2020, hasta: 2023, kwh: 50, wltp: 340, real: 290}, {desde: 2023, hasta: 2026, kwh: 51, wltp: 405, real: 315}]
+      "Opel Corsa-E": [{desde: 2020, hasta: 2023, kwh: 50, wltp: 340, real: 290}, {desde: 2023, hasta: 2026, kwh: 51, wltp: 405, real: 315}]
+      "Fiat 500": [{desde: 2020, hasta: 2026, kwh: 24, wltp: 190, real: 135}, {desde: 2020, hasta: 2026, kwh: 42, wltp: 320, real: 235}]
+      "Fiat 500E": [{desde: 2020, hasta: 2026, kwh: 24, wltp: 190, real: 135}, {desde: 2020, hasta: 2026, kwh: 42, wltp: 320, real: 235}]
+      "Mg Mg4": [{desde: 2022, hasta: 2026, kwh: 51, wltp: 350, real: 300}, {desde: 2022, hasta: 2026, kwh: 64, wltp: 435, real: 360}, {desde: 2022, hasta: 2026, kwh: 77, wltp: 530, real: 425}]
+      "Mg Zs": [{desde: 2019, hasta: 2021, kwh: 44.5, wltp: 263, real: 220}, {desde: 2021, hasta: 2025, kwh: 51, wltp: 320, real: 265}, {desde: 2021, hasta: 2025, kwh: 72.6, wltp: 440, real: 370}]
+      "Byd Atto 3": [{desde: 2022, hasta: 2026, kwh: 60.5, wltp: 420, real: 335}]
+      "Byd Dolphin": [{desde: 2023, hasta: 2026, kwh: 44.9, wltp: 340, real: 265}, {desde: 2023, hasta: 2026, kwh: 60.4, wltp: 427, real: 350}]
+      "Dacia Spring": [{desde: 2021, hasta: 2025, kwh: 27.4, wltp: 220, real: 162}]
+      "Citroën C4": [{desde: 2020, hasta: 2023, kwh: 50, wltp: 352, real: 285}, {desde: 2023, hasta: 2026, kwh: 54, wltp: 420, real: 328}]
+      "Cupra Born": [{desde: 2021, hasta: 2024, kwh: 58, wltp: 424, real: 348}, {desde: 2021, hasta: 2024, kwh: 77, wltp: 548, real: 450}]
+      "Skoda Enyaq": [{desde: 2021, hasta: 2023, kwh: 52, wltp: 370, real: 305}, {desde: 2021, hasta: 2023, kwh: 62, wltp: 413, real: 340}, {desde: 2021, hasta: 2023, kwh: 82, wltp: 534, real: 440}]
+      "BMW I3": [{desde: 2013, hasta: 2016, kwh: 22, real: 115, nedc: 190}, {desde: 2016, hasta: 2018, kwh: 33, real: 165, nedc: 300}, {desde: 2018, hasta: 2022, kwh: 42, wltp: 300, real: 235}]
+      "MINI MINI": [{desde: 2020, hasta: 2023, kwh: 28.9, wltp: 234, real: 180}]
+      "MINI Cooper Se": [{desde: 2020, hasta: 2023, kwh: 28.9, wltp: 234, real: 180}]
+      "Mazda Mx-30": [{desde: 2020, hasta: 2024, kwh: 30, wltp: 200, real: 170}]
+      "Renault Mégane": [{desde: 2022, hasta: 2025, kwh: 40, wltp: 300, real: 265}, {desde: 2022, hasta: 2025, kwh: 60, wltp: 460, real: 390}]
+  alquiler:                  # modelos vendidos en España con batería en alquiler (cuota mensual con el uso estándar de 12.000 km/año)
+    estado: "cuotas confirmadas o probables con fecha (ver fuente); fin del alquiler del Zoe nuevo confirmado (junio de 2020); fin en Kangoo, Twizy y Leaf PENDIENTE (supuesto). Detección por texto = supuesto (práctica habitual)"
+    fuente: "Zoe 22 kWh 79 €/mes con 12.500 km/año (diariomotor, 15-03-2013); Zoe ZE40 Z.E. Flex 69 € hasta 7.500 km/año + 10 € por cada 2.500 km (motorpasion 18-12-2018) -> 89 €/mes a 12.000 km; Fluence/Kangoo/Twizy 82/75/50 €/mes (motor.es, energias-renovables ~2011-2012); smart fortwo ED 451 sale&care 65 €/mes (km77 2012); Nissan Leaf 2013 desde 79 €/mes con 12.500 km/año (motorpasion 16-04-2013); fin del alquiler del Zoe: https://www.motorpasion.com/renault/adios-al-coche-electrico-baterias-alquiladas-renault-zoe-solo-se-puede-comprar-baterias"
+    modelos:                 # [desde, hasta, €/mes]
+      "Renault Zoe": [[2013, 2016, 79], [2017, 2020, 89]]
+      "Renault Fluence": [[2011, 2014, 82]]
+      "Renault Kangoo": [[2011, 2020, 75]]
+      "Renault Twizy": [[2012, 2023, 50]]
+      "smart fortwo": [[2012, 2016, 65]]
+      "Nissan Leaf": [[2013, 2017, 79]]
+    patrones_propiedad: ["sin alquiler de bateria", "bateria (en |de )?propiedad", "bateria propia", "bateria incluida", "bateria comprada", "bateria-en-propiedad", "incluye bateria"]
+    patrones_alquiler: ["alquiler de (la )?bateria", "bateria (en |de )?alquiler", "bateria alquilada", "renting (de )?bateria", "precio sin bateria", "\\bflex\\b", "z\\.?e\\.? relax"]
+vida_util:                 # vida útil esperada (para la penalización por vida restante del coste anual)
+  activo: true
+  estado: "supuesto documentado: años verificados (Sigrauto, todos los automóviles); km = supuesto de modelización ICCT; diésel escalado con Ricardo-AEA; sin datos por segmento ni por combustible en España (PENDIENTE)"
+  fuente: "Sigrauto, edad media de baja 20,44 años (2025) y 21,18 (2024): https://www.sigrauto.com/cuantos-vehiculos-fuera-de-uso-se-tratan-al-ano/evolucion-historica ; DGT Anuario 2024, tabla 57: el 76,6 % de las bajas de turismos tiene 20 años o más ; ICCT 2025 (How clean are electric cars in Europe), vida de 240.000 km (20 años × 12.000) ; Ricardo-AEA para la DG CLIMA 2015, km de vida UK: gasolina 160.000, diésel 208.000 (diésel = 1,3 × gasolina)"
+  tabla:
+    "*|*": {km: 240000, anios: 20, nota: "ICCT 240.000 km; Sigrauto ≈ 20 años"}
+    "diesel|*": {km: 312000, anios: 20, nota: "240.000 × 208.000/160.000 (proporción diésel/gasolina de Ricardo-AEA)"}
+    "electrico|*": {km: 240000, anios: 20, nota: "ICCT usa la misma vida para eléctricos; la batería se trata aparte (SOH)"}

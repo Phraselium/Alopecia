@@ -1,0 +1,122 @@
+# Estética (criterio "Estética", peso en config.yaml -> scoring.pesos.estetica). EDITABLE.
+# Puntuación del criterio (0-100) = peso_modelo × modelo + peso_atributos × atributos
+#   modelo: (puntos 1-5 - 1) / 4 × 100     ·     atributos: puntos_atributos (abajo), acotado 0-100
+# Es una preferencia personal, no un dato: no lleva fuente.
+peso_modelo: 0.6667      # 2/3
+peso_atributos: 0.3333   # 1/3
+
+# Modelos con puntos propios (la primera entrada que case manda). motores = cilindrada en litros ([] = cualquiera);
+# combustible vacío = cualquiera. Los modelos de esta lista con puntos >= config.yaml -> filtros.particulares.min_estetica
+# se admiten también de particular.
+modelos:
+  - {modelo: Audi A3, generacion: 8P, desde: 2003, hasta: 2012, motores: ["1.6"], combustible: gasolina, puntos: 5}
+  - {modelo: Audi A4, generacion: B7, desde: 2004, hasta: 2008, motores: ["2.0"], combustible: gasolina, puntos: 5}
+  - {modelo: Seat Exeo, generacion: 3R, desde: 2008, hasta: 2013, motores: [], combustible: "", puntos: 5}
+  - {modelo: Seat León, generacion: II (1P), desde: 2005, hasta: 2012, motores: ["1.6"], combustible: gasolina, puntos: 5}
+  - {modelo: Honda Civic, generacion: 8.ª gen, desde: 2006, hasta: 2011, motores: ["1.8"], combustible: gasolina, puntos: 5}
+  - {modelo: Mazda 3, generacion: BK, desde: 2003, hasta: 2009, motores: ["1.6"], combustible: gasolina, puntos: 5}
+  - {modelo: Mazda 6, generacion: GG, desde: 2002, hasta: 2008, motores: ["1.8", "2.0"], combustible: gasolina, puntos: 5}
+  - {modelo: Honda Accord, generacion: 7.ª gen, desde: 2003, hasta: 2008, motores: ["2.0"], combustible: gasolina, puntos: 4}
+  - {modelo: Toyota Avensis, generacion: T25, desde: 2003, hasta: 2008, motores: ["1.8"], combustible: gasolina, puntos: 4}
+  - {modelo: Skoda Octavia, generacion: II (1Z), desde: 2004, hasta: 2013, motores: ["1.6"], combustible: gasolina, puntos: 4}
+  - {modelo: Volkswagen Jetta, generacion: V, desde: 2005, hasta: 2010, motores: ["1.6"], combustible: gasolina, puntos: 4}
+  - {modelo: Volkswagen Golf, generacion: V, desde: 2003, hasta: 2008, motores: ["1.6"], combustible: gasolina, puntos: 4}
+  - {modelo: Alfa Romeo 147, generacion: "937", desde: 2000, hasta: 2010, motores: [], combustible: "", puntos: 4}
+  - {modelo: Alfa Romeo 159, generacion: "939", desde: 2005, hasta: 2011, motores: [], combustible: "", puntos: 4}
+
+# Resto de modelos: puntos según el segmento (2 = utilitario pequeño genérico)
+puntos_por_defecto: {utilitario: 2, compacto: 3, berlina: 3, berlina_d: 3, familiar: 3, monovolumen_pequeno: 2, otros: 3}
+
+# Atributos del anuncio (título, versión, descripción y equipamiento estructurado de la plataforma)
+puntos_atributos: {base: 40, acabado: 25, llantas: 10, llantas_16: 20, faros: 15, tintados: 10, chapa: 25}
+atributos:
+  # acabados altos o deportivos: solo en título/versión (palabra completa, sin tildes, minúsculas)
+  acabados: ["sport", "fr", "s line", "s-line", "sline", "sportive", "executive", "gt", "sportline", "sport line", "type s", "exclusive"]
+  llantas: ["llantas?\\s*(de\\s*)?(aleacion|aluminio|alu)\\b", "llantas de aleacion", "\\balloy"]
+  chapa: ["tapacubos", "tapacubiertas", "tapacubiertos", "llantas?\\s*(de\\s*)?(chapa|acero)"]
+  faros: ["xenon", "bi-?xenon", "faros?\\s*(de\\s*)?(full\\s*)?led", "luces\\s*(de\\s*cruce\\s*)?led", "\\bled\\s*(delanteros|faros)"]
+  tintados: ["(lunas|cristales|vidrios|ventanillas)\\s*(traseros?\\s*|traseras?\\s*)?(tintad|oscurecid|privacy)", "privacy glass", "cristales oscuros"]
+
+# Color (criterio "Color", peso en config.yaml). Puntos por grupo; sin color o no reconocido = neutro (no se descarta).
+colores:
+  puntos: {maxima: 100, media: 65, resta: 15, neutro: 50}
+  grupos:
+    blanco: maxima
+    plata: maxima
+    gris_medio: maxima
+    azul: media
+    gris_oscuro: media
+    azul_marino: media
+    dorado: resta
+    beige: resta
+    champan: resta
+    verde_claro: resta
+    chillon: resta
+    rojo: neutro
+    verde: neutro
+    granate: neutro
+    negro: excluido
+    marron_oscuro: excluido
+  # texto normalizado (sin tildes, minúsculas) -> color. Se prueban primero los alias más largos.
+  alias:
+    blanco: blanco
+    white: blanco
+    nacarado: blanco
+    blanco perla: blanco
+    perla: blanco
+    gris perla: gris_medio
+    blanco nacarado: blanco
+    plata: plata
+    plateado: plata
+    silver: plata
+    gris plata: plata
+    gris / plata: plata
+    gris: gris_medio
+    gris medio: gris_medio
+    grafito claro: gris_medio
+    gris claro: gris_medio
+    grey: gris_medio
+    gris oscuro: gris_oscuro
+    antracita: gris_oscuro
+    grafito: gris_oscuro
+    gris marengo: gris_oscuro
+    marengo: gris_oscuro
+    plomo: gris_oscuro
+    azul: azul
+    azul metalizado: azul
+    azul medio: azul
+    azul claro: azul
+    azul marino: azul_marino
+    azul oscuro: azul_marino
+    marino: azul_marino
+    navy: azul_marino
+    negro: negro
+    black: negro
+    marron: marron_oscuro
+    marron oscuro: marron_oscuro
+    chocolate: marron_oscuro
+    cafe: marron_oscuro
+    marron claro: beige
+    dorado: dorado
+    oro: dorado
+    beige: beige
+    arena: beige
+    champan: champan
+    champagne: champan
+    verde claro: verde_claro
+    verde lima: verde_claro
+    lima: verde_claro
+    verde manzana: verde_claro
+    pistacho: verde_claro
+    verde: verde
+    verde oscuro: verde
+    amarillo: chillon
+    naranja: chillon
+    rosa: chillon
+    fucsia: chillon
+    morado: chillon
+    lila: chillon
+    violeta: chillon
+    rojo: rojo
+    granate: granate
+    burdeos: granate

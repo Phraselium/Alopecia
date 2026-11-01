@@ -1,0 +1,100 @@
+# Perfil "mercado": visión global del mercado de coches (nuevos, km 0, seminuevos y usados).
+# Independiente del perfil personal (config.yaml): BD, salidas y supuestos propios. Uso: python run_mercado.py
+# Sin filtros personales: no se aplican estetica.yaml, colores, modelos excluidos, solo profesionales ni exclusión de diésel.
+# Solo se mantienen el filtro estricto de averías (src/averias.py) y el de fraude (precio anómalo, textos sospechosos).
+
+zonas:
+  # base: cobertura completa de lo que permiten robots.txt; referencia: muestra (pocas páginas por marca)
+  valencia:  {tipo: base,       provincia_cochesnet: valencia,  cp_prefijo: "46", as24_zip: "46001", as24_radio_km: 100}
+  madrid:    {tipo: referencia, provincia_cochesnet: madrid,    cp_prefijo: "28", as24_zip: "28001", as24_radio_km: 60}
+  barcelona: {tipo: referencia, provincia_cochesnet: barcelona, cp_prefijo: "08", as24_zip: "08001", as24_radio_km: 60}
+
+fuentes:
+  cochesnet:
+    activo: true
+    paginas_marca: 6          # robots.txt de coches.net prohíbe pg >= 7
+    paginas_referencia: 2     # Madrid y Barcelona: 2 páginas por marca (muestra)
+    rutas_modelo: true        # si una marca tiene > 180 anuncios en la zona base, se recorre por modelo
+    km0: true                 # /km-0/{provincia}/
+    nuevos: true              # /nuevos/{provincia}/ (la ruta de nuevos NO filtra por provincia: muestra nacional)
+  autoscout24:
+    activo: true
+    paginas_max: 20           # 20 resultados por página; AutoScout24 no sirve más de 20 páginas por búsqueda
+    paginas_referencia: 3
+    tramos_precio: [0, 5000, 10000, 15000, 20000, 30000, 50000, 1000000]   # se trocea por precio si una marca supera 400
+  ocasionplus: {activo: true, paginas_max: 80}
+  flexicar:    {activo: true, paginas_max: 3}   # solo la 1.ª página (12 coches): el resto se carga desde /api/, prohibido por robots.txt
+  # Webs oficiales de marca: ver RECONOCIMIENTO.md (Das WeltAuto prohíbe todo en robots.txt; Spoticar 403; Toyota sin
+  # paginación documentada; Hyundai Promise 4 coches en Valencia; Kia y Mazda sin stock central) -> no implementadas.
+
+marcas_cochesnet: [abarth, alfa-romeo, alpine, aston-martin, audi, bentley, bmw, byd, chevrolet, citroen, cupra, dacia, dfsk,
+  dodge, ds, ebro, ferrari, fiat, ford, honda, hyundai, infiniti, jaecoo, jaguar, jeep, kgm, kia, lamborghini, lancia,
+  land-rover, leapmotor, lexus, lynk-co, maserati, mazda, mercedes-benz, mg, mini, mitsubishi, nissan, omoda, opel, peugeot,
+  polestar, porsche, renault, seat, skoda, smart, ssangyong, subaru, suzuki, tesla, toyota, volkswagen, volvo, xpeng]
+
+clasificacion:
+  seminuevo_max_anios: 2       # "seminuevo" = ocasión con <= 2 años y <= 30.000 km (criterio propio, configurable)
+  seminuevo_max_km: 30000
+
+http:
+  pausa_min_s: 2.0
+  pausa_max_s: 5.0
+  timeout_s: 30
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
+  accept_language: "es-ES,es;q=0.9"
+  cache_dir: raw
+  cache_ttl_horas: 20
+  respetar_robots: true
+
+uso:                           # supuesto de uso estándar para el coste total de propiedad (configurable)
+  km_anio: 12000
+  anios: 5
+  ciclo: mixto
+
+calidad:
+  # "Calidad global" = mismos criterios y pesos documentados del perfil personal (config.yaml, 02-11-2026) SIN los criterios
+  # de gusto personal (estética 12 % y color 2 %), renormalizados para que sumen 1 (÷ 0,86).
+  pesos_origen: {fiabilidad: 0.22, precio: 0.15, estado: 0.12, seguridad_vial: 0.10, seguridad_compra: 0.10,
+                 coste_uso: 0.09, km_edad: 0.05, reventa: 0.03}
+  # "Calidad intrínseca" (eje de la frontera calidad/coste): la global sin precio ni coste de uso, que ya están en el coste anual.
+  intrinseca_excluye: [precio, coste_uso]
+  neutro: 50
+  km_edad: {km_max: 300000, anio_min: 2000, km_anio_ideal_max: 18000, km_anio_cero: 35000, peso_km_total: 0.4, peso_km_anio: 0.3, peso_edad: 0.3}
+  precio: {pendiente: 250}
+  seguridad_vial: {peso_ncap: 0.7, peso_esp: 0.3, esp_obligatorio_desde: 2015}
+  seguridad_compra: {garantia_meses_full: 36, minimo_legal_profesional_meses: 12}
+
+analisis:
+  min_anuncios_grupo: 5        # mínimo de anuncios para publicar una mediana
+  franjas_precio: [0, 5000, 10000, 15000, 25000, 1000000000]
+  segmentos_top: [utilitario, compacto, berlina, familiar, suv]
+  dep_factor5_defecto: 0.6     # solo si no hay datos para estimar la depreciación (supuesto)
+
+filtros:
+  averias: {activo: true, revisar_si_no_menciona_itv: false}
+  fraude: {descuento_max_vs_mediana: 0.45, palabras: ["solo envío", "solo envio", "estoy fuera", "estoy en el extranjero",
+                                                      "pago por adelantado", "pago adelantado", "western union"]}
+  precio_min_creible: 500      # por debajo: casi siempre despiece, cuota mensual o error
+  km_max_creible: 600000       # más km: error del anuncio
+  km_anio_max_creible: 70000   # más km/año (con 1 año o más): error del anuncio (p. ej. 3.850.000 km)
+  precio_min_reciente: {anios: 3, eur: 3000}   # coche de <= 3 años por menos: cuota, reserva o error
+electricos:                    # criterios del perfil mercado para coches eléctricos (configurables)
+  autonomia_umbral_km: 200     # autonomía real estimada (WLTP × factor real × SOH) por debajo de la cual se penaliza la calidad
+  autonomia_penalizacion_max_km: 100   # con esta autonomía o menos, la penalización es la máxima
+  penalizacion_max_puntos: 15  # puntos que se restan a la calidad global y a la intrínseca (lineal entre umbral y máximo)
+  elasticidad_valor_soh: 1.0   # valor residual × (SOH final / SOH hoy)^e; 1 = proporcional a la capacidad que conserva la batería
+recarga:
+  escenario: mixta             # casa | mixta | publica (precios y reparto en mercado_supuestos.yaml → recarga)
+sensibilidad:
+  variacion: 0.20              # ± sobre cada componente del coste anual
+  factores: [energia, seguro, depreciacion]
+infravalorados:
+  edad_max: 15                 # el modelo de valor ajusta mal los coches muy viejos
+  min_anuncios: 8
+  excluir_segmentos: [furgoneta, pickup]
+
+salida:
+  db: data/mercado.sqlite
+  excel: mercado.xlsx
+  informe: informe_mercado.md
+  log: logs/mercado.log

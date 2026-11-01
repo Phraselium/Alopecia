@@ -1,0 +1,7 @@
+requests>=2.31
+beautifulsoup4>=4.12
+PyYAML>=6.0
+openpyxl>=3.1
+rapidfuzz>=3.0
+pytest>=8.0
+# playwright solo si alguna plataforma lo exige tras el reconocimiento

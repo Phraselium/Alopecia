@@ -1,0 +1,1563 @@
+# Tabla de fiabilidad. NO contiene valores inventados: cada métrica lleva fuente y estado.
+#   estado: confirmado | probable (visto en resumen/fragmento, verificar en la fuente) | PENDIENTE
+# Consultado: 2026-10-31. Desde este entorno no se pudo abrir adac.de, tuev-verband.de ni ocu.org
+# directamente; los valores "probable" salen de resúmenes de prensa de esos informes.
+#
+# Cobertura: ADAC Pannenstatistik 2026 solo incluye matriculaciones 2016-2023 (2-9 años), así que
+# para 2008-2015 la referencia útil es el TÜV Report en las franjas 10-11 y 12-13 años.
+#
+# Cómo se convierte en puntos (fórmulas en la hoja "Supuestos" del Excel):
+#   punt_TÜV = 50 + 100 * (media_franja - Mängelquote) / media_franja, acotado 0-100
+#   punt_OCU_marca = índice OCU de la marca (0-100)
+#   punt_modelo = media de los disponibles; si no hay ninguno -> neutro (config) y se marca PENDIENTE
+#   punt_final = punt_modelo + ajuste_motor + ajuste_combustible, acotado 0-100
+
+medias_tuv_2026:
+  "10-11": {valor: 22.9, estado: probable, fuente: "https://www.tuev-verband.de/presse/publikationen/reporte/tuev-report-autobild"}
+  "12-13": {valor: 28.4, estado: probable, fuente: "https://www.tuev-verband.de/presse/publikationen/reporte/tuev-report-autobild"}
+
+modelos:
+  # clave = "Marca Modelo" normalizado (ver src/normalize.py)
+  "Renault Clio":    {adac: "Renault Clio/Captur", tuv_mq: 40.4, tuv_franja: "12-13", estado: probable, fuente: "TÜV Report 2026 vía https://www.autobild.de/artikel/tuev-report-2026-gewinner-verlierer-28424531.html (peor de su franja)"}
+  "Dacia Sandero":   {adac: "Dacia Sandero", tuv_mq: 31.5, tuv_franja: "10-11", estado: "probable (edición no fechada en el resumen)", fuente: "https://www.tuev-verband.de/presse/publikationen/reporte/tuev-report-autobild"}
+  "Renault Mégane":  {adac: "Renault Mégane", tuv_mq: 31.7, tuv_franja: "10-11", estado: "probable (edición no fechada en el resumen)", fuente: "https://www.tuev-verband.de/presse/publikationen/reporte/tuev-report-autobild"}
+  "Ford Focus":      {adac: "Ford Focus", tuv_mq: 34.8, tuv_franja: "12-13", estado: "probable (TÜV 2025; media de franja 28,1 % en esa edición)", fuente: "https://www.t-online.de/mobilitaet/aktuelles/id_100543260/tuev-report-das-sind-die-schlechtesten-kompakten-gebrauchten.html", tuv_media_propia: 28.1}
+  "Volkswagen Golf": {adac: "VW Golf", tuv_mq: 17.4, tuv_franja: "10-11", estado: "probable (el resumen lo marcó dudoso)", fuente: "https://www.tuvsud.com/de-de/publikationen/tuev-report/maengelzwerge-und-fehlerriesen"}
+  "Mazda 3":         {adac: "Mazda 3", tuv_mq: 20.9, tuv_franja: "12-13", estado: "probable (sin verificar)", fuente: "https://www.tuvsud.com/de-de/publikationen/tuev-report/maengelzwerge-und-fehlerriesen"}
+  # PENDIENTES (sin métrica numérica verificada para 2008-2018):
+  "Mitsubishi Space Star": {adac: "Mitsubishi Space Star", estado: "solo ADAC"}
+  "Toyota Aygo": {adac: "Toyota Aygo", estado: "solo ADAC"}
+  "Fiat Panda": {adac: "Fiat Panda", estado: "solo ADAC"}
+  "Dacia Logan": {adac: "Dacia Logan", estado: "solo ADAC"}
+  "Toyota Yaris": {adac: "Toyota Yaris", estado: PENDIENTE}
+  "Toyota Auris": {adac: "Toyota Auris", estado: PENDIENTE}
+  "Toyota Corolla": {estado: PENDIENTE}
+  "Honda Jazz": {estado: PENDIENTE}
+  "Honda Civic": {estado: "PENDIENTE (8.ª gen: sin Mängelquote; ADAC 2023 por encima de la media casi todos los años, sobre todo batería; TÜV: rótulas, discos, luces)", fuente: "https://assets.adac.de/Autodatenbank/GWInfo/gw0135-honda-civic-2005-2011-bericht.pdf"}
+  "Mazda 2": {adac: "Mazda 2", estado: "PENDIENTE (TÜV 2026 solo da franjas jóvenes: 2,9 % a 2-3 años; ADAC 2026 lo pone entre los mejores Kleinwagen 2016-2023)"}
+  "Kia Rio": {estado: PENDIENTE}
+  "Kia Ceed": {adac: "KIA Ceed/XCeed", estado: PENDIENTE}
+  "Kia Picanto": {adac: "Kia Picanto", estado: PENDIENTE}
+  "Audi A3": {estado: "PENDIENTE de Mängelquote por franja (A3 8P: ADAC 2021 'nivel muy bajo de defectos y averías', TÜV mejor que la media; TÜV 2015 4,9 % sin franja clara)", fuente: "https://assets.adac.de/Autodatenbank/GWInfo/gw0091-audi-a3-2003-2013-benziner-bericht.pdf"}
+  "Alfa Romeo 147": {tuv_mq: 30.7, tuv_franja: "9 años (TÜV 2012)", tuv_media_propia: 22.2, estado: "confirmado (TÜV Report 2012: puesto 78 de 85 a 9 años, media 22,2 %)", fuente: "https://autoflotte.de/downloadfile/1085776/TUEV_Report_2012.pdf ; eje trasero 3 veces peor que la media, electrónica: https://www.autobild.de/artikel/gebrauchtwagen-test-alfa-147-ab-2001--53500.html"}
+  "Alfa Romeo 159": {tuv_mq: 9.4, tuv_franja: "3 años (TÜV 2012)", tuv_media_propia: 5.9, estado: "confirmado (TÜV Report 2012: puesto 119 de 127 a 3 años, media 5,9 %; AUTO BILD 2016: solo el 58,5 % de los de 7 años pasa sin defectos)", fuente: "https://autoflotte.de/downloadfile/1085776/TUEV_Report_2012.pdf ; https://www.autobild.de/artikel/alfa-romeo-159-gebrauchtwagen-test-10615563.html"}
+  # Berlinas medianas prioritarias (01-11-2026). Sin cifra TÜV/ADAC/OCU de la generación que entra en presupuesto:
+  # los TÜV 2026 encontrados son de generaciones posteriores (A4 B9, Octavia III/IV) y el ADAC solo cubre 2016-2023.
+  "Honda Accord": {estado: "PENDIENTE (TÜV 2014/2016: cualitativo 'fiable'; rótulas y muelles por encima de la media desde ~9-11 años; sin cifra por franja)", fuente: "https://www.handelsblatt.com/mobilitaet/motor/der-honda-accord-als-gebrauchter-solide-aber-selten-/14733658.html ; https://www.wz.de/auto/gebrauchtwagen/purer-durchschnitt-tuev-report-zu-honda-accord_aid-29389651"}
+  "Toyota Avensis": {estado: "PENDIENTE (T25: 2.º de su franja 8-9 años en el TÜV 2013, sin porcentaje; puntúa por el índice OCU de Toyota)", fuente: "https://autocreative.wordpress.com/2012/12/07/toyota-beim-tuv-report-ganz-vorne/"}
+  "Mazda 6": {estado: "PENDIENTE (GG/GY 2002-2008: sin cifra TÜV/ADAC encontrada)"}
+  "Volkswagen Jetta": {estado: "PENDIENTE (Jetta V: sin dato TÜV/ADAC/OCU)"}
+  "Audi A4": {estado: "PENDIENTE (B7 2004-2008: el TÜV 2026 de Auto Bild (20,8 % a 8-9 años) es del B9; no se usa. El dato ADAC 'Audi A4' es de matriculaciones 2015 y no se aplica al B7)", fuente: "https://www.autobild.de/artikel/audi-a4-a5-schwachstellen-maengel-staerken-28217247.html"}
+  "Seat Exeo": {estado: "PENDIENTE (gemelo del Audi A4 B7, que tampoco tiene cifra)"}
+  "Hyundai i10": {adac: "Hyundai i10", estado: PENDIENTE}
+  "Hyundai i20": {adac: "Hyundai i20", estado: PENDIENTE}
+  "Hyundai i30": {adac: "Hyundai i30", estado: PENDIENTE}
+  "Skoda Fabia": {adac: "Skoda Fabia", estado: "PENDIENTE (ADAC 2026 entre los mejores Kleinwagen 2016-2023, sin cifra)"}
+  "Skoda Octavia": {adac: "Skoda Octavia", estado: PENDIENTE}
+  "Seat Ibiza": {adac: "SEAT Ibiza", estado: "PENDIENTE (ADAC 2026 entre los mejores Kleinwagen 2016-2023, sin cifra)"}
+  "Seat León": {adac: "SEAT Leon", estado: "PENDIENTE de Mängelquote (León II 1P: ADAC 2023 'muy buena estadística de averías', TÜV en la media; iluminación por encima de la media)", fuente: "https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://www.autozeitung.de/seat-leon-erfahrungen-kaufberatung-i-ii-91760.html"}
+  "Volkswagen Polo": {adac: "VW Polo", estado: "PENDIENTE (ADAC 2026 entre los mejores Kleinwagen 2016-2023, sin cifra)"}
+  "Opel Corsa": {adac: "Opel Corsa", estado: PENDIENTE}
+  "Opel Astra": {adac: "Opel Astra", estado: PENDIENTE}
+  "Peugeot 107": {estado: PENDIENTE, gemelo: "Toyota Aygo"}
+  "Citroën C1": {estado: PENDIENTE, gemelo: "Toyota Aygo"}
+  "Seat Córdoba": {estado: PENDIENTE, gemelo: "Seat Ibiza"}
+  "Peugeot 208": {adac: "Peugeot 208", estado: PENDIENTE}
+  "Peugeot 308": {adac: "Peugeot 308", estado: PENDIENTE}
+  "Citroën C3": {adac: "Citroen C3/DS 3", estado: PENDIENTE}
+  "Citroën C4": {estado: PENDIENTE}
+  "Ford Fiesta": {adac: "Ford Fiesta (Courier)", estado: PENDIENTE}
+  "Fiat Punto": {estado: PENDIENTE}
+  "Fiat 500": {adac: "Fiat 500", estado: PENDIENTE}
+  "Nissan Micra": {adac: "Nissan Micra", estado: PENDIENTE}
+  "Suzuki Swift": {adac: "Suzuki Swift", estado: "PENDIENTE (ADAC 2026 entre los mejores Kleinwagen 2016-2023, sin cifra)"}
+  "Mitsubishi Colt": {estado: PENDIENTE}
+
+adac_2025:
+  descripcion: "ADAC Pannenstatistik 2025 (averías en 2024): Pannenkennziffer = averías por 1.000 vehículos, matriculación 2015 (la más antigua de la edición)"
+  fuente: "https://assets.adac.de/image/upload/v1744279730/ADAC-eV/KOR/Text/PDF/Pannenstatistik_2025_final_nrmvls.pdf"
+  estado: "confirmado (PDF original descargado el 31-10-2026; extraído con tools/adac_extract.py, último valor de cada fila; C3/DS3 y Mégane revisados a mano)"
+  nota: "Cubre coches de 2015; para 2008-2014 es una aproximación del modelo, no de la generación exacta."
+  puntuacion: "punt_ADAC = 50 + 100·(mediana − PKZ)/mediana, acotado 0-100; mediana de todas las filas de la tabla"
+  pkz_2015:
+    "Audi A1": 6.0
+    "Audi A4": 7.6
+    "Audi A5": 11.1
+    "Audi Q5": 13.8
+    "BMW 3er-Reihe": 9.1
+    "BMW 4er-Reihe": 7.5
+    "BMW 5er-Reihe": 10.3
+    "BMW X1": 14.2
+    "BMW X3": 4.2
+    "BMW X5": 14.1
+    "Citroen Berlingo, Fiat Doblò, Peugeot Partner/Rifter": 19.5
+    "Citroen C3/DS 3": 23.7
+    "DS Automobiles DS3, Citroen C3/DS 3": 23.7
+    "Dacia Dokker": 7.5
+    "Dacia Duster": 22.9
+    "Dacia Logan": 23.1
+    "Dacia Sandero": 14.1
+    "Fiat 500": 23.6
+    "Fiat Ducato": 45.6
+    "Fiat Panda": 16.5
+    "Ford B-MAX": 17.7
+    "Ford C-MAX": 25.0
+    "Ford Fiesta (Courier)": 20.4
+    "Ford Focus": 25.2
+    "Ford Kuga": 23.6
+    "Ford Ranger": 16.7
+    "Ford Tourneo/Transit Connect": 23.5
+    "Ford Tourneo/Transit Custom": 18.6
+    "Hyundai Tucson": 18.2
+    "Hyundai i10": 18.6
+    "Hyundai i20": 21.1
+    "Hyundai i30": 16.8
+    "Hyundai ix20": 21.1
+    "KIA Ceed/XCeed": 15.4
+    "Kia Picanto": 24.4
+    "Kia Sportage": 19.7
+    "MINI MINI": 11.6
+    "Mazda 2": 6.6
+    "Mazda 3": 12.3
+    "Mazda CX-3": 9.1
+    "Mazda CX-5": 15.1
+    "Mercedes-Benz A-Klasse": 13.9
+    "Mercedes-Benz B-Klasse": 12.8
+    "Mercedes-Benz C-Klasse": 11.4
+    "Mercedes-Benz CLA": 19.3
+    "Mercedes-Benz Citan": 21.9
+    "Mercedes-Benz E-Klasse": 19.5
+    "Mercedes-Benz GLA": 10.7
+    "Mercedes-Benz GLE": 13.0
+    "Mitsubishi ASX": 8.8
+    "Mitsubishi Space Star": 25.9
+    "Nissan Micra": 18.4
+    "Nissan Qashqai": 24.9
+    "Opel ADAM": 21.0
+    "Opel Astra": 22.2
+    "Opel Corsa": 20.2
+    "Opel KARL": 20.4
+    "Opel Meriva": 26.2
+    "Opel Mokka": 20.4
+    "Opel Zafira": 30.2
+    "Peugeot 2008": 13.4
+    "Peugeot 208": 20.4
+    "Peugeot 308": 25.6
+    "Renault Clio/Captur": 26.0
+    "Renault Kangoo/Rapid": 26.8
+    "Renault Master": 19.5
+    "Renault Mégane": 28.1
+    "Renault Scénic": 29.1
+    "Renault Twingo": 20.7
+    "SEAT Ibiza": 16.8
+    "SEAT Leon": 10.0
+    "Skoda Fabia": 12.8
+    "Skoda Octavia": 10.4
+    "Skoda Rapid": 15.1
+    "Skoda Yeti": 14.0
+    "Suzuki Swift": 12.0
+    "Toyota Auris": 19.3
+    "Toyota Aygo": 12.0
+    "Toyota Yaris": 22.8
+    "VW Beetle": 11.8
+    "VW Golf": 10.5
+    "VW Nutzfahrzeuge Caddy": 16.4
+    "VW Polo": 14.9
+    "VW Tiguan": 11.4
+    "VW Touran": 20.3
+    "smart forfour": 27.5
+    "smart fortwo": 21.0
+
+plataformas_gemelas:
+  # Si un modelo no tiene dato de fiabilidad y su gemelo sí, hereda la puntuación del gemelo marcada "por plataforma".
+  - grupo: [Toyota Aygo, Peugeot 107, Citroën C1]
+    detalle: "Proyecto B-Zero de Toyota y PSA: plataforma común, fabricados en TPCA Kolín desde 2005; mismo motor de gasolina 1.0 (1KR)"
+    estado: confirmado
+    fuente: "Nota de prensa de Toyota, 01-12-2004: https://global.toyota/en/detail/221659 (\"Developed on a common platform, all three cars will begin rolling off the line at the TPCA plant in Kolín\")"
+  - grupo: [Seat Ibiza, Seat Córdoba, Volkswagen Polo, Skoda Fabia]
+    detalle: "Ibiza 6L (2002-2008), Córdoba 6L (2002-2009), Polo 9N (2001-2009) y Fabia I: plataforma PQ24 del grupo VW"
+    estado: "confirmado (Ibiza 6L-Polo 9N-Fabia); probable (Córdoba = Ibiza 6L berlina)"
+    fuente: "Auto Bild, 'Gebrauchtwagen Seat Ibiza (ab 2002)': https://www.autobild.de/artikel/gebrauchtwagen-seat-ibiza-ab-2002--53502.html (\"Teilt sich der Ibiza ... 6L ... seine Plattform mit dem Polo 9N und dem Skoda Fabia\")"
+    nota: "Ibiza, Polo y Fabia ya tienen dato propio; hereda el Córdoba (del Ibiza). El dato ADAC es de matriculaciones 2015 (generación posterior)."
+
+  - grupo: [Audi A4, Seat Exeo]
+    detalle: "Seat Exeo (2008-2013) = Audi A4 B7 (plataforma PL46, motores 2.0 TFSI/TDI del A4); la línea de montaje del B7 se trasladó de Ingolstadt a Martorell"
+    estado: confirmado
+    fuente: "Nota de prensa de SEAT (02-10-2008) reproducida en https://www2020.theautochannel.com/news/2008/10/02/146068.html ; Auto Bild (10-2008): https://www.autobild.de/artikel/seat-exeo-in-paris-789600.html ; https://paultan.org/2008/10/06/seat-exeo-official-photos-and-details/"
+    nota: "Ninguno de los dos tiene cifra de fiabilidad propia: el gemelo no aporta puntos hasta tenerla."
+
+cajas_excluidas:
+  # Excluidas por defecto (config.yaml -> filtros.excluir_multitronic). Detección en src/pipeline.py:
+  #   'multitronic' o 'cvt' en un Audi -> excluido; Audi automático sin 'tiptronic/s tronic/quattro/dsg' -> aviso "posible".
+  multitronic:
+    nombre: "Audi Multitronic (CVT 01J y 0AW)"
+    problema: "Averías de la caja CVT: centralita (TCM), cuerpo de válvulas y la propia caja. En EE. UU., acuerdo colectivo de 2013 que amplió a 10 años/100.000 millas la cobertura (TCM 2003-06, cuerpo de válvulas 2003-04, caja 2002-04) en ~64.000 A4/A4 Cabrio/A6 2002-2006, sin admisión de culpa. En Europa no hay ampliación documentada; Auto Bild recoge averías frecuentes en el A4 B6 (un caso con la 3.ª caja a 38.000 km)."
+    estado: "confirmado (EE. UU.); probable (Europa, prensa); 0AW (B8): sin boletín ni dato ADAC encontrado"
+    fuente: "https://www.autoblog.com/2013/10/07/audi-cvt-settlement-covers-64000-cars/ (07-10-2013) ; boletines Audi en NHTSA: https://static.nhtsa.gov/odi/tsbs/2013/MC-10123551-9999.pdf , https://static.nhtsa.gov/odi/tsbs/2013/MC-10123545-9999.pdf ; Auto Bild A4 B6: https://www.autobild.de/artikel/audi-a4-ab-2000--44969.html (fecha PENDIENTE)"
+    revisar: "Si el anuncio dice 'automático' sin más en un Audi de tracción delantera, preguntar si es Multitronic: en ese caso, descartar."
+
+cajas_robotizadas:
+  # Penalización en la fiabilidad (scoring.penalizaciones.caja_robotizada). Detectadas en título/versión.
+  patron: "easy-?tronic|\\bmta\\b|dualogic|\\bmmt\\b|2-?tronic|\\betg\\d?\\b|sensodrive|\\bcmp\\b|pilotad\\w*|\\basg\\b|\\bags\\b|speedshift|softouch|selespeed|quickshift|durashift|\\bamt\\b|robotizad\\w*"
+  nombres: "Opel Easytronic (MTA), Fiat Dualogic, Toyota MMT, Peugeot 2-Tronic/ETG, Citroën SensoDrive/CMP, VW ASG, Suzuki AGS, smart speedshift/softouch, Alfa Selespeed, Renault Quickshift, Ford Durashift"
+  estado: "criterio sin fuente seria de fiabilidad (no hay datos ADAC/TÜV/OCU por tipo de caja)"
+  referencia: "km77 sobre la mala fama de las cajas robotizadas por lentitud, imprecisión y brusquedad (no es un dato de averías): https://www.km77.com/revista/?p=14315"
+  revisar: "Prueba larga en ciudad: tirones, retraso al iniciar la marcha, ruido del actuador; facturas de embrague/actuador y si se ha hecho la adaptación del embrague"
+
+marcas_ocu_2026:
+  # Índice de fiabilidad OCU 2026 por marca (0-100). Solo marcas con cifra en la nota de prensa.
+  fuente: "https://www.ocu.org/organizacion/prensa/notas-de-prensa/2026/fiabcoches020326 ; https://es.motor1.com/news/789821/ocu-fiabilidad-2026-japoneses-tesla/"
+  estado: probable
+  valores: {Lexus: 93, Subaru: 91, Toyota: 91, Suzuki: 91}
+  # Kia 89: fuente secundaria de edición incierta -> PENDIENTE, no se usa.
+
+motores:
+  # El PROBLEMA está documentado en la fuente; la MAGNITUD del ajuste (puntos) es un criterio de
+  # scoring editable, no un dato. marca "(todas)" = aplica a cualquier marca con esa clave de motor.
+  - {marca: "(todas)", motor: "1.2 PureTech", anio_desde: 2012, anio_hasta: 2022, ajuste: -25,
+     problema: "Correa de distribución húmeda que se degrada y consumo de aceite; Stellantis amplió garantía a 10 años/175.000 km con condiciones",
+     revisar: "Factura de cambio de correa y del tamiz/bomba de aceite; nivel de aceite; testigo de presión; si entra en la ampliación de garantía Stellantis",
+     estado: probable, fuente: "https://www.km77.com/revista/engendro-mecanico/stellantis-compensacion-afectados-puretech/ ; https://www.motorpasion.com/industria/stellantis-fin-responde-al-problema-motores-puretech-10-anos-garantia-retroactiva"}
+  - {marca: "(todas)", motor: "1.0 PureTech", anio_desde: 2012, anio_hasta: 2022, ajuste: -25,
+     problema: "Igual que 1.2 PureTech (familia EB)", revisar: "Igual que 1.2 PureTech",
+     estado: probable, fuente: "https://www.km77.com/revista/engendro-mecanico/stellantis-compensacion-afectados-puretech/"}
+  - {marca: "(todas)", motor: "1.2 VTi", anio_desde: 2012, anio_hasta: 2022, ajuste: -25,
+     problema: "1.2 VTi atmosférico = PureTech EB2 (correa húmeda)", revisar: "Igual que 1.2 PureTech",
+     estado: probable, fuente: "https://www.km77.com/revista/engendro-mecanico/stellantis-compensacion-afectados-puretech/"}
+  - {marca: "(todas)", motor: "1.2 TSI", anio_desde: 2008, anio_hasta: 2012, ajuste: -20,
+     problema: "EA111: cadena de distribución que se alarga y tensor que falla; puede saltar y romper el motor",
+     revisar: "Ruido metálico en arranque en frío (primeros segundos); factura de cambio de cadena y tensor",
+     estado: probable, fuente: "https://www.autobild.de/artikel/vw-steuerketten-kulanz-2892135.html"}
+  - {marca: "(todas)", motor: "1.4 TSI", anio_desde: 2008, anio_hasta: 2012, ajuste: -20,
+     problema: "EA111: cadena de distribución que se alarga y tensor que falla",
+     revisar: "Ruido de cadena en frío; factura de cadena/tensor; consumo de aceite",
+     estado: probable, fuente: "https://www.autobild.de/artikel/vw-steuerketten-kulanz-2892135.html"}
+  - {marca: "(todas)", motor: "1.0 EcoBoost", anio_desde: 2012, anio_hasta: 2018, ajuste: -20,
+     problema: "Correa bañada en aceite que se degrada; fallos de refrigeración y sobrecalentamiento (≈2012-2014)",
+     revisar: "Fugas y nivel de refrigerante, manguitos, historial de sobrecalentamiento, factura de correa",
+     estado: probable, fuente: "https://www.motor.es/noticias/ford-10-ecoboost-tricilindricos-correas-banadas-2026115650.html ; https://www.whatcar.com/news/ford-ecoboost-engine-recall-%E2%80%93-what-you-need-to-know/n17972"}
+  - {marca: "(todas)", motor: "1.2 TCe", anio_desde: 2012, anio_hasta: 2016, ajuste: -20,
+     problema: "H5Ft: consumo excesivo de aceite (fabricados 10/2012-07/2016); recalibración desde 06/2015",
+     revisar: "Consumo de aceite, humo azul, si se le hizo la actualización de software/campaña",
+     estado: probable, fuente: "https://questions.assemblee-nationale.fr/dyn/15/questions/QANR5L15QOSD963.pdf"}
+  - {marca: "Opel", motor: "1.4 Turbo", anio_desde: 2010, anio_hasta: 2018, ajuste: -10,
+     problema: "A14NET: pistones/segmentos (consumo de aceite, preencendido), ventilación del cárter, cadena. Fuentes secundarias",
+     revisar: "Consumo de aceite, tirones, ruido de cadena",
+     estado: "probable (fuente secundaria)", fuente: "https://carwiki.de/opel-a14net-motor"}
+  - {marca: "(todas)", motor: "1.6 THP", anio_desde: 2007, anio_hasta: 2018, ajuste: -10,
+     problema: "Familia Prince EP6 turbo (PSA/BMW): estiramiento de la cadena de distribución, consumo de aceite y carbonilla en admisión. Solo fuentes secundarias",
+     revisar: "Traqueteo de cadena en arranque en frío, consumo de aceite, facturas de cadena/tensor",
+     estado: "probable (fuente secundaria)", fuente: "https://autoscore.pro/engine/1.6-thp-ep6"}
+  - {marca: "(todas)", motor: "1.6 VTi", anio_desde: 2006, anio_hasta: 2015, ajuste: -10,
+     problema: "Familia Prince EP6 atmosférico (= MINI N12/N16): tensor y guías de la cadena de distribución; los boletines de MINI (SI M11 03 11) cubren también los atmosféricos producidos hasta 11-2011",
+     revisar: "Ruido de cadena en arranque en frío (primeros segundos), consumo de aceite, factura de cadena/tensor",
+     estado: "probable (boletines de servicio MINI recogidos por australiancar.reviews)",
+     fuente: "https://australiancar.reviews/recalls-faults-mini-r56-cooper-2007-13/"}
+  - {marca: "(todas)", motor: "1.4 VTi", anio_desde: 2006, anio_hasta: 2015, ajuste: -10,
+     problema: "PSA 1.4 VTi (EP3) = familia Prince (como el MINI 1.4 N12B14): tensor y guías de la cadena de distribución",
+     revisar: "Ruido de cadena en arranque en frío, consumo de aceite, factura de cadena/tensor",
+     estado: "probable (boletines de servicio MINI de la familia Prince recogidos por australiancar.reviews)",
+     fuente: "https://australiancar.reviews/recalls-faults-mini-r56-cooper-2007-13/"}
+  - {marca: "MINI", motor: "(cualquiera)", anio_desde: 2006, anio_hasta: 2013, ajuste: -10,
+     problema: "MINI R56 1.4/1.6 con motores Prince (N12/N16 atmosféricos, N14/N18 turbo): tensor de la cadena de distribución (boletines SI M11 02 07 y SI M11 03 11; producidos antes de 11-2011)",
+     revisar: "Cascabeleo de cadena en frío, historial de cambio de tensor/cadena, consumo de aceite (N14)",
+     estado: "probable (boletines de servicio MINI recogidos por australiancar.reviews)",
+     fuente: "https://australiancar.reviews/recalls-faults-mini-r56-cooper-2007-13/"}
+  # --- Alfa Romeo (02-11-2026). Los defectos de bastidor y electrónica ya están en la Mängelquote del modelo (no se duplican).
+  - {marca: "Alfa Romeo", motor: "1.6", anio_desde: 2000, anio_hasta: 2010, ajuste: -10,
+     problema: "1.6 Twin Spark: correa de distribución con roturas conocidas y daño grave; intervalo oficial reducido a ~58.000 km (36.000 millas) o 3 años desde el 13-11-2006",
+     revisar: "Factura con fecha de correa, tensor y bomba; si no la hay, cambiarla al comprar", estado: confirmado,
+     fuente: "https://whatcar.com/alfa-romeo/147/hatchback/used-review/n207/reliability ; https://alfaworkshop.co.uk/alfa_romeo_timing_belts.shtml"}
+  - {marca: "Alfa Romeo", motor: "2.0", anio_desde: 2000, anio_hasta: 2010, ajuste: -10,
+     problema: "2.0 Twin Spark: misma correa de intervalo corto que el 1.6 TS", revisar: "Igual que 1.6 TS", estado: confirmado,
+     fuente: "https://whatcar.com/alfa-romeo/147/hatchback/used-review/n207/reliability ; https://alfaworkshop.co.uk/alfa_romeo_timing_belts.shtml"}
+  - {marca: "Alfa Romeo", motor: "1.6", anio_desde: 2000, anio_hasta: 2010, ajuste: -5,
+     problema: "Twin Spark: variador de fase (reparación habitual de precio fijo en especialista; no es una estadística)", revisar: "Ruido tipo diésel al ralentí en caliente; si se cambió con la correa",
+     estado: "probable (taller especialista)", fuente: "https://alfa.studio.silvertoad.co.uk/?p=37543"}
+  - {marca: "Alfa Romeo", motor: "2.0", anio_desde: 2000, anio_hasta: 2010, ajuste: -5,
+     problema: "Twin Spark: variador de fase", revisar: "Igual que 1.6 TS", estado: "probable (taller especialista)", fuente: "https://alfa.studio.silvertoad.co.uk/?p=37543"}
+  - {marca: "Alfa Romeo", motor: "1.9", anio_desde: 2005, anio_hasta: 2011, ajuste: -15,
+     problema: "1.9 JTS: cadena de distribución y de equilibrado que se estiran (desde ~64.000 km); cadena, guías y tensores ~999 GBP en especialista",
+     revisar: "Factura de cadena; ruido en arranque en frío; códigos de sincronización leva/cigüeñal", estado: "probable (taller especialista)",
+     fuente: "https://alfaworkshop.co.uk/alfa_romeo_timing_belts.shtml"}
+  - {marca: "Alfa Romeo", motor: "2.2", anio_desde: 2005, anio_hasta: 2011, ajuste: -15,
+     problema: "2.2 JTS: cadenas de distribución y equilibrado que se estiran (desde ~64.000 km)", revisar: "Igual que 1.9 JTS",
+     estado: "probable (taller especialista)", fuente: "https://alfaworkshop.co.uk/alfa_romeo_timing_belts.shtml"}
+  - {marca: "Alfa Romeo", motor: "2.2", anio_desde: 2005, anio_hasta: 2011, ajuste: -5,
+     problema: "2.2 JTS: lodos en el aceite que colapsan el filtro; aceite y filtro cada año", revisar: "Historial de cambios de aceite anuales",
+     estado: "probable (taller especialista)", fuente: "https://alfa.studio.silvertoad.co.uk/?p=37541"}
+  # 2.2 JTS desgaste de árbol de levas: sin fuente seria (PENDIENTE). 2.4 JTDm: bielas/correa/sobrecalentamiento (AUTO BILD) -> diésel.
+  - {marca: "Alfa Romeo", motor: "2.4 Multijet", anio_desde: 2005, anio_hasta: 2011, ajuste: -20,
+     problema: "2.4 JTDm: averías de motor por bielas rotas, correa rota o sobrecalentamiento 'no son la excepción'", revisar: "Historial completo, factura de correa, temperatura",
+     estado: confirmado, fuente: "https://www.autobild.de/artikel/alfa-romeo-159-gebrauchtwagen-test-10615563.html"}
+  # --- Audi/VW gasolina (01-11-2026) ---
+  - {marca: "(todas)", motor: "1.8 TFSI", anio_desde: 2007, anio_hasta: 2012, ajuste: -20,
+     problema: "EA888 de 1.ª generación (CDHA/CDAB...): consumo excesivo de aceite por segmentos rascadores demasiado estrechos; la solución suele ser cambiar pistones y segmentos (Auto Bild: ~1 l/1.000 km). Sin programa europeo oficial de Kulanz",
+     revisar: "Consumo de aceite (pedir registro o prueba de consumo), humo azul, factura de pistones/segmentos o de la ventilación del cárter",
+     estado: "probable (Auto Bild; boletín Audi 11-24 del 11-11-2011)",
+     fuente: "https://www.autobild.de/artikel/oel-saufende-tfsi-motoren-11525331.html ; https://static.nhtsa.gov/odi/tsbs/2013/MC-10121325-9999.pdf"}
+  - {marca: "(todas)", motor: "1.8 TSI", anio_desde: 2007, anio_hasta: 2012, ajuste: -20,
+     problema: "Mismo motor que el 1.8 TFSI (EA888 de 1.ª generación): consumo excesivo de aceite (segmentos)",
+     revisar: "Igual que 1.8 TFSI", estado: "probable (mismo motor)",
+     fuente: "https://www.autobild.de/artikel/oel-saufende-tfsi-motoren-11525331.html"}
+  - {marca: "Audi", motor: "2.0 TFSI", anio_desde: 2009, anio_hasta: 2012, ajuste: -20,
+     problema: "EA888 2.0 TFSI (CAEB/CDNC, A4 B8/A5/Q5): consumo excesivo de aceite. En EE. UU., demanda Asghari v. Volkswagen (sentencia final 29-05-2015): garantía ampliada a 8 años/80.000 millas para el CAEB (A4 2009-11, A5 2010-11, Q5 2011). Boletín Audi 11-24 (11-11-2011): presión del cárter, corregido en producción desde el MY2012. El A4 B7 2.0 TFSI (EA113, BGB/BWE) NO es EA888 y no tiene este ajuste",
+     revisar: "Consumo de aceite, humo azul, si se hizo el cambio de pistones/segmentos o la válvula PCV; en un A4 de 2008 confirmar si es B7 (EA113) o B8 (EA888)",
+     estado: "confirmado (EE. UU.); probable (Europa, Auto Bild)",
+     fuente: "https://cases.justia.com/federal/district-courts/california/cacdce/2:2013cv02529/559084/186/0.pdf (29-05-2015) ; https://static.nhtsa.gov/odi/tsbs/2013/MC-10121325-9999.pdf ; https://www.autobild.de/artikel/oel-saufende-tfsi-motoren-11525331.html"}
+  - {marca: "(todas)", motor: "1.4 TSI Twincharger", anio_desde: 2005, anio_hasta: 2014, ajuste: -25,
+     problema: "1.4 TSI con turbo + compresor (BMY, BLG, CAVD, CAVE): familia EA111 con estiramiento y salto de la cadena de distribución reconocido por VW (casos de Kulanz). Rotura/fisura de pistones por carga térmica: solo fuentes de taller (baja confianza). Embrague del compresor: PENDIENTE",
+     revisar: "Ruido de cadena en frío, factura de cadena/tensor, compresión de cilindros, consumo de aceite, tirones o ruido del compresor",
+     estado: "probable (cadena, Auto Bild); pistones: fuente secundaria",
+     fuente: "https://www.autobild.de/artikel/vw-steuerketten-kulanz-2892135.html ; pistones: https://gebrauchtwagenberater.de/probleme-beim-tsi/"}
+  # A4 B7 2.0 TFSI (EA113 BGB/BWE) y 1.8T 20v: sin fuente seria que los incluya o excluya del problema de aceite (PENDIENTE).
+  # --- Diésel (añadido 31-10-2026). La magnitud del ajuste es criterio; el problema tiene fuente. ---
+  - {marca: "(todas)", motor: "1.6 HDi", anio_desde: 2004, anio_hasta: 2010, ajuste: -20,
+     problema: "PSA DV6 16v (producido hasta 2010): fallos de inyectores, volante motor, turbo y embrague",
+     revisar: "Humo y silbido de turbo, juntas de inyector (carbonilla), volante bimasa (vibración al ralentí), factura de turbo/embrague",
+     estado: confirmado, fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_2.html"}
+  - {marca: "(todas)", motor: "1.6 HDi", anio_desde: 2011, anio_hasta: 2014, ajuste: -10,
+     problema: "PSA DV6 8v: inyectores Continental con tirones hasta abril de 2014; la polea del cigüeñal desgasta la correa de distribución",
+     revisar: "Tirones en aceleración, estado de la correa y de la polea del cigüeñal, factura de distribución",
+     estado: confirmado, fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_2.html"}
+  - {marca: "(todas)", motor: "1.6 HDi", anio_desde: 2015, anio_hasta: 2020, ajuste: -5,
+     problema: "1.6 BlueHDi: depósito de AdBlue defectuoso; Stellantis amplió la garantía de sustitución a 8 años (acuerdo OCU/BEUC)",
+     revisar: "Testigo de AdBlue/anticontaminación; si se cambió el depósito, factura o si entra en la ampliación",
+     estado: confirmado, fuente: "OCU, nota de prensa 27-12-2024: https://www.ocu.org/organizacion/prensa/notas-de-prensa/2024/adblue271224"}
+  - {marca: "(todas)", motor: "1.6 TDCi", anio_desde: 2004, anio_hasta: 2010, ajuste: -20,
+     problema: "Ford 1.6 TDCi = PSA DV6 16v: mismos fallos de inyectores, turbo y volante motor",
+     revisar: "Igual que 1.6 HDi 16v",
+     estado: "probable (mismo motor que el 1.6 HDi; la fuente habla de PSA)", fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_2.html"}
+  - {marca: "(todas)", motor: "1.6 TDCi", anio_desde: 2011, anio_hasta: 2014, ajuste: -10,
+     problema: "Ford 1.6 TDCi = PSA DV6 8v: inyectores y desgaste de la correa por la polea",
+     revisar: "Igual que 1.6 HDi 8v", estado: "probable (mismo motor)", fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_2.html"}
+  - {marca: "(todas)", motor: "1.4 HDi", anio_desde: 2001, anio_hasta: 2008, ajuste: -10,
+     problema: "PSA DV4: fugas en inyectores (juntas hasta 01-04-2004, tubos rígidos hasta 31-01-2008)",
+     revisar: "Olor a gasóleo, fugas en inyectores, arranque en caliente", estado: confirmado, fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_2.html"}
+  - {marca: "(todas)", motor: "1.4 HDi", anio_desde: 2009, anio_hasta: 2013, ajuste: -5,
+     problema: "1.4 HDi 68 FAP Euro 5: riesgo de obstrucción del filtro de partículas hasta julio de 2013 (regeneración)",
+     revisar: "Testigo de FAP, regeneraciones frecuentes", estado: confirmado, fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_2.html"}
+  - {marca: "(todas)", motor: "1.4 TDCi", anio_desde: 2001, anio_hasta: 2008, ajuste: -10,
+     problema: "Ford 1.4 TDCi = PSA DV4: fugas en inyectores", revisar: "Igual que 1.4 HDi",
+     estado: "probable (mismo motor)", fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_2.html"}
+  - {marca: "(todas)", motor: "1.5 dCi", anio_desde: 2001, anio_hasta: 2007, ajuste: -25,
+     problema: "Renault K9K: desgaste anormal de los cojinetes de biela que puede acabar en rotura del motor (afectó a cerca del 1 % hasta 2007)",
+     revisar: "Ruido de bielas en caliente, presión de aceite, facturas de cambio de aceite cada 10-15.000 km; si se cambiaron cojinetes",
+     estado: confirmado, fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_3.html"}
+  - {marca: "(todas)", motor: "1.5 dCi", anio_desde: 2008, anio_hasta: 2018, ajuste: 0,
+     problema: "La fuente sitúa el problema de los cojinetes hasta 2007; después no señala fallos graves específicos",
+     revisar: "Historial de cambios de aceite, EGR y FAP en uso urbano", estado: "probable", fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_3.html"}
+  - {marca: "(todas)", motor: "1.3 Multijet", anio_desde: 2005, anio_hasta: 2018, ajuste: -15,
+     problema: "Fiat 1.3 JTD/Multijet (también Ford Ka, Suzuki Splash y Swift): riesgo de rotura del motor por dilución del aceite",
+     revisar: "Nivel de aceite que SUBE (dilución por gasóleo), regeneraciones del FAP, cambios de aceite frecuentes",
+     estado: confirmado, fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_5.html"}
+  - {marca: "Ford", motor: "1.3 TDCi", anio_desde: 2008, anio_hasta: 2016, ajuste: -15,
+     problema: "Ford Ka 1.3 TDCi = Fiat 1.3 Multijet: riesgo de rotura por dilución del aceite",
+     revisar: "Igual que 1.3 Multijet", estado: "confirmado (la fuente cita el Ford Ka)",
+     fuente: "L'argus (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_5.html"}
+  - {marca: "(todas)", motor: "1.3 CDTi", anio_desde: 2003, anio_hasta: 2009, ajuste: -5,
+     problema: "Opel 1.3 CDTI: olor a gasóleo por soportes o juntas de inyectores hasta junio de 2009",
+     revisar: "Olor a gasóleo en el habitáculo, juntas de inyector", estado: confirmado, fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_5.html"}
+  - {marca: "(todas)", motor: "1.6 TDI", anio_desde: 2009, anio_hasta: 2015, ajuste: -10,
+     problema: "VAG EA189: fuga de refrigerante por la bomba de agua (L'argus) y campaña de emisiones (dieselgate) con actualización de software y rectificador de flujo",
+     revisar: "Nivel de refrigerante; comprobar con el bastidor que la campaña EA189 está hecha (si no, puede afectar a la ITV)",
+     estado: confirmado, fuente: "L'argus, 'Diesel : la liste des pannes récurrentes des moteurs HDi, dCi, TDI...' (28-10-2014): https://www.largus.fr/actualite-automobile/diesel-la-liste-des-pannes-recurrentes-5287380_p_4.html ; campaña EA189 en España: https://www.autofacil.es/lista-coches-afectados-fraude-volkswagen-asciende-683626-unidades-espana"}
+  - {marca: "(todas)", motor: "1.2 TDI", anio_desde: 2009, anio_hasta: 2014, ajuste: -5,
+     problema: "VAG 1.2 TDI EA189: incluido en la campaña de emisiones (actualización de software)",
+     revisar: "Comprobar con el bastidor que la campaña EA189 está hecha; FAP en uso urbano",
+     estado: "confirmado (campaña); fiabilidad mecánica PENDIENTE", fuente: "https://www.motor.es/noticias/deberia-llevar-tdi-revision-dieselgate-201630418.html"}
+  # Pendientes (sin fuente seria encontrada): 1.2/1.4 TDI 3 cil. (más allá de la campaña), 1.7 CDTi, 1.6 CDTi,
+  # 1.4 D-4D, Hyundai/Kia 1.1/1.4/1.6 CRDi, 1.3 DDiS. Entran con la fiabilidad del modelo limitada a neutra.
+  # Motores con buena fama (Toyota VVT-i/HSD, Honda i-VTEC, Mazda Skyactiv-G, Kia/Hyundai MPI, VAG MPI):
+  # PENDIENTE, no se encontró fuente de autoridad. Sin ajuste positivo hasta tenerla.
+
+combustibles:
+  - {combustible: diesel, ajuste: -15,
+     problema: "Filtro de partículas (DPF): en uso urbano no regenera y se colmata; sustitución >1.000-1.500 €",
+     revisar: "Testigo DPF, regeneraciones frecuentes, EGR, si se ha anulado el filtro (ilegal en ITV)",
+     estado: probable, fuente: "https://www.motor16.com/las-ultimas-noticias/filtro-particulas-diesel-averia-1500/"}
+
+# Consumo real de gasolina (l/100 km). Ver la sección "consumo" de fiscal.yaml (por segmento y por modelo).
+consumo: {}
+seguro: {}
+
+cajas:
+  # Riesgos de caja de cambios: se explican en informe.md y NO ajustan la puntuación (sin dato cuantitativo europeo).
+  - patron: "dsg ?7|dq200|7 velocidades dsg|dsg de 7"
+    nombre: "VAG DSG de 7 velocidades y embrague seco (DQ200)"
+    problema: "Desgaste de los embragues secos y fallos de la mecatrónica. En 2012 VW China amplió la garantía de la DQ200 a 10 años o 160.000 km; en Europa no consta campaña equivalente"
+    revisar: "Tirones o vibración al arrancar y en maniobras, golpes al cambiar de 1.ª a 2.ª, testigo de la caja; facturas de embrague o mecatrónica"
+    estado: "probable (prensa del sector)"
+    fuente: "https://autonews.gasgoo.com/articles/market-industry/vw-apologizes-to-chinese-customers-for-dsg-gearbox-problem-1021311"
+
+# ---- Mantenimiento (02-11-2026): recambios por marca y distribución por marca|motor (clave = marca|motor normalizado)
+mantenimiento:
+  nota: 'Mantenimiento (dentro de Coste de uso) = media de: puntos de la marca (coste de la revisión anual en taller oficial, OCU 2026) y puntos del tipo de distribución. Marca o motor sin dato: NEUTRO. El resto de marcas (Seat, Skoda, Toyota, Peugeot...)
+    no tienen cifra en la nota de la OCU: PENDIENTE.'
+  nota_puntos: 'Supuesto (criterio): cadena 80 (sin cambio periódico, aunque algunas se estiran), correa 50, correa de intervalo corto (< 100.000 km o <= 4 años) 25. Referencias: kit de distribución + bomba en Valencia 550,22 € (Tallerator vía Autofácil,
+    2014) https://www.autofacil.es/cuesta-cambiar-kit-distribucion/ ; Audatex 2013: premium +8,7 % de coste cada 100.000 km https://www.autofacil.es/mantener-coche-premium-cuesta-9-marca-generalista/'
+  puntos_distribucion:
+    cadena: 80
+    correa: 50
+    correa_corta: 25
+  marcas:
+    Audi:
+      puntos: 0
+      coste_revision_eur: 377
+      estado: confirmado (coste) · puntos = 50 + 100·(249 − coste)/249
+      fuente: 'OCU, nota de prensa 28-04-2026 (encuesta a 85.500 conductores): revisión anual en taller oficial, media 249 €. https://www.ocu.org/organizacion/prensa/notas-de-prensa/2026/tallerescoches280426'
+    Volkswagen:
+      puntos: 77.7
+      coste_revision_eur: 180
+      estado: confirmado (coste) · puntos = 50 + 100·(249 − coste)/249
+      fuente: 'OCU, nota de prensa 28-04-2026 (encuesta a 85.500 conductores): revisión anual en taller oficial, media 249 €. https://www.ocu.org/organizacion/prensa/notas-de-prensa/2026/tallerescoches280426'
+    Renault:
+      puntos: 77.7
+      coste_revision_eur: 180
+      estado: confirmado (coste) · puntos = 50 + 100·(249 − coste)/249
+      fuente: 'OCU, nota de prensa 28-04-2026 (encuesta a 85.500 conductores): revisión anual en taller oficial, media 249 €. https://www.ocu.org/organizacion/prensa/notas-de-prensa/2026/tallerescoches280426'
+    Hyundai:
+      puntos: 85.7
+      coste_revision_eur: 160
+      estado: confirmado (coste) · puntos = 50 + 100·(249 − coste)/249
+      fuente: 'OCU, nota de prensa 28-04-2026 (encuesta a 85.500 conductores): revisión anual en taller oficial, media 249 €. https://www.ocu.org/organizacion/prensa/notas-de-prensa/2026/tallerescoches280426'
+    Mercedes-Benz:
+      puntos: 0
+      coste_revision_eur: 490
+      estado: confirmado (coste) · puntos = 50 + 100·(249 − coste)/249
+      fuente: 'OCU, nota de prensa 28-04-2026 (encuesta a 85.500 conductores): revisión anual en taller oficial, media 249 €. https://www.ocu.org/organizacion/prensa/notas-de-prensa/2026/tallerescoches280426'
+    Lexus:
+      puntos: 14.3
+      coste_revision_eur: 338
+      estado: confirmado (coste) · puntos = 50 + 100·(249 − coste)/249
+      fuente: 'OCU, nota de prensa 28-04-2026 (encuesta a 85.500 conductores): revisión anual en taller oficial, media 249 €. https://www.ocu.org/organizacion/prensa/notas-de-prensa/2026/tallerescoches280426'
+  distribucion:
+    Seat|1.6:
+      tipo: correa
+      intervalo: '180.000 km (ADAC); AutoScout24: como muy tarde cada 5 años'
+      estado: probable (1.6 MPI 8v BGU/BSE/BSF; la ficha ADAC del A3 8P no da fila de correa)
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0229-seat-altea-2004-2015-benziner-bericht.pdf
+    Volkswagen|1.6:
+      tipo: correa
+      intervalo: '180.000 km (ADAC); AutoScout24: como muy tarde cada 5 años'
+      estado: probable (1.6 MPI 8v BGU/BSE/BSF; la ficha ADAC del A3 8P no da fila de correa)
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0229-seat-altea-2004-2015-benziner-bericht.pdf
+    Skoda|1.6:
+      tipo: correa
+      intervalo: '180.000 km (ADAC); AutoScout24: como muy tarde cada 5 años'
+      estado: probable (1.6 MPI 8v BGU/BSE/BSF; la ficha ADAC del A3 8P no da fila de correa)
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0229-seat-altea-2004-2015-benziner-bericht.pdf
+    Audi|1.6:
+      tipo: correa
+      intervalo: '180.000 km (ADAC); AutoScout24: como muy tarde cada 5 años'
+      estado: probable (1.6 MPI 8v BGU/BSE/BSF; la ficha ADAC del A3 8P no da fila de correa)
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0229-seat-altea-2004-2015-benziner-bericht.pdf
+    Seat|1.6 MPI:
+      tipo: correa
+      intervalo: '180.000 km (ADAC); AutoScout24: como muy tarde cada 5 años'
+      estado: probable (1.6 MPI 8v BGU/BSE/BSF; la ficha ADAC del A3 8P no da fila de correa)
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0229-seat-altea-2004-2015-benziner-bericht.pdf
+    Volkswagen|1.6 MPI:
+      tipo: correa
+      intervalo: '180.000 km (ADAC); AutoScout24: como muy tarde cada 5 años'
+      estado: probable (1.6 MPI 8v BGU/BSE/BSF; la ficha ADAC del A3 8P no da fila de correa)
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0229-seat-altea-2004-2015-benziner-bericht.pdf
+    Skoda|1.6 MPI:
+      tipo: correa
+      intervalo: '180.000 km (ADAC); AutoScout24: como muy tarde cada 5 años'
+      estado: probable (1.6 MPI 8v BGU/BSE/BSF; la ficha ADAC del A3 8P no da fila de correa)
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0229-seat-altea-2004-2015-benziner-bericht.pdf
+    Seat|1.4:
+      tipo: correa
+      intervalo: 150.000-180.000 km (1.4 16v MPI EA111)
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0197-seat-ibiza-2008-2017-benziner-bericht.pdf
+    Volkswagen|1.4:
+      tipo: correa
+      intervalo: 150.000-180.000 km (1.4 16v MPI EA111)
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0197-seat-ibiza-2008-2017-benziner-bericht.pdf
+    Skoda|1.4:
+      tipo: correa
+      intervalo: 150.000-180.000 km (1.4 16v MPI EA111)
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0197-seat-ibiza-2008-2017-benziner-bericht.pdf
+    Seat|1.2 TSI:
+      tipo: cadena
+      intervalo: 'sin intervalo (EA111: cadena que se estira, ver motores)'
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf
+    Seat|1.4 TSI:
+      tipo: cadena
+      intervalo: 'sin intervalo (EA111: cadena que se estira, ver motores)'
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf
+    Volkswagen|1.2 TSI:
+      tipo: cadena
+      intervalo: 'sin intervalo (EA111: cadena que se estira, ver motores)'
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf
+    Volkswagen|1.4 TSI:
+      tipo: cadena
+      intervalo: 'sin intervalo (EA111: cadena que se estira, ver motores)'
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf
+    Skoda|1.2 TSI:
+      tipo: cadena
+      intervalo: 'sin intervalo (EA111: cadena que se estira, ver motores)'
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf
+    Skoda|1.4 TSI:
+      tipo: cadena
+      intervalo: 'sin intervalo (EA111: cadena que se estira, ver motores)'
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf
+    Audi|1.2 TSI:
+      tipo: cadena
+      intervalo: 'sin intervalo (EA111: cadena que se estira, ver motores)'
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf
+    Audi|1.4 TSI:
+      tipo: cadena
+      intervalo: 'sin intervalo (EA111: cadena que se estira, ver motores)'
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0516-seat-leon-2005-2012-benziner-bericht.pdf
+    Honda|1.8:
+      tipo: cadena
+      intervalo: sin intervalo fijo (R18A/R20A)
+      estado: probable
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0135-honda-civic-2005-2011-bericht.pdf ; https://jdmshop.eu/en/genuine-honda-timing-chain-14401-rna-a01
+    Honda|2.0:
+      tipo: cadena
+      intervalo: sin intervalo fijo (R18A/R20A)
+      estado: probable
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0135-honda-civic-2005-2011-bericht.pdf ; https://jdmshop.eu/en/genuine-honda-timing-chain-14401-rna-a01
+    Honda|1.8 i-VTEC:
+      tipo: cadena
+      intervalo: sin intervalo fijo (R18A/R20A)
+      estado: probable
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0135-honda-civic-2005-2011-bericht.pdf ; https://jdmshop.eu/en/genuine-honda-timing-chain-14401-rna-a01
+    Honda|2.0 i-VTEC:
+      tipo: cadena
+      intervalo: sin intervalo fijo (R18A/R20A)
+      estado: probable
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0135-honda-civic-2005-2011-bericht.pdf ; https://jdmshop.eu/en/genuine-honda-timing-chain-14401-rna-a01
+    Toyota|1.8:
+      tipo: cadena
+      intervalo: sin intervalo (1ZZ-FE, Avensis T25 / Corolla E12)
+      estado: 'confirmado (ADAC: sin correa en los gasolina del Corolla E12; catálogos con tensor de cadena del Avensis T25 1.8 ZZT251)'
+      fuente: 'toyota-club.net (FAQ técnica serie ZZ) https://toyota-club.net/files/faq/04-01-10_rem_1zzfe_eng.htm ; catálogos de recambios: tensor de cadena Avensis T25 1.8 VVT-i ZZT251 https://www.expertoautorecambios.es/piezas-de-repuesto-toyota/avensis-t25/17344/10514/tensor-de-cadena
+        ; ADAC Corolla E12 https://assets.adac.de/image/upload/Autodatenbank/GWInfo/gw0112-toyota-corolla-2001---2007-bericht.pdf'
+    Toyota|1.8 VVT-i:
+      tipo: cadena
+      intervalo: sin intervalo (1ZZ-FE, Avensis T25 / Corolla E12)
+      estado: 'confirmado (ADAC: sin correa en los gasolina del Corolla E12; catálogos con tensor de cadena del Avensis T25 1.8 ZZT251)'
+      fuente: 'toyota-club.net (FAQ técnica serie ZZ) https://toyota-club.net/files/faq/04-01-10_rem_1zzfe_eng.htm ; catálogos de recambios: tensor de cadena Avensis T25 1.8 VVT-i ZZT251 https://www.expertoautorecambios.es/piezas-de-repuesto-toyota/avensis-t25/17344/10514/tensor-de-cadena
+        ; ADAC Corolla E12 https://assets.adac.de/image/upload/Autodatenbank/GWInfo/gw0112-toyota-corolla-2001---2007-bericht.pdf'
+    Toyota|1.4 VVT-i:
+      tipo: cadena
+      intervalo: sin intervalo (familia ZZ)
+      estado: confirmado (Corolla E12); 2ZR probable
+      fuente: https://assets.adac.de/image/upload/Autodatenbank/GWInfo/gw0112-toyota-corolla-2001---2007-bericht.pdf
+    Toyota|1.6 VVT-i:
+      tipo: cadena
+      intervalo: sin intervalo (familia ZZ)
+      estado: confirmado (Corolla E12); 2ZR probable
+      fuente: https://assets.adac.de/image/upload/Autodatenbank/GWInfo/gw0112-toyota-corolla-2001---2007-bericht.pdf
+    Mazda|1.4:
+      tipo: cadena
+      intervalo: sin intervalo (MZR gasolina)
+      estado: confirmado (Mazda 3 BK); Mazda 2/6 probable
+      fuente: 'https://assets.adac.de/Autodatenbank/GWInfo/gw0122-mazda-3-2003-2009-bericht.pdf ; Mazda 2 DY: cadena, Autodoc recomienda revisarla a 150.000 km https://club.autodoc.co.uk/manuals/engine/timing-chain/mazda/2'
+    Mazda|1.6:
+      tipo: cadena
+      intervalo: sin intervalo (MZR gasolina)
+      estado: confirmado (Mazda 3 BK); Mazda 2/6 probable
+      fuente: 'https://assets.adac.de/Autodatenbank/GWInfo/gw0122-mazda-3-2003-2009-bericht.pdf ; Mazda 2 DY: cadena, Autodoc recomienda revisarla a 150.000 km https://club.autodoc.co.uk/manuals/engine/timing-chain/mazda/2'
+    Mazda|1.8:
+      tipo: cadena
+      intervalo: sin intervalo (MZR gasolina)
+      estado: confirmado (Mazda 3 BK); Mazda 2/6 probable
+      fuente: 'https://assets.adac.de/Autodatenbank/GWInfo/gw0122-mazda-3-2003-2009-bericht.pdf ; Mazda 2 DY: cadena, Autodoc recomienda revisarla a 150.000 km https://club.autodoc.co.uk/manuals/engine/timing-chain/mazda/2'
+    Mazda|2.0:
+      tipo: cadena
+      intervalo: sin intervalo (MZR gasolina)
+      estado: confirmado (Mazda 3 BK); Mazda 2/6 probable
+      fuente: 'https://assets.adac.de/Autodatenbank/GWInfo/gw0122-mazda-3-2003-2009-bericht.pdf ; Mazda 2 DY: cadena, Autodoc recomienda revisarla a 150.000 km https://club.autodoc.co.uk/manuals/engine/timing-chain/mazda/2'
+    Peugeot|1.4:
+      tipo: correa
+      intervalo: '150.000 km / 10 años (ADAC 207); manual 207: 240.000 normal, 180.000 severo'
+      estado: confirmado (Peugeot 207); otros PSA TU/ET probable
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0140-peugeot-207-2006-2015-benziner-bericht.pdf ; https://www.autofacil.es/consultorio/tecnico/debo-cambiar-correa-peugeot-207/58226.html
+    Peugeot|1.6:
+      tipo: correa
+      intervalo: '150.000 km / 10 años (ADAC 207); manual 207: 240.000 normal, 180.000 severo'
+      estado: confirmado (Peugeot 207); otros PSA TU/ET probable
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0140-peugeot-207-2006-2015-benziner-bericht.pdf ; https://www.autofacil.es/consultorio/tecnico/debo-cambiar-correa-peugeot-207/58226.html
+    Citroën|1.4:
+      tipo: correa
+      intervalo: '150.000 km / 10 años (ADAC 207); manual 207: 240.000 normal, 180.000 severo'
+      estado: confirmado (Peugeot 207); otros PSA TU/ET probable
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0140-peugeot-207-2006-2015-benziner-bericht.pdf ; https://www.autofacil.es/consultorio/tecnico/debo-cambiar-correa-peugeot-207/58226.html
+    Citroën|1.6:
+      tipo: correa
+      intervalo: '150.000 km / 10 años (ADAC 207); manual 207: 240.000 normal, 180.000 severo'
+      estado: confirmado (Peugeot 207); otros PSA TU/ET probable
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0140-peugeot-207-2006-2015-benziner-bericht.pdf ; https://www.autofacil.es/consultorio/tecnico/debo-cambiar-correa-peugeot-207/58226.html
+    Peugeot|1.4 VTi:
+      tipo: cadena
+      intervalo: sin intervalo (familia Prince EP)
+      estado: probable (boletines MINI de la familia Prince)
+      fuente: https://australiancar.reviews/recalls-faults-mini-r56-cooper-2007-13/
+    Peugeot|1.6 VTi:
+      tipo: cadena
+      intervalo: sin intervalo (familia Prince EP)
+      estado: probable (boletines MINI de la familia Prince)
+      fuente: https://australiancar.reviews/recalls-faults-mini-r56-cooper-2007-13/
+    Citroën|1.4 VTi:
+      tipo: cadena
+      intervalo: sin intervalo (familia Prince EP)
+      estado: probable (boletines MINI de la familia Prince)
+      fuente: https://australiancar.reviews/recalls-faults-mini-r56-cooper-2007-13/
+    Citroën|1.6 VTi:
+      tipo: cadena
+      intervalo: sin intervalo (familia Prince EP)
+      estado: probable (boletines MINI de la familia Prince)
+      fuente: https://australiancar.reviews/recalls-faults-mini-r56-cooper-2007-13/
+    Peugeot|1.6 THP:
+      tipo: cadena
+      intervalo: sin intervalo (familia Prince EP)
+      estado: probable (boletines MINI de la familia Prince)
+      fuente: https://australiancar.reviews/recalls-faults-mini-r56-cooper-2007-13/
+    Citroën|1.6 THP:
+      tipo: cadena
+      intervalo: sin intervalo (familia Prince EP)
+      estado: probable (boletines MINI de la familia Prince)
+      fuente: https://australiancar.reviews/recalls-faults-mini-r56-cooper-2007-13/
+    Renault|1.2:
+      tipo: correa
+      intervalo: 120.000 km / 5 años (D4F, F4R)
+      estado: confirmado (Clio III)
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0169-renault-clio-2005-2014-benziner-bericht.pdf
+    Renault|2.0:
+      tipo: correa
+      intervalo: 120.000 km / 5 años (D4F, F4R)
+      estado: confirmado (Clio III)
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0169-renault-clio-2005-2014-benziner-bericht.pdf
+    Dacia|1.2:
+      tipo: correa_corta
+      intervalo: 90.000 km / 4 años (D4F en Sandero II; Sandero I PENDIENTE)
+      estado: confirmado (Sandero II)
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0234-dacia-sandero-2013-2020-bericht.pdf
+    Opel|1.0:
+      tipo: cadena
+      intervalo: sin intervalo (Twinport Z10/Z12/Z14XEP)
+      estado: confirmado (Corsa D); Astra H probable
+      fuente: https://assets.adac.de/image/upload/Autodatenbank/GWInfo/gw0164-opel-corsa-d-2006-2014-benziner-bericht.pdf
+    Opel|1.2:
+      tipo: cadena
+      intervalo: sin intervalo (Twinport Z10/Z12/Z14XEP)
+      estado: confirmado (Corsa D); Astra H probable
+      fuente: https://assets.adac.de/image/upload/Autodatenbank/GWInfo/gw0164-opel-corsa-d-2006-2014-benziner-bericht.pdf
+    Opel|1.4:
+      tipo: cadena
+      intervalo: sin intervalo (Twinport Z10/Z12/Z14XEP)
+      estado: confirmado (Corsa D); Astra H probable
+      fuente: https://assets.adac.de/image/upload/Autodatenbank/GWInfo/gw0164-opel-corsa-d-2006-2014-benziner-bericht.pdf
+    Ford|1.2:
+      tipo: correa
+      intervalo: 160.000 km / 8 años (Duratec Sigma)
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0168-ford-fiesta-2008-2017-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0005-ford-focus-2004-2011-benziner-bericht.pdf
+    Ford|1.4:
+      tipo: correa
+      intervalo: 160.000 km / 8 años (Duratec Sigma)
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0168-ford-fiesta-2008-2017-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0005-ford-focus-2004-2011-benziner-bericht.pdf
+    Ford|1.6:
+      tipo: correa
+      intervalo: 160.000 km / 8 años (Duratec Sigma)
+      estado: confirmado
+      fuente: https://assets.adac.de/Autodatenbank/GWInfo/gw0168-ford-fiesta-2008-2017-benziner-bericht.pdf ; https://assets.adac.de/Autodatenbank/GWInfo/gw0005-ford-focus-2004-2011-benziner-bericht.pdf
+    Fiat|1.2:
+      tipo: correa
+      intervalo: 120.000 km / 5 años (1.2 8v FIRE)
+      estado: confirmado
+      fuente: https://assets.adac.de/image/upload/Autodatenbank/GWInfo/gw0129-fiat-punto-2005-2018-bericht.pdf
+    Suzuki|1.0:
+      tipo: cadena
+      intervalo: sin intervalo (K10B)
+      estado: probable
+      fuente: https://classics.honestjohn.co.uk/askhj/answer/166663/suzuki-alto---cam-belt-or-chain-
+    Alfa Romeo|1.6:
+      tipo: correa_corta
+      intervalo: ~58.000 km (36.000 millas) / 3 años, oficial desde 13-11-2006
+      estado: confirmado
+      fuente: https://alfa.studio.silvertoad.co.uk/?p=37543 ; https://whatcar.com/alfa-romeo/147/hatchback/used-review/n207/reliability
+    Alfa Romeo|2.0:
+      tipo: correa_corta
+      intervalo: ~58.000 km (36.000 millas) / 3 años, oficial desde 13-11-2006
+      estado: confirmado
+      fuente: https://alfa.studio.silvertoad.co.uk/?p=37543 ; https://whatcar.com/alfa-romeo/147/hatchback/used-review/n207/reliability
+    Alfa Romeo|1.9:
+      tipo: cadena
+      intervalo: sin intervalo; estiramiento desde ~64.000 km (JTS)
+      estado: probable
+      fuente: https://alfaworkshop.co.uk/alfa_romeo_timing_belts.shtml
+    Alfa Romeo|2.2:
+      tipo: cadena
+      intervalo: sin intervalo; estiramiento desde ~64.000 km (JTS)
+      estado: probable
+      fuente: https://alfaworkshop.co.uk/alfa_romeo_timing_belts.shtml
+    Hyundai|1.2:
+      tipo: cadena
+      intervalo: sin intervalo (Kappa G4LA); fallos de cadena citados a 80.000-120.000 km solo en foros
+      estado: probable (ficha técnica de motor y catálogo de recambios)
+      fuente: 'https://mymotorlist.com/engines/hyundai/g4la/ ; tensor de cadena i20 (GB/IB) G4LA 1.2: https://www.motordoctor.es/tensor-de-cadena-de-distribucion/hyundai/i20/i20-gb/108806-1-2'
+    Kia|1.2:
+      tipo: cadena
+      intervalo: sin intervalo (Kappa G4LA); fallos de cadena citados a 80.000-120.000 km solo en foros
+      estado: probable (ficha técnica de motor y catálogo de recambios)
+      fuente: 'https://mymotorlist.com/engines/hyundai/g4la/ ; tensor de cadena i20 (GB/IB) G4LA 1.2: https://www.motordoctor.es/tensor-de-cadena-de-distribucion/hyundai/i20/i20-gb/108806-1-2'
+    Volkswagen|1.2:
+      tipo: cadena
+      intervalo: sin intervalo (1.2 6V/12V de 3 cilindros, p. ej. CGPA/CGPB)
+      estado: probable (catálogo de útiles de calado del fabricante NTN-SNR)
+      fuente: 'NTN-SNR, útiles de calado ''VAG 1.2 gasolina'' 6V/12V con cadena (Polo): https://eshop.ntn-snr.com/es/product/OM4010-CLA/TIMING%20TOOLS%20VAG%201.2%20PETROL'
+    Seat|1.2:
+      tipo: cadena
+      intervalo: sin intervalo (1.2 6V/12V de 3 cilindros, p. ej. CGPA/CGPB)
+      estado: probable (catálogo de útiles de calado del fabricante NTN-SNR)
+      fuente: 'NTN-SNR, útiles de calado ''VAG 1.2 gasolina'' 6V/12V con cadena (Polo): https://eshop.ntn-snr.com/es/product/OM4010-CLA/TIMING%20TOOLS%20VAG%201.2%20PETROL'
+    Skoda|1.2:
+      tipo: cadena
+      intervalo: sin intervalo (1.2 6V/12V de 3 cilindros, p. ej. CGPA/CGPB)
+      estado: probable (catálogo de útiles de calado del fabricante NTN-SNR)
+      fuente: 'NTN-SNR, útiles de calado ''VAG 1.2 gasolina'' 6V/12V con cadena (Polo): https://eshop.ntn-snr.com/es/product/OM4010-CLA/TIMING%20TOOLS%20VAG%201.2%20PETROL'
+
+# ---- Euro NCAP por generación (02-11-2026). Estrellas del espejo de la base Euro NCAP en autocentrum.pl (euroncap.com ya no
+# publica los ensayos anteriores a 2017: las URL antiguas dan 404 y su /api/search está prohibido por robots.txt) -> "probable".
+# ESP de serie: fichas de equipamiento de km77 de una o dos versiones por generación ("sí" = de serie en las comprobadas).
+# Obligación: Reglamento (CE) 661/2009, art. 12.1 y 13.5 (DOUE L 200, 31-7-2009, copia del BOE: https://www.boe.es/doue/2009/200/L00001-00024.pdf):
+# ESC obligatorio en tipos nuevos M1/N1 desde 1-11-2011 y en todos los turismos nuevos matriculados desde 1-11-2014.
+euroncap_nota: "Euro NCAP cambió el protocolo en 2009 (puntuación global con asistencia a la seguridad): las estrellas anteriores y posteriores a 2009 no son comparables. Las de antes son las de adulto."
+euroncap:
+- modelo: Audi A3
+  desde: 2003
+  hasta: 2012
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 3
+  peaton: 1
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/audi/a3/2003/3-puertas/ambiente/a3-16-ambiente/datos/equipamiento
+  estado: probable (estrellas del espejo autocentrum; ESP de serie en el 1.6 Ambiente 2003 y en el Sportback 1.2 TFSI 2010; años aprox.)
+  fuente: https://www.autocentrum.pl/euroncap/audi/a3-2003/
+- modelo: Audi A4
+  desde: 2004
+  hasta: 2008
+  ensayo: 2001
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 1
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/audi/a4/2005/berlina/estandar/a4-18-t/datos/equipamiento
+  estado: probable (el B7 no tiene ensayo propio; son los datos del B6 de 2001, sin estrellas de niño; ESP de serie en el 1.8T de 2005; años aprox.)
+  fuente: https://www.autocentrum.pl/euroncap/audi/a4-2001/
+- modelo: Seat Exeo
+  desde: 2009
+  hasta: 2013
+  ensayo: 2010
+  estrellas: 4
+  protocolo: 2009+
+  adulto: null
+  nino: null
+  peaton: null
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/seat/exeo/2009/berlina/reference/exeo-reference-16-102-cv2/datos/equipamiento
+  estado: 'probable (77/81/50/57 %; Euro NCAP: ESC de serie en todas las versiones; ensayo 2010, no 2009)'
+  fuente: https://www.autocentrum.pl/euroncap/seat/exeo-1.6-reference-lhd-2010/
+- modelo: Seat León
+  desde: 2005
+  hasta: 2012
+  ensayo: 2005
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 3
+  peaton: 3
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/seat/leon/2005/5-puertas/reference/leon-14-85-cv-reference/datos/equipamiento
+  estado: probable (ESP opcional, 495 €, en el 1.4 85 CV Reference de 2007; años aprox.)
+  fuente: https://www.autocentrum.pl/euroncap/seat/leon-2005/
+- modelo: Honda Civic
+  desde: 2006
+  hasta: 2011
+  ensayo: 2006
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 4
+  peaton: 3
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/honda/civic/2009/5-puertas/comfort/civic-5p-14-i-vtec-comfort2/datos/equipamiento
+  estado: probable (VSA de serie en el Hybrid 2006 y en el 1.4 Comfort 2009; no comprobé el 5p de entrada de 2006; también hay ensayo 2007 con 4/4/3)
+  fuente: https://www.autocentrum.pl/euroncap/honda/civic-2006/
+- modelo: Mazda 3
+  desde: 2004
+  hasta: 2009
+  ensayo: 2006
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 3
+  peaton: 2
+  esp_serie: no/opcional
+  esp_fuente: https://www.km77.com/coches/mazda/mazda3/2004/5-puertas/active/3-active-16-vvt-105cv-5p/datos/equipamiento
+  estado: probable (ESP no disponible en el 1.6 Active de 2004; DSC opcional, 500 €, en el Sportsedan de 2006; el espejo fecha el ensayo en 2006)
+  fuente: https://www.autocentrum.pl/euroncap/mazda/3-2006/
+- modelo: Mazda 6
+  desde: 2002
+  hasta: 2007
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 3
+  peaton: 1
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/mazda/mazda6/2002/4-puertas/active/6-active-18-16v-4p/datos/equipamiento
+  estado: probable (DSC de serie en el 1.8 Active de 2002 y en el Wagon de 2005; hay un 2.º ensayo de 2005 con 4/4/1)
+  fuente: https://www.autocentrum.pl/euroncap/mazda/6-2003/
+- modelo: Honda Accord
+  desde: 2003
+  hasta: 2008
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 2
+  esp_serie: no/opcional
+  esp_fuente: https://www.km77.com/coches/honda/accord/2003/4-puertas/comfort/accord-4p-20-comfort-i-vtec/datos/equipamiento
+  estado: probable (no disponible en el 2.0 Comfort de 2003; de serie en el Tourer Sport de 2006; el espejo no muestra estrellas de niño)
+  fuente: https://www.autocentrum.pl/euroncap/honda/accord-2003/
+- modelo: Toyota Avensis
+  desde: 2003
+  hasta: 2008
+  ensayo: 2003
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: null
+  peaton: 1
+  esp_serie: no/opcional
+  esp_fuente: https://www.km77.com/coches/toyota/avensis/2003/berlina/sol/avensis-5p-18-vvt-i-sol/datos/equipamiento
+  estado: probable (VSC no disponible en el 1.8 Sol de 2003; de serie en el Wagon 1.8 Sol de 2006; sin estrellas de niño en el espejo)
+  fuente: https://www.autocentrum.pl/euroncap/toyota/avensis-2003/
+- modelo: Skoda Octavia
+  desde: 2004
+  hasta: 2013
+  ensayo: 2004
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 4
+  peaton: 2
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/skoda/octavia/2004/estandar/active/octavia-16-active/datos/equipamiento
+  estado: probable (ESP opcional, 495 €, en el 1.6 Active de 2004; de serie en el 1.2 TSI Active Plus de 2009)
+  fuente: https://www.autocentrum.pl/euroncap/skoda/octavia-2004/
+- modelo: Volkswagen Jetta
+  desde: 2005
+  hasta: 2010
+  ensayo: 2004
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 3
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/volkswagen/jetta/2006/4-puertas/advance/jetta-advance-14-tsi-122-cv2/datos/equipamiento
+  estado: probable (sin ensayo propio; son los datos del Golf V de 2004; ESP de serie en el 1.4 TSI Advance, sin comprobar en todas las versiones)
+  fuente: https://www.autocentrum.pl/euroncap/volkswagen/golf-1.6-trendline-2004/
+- modelo: Volkswagen Golf
+  desde: 2003
+  hasta: 2008
+  ensayo: 2004
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 3
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/volkswagen/golf/2004/3-puertas/conceptline/golf-3p-conceptline-14-75-cv/datos/equipamiento
+  estado: probable (ESP de serie incluso en el Conceptline 1.4 75 CV)
+  fuente: https://www.autocentrum.pl/euroncap/volkswagen/golf-1.6-trendline-2004/
+- modelo: Alfa Romeo 147
+  desde: 2001
+  hasta: 2010
+  ensayo: 2001
+  estrellas: 3
+  protocolo: pre-2009
+  adulto: 3
+  nino: null
+  peaton: 2
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/alfa-romeo/147/2005/5-puertas/distinctive/147-5p-16-ts-105-cv-distinctive/datos/equipamiento
+  estado: probable (VDC opcional, 613 €, en el 1.6 Distinctive de 2005; 3★ coincide con el nombre del PDF oficial euroncap_alfa-romeo_147_2001_3stars.pdf, hoy en 404)
+  fuente: https://www.autocentrum.pl/euroncap/alfa-romeo/147-2001/
+- modelo: Alfa Romeo 159
+  desde: 2005
+  hasta: 2011
+  ensayo: 2005
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 1
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/alfa-romeo/159/2006/sportwagon/distinctive/159-sportwagon-19-jtd-distinctive-120-cv/datos/equipamiento
+  estado: probable (VDC de serie; el ensayo es de 2005, no 2006)
+  fuente: https://www.autocentrum.pl/euroncap/alfa-romeo/159-2005/
+- modelo: Peugeot 207
+  desde: 2006
+  hasta: 2014
+  ensayo: 2006
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 3
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/peugeot/207/2006/3-puertas/confort/207-3p-confort-14-752/datos/equipamiento
+  estado: probable (opcional, 500 €, en el 1.4 Confort de 2006; de serie en el SW Active de 2009)
+  fuente: https://www.autocentrum.pl/euroncap/peugeot/207-2006/
+- modelo: Suzuki Alto
+  desde: 2009
+  hasta: 2014
+  ensayo: 2009
+  estrellas: 3
+  protocolo: 2009+
+  adulto: null
+  nino: null
+  peaton: null
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/suzuki/alto/2009/5-puertas/ga/alto-10-ga/datos/equipamiento
+  estado: 'probable (55/46/35/29 %; Euro NCAP: ESC opcional en unas versiones y de serie en otras; km77: 550 € en el 1.0 GA)'
+  fuente: https://www.autocentrum.pl/euroncap/suzuki/alto-1.0-gl-rhd-2009/
+- modelo: Mazda 2
+  desde: 2003
+  hasta: 2007
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 3
+  peaton: 2
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/mazda/mazda2/2003/5-puertas/active/2-active-12/datos/equipamiento
+  estado: probable (DY; ESP no disponible en el 1.2 Active de 2003 ni en el 1.4 de 2006; hay otro ensayo de 2004 con 4/3/2)
+  fuente: https://www.autocentrum.pl/euroncap/mazda/2-2003/
+- modelo: Mazda 2
+  desde: 2007
+  hasta: 2014
+  ensayo: 2007
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 2
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/mazda/mazda2/2011/5-puertas/active/2-5p-active-13-75-cv/datos/equipamiento
+  estado: probable (DE; ESP no disponible en el 1.3 Active de 2011; no comprobé otras versiones)
+  fuente: https://www.autocentrum.pl/euroncap/mazda/2-1.3-ge-2007/
+- modelo: Lancia Ypsilon
+  desde: 2003
+  hasta: 2011
+  ensayo: null
+  estrellas: null
+  protocolo: PENDIENTE
+  adulto: null
+  nino: null
+  peaton: null
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/lancia/ypsilon/2007/3-puertas/argento/ypsilon-12-60-cv-argento/datos/equipamiento
+  estado: 'PENDIENTE (Ypsilon 843: no aparece en el espejo de Euro NCAP; cars-data lo da como Not Tested; ESP no disponible en el 1.2 Argento de 2007)'
+  fuente: PENDIENTE
+- modelo: Lancia Ypsilon
+  desde: 2011
+  hasta: 2024
+  ensayo: 2015
+  estrellas: 2
+  protocolo: 2009+
+  adulto: null
+  nino: null
+  peaton: null
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/lancia/ypsilon/2011/5-puertas/30-aniversario/ypsilon-09-twinair-30-aniversario-startstop/datos/equipamiento
+  estado: 'probable (44/79/64/38 %; no se ensayó en 2011, el primer ensayo es de 2015; Euro NCAP: ESC de serie)'
+  fuente: https://www.autocentrum.pl/euroncap/lancia/ypsilon-1.2-gold-lhd-2015/
+- modelo: Dacia Sandero
+  desde: 2008
+  hasta: 2012
+  ensayo: 2008
+  estrellas: 3
+  protocolo: pre-2009
+  adulto: 3
+  nino: 4
+  peaton: 1
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/dacia/sandero/2008/estandar/ambiance/sandero-ambiance-12-16v-75-cv2/datos/equipamiento
+  estado: probable (ESP no disponible en el 1.2 Ambiance de 2008 ni en el Stepway de 2009)
+  fuente: https://www.autocentrum.pl/euroncap/dacia/sandero-1.5-dci-2008/
+- modelo: Renault Laguna
+  desde: 2001
+  hasta: 2007
+  ensayo: 2001
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: null
+  peaton: 2
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/renault/laguna/2001/berlina/authentique/laguna-16-16v-authentique/datos/equipamiento
+  estado: probable (Laguna II; ESP de serie en el 1.6 Authentique de 2001 y en el GT Expression de 2005; reensayo de 2003, también 5★)
+  fuente: https://www.autocentrum.pl/euroncap/renault/laguna-2001/
+- modelo: Renault Laguna
+  desde: 2007
+  hasta: 2015
+  ensayo: 2007
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 2
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/renault/laguna/2008/berlina/authentique/laguna-authentique-15-dci-110-cv-eco22/datos/equipamiento
+  estado: probable (Laguna III; ESP de serie en el Authentique 1.5 dCi)
+  fuente: https://www.autocentrum.pl/euroncap/renault/laguna-2007/
+- modelo: Opel Corsa
+  desde: 2000
+  hasta: 2006
+  ensayo: 2002
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 1
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/opel/corsa/2004/5-puertas/blue-line/corsa-5p-blue-line-12-16v/datos/equipamiento
+  estado: probable (Corsa C; ESP no disponible en el 1.2 Blue Line de 2004; la ficha de 2001 no trae el campo ESP)
+  fuente: https://www.autocentrum.pl/euroncap/opel/corsa-2002-2002/
+- modelo: Opel Corsa
+  desde: 2006
+  hasta: 2014
+  ensayo: 2007
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 3
+  peaton: 3
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/opel/corsa/2006/3-puertas/111-aniversario/corsa-3p-111-aniversario-12-85-cv2/datos/equipamiento
+  estado: probable (Corsa D; ESP opcional, 305 €; el espejo fecha el ensayo en 2007, no 2006)
+  fuente: https://www.autocentrum.pl/euroncap/opel/corsa-2007/
+- modelo: Citroën C2
+  desde: 2003
+  hasta: 2009
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 3
+  peaton: 2
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/citroen/c2/2003/3-puertas/audace/c2-11i-audace/datos/equipamiento
+  estado: probable (ESP no disponible en el 1.1i Audace; solo comprobé esa versión)
+  fuente: https://www.autocentrum.pl/euroncap/citroen/c2-2003/
+- modelo: Seat Ibiza
+  desde: 2002
+  hasta: 2008
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 2
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/seat/ibiza/2002/3-puertas/cool/ibiza-3p-12-12v-64-cv-cool/datos/equipamiento
+  estado: probable (6L; ESP no disponible en el 1.2 Cool de 2002 ni en el Reference de 2006; el espejo fecha el ensayo en 2003)
+  fuente: https://www.autocentrum.pl/euroncap/seat/ibiza-2003/
+- modelo: Seat Ibiza
+  desde: 2008
+  hasta: 2017
+  ensayo: 2008
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 3
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/seat/ibiza/2008/5-puertas/reference/ibiza-5p-16-16v-105-cv-reference/datos/equipamiento
+  estado: probable (6J; ESP de serie en el 1.6 Reference y el 1.4 Sport de 2008 y en el ST 1.0 de 2015; no comprobé el 1.2 de entrada)
+  fuente: https://www.autocentrum.pl/euroncap/seat/ibiza-1.4-reference-2008/
+- modelo: Toyota Yaris
+  desde: 2005
+  hasta: 2011
+  ensayo: 2005
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 3
+  peaton: 2
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/toyota/yaris/2006/3-puertas/yaris/yaris-3p-13-vvt-i-yaris4/datos/equipamiento
+  estado: 'probable (VSC opcional: 600 € en 2006, solo con Pack Aire; 450 € en 2010)'
+  fuente: https://www.autocentrum.pl/euroncap/toyota/yaris-2005/
+- modelo: Ford Fiesta
+  desde: 2002
+  hasta: 2008
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 2
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/ford/fiesta/2002/5-puertas/ambiente/fiesta-5p-ambiente-13-70-cv/datos/equipamiento
+  estado: probable (Mk6; ESP no disponible en el 1.3 Ambiente de 2002 ni de 2006; el espejo fecha el ensayo en 2003)
+  fuente: https://www.autocentrum.pl/euroncap/ford/fiesta-2003/
+- modelo: Ford Fiesta
+  desde: 2008
+  hasta: 2017
+  ensayo: 2008
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 3
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/ford/fiesta/2008/3-puertas/ambiente/fiesta-3p-ambiente-125/datos/equipamiento
+  estado: probable (Mk7; ESP opcional, 450 €, en el Ambiente de 2008; de serie en el ST-Line de 2013)
+  fuente: https://www.autocentrum.pl/euroncap/ford/fiesta-1.25-trend-2008/
+- modelo: Renault Clio
+  desde: 2005
+  hasta: 2012
+  ensayo: 2005
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 1
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/renault/clio/2006/3-puertas/authentique/clio-3p-12-16v-authentique-eco2/datos/equipamiento
+  estado: 'probable (Clio III; ESP opcional: 600 € en 2006, 362 € en 2009)'
+  fuente: https://www.autocentrum.pl/euroncap/renault/clio-2005/
+- modelo: Volkswagen Polo
+  desde: 2002
+  hasta: 2009
+  ensayo: 2002
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 1
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/volkswagen/polo/2002/3-puertas/conceptline/polo-3p-12-55-cv-conceptline/datos/equipamiento
+  estado: probable (9N; ESP+ASR+HBA opcional por 970 € en 2002; 605 € en el CrossPolo de 2006)
+  fuente: https://www.autocentrum.pl/euroncap/volkswagen/polo-2002-2002/
+- modelo: Volkswagen Polo
+  desde: 2009
+  hasta: 2017
+  ensayo: 2009
+  estrellas: 5
+  protocolo: 2009+
+  adulto: null
+  nino: null
+  peaton: null
+  esp_serie: opcional
+  esp_fuente: https://www.autocentrum.pl/euroncap/volkswagen/vw-polo-1.2-trendline-lhd-2009/
+  estado: 'probable (90/86/41/71 %; Euro NCAP 2009: ESC opcional, de serie solo en algunas versiones; km77: de serie en el Polo Cross de 2015)'
+  fuente: https://www.autocentrum.pl/euroncap/volkswagen/vw-polo-1.2-trendline-lhd-2009/
+- modelo: Ford Focus
+  desde: 2004
+  hasta: 2011
+  ensayo: 2004
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 2
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/ford/focus/2005/4-puertas/ghia/focus-4p-16-tdci-109-cv-ghia/datos/equipamiento
+  estado: probable (ESP opcional, 650 €, incluso en el Ghia 1.6 TDCi de 2005)
+  fuente: https://www.autocentrum.pl/euroncap/ford/focus-2004/
+- modelo: Renault Mégane
+  desde: 2002
+  hasta: 2008
+  ensayo: 2003
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: null
+  peaton: 2
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/renault/megane/2003/3-puertas/pack-authentique/megane-3p-15-dci-100-cv-pack-authentique/datos/equipamiento
+  estado: probable (Mégane II; ESP opcional, 600 €, en el Pack Authentique y el Confort Authentique; el espejo fecha el ensayo en 2003 y no da estrellas de niño)
+  fuente: https://www.autocentrum.pl/euroncap/renault/megane-2003/
+- modelo: Opel Astra
+  desde: 2004
+  hasta: 2010
+  ensayo: 2004
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 1
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/opel/astra/2004/5-puertas/cosmo/astra-5p-cosmo-17-cdti-100-cv/datos/equipamiento
+  estado: probable (Astra H; ESP opcional, 590 €, en el Cosmo 1.7 CDTI de 2004; ESP Plus de serie en el TwinTop de 2007)
+  fuente: https://www.autocentrum.pl/euroncap/opel/vauxhall-astra-1.6-enjoy-lhd-2004/
+- modelo: Peugeot 307
+  desde: 2001
+  hasta: 2008
+  ensayo: 2001
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 2
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/peugeot/307/2006/sw/d-sign/307-sw-d-sign-162/datos/equipamiento
+  estado: probable (de serie en el HDi 136 Speedup, una versión alta, y opcional, 573 €, en el SW D-Sign de 2006; no comprobé las versiones de entrada)
+  fuente: https://www.autocentrum.pl/euroncap/peugeot/307-2001/
+- modelo: Peugeot 308
+  desde: 2007
+  hasta: 2013
+  ensayo: 2007
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 3
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/peugeot/308/2008/3-puertas/confort/308-3p-confort-14-vti-952/datos/equipamiento
+  estado: probable (ESP de serie en el 1.4 VTi Confort de 2008 y en el SW Access de 2011; hay otro ensayo de 2009, 5★, con el protocolo nuevo)
+  fuente: https://www.autocentrum.pl/euroncap/peugeot/308-2007/
+- modelo: Citroën C3
+  desde: 2002
+  hasta: 2009
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 2
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/citroen/c3/2002/5-puertas/furio/c3-11i-furio/datos/equipamiento
+  estado: probable (C3 I; ESP no disponible en el 1.1i Furio de 2002 ni en el Cool de 2006)
+  fuente: https://www.autocentrum.pl/euroncap/citroen/c3-2003/
+- modelo: Citroën C3
+  desde: 2009
+  hasta: 2016
+  ensayo: 2009
+  estrellas: 4
+  protocolo: 2009+
+  adulto: null
+  nino: null
+  peaton: null
+  esp_serie: opcional
+  esp_fuente: https://www.autocentrum.pl/euroncap/citroen/c3-1.4-diesel-lhd-2009/
+  estado: 'probable (83/74/33/40 %; Euro NCAP 2009: ESC disponible pero no de serie en suficientes unidades; km77: de serie en el Attraction BlueHDi de 2013)'
+  fuente: https://www.autocentrum.pl/euroncap/citroen/c3-1.4-diesel-lhd-2009/
+- modelo: Toyota Corolla
+  desde: 2002
+  hasta: 2007
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 2
+  esp_serie: PENDIENTE
+  esp_fuente: https://www.km77.com/coches/toyota/corolla/2006/wagon/luna/corolla-wagon-14-d4-d-90-cv-luna/datos/equipamiento
+  estado: 'probable para las estrellas (el espejo fecha el ensayo en 2003; el resumen habla de un coche sin airbags laterales). ESP: la ficha base de 2002 no trae el campo; de serie en el Wagon Luna de 2006'
+  fuente: https://www.autocentrum.pl/euroncap/toyota/corolla-2003/
+- modelo: Toyota Auris
+  desde: 2007
+  hasta: 2012
+  ensayo: 2007
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 3
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/toyota/auris/2010/5-puertas/active/auris-5p-133-vvt-i-active/datos/equipamiento
+  estado: probable (VSC+TRC opcional, 520 €, en el 1.33 Active de 2010)
+  fuente: https://www.autocentrum.pl/euroncap/toyota/auris-2007/
+- modelo: Honda Jazz
+  desde: 2002
+  hasta: 2008
+  ensayo: 2004
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 3
+  peaton: 3
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/honda/jazz/2002/estandar/s/jazz-12-i-dsi-s/datos/equipamiento
+  estado: probable (Jazz II; el espejo fecha el ensayo en 2004; ESP no disponible en 2002 ni en 2005)
+  fuente: https://www.autocentrum.pl/euroncap/honda/jazz-1.4-se-rhd-2004/
+- modelo: Honda Jazz
+  desde: 2008
+  hasta: 2015
+  ensayo: 2009
+  estrellas: 5
+  protocolo: 2009+
+  adulto: null
+  nino: null
+  peaton: null
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/honda/jazz/2009/estandar/elegance/jazz-12-i-vtec-elegance/datos/equipamiento
+  estado: 'probable (78/79/60/71 %; Euro NCAP 2009: ESC opcional en la mayoría de países y de serie en toda Europa desde enero de 2010; km77: VSA de serie en el Elegance de 2009 y en el 1.2 de 2011)'
+  fuente: https://www.autocentrum.pl/euroncap/honda/jazz-1.4-es-lhd-2009/
+- modelo: Kia Rio
+  desde: 2005
+  hasta: 2011
+  ensayo: 2005
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 3
+  peaton: 2
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/kia/rio/2005/4-puertas/ex1/rio-14-dohc-ex1-4p/datos/equipamiento
+  estado: probable (ESP no disponible en el 1.4 EX1 de 2005)
+  fuente: https://www.autocentrum.pl/euroncap/kia/rio-2005/
+- modelo: Hyundai i20
+  desde: 2008
+  hasta: 2014
+  ensayo: 2009
+  estrellas: 5
+  protocolo: 2009+
+  adulto: null
+  nino: null
+  peaton: null
+  esp_serie: no/opcional
+  esp_fuente: https://www.km77.com/coches/hyundai/i20/2009/3-puertas/classic/i20-3p-12-classic/datos/equipamiento
+  estado: 'probable (88/83/64/86 %; Euro NCAP: ESC de serie en unas versiones y opcional en otras; km77: no disponible en el Classic de 2009, de serie en el City S de 2012)'
+  fuente: https://www.autocentrum.pl/euroncap/hyundai/i20-1.4-gl-lhd-2009/
+- modelo: Fiat Punto
+  desde: 2005
+  hasta: 2012
+  ensayo: 2005
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 3
+  peaton: 3
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/fiat/grande-punto/2006/3-puertas/active/grande-punto-3p-12-65-cv-active/datos/equipamiento
+  estado: probable (Grande Punto; ESP no disponible en el 1.2 Active de 2006; no comprobé versiones altas ni el Punto Evo)
+  fuente: https://www.autocentrum.pl/euroncap/fiat/punto-2005/
+- modelo: Skoda Fabia
+  desde: 2000
+  hasta: 2007
+  ensayo: 2000
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 2
+  esp_serie: PENDIENTE
+  esp_fuente: PENDIENTE
+  estado: 'probable para las estrellas (Fabia I); ESP PENDIENTE: no encontré la generación en km77'
+  fuente: https://www.autocentrum.pl/euroncap/skoda/fabia-1.4-classic-2000/
+- modelo: Skoda Fabia
+  desde: 2007
+  hasta: 2014
+  ensayo: 2007
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 3
+  peaton: 2
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/skoda/fabia/2007/5-puertas/urban/fabia-12-60-cv-urban/datos/equipamiento
+  estado: probable (Fabia II; ESP opcional, 385 €, en el 1.2 60 CV Urban)
+  fuente: https://www.autocentrum.pl/euroncap/skoda/fabia-2007/
+- modelo: Ford Mondeo
+  desde: 2000
+  hasta: 2007
+  ensayo: 2001
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 2
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/ford/mondeo/2001/4-puertas/ambiente/mondeo-4p-ambiente-20-tdci-115cv/datos/equipamiento
+  estado: probable (Mondeo III; ESP opcional, 650 €, en 2001 y en 2005; hay otro ensayo de 2002 con 4/2)
+  fuente: https://www.autocentrum.pl/euroncap/ford/mondeo-2001/
+- modelo: Ford Mondeo
+  desde: 2007
+  hasta: 2014
+  ensayo: 2007
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 2
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/ford/mondeo/2007/4-puertas/ambiente/mondeo-4p-ambiente-16i-123-cv/datos/equipamiento
+  estado: probable (Mondeo IV; ESP/IVD de serie en el Ambiente 1.6 de 2007)
+  fuente: https://www.autocentrum.pl/euroncap/ford/mondeo-2007/
+- modelo: Renault Twingo
+  desde: 2007
+  hasta: 2014
+  ensayo: 2007
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 2
+  esp_serie: no/opcional
+  esp_fuente: https://www.km77.com/coches/renault/twingo/2007/estandar/access/twingo-access-12-60-cv-eco2/datos/equipamiento
+  estado: 'probable (el espejo no muestra estrellas de niño, raro para 2007: conviene verificarlo; ESP no disponible en el Access de 2007, opcional por 465 € en el Emotion de 2012)'
+  fuente: https://www.autocentrum.pl/euroncap/renault/twingo-2007/
+- modelo: Fiat Panda
+  desde: 2003
+  hasta: 2012
+  ensayo: 2004
+  estrellas: 3
+  protocolo: pre-2009
+  adulto: 3
+  nino: 2
+  peaton: 1
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/fiat/panda/2003/estandar/dynamic/panda-12-dynamic-natural-power/datos/equipamiento
+  estado: probable (Panda II; el espejo fecha el ensayo en 2004; ESP no disponible en el 1.2 Dynamic; solo comprobé esa versión)
+  fuente: https://www.autocentrum.pl/euroncap/fiat/panda-2004/
+- modelo: Hyundai i10
+  desde: 2008
+  hasta: 2013
+  ensayo: 2008
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: 4
+  peaton: 3
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/hyundai/i10/2008/estandar/classic/i10-11-classic2/datos/equipamiento
+  estado: probable (ESP no disponible en el 1.1 Classic de 2008 ni de 2011)
+  fuente: https://www.autocentrum.pl/euroncap/hyundai/i10-1.1-gls-2008/
+- modelo: Kia Picanto
+  desde: 2004
+  hasta: 2011
+  ensayo: 2004
+  estrellas: 3
+  protocolo: pre-2009
+  adulto: 3
+  nino: 4
+  peaton: 1
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/kia/picanto/2004/5-puertas/concept/picanto-10-concept/datos/equipamiento
+  estado: probable (ESP no disponible en el 1.0 Concept de 2004 ni de 2010)
+  fuente: https://www.autocentrum.pl/euroncap/kia/picanto-2004/
+- modelo: Kia Picanto
+  desde: 2011
+  hasta: 2017
+  ensayo: 2011
+  estrellas: 4
+  protocolo: 2009+
+  adulto: null
+  nino: null
+  peaton: null
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/kia/picanto/2011/3-puertas/basic/picanto-3p-10-basic/datos/equipamiento
+  estado: 'probable (86/83/47/43 %; Euro NCAP: ESC solo opcional y no puntuado; km77: 461 € en el Basic de 2011, de serie en 2015)'
+  fuente: https://www.autocentrum.pl/euroncap/kia/picanto-1.0-lx-lhd-2011/
+- modelo: Chevrolet Aveo
+  desde: 2006
+  hasta: 2011
+  ensayo: 2006
+  estrellas: 2
+  protocolo: pre-2009
+  adulto: 2
+  nino: 4
+  peaton: 3
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/chevrolet/aveo/2006/sedan/ls/aveo-14-16v-ls/datos/equipamiento
+  estado: 'probable (Aveo sedán T200/T250: 2★ de adulto con una tachada por riesgo en el pecho del conductor, según la prensa de 2006; autocentrum lo muestra como 1★. El Kalos/Aveo 5p de 2006 sacó 3/3/2. ESP no disponible ni en 2006 ni en 2008)'
+  fuente: https://www.autocentrum.pl/euroncap/chevrolet/aveo-2006/
+- modelo: Chevrolet Aveo
+  desde: 2011
+  hasta: 2015
+  ensayo: 2011
+  estrellas: 5
+  protocolo: 2009+
+  adulto: null
+  nino: null
+  peaton: null
+  esp_serie: sí
+  esp_fuente: https://www.km77.com/coches/chevrolet/aveo/2011/5-puertas/ltplus/aveo-5p-14-16v-100-cv-aut/datos/equipamiento
+  estado: 'probable (T300; 95/87/54/93 %; Euro NCAP: ESC de serie)'
+  fuente: https://www.autocentrum.pl/euroncap/chevrolet/aveo-1.2-lt-lhd-2011/
+- modelo: Nissan Micra
+  desde: 2003
+  hasta: 2010
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 2
+  esp_serie: 'no'
+  esp_fuente: https://www.km77.com/coches/nissan/micra/2003/3-puertas/visia/micra-3p-12i-65-cv-visia/datos/equipamiento
+  estado: probable (K12; ESP no disponible en el Visia de 2003 ni en el 25 Aniversario de 2008)
+  fuente: https://www.autocentrum.pl/euroncap/nissan/micra-2003/
+- modelo: Citroën C4
+  desde: 2004
+  hasta: 2010
+  ensayo: 2004
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 3
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/citroen/c4/2005/berlina/collection/c4-5p-14i-16v-90cv-collection2/datos/equipamiento
+  estado: probable (ESP opcional, 300 €, en el 1.4 Collection de 2005; no disponible en el C4 Sedán 1.6 Collection de 2008)
+  fuente: https://www.autocentrum.pl/euroncap/citroen/c4-2004/
+- modelo: Seat Altea
+  desde: 2004
+  hasta: 2015
+  ensayo: 2004
+  estrellas: 5
+  protocolo: pre-2009
+  adulto: 5
+  nino: 4
+  peaton: 3
+  esp_serie: opcional
+  esp_fuente: https://www.km77.com/coches/seat/altea/2004/estandar/sunrise/altea-14-85-cv-sunrise/datos/equipamiento
+  estado: probable (ESP opcional, 540 €, en el 1.4 Sunrise de 2004; años posteriores sin comprobar)
+  fuente: https://www.autocentrum.pl/euroncap/seat/altea-2004/
+- modelo: Opel Meriva
+  desde: 2003
+  hasta: 2010
+  ensayo: 2003
+  estrellas: 4
+  protocolo: pre-2009
+  adulto: 4
+  nino: null
+  peaton: 1
+  esp_serie: no/opcional
+  esp_fuente: https://www.km77.com/coches/opel/meriva/2006/estandar/cosmo/meriva-cosmo-13-cdti/datos/equipamiento
+  estado: probable (Meriva A; ESP no disponible en el Cosmo 1.3 CDTI de 2003, opcional por 420 € en el de 2006)
+  fuente: https://www.autocentrum.pl/euroncap/opel/meriva-2003/
