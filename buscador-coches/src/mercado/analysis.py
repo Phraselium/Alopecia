@@ -374,7 +374,8 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
     # 10. frontera eficiente, top y infravalorados (zona base: Valencia)
     cortes = cfg["analisis"]["franjas_precio"]
     fr_tags = [franja(lo, cortes) for lo in cortes[:-1]]
-    base_ads = [a for a in ads if a["zona"] == "valencia"]
+    # sin combustible conocido el coste de energía no se puede calcular: fuera de frontera, top e infravalorados
+    base_ads = [a for a in ads if a["zona"] == "valencia" and a["combustible"]]
     efic = set(frontera([(a["coste_anual"], a["calidad_intr"], a["uid"]) for a in base_ads]))
     front = {"global": [a for a in base_ads if a["uid"] in efic]}
     for f in fr_tags:
@@ -396,7 +397,8 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
         a["resid_valor"] = float(e)
     gm = defaultdict(list)
     for a in base_ads:
-        gm[a["modelo_key"]].append(a)
+        if a.get("modelo") and a["modelo_key"] != a["marca"]:     # sin modelo identificado no se agrupa
+            gm[a["modelo_key"]].append(a)
     infra = []
     ci = cfg.get("infravalorados") or {}
     for mk, lst in gm.items():

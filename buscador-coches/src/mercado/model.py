@@ -19,7 +19,7 @@ def clamp(x, lo=0.0, hi=100.0):
 # ------------------------------------------------------------------ normalización
 FUEL_PAT = [(r"enchufable|plug.?in|phev|\be-?hybrid\b.*enchuf", "phev"),
             (r"el[eé]ctric|electro(?!/)|\bev\b|\bbev\b", "electrico"),
-            (r"h[ií]brid|hybrid|mhev|electro/", "hibrido"),
+            (r"h[ií]brid|hybrid|mhev|electro/|\bhsd\b|e-?tech|\bhev\b", "hibrido"),
             (r"glp|gas licuado|lpg|autogas", "glp"),
             (r"gnc|gas natural|cng|tgi", "gnc"),
             (r"di[eé]sel|gas[oó]leo|tdi|hdi|dci|crdi|cdti|tdci", "diesel"),

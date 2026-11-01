@@ -31,10 +31,11 @@ def write_report(path: Path, res: dict, store) -> None:
          f"(Valencia {len(val)}). Descartados: " + ", ".join(f"{k} {v}" for k, v in res["descartes"].most_common()) + ".", "",
          "> Coste total a 5 años con uso estándar de " + f"{n(res['cfg']['uso']['km_anio'])} km/año. Supuestos y fuentes en la hoja Supuestos "
          "de mercado.xlsx y en mercado_supuestos.yaml. Calidad: criterios del perfil personal sin estética ni color.", ""]
-    runs = store.db.execute("SELECT fuente, zona, estado, vistos, peticiones, detalle FROM runs WHERE id IN "
-                            "(SELECT MAX(id) FROM runs GROUP BY fuente, zona)").fetchall()
-    L += ["## Fuentes", "", "| Fuente | Zona | Estado | Anuncios | Peticiones |", "|---|---|---|---|---|"]
-    L += [f"| {f} | {z} | {e} | {v} | {p} |" for f, z, e, v, p, _d in runs] + [""]
+    runs = store.db.execute("SELECT started, fuente, zona, estado, vistos, peticiones, detalle FROM runs ORDER BY id").fetchall()
+    L += ["## Fuentes (todas las pasadas)", "", "| Inicio | Fuente | Zona | Estado | Anuncios | Peticiones | Detalle |", "|---|---|---|---|---|---|---|"]
+    L += [f"| {st_} | {f} | {z} | {e} | {v} | {p} | {(d or '')[:90]} |" for st_, f, z, e, v, p, d in runs if v or e != "ok"] + [""]
+    tot = store.db.execute("SELECT plataforma, zona, COUNT(*) FROM anuncios GROUP BY 1, 2").fetchall()
+    L += ["Anuncios guardados por plataforma y zona: " + "; ".join(f"{p} {z} {n_}" for p, z, n_ in tot) + ".", ""]
     L += ["## Oferta y precios (Valencia)", "", "| Segmento | Anuncios | Precio mediano |", "|---|---|---|"]
     for k, (cnt, med) in sorted(res["med_seg"]["segmento"].items(), key=lambda kv: -kv[1][0]):
         L.append(f"| {k} | {cnt} | {n(med)} € |")
@@ -70,7 +71,8 @@ def write_report(path: Path, res: dict, store) -> None:
     L += ["", "## Cobertura de los datos y pendientes", "",
           f"- Euro NCAP de la generación: {cov(lambda a: a['ncap'] is not None):.0%} de los anuncios; "
           f"TÜV 2026 de su franja de edad: {cov(lambda a: 'TÜV 2026' in a['fiab_fuente']):.0%}; OCU 2026 de la marca: "
-          f"{cov(lambda a: 'OCU' in a['fiab_fuente']):.0%}; consumo WLTP del anuncio: {cov(lambda a: bool(a.get('consumo_wltp'))):.0%}; "
+          f"{cov(lambda a: 'OCU' in a['fiab_fuente']):.0%}; consumo WLTP del anuncio: {cov(lambda a: bool(a.get('consumo_wltp'))):.0%} "
+          "(los listados no lo traen: se usa el consumo real por defecto del segmento y combustible); "
           f"cambio conocido: {cov(lambda a: bool(a['cambio'])):.0%}.",
           "- Sin fuente o PENDIENTE: seguro por segmento con perfil estándar (supuesto calibrado con CHECK24/Kelisto); "
           "precio del juego de neumáticos (supuesto con precios de ensayos OCU); mantenimiento en € por motorización (OCU + "
