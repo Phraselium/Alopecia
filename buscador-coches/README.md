@@ -167,3 +167,61 @@ fiabilidad.
 **Datos estructurados**
 - Color y equipamiento se leen de la ficha guardada en `raw/`: OcasionPlus `vehicle`, AutoScout24 `vehicle` y Coches.net `ad`.
 - Para las fichas antiguas: `python tools/backfill_atributos.py`.
+
+## Perfil «mercado»: visión global (01-11-2026)
+
+Es un perfil independiente del personal: no usa `config.yaml` ni su base de datos.
+
+| Parte | Fichero |
+|---|---|
+| Configuración | `config_mercado.yaml` |
+| Supuestos con fuente | `mercado_supuestos.yaml`, `mercado_fiabilidad.yaml` |
+| Base de datos | `data/mercado.sqlite` |
+| Salidas | `mercado.xlsx`, `informe_mercado.md` |
+| Código | `src/mercado/` |
+
+```
+python run_mercado.py                    # recoge todo y regenera las salidas
+python run_mercado.py --solo cochesnet --sin-salidas   # una fuente (se pueden lanzar fuentes distintas en paralelo)
+python run_mercado.py --sin-red          # regenera con lo guardado
+python run_mercado.py --watch            # una vez al día: mide los días hasta que desaparece cada anuncio
+python tools/verify_mercado.py           # recalcula mercado.xlsx con LibreOffice y lo compara con Python
+```
+
+**Alcance**
+- Nuevos, km 0, seminuevos y usados, sin límite de precio ni de año, y todas las carrocerías, cambios y combustibles.
+- Sin filtros personales (estética, colores, modelos excluidos, solo profesionales, exclusión de diésel).
+- Solo se aplican el filtro estricto de averías (sobre el título) y el de fraude.
+
+**Zonas**
+- Provincia de Valencia como base.
+- Madrid y Barcelona como referencia nacional: una muestra de 2-3 páginas por marca.
+
+**Recogida a nivel de listado**
+- No se abren fichas: con las pausas de 2-5 s, abrir cada una costaría unas 20 horas por ejecución.
+- Coches.net:
+  - Usados por marca y por modelo (página 6 como máximo, por robots.txt).
+  - Km 0 de Valencia y una muestra nacional de 180 nuevos (su ruta de nuevos no filtra por provincia).
+  - Los filtros de precio en la URL están prohibidos por robots.txt.
+- AutoScout24: por marca, troceando por tramos de precio; trae el consumo WLTP y la generación.
+- OcasionPlus: todo su stock de Valencia, con precio al contado.
+- Flexicar: solo la primera página. El resto se carga desde `/api/`, que robots.txt prohíbe.
+- Webs oficiales de marca: no viables (ver RECONOCIMIENTO.md).
+
+**Coste total a 5 años** (12.000 km/año, configurable)
+- Impuestos: ITP o tasa.
+- Depreciación estimada con los propios datos.
+- Seguro, energía (WLTP más el desfase real del ICCT, o consumo por defecto), mantenimiento, neumáticos e IVTM de València.
+- Caballos fiscales según el RGV. La parte de uso anual (energía, seguro, mantenimiento, neumáticos e IVTM) se multiplica por los 5 años.
+
+**Calidad**
+- Mismos criterios y pesos que el perfil personal, sin estética ni color, renormalizados.
+- La «calidad intrínseca» (sin precio ni coste de uso) es el eje de la frontera eficiente y del ratio calidad/coste.
+
+**Análisis**
+- Medianas por modelo, generación, año y km.
+- Depreciación por segmento, combustible y marca: MCO con efectos fijos de modelo y errores HC1.
+- Oferta y liquidez.
+- Primas de etiqueta y de cambio automático (efectos fijos de modelo y año, errores HC1).
+- Frontera eficiente y top 5 por franja y por segmento.
+- Infravalorados: residuo de un modelo de valor.

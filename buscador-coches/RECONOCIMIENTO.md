@@ -89,3 +89,13 @@ Además: campaña EA189 (dieselgate) del 1.2/1.6/2.0 TDI (autofacil.es, motor.es
 AdBlue de los BlueHDi de Stellantis (nota de prensa de la OCU, 27-12-2024).
 **PENDIENTES** (sin fuente seria): 1.2/1.4 TDI de 3 cilindros (más allá de la campaña), Opel 1.7/1.6 CDTi, Toyota 1.4 D-4D,
 Hyundai/Kia CRDi y Suzuki 1.3 DDiS. Entran con la fiabilidad limitada a neutra (`filtros.diesel.sin_fuente: penalizar`).
+
+## Perfil mercado (01-11-2026)
+
+| Fuente | Qué permite robots.txt | Qué se usa | Cobertura |
+|---|---|---|---|
+| Coches.net | Prohíbe `pg>=7`, `MaxPrice`/`MinPrice` y `/Detail/` | `/segunda-mano/{prov}/`, `/{marca}/segunda-mano/{prov}/`, `/{marca}/{modelo}/segunda-mano/{prov}/`, `/km-0/{prov}/`, `/nuevos/{prov}/` | Valencia: 15.852 usados, 104 km 0. Nuevos: 7.313 en toda España, de los que solo son visibles 180. Las marcas compuestas pueden usar guion bajo (`alfa_romeo`). Si una ruta no aplica el filtro, devuelve el listado general y se descarta. |
+| AutoScout24 | Prohíbe `/lst?` y `/lst/?`; permite `/lst/{marca}?…` | `zip`, `zipr`, `ustate=N,U` y `pricefrom`/`priceto` | Hasta 20 páginas de 20 anuncios por búsqueda. Se trocea por precio y se filtra por el prefijo del código postal. |
+| OcasionPlus | Prohíbe los filtros por parámetro | `/coches-segunda-mano/valencia?page=N` (`vehicleList` del payload RSC) | Todo el stock de Valencia (unos 830 coches). |
+| Flexicar | Prohíbe `/api/` | Solo la primera página; `?page=` se ignora | 12 de unos 1.183 coches. |
+| Webs de marca | — | Ninguna | Das WeltAuto: Disallow total. Spoticar: 403. Toyota: sin paginación documentada. Hyundai Promise: 4 coches. Kia y Mazda: sin stock central. |

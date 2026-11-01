@@ -1,0 +1,157 @@
+# Supuestos del coste total de propiedad (perfil mercado). Cada cifra con estado y fuente. EDITABLE.
+# BORRADOR: se completa con las fuentes del agente de coste total (ver "estado" de cada bloque).
+fecha_consulta: 2026-11-01
+
+precio_energia:            # €/l (gasolina, diésel, GLP) y €/kWh (eléctrico)
+  gasolina: 1.717          # media de 612 estaciones de la provincia de Valencia (Geoportal MITECO, 01-11-2026 18:49)
+  diesel: 1.859            # gasóleo A, 624 estaciones (misma fuente)
+  hibrido: 1.717
+  phev: 1.717              # PHEV: se calcula como gasolina con el consumo real del ICCT (sin recarga a diario)
+  glp: 1.055               # 49 estaciones (misma fuente)
+  gnc: 1.45                # SUPUESTO (el Geoportal da €/kg; no calculado)
+  electrico: 0.2987        # SUPUESTO de mezcla 80 % casa (0,2509 €/kWh, Eurostat 2026-S1, todo incluido) + 20 % recarga rápida (0,49 €/kWh, CNMC)
+  estado: "confirmado (carburantes y precios eléctricos); la mezcla 80/20 es un supuesto"
+  fuente: "https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/FiltroProvincia/46 ; Eurostat nrg_pc_204 (2026-S1) ; CNMC E/CNMC/003/22 (https://www.cnmc.es/sites/default/files/6653179.pdf, pág. 124)"
+
+desfase_wltp_real:         # consumo real = WLTP × (1 + desfase). ICCT (jun-2026) con datos OBFCM de la UE, 2023
+  gasolina: 0.194
+  diesel: 0.185
+  hibrido: 0.194           # el ICCT no separa HEV de combustión: se aplica el de gasolina
+  glp: 0.194               # SUPUESTO = gasolina
+  gnc: 0.194               # SUPUESTO = gasolina
+  phev: 3.87               # PHEV de gasolina: consumo real 4,87 veces el WLTP (2023)
+  estado: confirmado (salvo GLP/GNC, supuesto); eléctricos sin dato OBFCM (PENDIENTE)
+  fuente: "https://theicct.org/publication/real-world-co2-emission-values-vehicles-europe-jun26/ (2026-06-02)"
+
+consumo_por_defecto:       # si el anuncio no trae WLTP. l/100 km REALES (kWh/100 km en eléctricos)
+  gasolina: {utilitario: 6.3, compacto: 7.4, berlina: 7.6, familiar: 7.6, suv: 7.8, monovolumen: 7.6, otros: 7.5}
+  diesel:   {utilitario: 5.0, compacto: 5.5, berlina: 5.8, familiar: 5.8, suv: 6.3, monovolumen: 6.0, otros: 6.0}
+  hibrido:  {utilitario: 4.6, compacto: 5.0, berlina: 5.3, familiar: 5.3, suv: 5.8, monovolumen: 5.6, otros: 5.4}
+  phev:     {otros: 6.5}
+  glp:      {otros: 9.0}
+  gnc:      {otros: 6.0}
+  electrico: {utilitario: 15.5, compacto: 16.5, berlina: 17.0, familiar: 17.5, suv: 19.0, otros: 18.0}
+  estado: "gasolina: aproximado (Spritmonitor, ver fiscal.yaml consumo_estimado del perfil personal); resto SUPUESTO sin fuente"
+  fuente: "fiscal.yaml -> consumo_estimado (gasolina); el resto, supuesto propio"
+
+seguro:                    # €/año, perfil estándar (40 años, > 15 años de carnet, sin siniestros). SUPUESTO calibrado:
+  # CHECK24 (mayo 2026): prima media de las pólizas CONTRATADAS 390 €/año (todas las modalidades). Kelisto 2T-2026 (presupuestos
+  # pedidos, sesgado por jóvenes): terceros ampliado 566,89 €; todo riesgo sin franquicia 3.165,91 €. Sin desglose por segmento
+  # ni por perfil (PENDIENTE). Se usa 390 € en terceros ampliado (coches de más de 3 años) y el doble en todo riesgo con
+  # franquicia (hasta 3 años), con un multiplicador por segmento (supuesto).
+  todo_riesgo_hasta_anios: 3
+  todo_riesgo: {utilitario: 700, compacto: 780, berlina: 860, familiar: 820, suv: 860, monovolumen: 780, otros: 780}
+  terceros_ampliado: {utilitario: 350, compacto: 390, berlina: 430, familiar: 410, suv: 430, monovolumen: 390, otros: 390}
+  estado: SUPUESTO calibrado con CHECK24 y Kelisto
+  fuente: "https://seguros.check24.es/wp-content/uploads/2026/06/NdP_La-prima-media-del-seguro-de-coche-baja-en-mayo-hasta-los-390-euros-un-53-menos-que-hace-un-ano.pdf ; https://assets.kelisto.es/press-releases/el-precio-de-los-seguros-de-coche-alcanza-su-maximo-historico-en-el-segundo-trimestre-de-2026.pdf"
+
+mantenimiento_anual:       # €/año = revisión anual media (OCU 2026: 249 €) tomada como gasolina; resto con las diferencias de Solera
+  gasolina: 249            # OCU 2026, revisión media en taller oficial
+  diesel: 224              # Solera 2024: un eléctrico cuesta -21 % que un diésel y -29 % que un gasolina -> 249·0,71/0,79
+  hibrido: 236             # Solera: eléctrico -25 % que un híbrido -> 249·0,71/0,75
+  phev: 236                # SUPUESTO = híbrido
+  electrico: 177           # 249 · (1 - 0,29)
+  glp: 249                 # SUPUESTO = gasolina
+  gnc: 249                 # SUPUESTO = gasolina
+  estado: "OCU confirmado (revisión); proporciones de Solera probables; solo revisión, sin averías"
+  fuente: "https://www.ocu.org/organizacion/prensa/notas-de-prensa/2026/tallerescoches280426 ; https://www.hibridosyelectricos.com/coches/segun-talleres-por-ahora-solo-en-esto-son-mas-rentables-coches-electricos-que-combustion_75238_102.html"
+
+neumaticos:
+  duracion_km: 42000       # OCU (encuesta): Michelin 44.187 km, Continental 41.943 km
+  juego: {utilitario: 280, compacto: 350, berlina: 400, familiar: 380, suv: 540, monovolumen: 400, otros: 400}
+  estado: "duración confirmada (OCU); precio del juego SUPUESTO: 4 × ~88 € en 205/55 R16 y 4 × ~135 € en 215/55 R17 (precios de ensayos OCU 2023-2024), sin montaje; utilitario sin dato"
+  fuente: "https://www.ocu.org/coches/neumaticos/informe/mejores-marcas-neumaticos ; https://www.ocu.org/organizacion/prensa/notas-de-prensa/2023/neumaticos200423 ; https://www.ocu.org/organizacion/prensa/notas-de-prensa/2024/neumaticos250424"
+
+ivtm:                      # Ayuntamiento de València, ordenanza del IVTM (BOP 31-12-2024, mantenida para 2026). [CVF hasta, cuota €]
+  tramos: [[8, 21.20], [12, 58.87], [16, 128.05], [20, 167.27], [100000, 219.01]]
+  cuota_sin_dato: 58.87    # SUPUESTO: tramo 8-11,99 CVF si no hay cilindrada
+  bonificacion: {electrico: 0.75, hibrido: 0.75, phev: 0.75, glp: 0.75, gnc: 0.75}   # art. 7, sin límite de años en el texto
+  estado: confirmado (cuotas y bonificaciones); vigencia 2026 probable
+  fuente: "https://sede.valencia.es/sede/descarga/doc/DOCUMENT_1_20250007834765 ; https://www.valencia.es/cas/actualidad/-/content/pleno-aprueba-ordenanzas-fiscales-de-2026"
+
+cvf:
+  formula: "CVF = 0,08 · (0,785·D²·R)^0,6 · N (RD 2822/1998, Anexo V); 0,785·D²·R = cilindrada de un cilindro -> 0,08·(cc/N)^0,6·N; eléctricos kW/5,152"
+  fuente: "https://www.boe.es/buscar/act.php?id=BOE-A-1999-1826"
+  cilindros: "SUPUESTO por cilindrada: < 1.100 cc 3; < 2.600 cc 4; < 3.600 cc 6; resto 8"
+
+matriculacion:
+  incluida_en_precio_nuevos: true   # probable (TRLGDCU art. 20.1.c: precio final completo con impuestos)
+  fuente: "https://www.boe.es/buscar/act.php?id=BOE-A-2007-20555 ; tipos IEDMT: Ley 38/1992 art. 70 y Ley 13/1997 GV art. 17 (16 % en >= 200 g/km)"
+
+contraste_depreciacion:    # para comparar con la depreciación estimada con los propios datos
+  ganvam_dat_valor_residual_3_anios: {hibrido: 68.0, gasolina: 60.2, diesel: 58.3, electrico: 48.0, fuente: "https://www.hibridosyelectricos.com/coches/con-21352-media-estos-son-coches-menos-valor-reventa-pierden-venderse-en-espana_85816_102.html (2026-03-25, probable)"}
+  ocu_beuc_perdida_3_anios: {electrico: 50, phev: 39, diesel: 36, gasolina: 33, fuente: "https://www.ocu.org/organizacion/prensa/notas-de-prensa/2025/cocheselectricos090425 (2025-04-09)"}
+
+cc_por_defecto: {utilitario: 1200, compacto: 1500, berlina: 1800, familiar: 1600, suv: 1600, monovolumen: 1600, otros: 1600}
+
+# Segmento de modelos recientes que no están en la tabla del perfil personal (src/normalize.py MODELS)
+segmentos_modelo:
+  Seat Arona: suv
+  Seat Ateca: suv
+  Seat Tarraco: suv
+  Cupra Formentor: suv
+  Cupra Born: compacto
+  Volkswagen T-Roc: suv
+  Volkswagen T-Cross: suv
+  Volkswagen Taigo: suv
+  Toyota Yaris Cross: suv
+  Toyota C-HR: suv
+  Toyota RAV4: suv
+  Renault Captur: suv
+  Renault Arkana: suv
+  Renault Austral: suv
+  Renault Kadjar: suv
+  Peugeot 2008: suv
+  Peugeot 3008: suv
+  Peugeot 5008: suv
+  Citroën C3 Aircross: suv
+  Citroën C5 Aircross: suv
+  Citroën C4: compacto
+  Opel Mokka: suv
+  Opel Crossland: suv
+  Opel Grandland: suv
+  Hyundai Kona: suv
+  Hyundai Tucson: suv
+  Hyundai Bayon: suv
+  Kia Stonic: suv
+  Kia Sportage: suv
+  Kia Niro: suv
+  Kia Xceed: suv
+  Mg Zs: suv
+  Mg Hs: suv
+  Mg Mg4: compacto
+  Mg 4: compacto
+  Tesla Model 3: berlina
+  Tesla Model Y: suv
+  Nissan Qashqai: suv
+  Nissan Juke: suv
+  Ford Puma: suv
+  Ford Kuga: suv
+  Skoda Kamiq: suv
+  Skoda Karoq: suv
+  Skoda Kodiaq: suv
+  Skoda Scala: compacto
+  Mazda Cx-30: suv
+  Mazda Cx-5: suv
+  Mazda Cx-3: suv
+  Dacia Duster: suv
+  Dacia Jogger: monovolumen
+  Dacia Spring: utilitario
+  Byd Atto 3: suv
+  Jeep Renegade: suv
+  Jeep Compass: suv
+  Fiat 500X: suv
+  Suzuki Vitara: suv
+  Mini Countryman: suv
+  Audi Q2: suv
+  Audi Q3: suv
+  Audi Q5: suv
+  Bmw X1: suv
+  Bmw X3: suv
+  Bmw Serie 1: compacto
+  Bmw Serie 3: berlina
+  Mercedes-Benz Gla: suv
+  Mercedes-Benz Glc: suv
+  Mercedes-Benz Clase C: berlina
+  Volvo Xc40: suv
+  Volvo Xc60: suv
