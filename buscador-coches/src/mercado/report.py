@@ -86,7 +86,8 @@ def write_report(path: Path, res: dict, store) -> None:
               f"{res['electricos']['autonomia_umbral_km']} km.",
               f"- Modelos con batería que pudo venderse en alquiler: {len(alq)} anuncios (" +
               ", ".join(f"{k} {v}" for k, v in sorted(__import__('collections').Counter(a['bat_estado'] for a in alq).items())) +
-              f"); si es de alquiler o no consta se suman {n(res['sup']['bateria']['alquiler']['cuota_mensual_eur'] * 12)} €/año.", ""]
+              "); si es de alquiler o no consta se suma la cuota del modelo y año × 12 (" +
+              ", ".join(sorted({f"{a['modelo_key']} {n(a['cuota_bat_mes'])} €/mes" for a in alq})) + ").", ""]
     # vida útil
     vu = [a for a in res.get("base_ads", []) if a["depreciacion"] > a["deprec_mkt"] + 0.5]
     L += ["## Vida útil restante", "",

@@ -1,6 +1,6 @@
 # Mercado de coches: Valencia (base), Madrid y Barcelona (referencia)
 
-Generado el 2026-11-01 20:29. Anuncios recogidos: 49672; limpios: 43588 (Valencia 33085). Descartados: duplicado entre plataformas 5306, fraude: precio > 45 % bajo la mediana 399, sin año 295, km no creíbles 75, precio no creíble o sin precio 5, precio no creíble para su edad (cuota, reserva o error) 4.
+Generado el 2026-11-01 21:22. Anuncios recogidos: 49672; limpios: 43588 (Valencia 33085). Descartados: duplicado entre plataformas 5306, fraude: precio > 45 % bajo la mediana 399, sin año 295, km no creíbles 75, precio no creíble o sin precio 5, precio no creíble para su edad (cuota, reserva o error) 4.
 
 > Coste total a 5 años con uso estándar de 12.000 km/año. Supuestos y fuentes en la hoja Supuestos de mercado.xlsx y en mercado_supuestos.yaml. Calidad: criterios del perfil personal sin estética ni color.
 
@@ -69,81 +69,88 @@ Anuncios guardados por plataforma y zona: autoscout24 barcelona 2461; autoscout2
 
 ## Frontera eficiente por franja (Valencia)
 
-**hasta 5.000 €** — 5 coches eficientes
+**hasta 5.000 €** — 12 coches eficientes
 
 | # | Coche | Año | Km | Precio | Coste anual | Calidad intr. | Calidad/coste | Tipo | Combustible |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | [Nissan Leaf Visia](https://www.autoscout24.es/anuncios/nissan-leaf-visia-electrico-blanco-cat_ma52mo19733-242c86d6-0e3f-4d25-90f6-97a48880e8b7) | 2014 | 160.000 | 4.500 € | 1.639 € | 62.1 | 37.9 | ocasion | electrico |
-| 2 | [SEAT Ibiza 1.6TDI CR Copa Reference DPF](https://www.autoscout24.es/anuncios/seat-ibiza-1-6tdi-cr-copa-reference-dpf-diesel-blanco-cat_ma64mo2006-eeb884b7-3af1-4fe8-9447-e21454d243b8) | 2012 | 247.257 | 4.499 € | 2.183 € | 63.2 | 28.9 | ocasion | diesel |
-| 3 | [Opel Corsa 1.2 Enjoy MTA (80 CV)](https://www.ocasionplus.com/coches-segunda-mano/opel-corsa-12-enjoy-mta-con-112793km-2007-nu8qgqaj) | 2007 | 112.793 | 2.900 € | 2.263 € | 66.3 | 29.3 | ocasion | gasolina |
-| 4 | [Volkswagen Polo 1.2 Advance BMT](https://www.autoscout24.es/anuncios/volkswagen-polo-1-2-advance-bmt-gasolina-gris-cat_ma74mo2090-827f958f-8688-4b6d-8737-916b285573e8) | 2011 | 211.000 | 4.400 € | 2.375 € | 66.4 | 28.0 | ocasion | gasolina |
-| 5 | [Hyundai i20 1.2 GASOLINA 100 EMOTION](https://www.autoscout24.es/anuncios/hyundai-i20-1-2-gasolina-100-emotion-gasolina-cat_ma33mo19188-a37432b1-37f1-494e-8619-bca54f407aa3) | 2010 | 129.000 | 4.649 € | 2.393 € | 68.9 | 28.8 | ocasion | gasolina |
+| 1 | [OPEL Corsa](https://www.coches.net/opel-corsa-diesel-2002-en-valencia-71576197-covo.aspx) | 2002 | 300.000 | 900 € | 2.027 € | 46.8 | 23.1 | ocasion | diesel |
+| 2 | [Ford Fiesta 1.4 TDCi Trend](https://www.autoscout24.es/anuncios/ford-fiesta-1-4-tdci-trend-diesel-azul-cat_ma29mo1758-e6768b14-3d3e-4d00-8398-cd29cd51d51d) | 2004 | 195.000 | 1.400 € | 2.119 € | 49.9 | 23.6 | ocasion | diesel |
+| 3 | [SMART forfour 1.5 CDI Passion](https://www.coches.net/smart-forfour-15-cdi-95cv-passion-5p-diesel-2005-en-valencia-71398397-covo.aspx) | 2005 | 200.000 | 1.500 € | 2.147 € | 50.4 | 23.5 | ocasion | diesel |
+| 4 | [SEAT Arosa 1.0i SELECT](https://www.coches.net/seat-arosa-10i-select-3p-gasolina-1999-en-valencia-71831288-covo.aspx) | 1999 | 120.000 | 1.000 € | 2.217 € | 51.9 | 23.4 | ocasion | gasolina |
+| 5 | [OPEL Corsa Enjoy 1.3 CDTi](https://www.coches.net/opel-corsa-enjoy-13-cdti-3p-diesel-2008-en-valencia-71537414-covo.aspx) | 2008 | 110.000 | 1.999 € | 2.239 € | 58.6 | 26.2 | ocasion | diesel |
+| 6 | [Opel Corsa 1.2 16v Silverline Base (80 CV)](https://www.ocasionplus.com/coches-segunda-mano/opel-corsa-12-16v-silverline-base-con-153000km-2006-1q1gwqak) | 2006 | 153.000 | 1.490 € | 2.345 € | 61.1 | 26.1 | ocasion | gasolina |
+| 7 | [KIA Rio 1.5 16v LS](https://www.coches.net/kia-rio-15-16v-ls-5p-gasolina-2004-en-valencia-71021641-covo.aspx) | 2004 | 119.000 | 2.500 € | 2.547 € | 62.6 | 24.6 | ocasion | gasolina |
+| 8 | [FIAT Punto 1.2 Feel](https://www.coches.net/fiat-punto-12-feel-5p-gasolina-2005-en-valencia-71702947-covo.aspx) | 2007 | 117.000 | 2.750 € | 2.597 € | 62.9 | 24.2 | ocasion | gasolina |
+| 9 | [TOYOTA Yaris 1.3 VVTi Yaris](https://www.coches.net/toyota-yaris-13-vvti-yaris-3p-gasolina-2007-en-valencia-71855647-covo.aspx) | 2007 | 165.000 | 2.795 € | 2.614 € | 64.3 | 24.6 | ocasion | gasolina |
+| 10 | [Opel Corsa 1.2 Enjoy MTA (80 CV)](https://www.ocasionplus.com/coches-segunda-mano/opel-corsa-12-enjoy-mta-con-112793km-2007-nu8qgqaj) | 2007 | 112.793 | 2.900 € | 2.627 € | 66.3 | 25.3 | ocasion | gasolina |
+| 11 | [Volkswagen Polo 1.2 Advance BMT](https://www.autoscout24.es/anuncios/volkswagen-polo-1-2-advance-bmt-gasolina-gris-cat_ma74mo2090-827f958f-8688-4b6d-8737-916b285573e8) | 2011 | 211.000 | 4.400 € | 2.927 € | 66.4 | 22.7 | ocasion | gasolina |
+| 12 | [Hyundai i20 1.2 GASOLINA 100 EMOTION](https://www.autoscout24.es/anuncios/hyundai-i20-1-2-gasolina-100-emotion-gasolina-cat_ma33mo19188-a37432b1-37f1-494e-8619-bca54f407aa3) | 2010 | 129.000 | 4.649 € | 2.977 € | 68.9 | 23.2 | ocasion | gasolina |
 
-**5.000–10.000 €** — 13 coches eficientes
-
-| # | Coche | Año | Km | Precio | Coste anual | Calidad intr. | Calidad/coste | Tipo | Combustible |
-|---|---|---|---|---|---|---|---|---|---|
-| 1 | [RENAULT Fluence ZE Dynamique](https://www.coches.net/renault-fluence-ze-dynamique-4p-electrico-hibrido-2011-en-valencia-71873979-covo.aspx) | 2013 | 101.000 | 6.490 € | 1.750 € | 60.5 | 34.6 | ocasion | electrico |
-| 2 | [smart forFour Electric Drive](https://www.autoscout24.es/anuncios/smart-forfour-electric-drive-electrico-negro-cat_ma15525mo18438-42f296a6-94a6-43b8-a8fa-29e1b48c04a6) | 2017 | 81.200 | 6.990 € | 1.862 € | 68.3 | 36.7 | ocasion | electrico |
-| 3 | [smart forFour Electric Drive](https://www.autoscout24.es/anuncios/smart-forfour-electric-drive-electrico-blanco-cat_ma15525mo18438-58c3aa1a-ad00-423e-95aa-b170dcd49209) | 2018 | 71.900 | 7.490 € | 1.910 € | 68.5 | 35.9 | ocasion | electrico |
-| 4 | [smart forFour EQ](https://www.autoscout24.es/anuncios/smart-forfour-eq-electrico-blanco-cat_ma15525mo18438-3b3c346e-bc90-41cb-bdaf-2c3955f97e5d) | 2019 | 56.149 | 7.970 € | 1.957 € | 68.8 | 35.1 | ocasion | electrico |
-| 5 | [smart forFour 41kW(56CV) electric drive - 5P (2019)](https://www.autoscout24.es/anuncios/smart-forfour-41kw-56cv-electric-drive-5p-2019-electrico-blanco-cat_ma15525mo18438-e0bd3ebc-7261-4157-a41b-160134381e89) | 2019 | 50.605 | 8.470 € | 1.995 € | 68.8 | 34.5 | ocasion | electrico |
-| 6 | [smart forFour Electric Drive](https://www.autoscout24.es/anuncios/smart-forfour-electric-drive-electrico-negro-cat_ma15525mo18438-69174872-ed5d-4d43-b1c1-6b5aead31a95) | 2019 | 44.998 | 8.690 € | 2.026 € | 68.9 | 34.0 | ocasion | electrico |
-| 7 | [HONDA Civic 1.3 iDSi IMA Hybrid](https://www.coches.net/honda-civic-13-idsi-ima-hybrid-4p-electrico-hibrido-2007-en-valencia-71735483-covo.aspx) | 2007 | 127.299 | 6.790 € | 2.221 € | 70.3 | 31.6 | ocasion | hibrido |
-| 8 | [SEAT Ibiza 1.4 16v Reference](https://www.coches.net/seat-ibiza-14-16v-85cv-reference-5p-gasolina-2012-en-valencia-71614917-covo.aspx) | 2012 | 129.900 | 6.450 € | 2.527 € | 70.5 | 27.9 | ocasion | gasolina |
-| 9 | [SEAT Ibiza 1.0 Reference 75](https://www.autoscout24.es/anuncios/seat-ibiza-1-0-reference-75-gasolina-azul-cat_ma64mo2006-7be7928d-9797-43e2-a2f7-edde2fa0d16e) | 2016 | 73.333 | 7.490 € | 2.567 € | 71.4 | 27.8 | ocasion | gasolina |
-| 10 | [SMART Fortwo Coupe 52 mhd Pure](https://www.coches.net/smart-fortwo-coupe-52-mhd-pure-3p-gasolina-2012-en-valencia-71722599-covo.aspx) | 2015 | 79.800 | 7.490 € | 2.605 € | 72.8 | 27.9 | ocasion | gasolina |
-| 11 | [Toyota Yaris 1.0 Business](https://www.autoscout24.es/anuncios/toyota-yaris-1-0-business-gasolina-rojo-cat_ma70mo15663-a41da43c-dc75-4c67-9b6b-eba6da987c4b) | 2018 | 102.925 | 9.428 € | 2.711 € | 73.8 | 27.2 | ocasion | gasolina |
-| 12 | [Toyota Yaris 1.0 Active](https://www.autoscout24.es/anuncios/toyota-yaris-1-0-active-gasolina-rojo-cat_ma70mo15663-3f44b781-766c-402c-9743-7844e8b317b2) | 2018 | 52.100 | 9.590 € | 2.723 € | 74.3 | 27.3 | ocasion | gasolina |
-
-**10.000–15.000 €** — 10 coches eficientes
+**5.000–10.000 €** — 24 coches eficientes
 
 | # | Coche | Año | Km | Precio | Coste anual | Calidad intr. | Calidad/coste | Tipo | Combustible |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | [Volkswagen Golf e-Golf ePower](https://www.autoscout24.es/anuncios/volkswagen-golf-e-golf-epower-electrico-blanco-cat_ma74mo2084-8fca4499-209d-4e73-b9c7-43b25b65b829) | 2018 | 115.754 | 10.990 € | 2.167 € | 63.9 | 29.5 | ocasion | electrico |
-| 2 | [smart forFour Electric Drive Passion](https://www.autoscout24.es/anuncios/smart-forfour-electric-drive-passion-electrico-blanco-cat_ma15525mo18438-a9686e5d-0c1a-4ae2-bbba-7c829f5322a9) | 2019 | 47.028 | 10.380 € | 2.189 € | 68.9 | 31.5 | ocasion | electrico |
-| 3 | [SMART forfour 60kW81CV EQ](https://www.coches.net/smart-forfour-60kw81cv-eq-5p-electrico-hibrido-2020-en-valencia-71675801-covo.aspx) | 2019 | 62.700 | 10.500 € | 2.200 € | 74.1 | 33.7 | ocasion | electrico |
-| 4 | [Toyota Yaris 1.5 100H Active Ecovan](https://www.autoscout24.es/anuncios/toyota-yaris-1-5-100h-active-ecovan-electro-gasolina-blanco-cat_ma70mo15663-9272a5a1-a2b2-45ab-a4b8-2f358c3a5afd) | 2020 | 77.327 | 10.990 € | 2.365 € | 75.0 | 31.7 | ocasion | hibrido |
-| 5 | [Toyota Yaris Hybrid 1.5 Active](https://www.autoscout24.es/anuncios/toyota-yaris-hybrid-1-5-active-electro-gasolina-azul-cat_ma70mo15663-74e60a2b-c19b-4249-bdb3-ac5e39b22374) | 2018 | 49.990 | 13.480 € | 2.529 € | 75.1 | 29.7 | ocasion | hibrido |
-| 6 | [Toyota Yaris 1.5 Hybrid Feel](https://www.autoscout24.es/anuncios/toyota-yaris-1-5-hybrid-feel-electro-gasolina-blanco-cat_ma70mo15663-5c612137-1d17-4f5e-a566-2477793c6981) | 2020 | 65.089 | 14.761 € | 2.614 € | 75.1 | 28.7 | ocasion | hibrido |
-| 7 | [TOYOTA Yaris 1.5 100H Active](https://www.coches.net/toyota-yaris-15-100h-active-5p-electrico-hibrido-2019-en-valencia-71882120-covo.aspx) | 2020 | 65.000 | 14.990 € | 2.629 € | 75.1 | 28.6 | ocasion | hibrido |
-| 8 | [KIA Stonic 1.0 TGDi MHEV iMT Drive](https://www.coches.net/kia-stonic-10-tgdi-74kw-100cv-mhev-imt-drive-5p-electrico-hibrido-2022-en-valencia-70850017-covo.aspx) | 2022 | 46.000 | 14.990 € | 3.105 € | 75.7 | 24.4 | ocasion | hibrido |
-| 9 | [HYUNDAI i10 1.0 Klass](https://www.coches.net/hyundai-i10-10-klass-5p-gasolina-2023-en-valencia-71745675-covo.aspx) | 2023 | 30.126 | 12.900 € | 3.320 € | 78.7 | 23.7 | ocasion | gasolina |
-| 10 | [HYUNDAI i10 1.0 Essence](https://www.coches.net/hyundai-i10-10-essence-5p-gasolina-2025-en-valencia-70875722-covo.aspx) | 2025 | 12 | 14.500 € | 3.439 € | 79.2 | 23.0 | seminuevo | gasolina |
+| 1 | [smart forFour Electric Drive](https://www.autoscout24.es/anuncios/smart-forfour-electric-drive-electrico-negro-cat_ma15525mo18438-42f296a6-94a6-43b8-a8fa-29e1b48c04a6) | 2017 | 81.200 | 6.990 € | 2.065 € | 53.3 | 25.8 | ocasion | electrico |
+| 2 | [smart forFour Electric Drive](https://www.autoscout24.es/anuncios/smart-forfour-electric-drive-electrico-blanco-cat_ma15525mo18438-58c3aa1a-ad00-423e-95aa-b170dcd49209) | 2018 | 71.900 | 7.490 € | 2.118 € | 53.5 | 25.3 | ocasion | electrico |
+| 3 | [Fiat 500 Club 1.0 Hybrid 51KW (70 CV)](https://www.autoscout24.es/anuncios/fiat-500-club-1-0-hybrid-51kw-70-cv-electro-gasolina-naranja-cat_ma28mo15160-c45a608b-cd6e-4c34-b177-6a1d1a74ab49) | 2022 | 79.249 | 6.990 € | 2.152 € | 60.4 | 28.1 | ocasion | hibrido |
+| 4 | [Fiat 500 Dolcevita 1.0 Hybrid 52KW (70 CV)](https://www.autoscout24.es/anuncios/fiat-500-dolcevita-1-0-hybrid-52kw-70-cv-electro-gasolina-blanco-cat_ma28mo15160-a4f8b1eb-9a0d-4323-aa49-b6cf7dcdff43) | 2021 | 62.500 | 7.990 € | 2.170 € | 60.8 | 28.0 | ocasion | hibrido |
+| 5 | [Fiat 500 Dolcevita 1.0 Hybrid 51KW (70 CV)](https://www.autoscout24.es/anuncios/fiat-500-dolcevita-1-0-hybrid-51kw-70-cv-electro-gasolina-gris-cat_ma28mo15160-0386cf47-34a0-4a20-8470-24fbd0bd8d92) | 2022 | 70.101 | 7.690 € | 2.173 € | 60.8 | 28.0 | ocasion | hibrido |
+| 6 | [Fiat 500 Dolcevita 1.0 Hybrid 51KW (70 CV)](https://www.autoscout24.es/anuncios/fiat-500-dolcevita-1-0-hybrid-51kw-70-cv-electro-gasolina-blanco-cat_ma28mo15160-aaf1e71d-a3d8-4fe0-ae76-7bf71c847d7d) | 2021 | 60.525 | 8.490 € | 2.198 € | 60.8 | 27.7 | ocasion | hibrido |
+| 7 | [Fiat 500 Cult 1.0 Hybrid 51KW (70 CV)](https://www.autoscout24.es/anuncios/fiat-500-cult-1-0-hybrid-51kw-70-cv-electro-gasolina-azul-cat_ma28mo15160-f85b9277-cfb6-439d-b5a2-066af1890051) | 2022 | 61.554 | 8.490 € | 2.201 € | 60.9 | 27.7 | ocasion | hibrido |
+| 8 | [Fiat 500 Club 1.0 Hybrid 51KW (70 CV)](https://www.autoscout24.es/anuncios/fiat-500-club-1-0-hybrid-51kw-70-cv-electro-gasolina-blanco-cat_ma28mo15160-4fb0a238-2594-42bd-b936-2e1b7ac7a5b5) | 2022 | 51.500 | 8.790 € | 2.210 € | 61.0 | 27.6 | ocasion | hibrido |
+| 9 | [Fiat 500 1.0 Mild-Hybrid Cult](https://www.autoscout24.es/anuncios/fiat-500-1-0-mild-hybrid-cult-electro-gasolina-blanco-cat_ma28mo15160-7e98c199-efdd-41bf-afe5-19e46a46bf59) | 2022 | 40.641 | 8.817 € | 2.212 € | 61.1 | 27.6 | ocasion | hibrido |
+| 10 | [Fiat 500 Connect 1.0 Hybrid 51KW (70 CV)](https://www.autoscout24.es/anuncios/fiat-500-connect-1-0-hybrid-51kw-70-cv-electro-gasolina-blanco-cat_ma28mo15160-2bc75779-2d06-4bd5-89b1-154fa06fc4c3) | 2021 | 18.000 | 9.990 € | 2.296 € | 61.3 | 26.7 | ocasion | hibrido |
+| 11 | [Ford Fiesta 1.5TDCi Titanium 85](https://www.autoscout24.es/anuncios/ford-fiesta-1-5tdci-titanium-85-diesel-gris-cat_ma29mo1758-570fddd2-d373-4bd9-9274-51b97e84db21) | 2017 | 124.351 | 6.990 € | 2.475 € | 64.3 | 26.0 | ocasion | diesel |
+| 12 | [Ford Fiesta 1.5 TDCi Titanium 95](https://www.autoscout24.es/anuncios/ford-fiesta-1-5-tdci-titanium-95-diesel-rojo-cat_ma29mo1758-46d9d97c-f10c-400e-8866-e5cb66df736d) | 2016 | 89.000 | 6.500 € | 2.489 € | 64.5 | 25.9 | ocasion | diesel |
 
-**15.000–25.000 €** — 14 coches eficientes
-
-| # | Coche | Año | Km | Precio | Coste anual | Calidad intr. | Calidad/coste | Tipo | Combustible |
-|---|---|---|---|---|---|---|---|---|---|
-| 1 | [PEUGEOT e208 Electrico Allure Pack](https://www.coches.net/peugeot-e208-electrico-allure-pack-5p-electrico-hibrido-2021-en-valencia-71833561-covo.aspx) | 2021 | 25.500 | 16.000 € | 2.504 € | 56.9 | 22.7 | ocasion | electrico |
-| 2 | [Tesla Model 3 Estándar Plus RWD - 4P (2019)](https://www.autoscout24.es/anuncios/tesla-model-3-estandar-plus-rwd-4p-2019-electrico-negro-cat_ma51520mo74665-4fde0d37-ba23-4b89-8924-66162908d198) | 2019 | 138.000 | 19.970 € | 2.555 € | 73.3 | 28.7 | ocasion | electrico |
-| 3 | [Tesla Model 3 Estándar Plus RWD](https://www.autoscout24.es/anuncios/tesla-model-3-estandar-plus-rwd-electrico-negro-cat_ma51520mo74665-65814fe7-f463-43bd-acf1-d5cc81eff5a1) | 2019 | 87.782 | 20.990 € | 2.614 € | 74.1 | 28.3 | ocasion | electrico |
-| 4 | [Toyota Yaris 120H 1.5 Active Tech](https://www.autoscout24.es/anuncios/toyota-yaris-120h-1-5-active-tech-electro-gasolina-blanco-cat_ma70mo15663-9b7d7978-5904-48af-86c5-9f292a7dc536) | 2021 | 93.105 | 15.390 € | 2.655 € | 74.8 | 28.2 | ocasion | hibrido |
-| 5 | [TOYOTA Yaris 1.5 100H Active Tech](https://www.coches.net/toyota-yaris-15-100h-active-tech-5p-electrico-hibrido-2019-en-valencia-71753793-covo.aspx) | 2018 | 45.000 | 15.500 € | 2.662 € | 75.1 | 28.2 | ocasion | hibrido |
-| 6 | [Toyota Yaris 1.5 Hybrid Collection](https://www.autoscout24.es/anuncios/toyota-yaris-1-5-hybrid-collection-electro-gasolina-blanco-cat_ma70mo15663-6c16c2c0-7037-4d69-82d1-50ff01ac9b90) | 2020 | 6.764 | 15.809 € | 2.683 € | 75.7 | 28.2 | ocasion | hibrido |
-| 7 | [Toyota Yaris 120H 1.5 Active Tech](https://www.autoscout24.es/anuncios/toyota-yaris-120h-1-5-active-tech-electro-gasolina-blanco-cat_ma70mo15663-268cb21c-d471-4af3-b7b1-b86e7b6b4faf) | 2022 | 13.000 | 17.990 € | 2.827 € | 75.9 | 26.8 | ocasion | hibrido |
-| 8 | [MAZDA Mazda2 Hybrid 1.5 CVT Agile Comfort](https://www.coches.net/mazda-mazda2-hybrid-15-85-kw-cvt-agile-comfort-5p-electrico-hibrido-2022-en-valencia-71869970-covo.aspx) | 2022 | 29.548 | 18.500 € | 2.860 € | 78.9 | 27.6 | ocasion | hibrido |
-| 9 | [TOYOTA Yaris 1.5 120H Active Tech](https://www.coches.net/toyota-yaris-15-120h-active-tech-5p-electrico-hibrido-2022-en-valencia-62579908-covo.aspx) | 2022 | 95.981 | 18.950 € | 2.890 € | 79.5 | 27.5 | ocasion | hibrido |
-| 10 | [TOYOTA Yaris 1.5 120H Style](https://www.coches.net/toyota-yaris-15-120h-style-5p-electrico-hibrido-2020-en-valencia-70625347-covo.aspx) | 2021 | 27.219 | 20.195 € | 2.972 € | 81.0 | 27.3 | ocasion | hibrido |
-| 11 | [TOYOTA C-HR 1.8 125H Style Plus](https://www.coches.net/toyota-c-hr-18-125h-style-plus-5p-electrico-hibrido-2019-en-valencia-71769664-covo.aspx) | 2018 | 148.238 | 16.990 € | 3.028 € | 84.7 | 28.0 | ocasion | hibrido |
-| 12 | [PEUGEOT 208 Style HYBRID 110 eDCS6](https://www.coches.net/km-0/peugeot/208/albacete/style-hybrid-110-edcs6-electrico-hibrido-de-km0-71379426-kovn.aspx) | 2026 | 232 | 19.200 € | 3.245 € | 87.1 | 26.8 | km0 | hibrido |
-
-**más de 25.000 €** — 14 coches eficientes
+**10.000–15.000 €** — 12 coches eficientes
 
 | # | Coche | Año | Km | Precio | Coste anual | Calidad intr. | Calidad/coste | Tipo | Combustible |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | [Tesla Model 3 Gran Autonomía AWD](https://www.autoscout24.es/anuncios/tesla-model-3-gran-autonomia-awd-electrico-azul-cat_ma51520mo74665-ed7ac7e4-6c6c-43df-9f75-a63648dc0fb6) | 2022 | 87.936 | 27.490 € | 2.991 € | 58.0 | 19.4 | ocasion | electrico |
-| 2 | [TESLA Model 3 Estandar Plus RWD](https://www.coches.net/tesla-model-3-estandar-plus-rwd-4p-electrico-hibrido-2019-en-valencia-71670370-covo.aspx) | 2020 | 58.150 | 27.890 € | 3.014 € | 74.5 | 24.7 | ocasion | electrico |
-| 3 | [Tesla Model 3 Long-Range Dual Motor AWD](https://www.autoscout24.es/anuncios/tesla-model-3-long-range-dual-motor-awd-electrico-blanco-cat_ma51520mo74665-54505649-6314-44cc-b5f4-acaad9335ecb) | 2020 | 54.186 | 27.990 € | 3.020 € | 74.5 | 24.7 | ocasion | electrico |
-| 4 | [TESLA Model 3 Performance AWD](https://www.coches.net/tesla-model-3-performance-awd-4p-electrico-hibrido-2019-en-alicante-71339101-covo.aspx) | 2020 | 48.452 | 32.990 € | 3.310 € | 74.6 | 22.5 | ocasion | electrico |
-| 5 | [BMW Serie 5 520dA xDrive](https://www.coches.net/bmw-serie-5-520da-xdrive-4p-electrico-hibrido-2023-en-valencia-71874548-covo.aspx) | 2022 | 100.689 | 25.000 € | 3.552 € | 77.6 | 21.8 | ocasion | hibrido |
-| 6 | [TOYOTA C-HR 2.0 180H Advance](https://www.coches.net/toyota-c-hr-20-180h-advance-5p-electrico-hibrido-2022-en-valencia-71860677-covo.aspx) | 2022 | 45.768 | 26.750 € | 3.667 € | 80.9 | 22.1 | ocasion | hibrido |
-| 7 | [TOYOTA Yaris Cross 1.5 120H Active Plus](https://www.coches.net/toyota-yaris-cross-15-120h-active-plus-5p-electrico-hibrido-2024-en-valencia-70187800-covo.aspx) | 2025 | 20.003 | 26.250 € | 3.722 € | 81.2 | 21.8 | seminuevo | hibrido |
-| 8 | [TOYOTA Yaris Cross 1.5 130H Active](https://www.coches.net/toyota-yaris-cross-15-130h-active-5p-electrico-hibrido-2026-en-valencia-71816742-covo.aspx) | 2025 | 7.866 | 28.750 € | 3.886 € | 81.6 | 21.0 | seminuevo | hibrido |
-| 9 | [TOYOTA Corolla 140H Active](https://www.coches.net/toyota-corolla-140h-active-5p-electrico-hibrido-2026-en-valencia-71474526-covo.aspx) | 2026 | 2.825 | 27.650 € | 3.961 € | 81.7 | 20.6 | seminuevo | hibrido |
-| 10 | [TESLA Model Y Gran Autonomia 4WD](https://www.coches.net/tesla-model-y-gran-autonomia-4wd-5p-electrico-hibrido-2021-en-valencia-71844361-covo.aspx) | 2022 | 92.000 | 34.490 € | 4.139 € | 83.8 | 20.2 | ocasion | electrico |
-| 11 | [PEUGEOT e-208 GT Electrico 156](https://www.coches.net/km-0/peugeot/e-208/albacete/gt-electrico-156-115-kw-electrico-/-hibrido-de-km0-61927660-kovn.aspx) | 2025 | 7.000 | 27.000 € | 4.169 € | 86.9 | 20.8 | km0 | electrico |
-| 12 | [HONDA Civic 2.0 iMMD Elegance CVT](https://www.coches.net/km-0/honda/civic/valencia/20-immd-elegance-cvt-electrico-hibrido-de-km0-71679176-kovn.aspx) | 2026 | 1 | 33.990 € | 4.378 € | 90.5 | 20.7 | km0 | hibrido |
+| 1 | [FIAT 500 Dolcevita 1.0 Hybrid 70 CV](https://www.coches.net/fiat-500-dolcevita-10-hybrid-51kw-70-cv-3p-electrico-hibrido-2023-en-valencia-71822580-covo.aspx) | 2022 | 50.233 | 10.475 € | 2.321 € | 61.0 | 26.3 | ocasion | hibrido |
+| 2 | [Fiat 500 1.0 Mild-Hybrid Dolcevita](https://www.autoscout24.es/anuncios/fiat-500-1-0-mild-hybrid-dolcevita-electro-gasolina-gris-cat_ma28mo15160-b83b6917-f1ee-42f1-ae3c-51e525fee394) | 2021 | 33.270 | 10.454 € | 2.327 € | 61.1 | 26.3 | ocasion | hibrido |
+| 3 | [Fiat 500 1.0 Mild-Hybrid Dolcevita](https://www.autoscout24.es/anuncios/fiat-500-1-0-mild-hybrid-dolcevita-electro-gasolina-blanco-cat_ma28mo15160-99b8a9a3-8277-4038-9d55-0ca4fdf818ec) | 2022 | 17.769 | 10.999 € | 2.356 € | 61.4 | 26.0 | ocasion | hibrido |
+| 4 | [Ford Fiesta 1.0 EcoBoost MHEV 92kW (125CV) Trend 5p](https://www.autoscout24.es/anuncios/ford-fiesta-1-0-ecoboost-mhev-92kw-125cv-trend-5p-electro-gasolina-azul-cat_ma29mo1758-4074254d-322e-423a-92bc-e876697e23fa) | 2021 | 83.527 | 10.490 € | 2.435 € | 65.5 | 26.9 | ocasion | hibrido |
+| 5 | [Hyundai i20 1.0 TGDI 74kW 100CV Essence LX](https://www.autoscout24.es/anuncios/hyundai-i20-1-0-tgdi-74kw-100cv-essence-lx-electro-gasolina-cat_ma33mo19188-8cf85e6f-abd6-42e7-8267-9959d5a2f17a) | 2021 | 78.235 | 10.949 € | 2.442 € | 67.5 | 27.6 | ocasion | hibrido |
+| 6 | [Suzuki Swift 1.2 GLE Mild Hybrid](https://www.autoscout24.es/anuncios/suzuki-swift-1-2-gle-mild-hybrid-electro-gasolina-azul-cat_ma68mo2036-0c3220a0-829d-4f91-8783-4e2559d0dcc6) | 2021 | 61.867 | 11.990 € | 2.447 € | 69.2 | 28.3 | ocasion | hibrido |
+| 7 | [Toyota Yaris 1.5 100H Active Ecovan](https://www.autoscout24.es/anuncios/toyota-yaris-1-5-100h-active-ecovan-electro-gasolina-blanco-cat_ma70mo15663-9272a5a1-a2b2-45ab-a4b8-2f358c3a5afd) | 2020 | 77.327 | 10.990 € | 2.450 € | 75.0 | 30.6 | ocasion | hibrido |
+| 8 | [Toyota Yaris 1.5 Hybrid Feel](https://www.autoscout24.es/anuncios/toyota-yaris-1-5-hybrid-feel-electro-gasolina-blanco-cat_ma70mo15663-5c612137-1d17-4f5e-a566-2477793c6981) | 2020 | 65.089 | 14.761 € | 2.694 € | 75.1 | 27.9 | ocasion | hibrido |
+| 9 | [TOYOTA Yaris 1.5 100H Active](https://www.coches.net/toyota-yaris-15-100h-active-5p-electrico-hibrido-2019-en-valencia-71882120-covo.aspx) | 2020 | 65.000 | 14.990 € | 2.710 € | 75.1 | 27.7 | ocasion | hibrido |
+| 10 | [KIA Stonic 1.0 TGDi MHEV iMT Drive](https://www.coches.net/kia-stonic-10-tgdi-74kw-100cv-mhev-imt-drive-5p-electrico-hibrido-2022-en-valencia-70850017-covo.aspx) | 2022 | 46.000 | 14.990 € | 3.105 € | 75.7 | 24.4 | ocasion | hibrido |
+| 11 | [HYUNDAI i10 1.0 Klass](https://www.coches.net/hyundai-i10-10-klass-5p-gasolina-2023-en-valencia-71745675-covo.aspx) | 2023 | 30.126 | 12.900 € | 3.320 € | 78.7 | 23.7 | ocasion | gasolina |
+| 12 | [HYUNDAI i10 1.0 Essence](https://www.coches.net/hyundai-i10-10-essence-5p-gasolina-2025-en-valencia-70875722-covo.aspx) | 2025 | 12 | 14.500 € | 3.439 € | 79.2 | 23.0 | seminuevo | gasolina |
+
+**15.000–25.000 €** — 10 coches eficientes
+
+| # | Coche | Año | Km | Precio | Coste anual | Calidad intr. | Calidad/coste | Tipo | Combustible |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | [Mazda 2 Hybrid 1.5 Agile CVT 85kW](https://www.autoscout24.es/anuncios/mazda-2-hybrid-1-5-agile-cvt-85kw-electro-gasolina-blanco-cat_ma46mo18342-c73b9feb-7360-4ad3-a408-ce60feac1822) | 2022 | 48.079 | 15.363 € | 2.653 € | 68.0 | 25.6 | ocasion | hibrido |
+| 2 | [Toyota Yaris 120H 1.5 Active Tech](https://www.autoscout24.es/anuncios/toyota-yaris-120h-1-5-active-tech-electro-gasolina-negro-cat_ma70mo15663-bb7e20ff-a9a4-441a-bedb-de940cc8276c) | 2022 | 40.000 | 15.990 € | 2.695 € | 75.6 | 28.0 | ocasion | hibrido |
+| 3 | [Toyota Yaris 1.5 Hybrid Collection](https://www.autoscout24.es/anuncios/toyota-yaris-1-5-hybrid-collection-electro-gasolina-blanco-cat_ma70mo15663-6c16c2c0-7037-4d69-82d1-50ff01ac9b90) | 2020 | 6.764 | 15.809 € | 2.769 € | 75.7 | 27.4 | ocasion | hibrido |
+| 4 | [Toyota Yaris 120H 1.5 Active Tech](https://www.autoscout24.es/anuncios/toyota-yaris-120h-1-5-active-tech-electro-gasolina-blanco-cat_ma70mo15663-268cb21c-d471-4af3-b7b1-b86e7b6b4faf) | 2022 | 13.000 | 17.990 € | 2.827 € | 75.9 | 26.8 | ocasion | hibrido |
+| 5 | [MAZDA Mazda2 Hybrid 1.5 CVT Agile Comfort](https://www.coches.net/mazda-mazda2-hybrid-15-85-kw-cvt-agile-comfort-5p-electrico-hibrido-2022-en-valencia-71869970-covo.aspx) | 2022 | 29.548 | 18.500 € | 2.860 € | 78.9 | 27.6 | ocasion | hibrido |
+| 6 | [TOYOTA Yaris 1.5 120H Style](https://www.coches.net/toyota-yaris-15-120h-style-5p-electrico-hibrido-2020-en-valencia-70625347-covo.aspx) | 2021 | 27.219 | 20.195 € | 2.986 € | 81.0 | 27.1 | ocasion | hibrido |
+| 7 | [KIA Stonic 1.0 TGDi MHEV iMT Drive](https://www.coches.net/kia-stonic-10-tgdi-74kw-100cv-mhev-imt-drive-5p-electrico-hibrido-2022-en-valencia-71424786-covo.aspx) | 2022 | 38.000 | 15.490 € | 3.141 € | 81.1 | 25.8 | ocasion | hibrido |
+| 8 | [PEUGEOT 208 Style HYBRID 110 eDCS6](https://www.coches.net/km-0/peugeot/208/albacete/style-hybrid-110-edcs6-electrico-hibrido-de-km0-71379426-kovn.aspx) | 2026 | 232 | 19.200 € | 3.245 € | 87.1 | 26.8 | km0 | hibrido |
+| 9 | [CITROEN C4 Hybrid 145 eDCS6 Plus](https://www.coches.net/km-0/citroen/c4/albacete/hybrid-145-edcs6-plus-electrico-hibrido-de-km0-71548114-kovn.aspx) | 2025 | 206 | 22.590 € | 3.623 € | 89.1 | 24.6 | km0 | hibrido |
+| 10 | [KIA Stonic 1.0 TGDi Concept](https://www.coches.net/km-0/kia/stonic/valencia/10-tgdi-74kw-100cv-concept-gasolina-de-km0-71546705-kovn.aspx) | 2026 | 20 | 20.900 € | 4.278 € | 90.9 | 21.2 | km0 | gasolina |
+
+**más de 25.000 €** — 13 coches eficientes
+
+| # | Coche | Año | Km | Precio | Coste anual | Calidad intr. | Calidad/coste | Tipo | Combustible |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | [Volkswagen Golf Life 1.5 eTSI 85kW (115CV) DSG](https://www.autoscout24.es/anuncios/volkswagen-golf-life-1-5-etsi-85kw-115cv-dsg-electro-gasolina-azul-cat_ma74mo2084-39389f59-fff3-4270-b9f3-4059cd24f9d3) | 2022 | 2.108 | 25.490 € | 3.432 € | 73.1 | 21.3 | ocasion | hibrido |
+| 2 | [Audi A3 Sportback S line 35 TFSI 110kW S tronic](https://www.autoscout24.es/anuncios/audi-a3-sportback-s-line-35-tfsi-110kw-s-tronic-electro-gasolina-negro-cat_ma9mo1624-1a8401a4-55ab-4d1c-852a-7b0413f1b48c) | 2022 | 50.000 | 26.490 € | 3.496 € | 73.2 | 20.9 | ocasion | hibrido |
+| 3 | [Toyota Yaris Cross 130H Active](https://www.autoscout24.es/anuncios/toyota-yaris-cross-130h-active-electro-gasolina-blanco-cat_ma70mo75902-ccace32c-d8f2-4d3c-944f-9a65edbc8f41) | 2026 | 100 | 25.190 € | 3.652 € | 74.1 | 20.3 | seminuevo | hibrido |
+| 4 | [PEUGEOT 208 GT HYBRID 145 eDCS6](https://www.coches.net/peugeot-208-gt-hybrid-145-edcs6-5p-electrico-hibrido-2026-en-albacete-70884236-covo.aspx) | 2026 | 5 | 25.300 € | 3.659 € | 77.4 | 21.2 | seminuevo | hibrido |
+| 5 | [TOYOTA C-HR 2.0 180H Advance](https://www.coches.net/toyota-c-hr-20-180h-advance-5p-electrico-hibrido-2022-en-valencia-71860677-covo.aspx) | 2022 | 45.768 | 26.750 € | 3.667 € | 80.9 | 22.1 | ocasion | hibrido |
+| 6 | [TOYOTA Yaris Cross 1.5 120H Active Plus](https://www.coches.net/toyota-yaris-cross-15-120h-active-plus-5p-electrico-hibrido-2024-en-valencia-70187800-covo.aspx) | 2025 | 20.003 | 26.250 € | 3.722 € | 81.2 | 21.8 | seminuevo | hibrido |
+| 7 | [TOYOTA Yaris Cross 1.5 130H Active](https://www.coches.net/toyota-yaris-cross-15-130h-active-5p-electrico-hibrido-2026-en-valencia-71816742-covo.aspx) | 2025 | 7.866 | 28.750 € | 3.886 € | 81.6 | 21.0 | seminuevo | hibrido |
+| 8 | [TOYOTA Corolla 140H Active](https://www.coches.net/toyota-corolla-140h-active-5p-electrico-hibrido-2026-en-valencia-71474526-covo.aspx) | 2026 | 2.825 | 27.650 € | 3.961 € | 81.7 | 20.6 | seminuevo | hibrido |
+| 9 | [MAZDA CX-30 2.5L eSKYACT G MHEV PrimeLine AT](https://www.coches.net/mazda-cx-30-25l-eskyact-g-mhev-103kw-primeline-at-5p-electrico-hibrido-2027-en-valencia-71487024-covo.aspx) | 2026 | 29.934 | 25.500 € | 4.314 € | 83.7 | 19.4 | seminuevo | hibrido |
+| 10 | [KIA Sportage 1.6 CRDi MHEV Drive 4x2](https://www.coches.net/kia-sportage-16-crdi-mhev-100kw-136cv-drive-4x2-5p-electrico-hibrido-2025-en-valencia-71624951-covo.aspx) | 2024 | 34.000 | 25.990 € | 4.332 € | 85.8 | 19.8 | ocasion | hibrido |
+| 11 | [HONDA Civic 2.0 iMMD Elegance CVT](https://www.coches.net/km-0/honda/civic/valencia/20-immd-elegance-cvt-electrico-hibrido-de-km0-71679176-kovn.aspx) | 2026 | 1 | 33.990 € | 4.378 € | 90.5 | 20.7 | km0 | hibrido |
+| 12 | [HYUNDAI Tucson 1.6D 48V Klass](https://www.coches.net/km-0/hyundai/tucson/albacete/16d-100kw-136cv-48v-klass-electrico-hibrido-de-km0-71537431-kovn.aspx) | 2026 | 33 | 28.995 € | 4.536 € | 94.3 | 20.8 | km0 | hibrido |
 
 ## Top 5 calidad / coste anual por franja (Valencia)
 
@@ -151,51 +158,51 @@ Anuncios guardados por plataforma y zona: autoscout24 barcelona 2461; autoscout2
 
 | # | Coche | Año | Km | Precio | Coste anual | Calidad intr. | Calidad/coste | Tipo | Combustible |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | [Nissan Leaf Visia](https://www.autoscout24.es/anuncios/nissan-leaf-visia-electrico-blanco-cat_ma52mo19733-242c86d6-0e3f-4d25-90f6-97a48880e8b7) | 2014 | 160.000 | 4.500 € | 1.639 € | 62.1 | 37.9 | ocasion | electrico |
-| 2 | [OPEL Corsa Enjoy 1.3 CDTi](https://www.coches.net/opel-corsa-enjoy-13-cdti-3p-diesel-2008-en-valencia-71537414-covo.aspx) | 2008 | 110.000 | 1.999 € | 1.992 € | 58.6 | 29.4 | ocasion | diesel |
-| 3 | [Opel Corsa 1.2 Enjoy MTA (80 CV)](https://www.ocasionplus.com/coches-segunda-mano/opel-corsa-12-enjoy-mta-con-112793km-2007-nu8qgqaj) | 2007 | 112.793 | 2.900 € | 2.263 € | 66.3 | 29.3 | ocasion | gasolina |
-| 4 | [SEAT Ibiza 1.6TDI CR Copa Reference DPF](https://www.autoscout24.es/anuncios/seat-ibiza-1-6tdi-cr-copa-reference-dpf-diesel-blanco-cat_ma64mo2006-eeb884b7-3af1-4fe8-9447-e21454d243b8) | 2012 | 247.257 | 4.499 € | 2.183 € | 63.2 | 28.9 | ocasion | diesel |
-| 5 | [Hyundai i20 1.2 GASOLINA 100 EMOTION](https://www.autoscout24.es/anuncios/hyundai-i20-1-2-gasolina-100-emotion-gasolina-cat_ma33mo19188-a37432b1-37f1-494e-8619-bca54f407aa3) | 2010 | 129.000 | 4.649 € | 2.393 € | 68.9 | 28.8 | ocasion | gasolina |
+| 1 | [OPEL Corsa Enjoy 1.3 CDTi](https://www.coches.net/opel-corsa-enjoy-13-cdti-3p-diesel-2008-en-valencia-71537414-covo.aspx) | 2008 | 110.000 | 1.999 € | 2.239 € | 58.6 | 26.2 | ocasion | diesel |
+| 2 | [Opel Corsa 1.2 16v Silverline Base (80 CV)](https://www.ocasionplus.com/coches-segunda-mano/opel-corsa-12-16v-silverline-base-con-153000km-2006-1q1gwqak) | 2006 | 153.000 | 1.490 € | 2.345 € | 61.1 | 26.1 | ocasion | gasolina |
+| 3 | [Opel Corsa 1.2 Enjoy MTA (80 CV)](https://www.ocasionplus.com/coches-segunda-mano/opel-corsa-12-enjoy-mta-con-112793km-2007-nu8qgqaj) | 2007 | 112.793 | 2.900 € | 2.627 € | 66.3 | 25.3 | ocasion | gasolina |
+| 4 | [FORD Fiesta 1.3 Ambiente](https://www.coches.net/ford-fiesta-13-ambiente-5p-gasolina-2003-en-valencia-71168369-covo.aspx) | 2002 | 150.000 | 1.990 € | 2.445 € | 60.8 | 24.9 | ocasion | gasolina |
+| 5 | [SUZUKI Alto 1.0 GL](https://www.coches.net/suzuki-alto-10-gl-5p-gasolina-2009-en-valencia-71388781-covo.aspx) | 2009 | 200.000 | 1.500 € | 2.317 € | 57.4 | 24.8 | ocasion | gasolina |
 
 **5.000–10.000 €**
 
 | # | Coche | Año | Km | Precio | Coste anual | Calidad intr. | Calidad/coste | Tipo | Combustible |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | [smart forFour Electric Drive](https://www.autoscout24.es/anuncios/smart-forfour-electric-drive-electrico-negro-cat_ma15525mo18438-42f296a6-94a6-43b8-a8fa-29e1b48c04a6) | 2017 | 81.200 | 6.990 € | 1.862 € | 68.3 | 36.7 | ocasion | electrico |
-| 2 | [smart forFour Electric Drive](https://www.autoscout24.es/anuncios/smart-forfour-electric-drive-electrico-blanco-cat_ma15525mo18438-56812e95-8f0c-468e-85dc-dee146d8bbcf) | 2018 | 92.933 | 7.190 € | 1.881 € | 68.3 | 36.3 | ocasion | electrico |
-| 3 | [smart forFour Electric Drive](https://www.autoscout24.es/anuncios/smart-forfour-electric-drive-electrico-blanco-cat_ma15525mo18438-58c3aa1a-ad00-423e-95aa-b170dcd49209) | 2018 | 71.900 | 7.490 € | 1.910 € | 68.5 | 35.9 | ocasion | electrico |
-| 4 | [smart forFour EQ](https://www.autoscout24.es/anuncios/smart-forfour-eq-electrico-blanco-cat_ma15525mo18438-3b3c346e-bc90-41cb-bdaf-2c3955f97e5d) | 2019 | 56.149 | 7.970 € | 1.957 € | 68.8 | 35.1 | ocasion | electrico |
-| 5 | [RENAULT Fluence ZE Dynamique](https://www.coches.net/renault-fluence-ze-dynamique-4p-electrico-hibrido-2011-en-valencia-71873979-covo.aspx) | 2013 | 101.000 | 6.490 € | 1.750 € | 60.5 | 34.6 | ocasion | electrico |
+| 1 | [Fiat 500 Club 1.0 Hybrid 51KW (70 CV)](https://www.autoscout24.es/anuncios/fiat-500-club-1-0-hybrid-51kw-70-cv-electro-gasolina-naranja-cat_ma28mo15160-c45a608b-cd6e-4c34-b177-6a1d1a74ab49) | 2022 | 79.249 | 6.990 € | 2.152 € | 60.4 | 28.1 | ocasion | hibrido |
+| 2 | [Fiat 500 Dolcevita 1.0 Hybrid 52KW (70 CV)](https://www.autoscout24.es/anuncios/fiat-500-dolcevita-1-0-hybrid-52kw-70-cv-electro-gasolina-blanco-cat_ma28mo15160-a4f8b1eb-9a0d-4323-aa49-b6cf7dcdff43) | 2021 | 62.500 | 7.990 € | 2.170 € | 60.8 | 28.0 | ocasion | hibrido |
+| 3 | [Fiat 500 Dolcevita 1.0 Hybrid 51KW (70 CV)](https://www.autoscout24.es/anuncios/fiat-500-dolcevita-1-0-hybrid-51kw-70-cv-electro-gasolina-gris-cat_ma28mo15160-0386cf47-34a0-4a20-8470-24fbd0bd8d92) | 2022 | 70.101 | 7.690 € | 2.173 € | 60.8 | 28.0 | ocasion | hibrido |
+| 4 | [Fiat 500 Dolcevita 1.0 Hybrid 52KW (70 CV)](https://www.autoscout24.es/anuncios/fiat-500-dolcevita-1-0-hybrid-52kw-70-cv-electro-gasolina-negro-cat_ma28mo15160-38a2fdd7-f38c-4ece-bfa3-94959fe8113d) | 2021 | 69.930 | 7.990 € | 2.194 € | 60.7 | 27.7 | ocasion | hibrido |
+| 5 | [Fiat 500 Dolcevita 1.0 Hybrid 51KW (70 CV)](https://www.autoscout24.es/anuncios/fiat-500-dolcevita-1-0-hybrid-51kw-70-cv-electro-gasolina-blanco-cat_ma28mo15160-aaf1e71d-a3d8-4fe0-ae76-7bf71c847d7d) | 2021 | 60.525 | 8.490 € | 2.198 € | 60.8 | 27.7 | ocasion | hibrido |
 
 **10.000–15.000 €**
 
 | # | Coche | Año | Km | Precio | Coste anual | Calidad intr. | Calidad/coste | Tipo | Combustible |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | [SMART forfour 60kW81CV EQ](https://www.coches.net/smart-forfour-60kw81cv-eq-5p-electrico-hibrido-2020-en-valencia-71675801-covo.aspx) | 2019 | 62.700 | 10.500 € | 2.200 € | 74.1 | 33.7 | ocasion | electrico |
-| 2 | [Toyota Yaris 1.5 100H Active Ecovan](https://www.autoscout24.es/anuncios/toyota-yaris-1-5-100h-active-ecovan-electro-gasolina-blanco-cat_ma70mo15663-9272a5a1-a2b2-45ab-a4b8-2f358c3a5afd) | 2020 | 77.327 | 10.990 € | 2.365 € | 75.0 | 31.7 | ocasion | hibrido |
-| 3 | [smart forFour Electric Drive Passion](https://www.autoscout24.es/anuncios/smart-forfour-electric-drive-passion-electrico-blanco-cat_ma15525mo18438-a9686e5d-0c1a-4ae2-bbba-7c829f5322a9) | 2019 | 47.028 | 10.380 € | 2.189 € | 68.9 | 31.5 | ocasion | electrico |
-| 4 | [Toyota Yaris Hybrid 1.5 Active](https://www.autoscout24.es/anuncios/toyota-yaris-hybrid-1-5-active-electro-gasolina-blanco-cat_ma70mo15663-6cd2fa2f-8270-4e1f-8e56-ecba3d59ac67) | 2018 | 76.992 | 11.590 € | 2.404 € | 74.8 | 31.1 | ocasion | hibrido |
-| 5 | [Toyota Yaris 100H 1.5 Active Tech](https://www.autoscout24.es/anuncios/toyota-yaris-100h-1-5-active-tech-electro-gasolina-azul-cat_ma70mo15663-68c986c2-a93c-446c-93ac-442f33cf65fc) | 2019 | 101.147 | 11.770 € | 2.416 € | 74.6 | 30.9 | ocasion | hibrido |
+| 1 | [Toyota Yaris 1.5 100H Active Ecovan](https://www.autoscout24.es/anuncios/toyota-yaris-1-5-100h-active-ecovan-electro-gasolina-blanco-cat_ma70mo15663-9272a5a1-a2b2-45ab-a4b8-2f358c3a5afd) | 2020 | 77.327 | 10.990 € | 2.450 € | 75.0 | 30.6 | ocasion | hibrido |
+| 2 | [Toyota Yaris 120H 1.5 Business Plus](https://www.autoscout24.es/anuncios/toyota-yaris-120h-1-5-business-plus-electro-gasolina-azul-cat_ma70mo15663-e5bbd9ed-64db-4882-9531-906974418389) | 2020 | 80.176 | 12.490 € | 2.577 € | 75.0 | 29.1 | ocasion | hibrido |
+| 3 | [Toyota Yaris 100H 1.5 Active](https://www.autoscout24.es/anuncios/toyota-yaris-100h-1-5-active-electro-gasolina-gris-cat_ma70mo15663-6b2978df-1d2e-40ab-af1c-7ecb725435f9) | 2020 | 78.188 | 12.690 € | 2.581 € | 75.0 | 29.1 | ocasion | hibrido |
+| 4 | [Toyota Yaris Hybrid 1.5 Active](https://www.autoscout24.es/anuncios/toyota-yaris-hybrid-1-5-active-electro-gasolina-blanco-cat_ma70mo15663-6cd2fa2f-8270-4e1f-8e56-ecba3d59ac67) | 2018 | 76.992 | 11.590 € | 2.605 € | 74.8 | 28.7 | ocasion | hibrido |
+| 5 | [Toyota Yaris 120H 1.5 Business Plus](https://www.autoscout24.es/anuncios/toyota-yaris-120h-1-5-business-plus-electro-gasolina-azul-cat_ma70mo15663-1d1ef713-d847-4c88-94ad-4ef0c5d6faaa) | 2020 | 92.546 | 11.980 € | 2.615 € | 74.8 | 28.6 | ocasion | hibrido |
 
 **15.000–25.000 €**
 
 | # | Coche | Año | Km | Precio | Coste anual | Calidad intr. | Calidad/coste | Tipo | Combustible |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | [Tesla Model 3 Estándar Plus RWD - 4P (2019)](https://www.autoscout24.es/anuncios/tesla-model-3-estandar-plus-rwd-4p-2019-electrico-negro-cat_ma51520mo74665-4fde0d37-ba23-4b89-8924-66162908d198) | 2019 | 138.000 | 19.970 € | 2.555 € | 73.3 | 28.7 | ocasion | electrico |
-| 2 | [Tesla Model 3 Estándar Plus RWD](https://www.autoscout24.es/anuncios/tesla-model-3-estandar-plus-rwd-electrico-negro-cat_ma51520mo74665-65814fe7-f463-43bd-acf1-d5cc81eff5a1) | 2019 | 87.782 | 20.990 € | 2.614 € | 74.1 | 28.3 | ocasion | electrico |
-| 3 | [Tesla Model 3 Long-Range Dual Motor AWD](https://www.autoscout24.es/anuncios/tesla-model-3-long-range-dual-motor-awd-electrico-negro-cat_ma51520mo74665-e8fb1f35-a741-46ed-a5d5-bac50b23a1c5) | 2019 | 140.535 | 20.490 € | 2.585 € | 73.2 | 28.3 | ocasion | electrico |
-| 4 | [Toyota Yaris 1.5 Hybrid Collection](https://www.autoscout24.es/anuncios/toyota-yaris-1-5-hybrid-collection-electro-gasolina-blanco-cat_ma70mo15663-6c16c2c0-7037-4d69-82d1-50ff01ac9b90) | 2020 | 6.764 | 15.809 € | 2.683 € | 75.7 | 28.2 | ocasion | hibrido |
-| 5 | [TOYOTA Yaris 1.5 100H Active Tech](https://www.coches.net/toyota-yaris-15-100h-active-tech-5p-electrico-hibrido-2019-en-valencia-71753793-covo.aspx) | 2018 | 45.000 | 15.500 € | 2.662 € | 75.1 | 28.2 | ocasion | hibrido |
+| 1 | [Toyota Yaris 120H 1.5 Active Tech](https://www.autoscout24.es/anuncios/toyota-yaris-120h-1-5-active-tech-electro-gasolina-negro-cat_ma70mo15663-bb7e20ff-a9a4-441a-bedb-de940cc8276c) | 2022 | 40.000 | 15.990 € | 2.695 € | 75.6 | 28.0 | ocasion | hibrido |
+| 2 | [Toyota Yaris 1.5 Hybrid Active](https://www.autoscout24.es/anuncios/toyota-yaris-1-5-hybrid-active-electro-gasolina-blanco-cat_ma70mo15663-88e59fe1-f7da-4014-bd8e-297fd171ae74) | 2022 | 46.151 | 16.181 € | 2.707 € | 75.5 | 27.9 | ocasion | hibrido |
+| 3 | [Toyota Yaris 120H 1.5 Active Tech](https://www.autoscout24.es/anuncios/toyota-yaris-120h-1-5-active-tech-electro-gasolina-blanco-cat_ma70mo15663-607f8b7c-3041-4196-bd32-cfb1b0d56a33) | 2021 | 49.000 | 15.990 € | 2.706 € | 75.4 | 27.9 | ocasion | hibrido |
+| 4 | [Toyota Yaris 120H 1.5 Active Tech](https://www.autoscout24.es/anuncios/toyota-yaris-120h-1-5-active-tech-electro-gasolina-negro-cat_ma70mo15663-f4b5b8b5-188b-4fd8-88cc-4de5245aa4a6) | 2022 | 50.000 | 16.500 € | 2.728 € | 75.5 | 27.7 | ocasion | hibrido |
+| 5 | [Toyota Yaris 120H 1.5 Active Tech](https://www.autoscout24.es/anuncios/toyota-yaris-120h-1-5-active-tech-electro-gasolina-blanco-cat_ma70mo15663-0fcf11ac-142a-416b-b0db-669c6b19615a) | 2021 | 37.618 | 16.390 € | 2.732 € | 75.5 | 27.6 | ocasion | hibrido |
 
 **más de 25.000 €**
 
 | # | Coche | Año | Km | Precio | Coste anual | Calidad intr. | Calidad/coste | Tipo | Combustible |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | [TESLA Model 3 Estandar Plus RWD](https://www.coches.net/tesla-model-3-estandar-plus-rwd-4p-electrico-hibrido-2019-en-valencia-71670370-covo.aspx) | 2020 | 58.150 | 27.890 € | 3.014 € | 74.5 | 24.7 | ocasion | electrico |
-| 2 | [Tesla Model 3 Long-Range Dual Motor AWD](https://www.autoscout24.es/anuncios/tesla-model-3-long-range-dual-motor-awd-electrico-blanco-cat_ma51520mo74665-54505649-6314-44cc-b5f4-acaad9335ecb) | 2020 | 54.186 | 27.990 € | 3.020 € | 74.5 | 24.7 | ocasion | electrico |
-| 3 | [TESLA Model 3 Performance AWD](https://www.coches.net/tesla-model-3-performance-awd-4p-electrico-hibrido-2019-en-alicante-71339101-covo.aspx) | 2020 | 48.452 | 32.990 € | 3.310 € | 74.6 | 22.5 | ocasion | electrico |
-| 4 | [TOYOTA C-HR 2.0 180H Advance](https://www.coches.net/toyota-c-hr-20-180h-advance-5p-electrico-hibrido-2022-en-valencia-71860677-covo.aspx) | 2022 | 45.768 | 26.750 € | 3.667 € | 80.9 | 22.1 | ocasion | hibrido |
-| 5 | [BMW Serie 5 520dA xDrive](https://www.coches.net/bmw-serie-5-520da-xdrive-4p-electrico-hibrido-2023-en-valencia-71874548-covo.aspx) | 2022 | 100.689 | 25.000 € | 3.552 € | 77.6 | 21.8 | ocasion | hibrido |
+| 1 | [TOYOTA C-HR 2.0 180H Advance](https://www.coches.net/toyota-c-hr-20-180h-advance-5p-electrico-hibrido-2022-en-valencia-71860677-covo.aspx) | 2022 | 45.768 | 26.750 € | 3.667 € | 80.9 | 22.1 | ocasion | hibrido |
+| 2 | [TOYOTA Yaris Cross 1.5 120H Active Plus](https://www.coches.net/toyota-yaris-cross-15-120h-active-plus-5p-electrico-hibrido-2024-en-valencia-70187800-covo.aspx) | 2025 | 20.003 | 26.250 € | 3.722 € | 81.2 | 21.8 | seminuevo | hibrido |
+| 3 | [HONDA Jazz 1.5 iMMD SPORT](https://www.coches.net/honda-jazz-15-immd-sport-5p-electrico-hibrido-2025-en-valencia-71797708-covo.aspx) | 2026 | 3.500 | 25.990 € | 3.704 € | 79.3 | 21.4 | seminuevo | hibrido |
+| 4 | [Volkswagen Golf Life 1.5 eTSI 85kW (115CV) DSG](https://www.autoscout24.es/anuncios/volkswagen-golf-life-1-5-etsi-85kw-115cv-dsg-electro-gasolina-azul-cat_ma74mo2084-39389f59-fff3-4270-b9f3-4059cd24f9d3) | 2022 | 2.108 | 25.490 € | 3.432 € | 73.1 | 21.3 | ocasion | hibrido |
+| 5 | [PEUGEOT 208 GT HYBRID 145 eDCS6](https://www.coches.net/peugeot-208-gt-hybrid-145-edcs6-5p-electrico-hibrido-2026-en-albacete-70884236-covo.aspx) | 2026 | 5 | 25.300 € | 3.659 € | 77.4 | 21.2 | seminuevo | hibrido |
 
 ## Top 5 por segmento (Valencia)
 
@@ -203,81 +210,137 @@ Anuncios guardados por plataforma y zona: autoscout24 barcelona 2461; autoscout2
 
 | # | Coche | Año | Km | Precio | Coste anual | Calidad intr. | Calidad/coste | Tipo | Combustible |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | [Nissan Leaf Visia](https://www.autoscout24.es/anuncios/nissan-leaf-visia-electrico-blanco-cat_ma52mo19733-242c86d6-0e3f-4d25-90f6-97a48880e8b7) | 2014 | 160.000 | 4.500 € | 1.639 € | 62.1 | 37.9 | ocasion | electrico |
-| 2 | [smart forFour Electric Drive](https://www.autoscout24.es/anuncios/smart-forfour-electric-drive-electrico-negro-cat_ma15525mo18438-42f296a6-94a6-43b8-a8fa-29e1b48c04a6) | 2017 | 81.200 | 6.990 € | 1.862 € | 68.3 | 36.7 | ocasion | electrico |
-| 3 | [smart forFour Electric Drive](https://www.autoscout24.es/anuncios/smart-forfour-electric-drive-electrico-blanco-cat_ma15525mo18438-56812e95-8f0c-468e-85dc-dee146d8bbcf) | 2018 | 92.933 | 7.190 € | 1.881 € | 68.3 | 36.3 | ocasion | electrico |
-| 4 | [smart forFour Electric Drive](https://www.autoscout24.es/anuncios/smart-forfour-electric-drive-electrico-blanco-cat_ma15525mo18438-58c3aa1a-ad00-423e-95aa-b170dcd49209) | 2018 | 71.900 | 7.490 € | 1.910 € | 68.5 | 35.9 | ocasion | electrico |
-| 5 | [smart forFour EQ](https://www.autoscout24.es/anuncios/smart-forfour-eq-electrico-blanco-cat_ma15525mo18438-3b3c346e-bc90-41cb-bdaf-2c3955f97e5d) | 2019 | 56.149 | 7.970 € | 1.957 € | 68.8 | 35.1 | ocasion | electrico |
+| 1 | [Toyota Yaris 1.5 100H Active Ecovan](https://www.autoscout24.es/anuncios/toyota-yaris-1-5-100h-active-ecovan-electro-gasolina-blanco-cat_ma70mo15663-9272a5a1-a2b2-45ab-a4b8-2f358c3a5afd) | 2020 | 77.327 | 10.990 € | 2.450 € | 75.0 | 30.6 | ocasion | hibrido |
+| 2 | [Toyota Yaris 120H 1.5 Business Plus](https://www.autoscout24.es/anuncios/toyota-yaris-120h-1-5-business-plus-electro-gasolina-azul-cat_ma70mo15663-e5bbd9ed-64db-4882-9531-906974418389) | 2020 | 80.176 | 12.490 € | 2.577 € | 75.0 | 29.1 | ocasion | hibrido |
+| 3 | [Toyota Yaris 100H 1.5 Active](https://www.autoscout24.es/anuncios/toyota-yaris-100h-1-5-active-electro-gasolina-gris-cat_ma70mo15663-6b2978df-1d2e-40ab-af1c-7ecb725435f9) | 2020 | 78.188 | 12.690 € | 2.581 € | 75.0 | 29.1 | ocasion | hibrido |
+| 4 | [Toyota Yaris Hybrid 1.5 Active](https://www.autoscout24.es/anuncios/toyota-yaris-hybrid-1-5-active-electro-gasolina-blanco-cat_ma70mo15663-6cd2fa2f-8270-4e1f-8e56-ecba3d59ac67) | 2018 | 76.992 | 11.590 € | 2.605 € | 74.8 | 28.7 | ocasion | hibrido |
+| 5 | [Toyota Yaris 120H 1.5 Business Plus](https://www.autoscout24.es/anuncios/toyota-yaris-120h-1-5-business-plus-electro-gasolina-azul-cat_ma70mo15663-1d1ef713-d847-4c88-94ad-4ef0c5d6faaa) | 2020 | 92.546 | 11.980 € | 2.615 € | 74.8 | 28.6 | ocasion | hibrido |
 
 **compacto**
 
 | # | Coche | Año | Km | Precio | Coste anual | Calidad intr. | Calidad/coste | Tipo | Combustible |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | [HONDA Civic 1.3 iDSi IMA Hybrid](https://www.coches.net/honda-civic-13-idsi-ima-hybrid-4p-electrico-hibrido-2007-en-valencia-71735483-covo.aspx) | 2007 | 127.299 | 6.790 € | 2.221 € | 70.3 | 31.6 | ocasion | hibrido |
-| 2 | [Volkswagen Golf e-Golf ePower](https://www.autoscout24.es/anuncios/volkswagen-golf-e-golf-epower-electrico-blanco-cat_ma74mo2084-63b9af3f-ca55-4e0a-a263-1e740f2509aa) | 2019 | 71.848 | 13.790 € | 2.385 € | 71.2 | 29.8 | ocasion | electrico |
-| 3 | [Toyota Auris hybrid Active](https://www.autoscout24.es/anuncios/toyota-auris-hybrid-active-electro-gasolina-negro-cat_ma70mo18992-7eb3213d-9270-4e31-a05b-94a5babd6ac9) | 2012 | 154.000 | 8.770 € | 2.367 € | 70.0 | 29.6 | ocasion | hibrido |
-| 4 | [Volkswagen Golf e-Golf ePower](https://www.autoscout24.es/anuncios/volkswagen-golf-e-golf-epower-electrico-blanco-cat_ma74mo2084-8fca4499-209d-4e73-b9c7-43b25b65b829) | 2018 | 115.754 | 10.990 € | 2.167 € | 63.9 | 29.5 | ocasion | electrico |
-| 5 | [VOLKSWAGEN Golf eGolf ePower](https://www.coches.net/volkswagen-golf-egolf-epower-100-kw-136cv-5p-electrico-hibrido-2020-en-valencia-71840979-covo.aspx) | 2019 | 71.848 | 14.490 € | 2.439 € | 71.2 | 29.2 | ocasion | electrico |
+| 1 | [Toyota Corolla 1.8 125H ACTIVE TECH E-CVT](https://www.autoscout24.es/anuncios/toyota-corolla-1-8-125h-active-tech-e-cvt-electro-gasolina-negro-cat_ma70mo2052-771de376-2093-4ac1-ac02-9048df679d9c) | 2022 | 79.195 | 14.290 € | 2.866 € | 74.9 | 26.1 | ocasion | hibrido |
+| 2 | [Toyota Corolla 1.8 125H ACTIVE TECH E-CVT](https://www.autoscout24.es/anuncios/toyota-corolla-1-8-125h-active-tech-e-cvt-electro-gasolina-blanco-cat_ma70mo2052-5ebd57a4-2b5f-47f7-8f0b-3e9b30b07b7f) | 2022 | 78.321 | 14.990 € | 2.912 € | 74.9 | 25.7 | ocasion | hibrido |
+| 3 | [Toyota Corolla 1.8 125H BUSINESS E-CVT](https://www.autoscout24.es/anuncios/toyota-corolla-1-8-125h-business-e-cvt-electro-gasolina-rojo-cat_ma70mo2052-07a026ac-4453-42d5-802b-4c25455ef594) | 2021 | 45.621 | 16.990 € | 2.932 € | 75.4 | 25.7 | ocasion | hibrido |
+| 4 | [Toyota Corolla 1.8 125H BUSINESS E-CVT](https://www.autoscout24.es/anuncios/toyota-corolla-1-8-125h-business-e-cvt-electro-gasolina-rojo-cat_ma70mo2052-7d3337bd-e52a-4779-8496-8421015fc9d3) | 2021 | 51.599 | 16.990 € | 2.932 € | 75.4 | 25.7 | ocasion | hibrido |
+| 5 | [Hyundai i30 1.0 T-GDI Mild-Hybrid Klass](https://www.autoscout24.es/anuncios/hyundai-i30-1-0-t-gdi-mild-hybrid-klass-electro-gasolina-rojo-cat_ma33mo19065-c88912a8-b34d-49c9-b4f9-62f82628134d) | 2022 | 57.821 | 13.545 € | 2.665 € | 68.3 | 25.6 | ocasion | hibrido |
 
 **berlina**
 
 | # | Coche | Año | Km | Precio | Coste anual | Calidad intr. | Calidad/coste | Tipo | Combustible |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | [RENAULT Fluence ZE Dynamique](https://www.coches.net/renault-fluence-ze-dynamique-4p-electrico-hibrido-2011-en-valencia-71873979-covo.aspx) | 2013 | 101.000 | 6.490 € | 1.750 € | 60.5 | 34.6 | ocasion | electrico |
-| 2 | [Tesla Model 3 Estándar Plus RWD - 4P (2019)](https://www.autoscout24.es/anuncios/tesla-model-3-estandar-plus-rwd-4p-2019-electrico-negro-cat_ma51520mo74665-4fde0d37-ba23-4b89-8924-66162908d198) | 2019 | 138.000 | 19.970 € | 2.555 € | 73.3 | 28.7 | ocasion | electrico |
-| 3 | [Tesla Model 3 Estándar Plus RWD](https://www.autoscout24.es/anuncios/tesla-model-3-estandar-plus-rwd-electrico-negro-cat_ma51520mo74665-65814fe7-f463-43bd-acf1-d5cc81eff5a1) | 2019 | 87.782 | 20.990 € | 2.614 € | 74.1 | 28.3 | ocasion | electrico |
-| 4 | [Tesla Model 3 Long-Range Dual Motor AWD](https://www.autoscout24.es/anuncios/tesla-model-3-long-range-dual-motor-awd-electrico-negro-cat_ma51520mo74665-e8fb1f35-a741-46ed-a5d5-bac50b23a1c5) | 2019 | 140.535 | 20.490 € | 2.585 € | 73.2 | 28.3 | ocasion | electrico |
-| 5 | [TOYOTA C-HR 1.8 125H Style Plus](https://www.coches.net/toyota-c-hr-18-125h-style-plus-5p-electrico-hibrido-2019-en-valencia-71769664-covo.aspx) | 2018 | 148.238 | 16.990 € | 3.028 € | 84.7 | 28.0 | ocasion | hibrido |
+| 1 | [Tesla Model 3 Estándar Plus RWD](https://www.autoscout24.es/anuncios/tesla-model-3-estandar-plus-rwd-electrico-negro-cat_ma51520mo74665-65814fe7-f463-43bd-acf1-d5cc81eff5a1) | 2019 | 87.782 | 20.990 € | 3.191 € | 74.1 | 23.2 | ocasion | electrico |
+| 2 | [MAZDA Mazda6 2.2 DE Style](https://www.coches.net/mazda-mazda6-22-de-129cv-style-5p-diesel-2010-en-valencia-71665999-covo.aspx) | 2011 | 300.000 | 950 € | 2.391 € | 54.3 | 22.7 | ocasion | diesel |
+| 3 | [HYUNDAI IONIQ 1.6 GDI PHEV Klass DT](https://www.coches.net/hyundai-ioniq-16-gdi-phev-klass-dt-5p-electrico-hibrido-2019-en-valencia-71142230-covo.aspx) | 2022 | 85.801 | 14.950 € | 3.401 € | 77.2 | 22.7 | ocasion | phev |
+| 4 | [Tesla Model 3 Standard Range](https://www.autoscout24.es/anuncios/tesla-model-3-standard-range-electrico-azul-cat_ma51520mo74665-578661c2-e49c-4729-b2a8-3d80bbf6ef38) | 2019 | 37.446 | 22.666 € | 3.328 € | 74.6 | 22.4 | ocasion | electrico |
+| 5 | [TOYOTA C-HR 1.8 125H Advance](https://www.coches.net/toyota-c-hr-18-125h-advance-5p-electrico-hibrido-2022-en-valencia-71808591-covo.aspx) | 2022 | 73.048 | 23.450 € | 3.601 € | 80.6 | 22.4 | ocasion | hibrido |
 
 **familiar**
 
 | # | Coche | Año | Km | Precio | Coste anual | Calidad intr. | Calidad/coste | Tipo | Combustible |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | [Ford Puma 1.0 EcoBoost 125cv ST-Line MHEV](https://www.autoscout24.es/anuncios/ford-puma-1-0-ecoboost-125cv-st-line-mhev-electro-gasolina-negro-cat_ma29mo14803-7136ffab-4d43-4d6d-872d-2fbe8ad617af) | 2022 | 144.133 | 10.490 € | 2.505 € | 68.1 | 27.2 | ocasion | hibrido |
-| 2 | [Ford Puma 1.0 EcoBoost 114kW (155cv) ST-Line MHEV](https://www.autoscout24.es/anuncios/ford-puma-1-0-ecoboost-114kw-155cv-st-line-mhev-electro-gasolina-gris-cat_ma29mo14803-c32c3ee9-c183-4948-9207-925da4067db6) | 2021 | 141.792 | 11.490 € | 2.566 € | 69.0 | 26.9 | ocasion | hibrido |
-| 3 | [Ford Puma 1.0 EcoBoost 114kW (155cv) ST-Line MHEV](https://www.autoscout24.es/anuncios/ford-puma-1-0-ecoboost-114kw-155cv-st-line-mhev-electro-gasolina-azul-cat_ma29mo14803-fcf94f1e-8a25-4cbd-9fc1-3b521dbdf144) | 2021 | 127.631 | 11.990 € | 2.596 € | 69.6 | 26.8 | ocasion | hibrido |
-| 4 | [Ford Puma 1.0 EcoBoost Mild-Hybrid ST-Line X](https://www.autoscout24.es/anuncios/ford-puma-1-0-ecoboost-mild-hybrid-st-line-x-electro-gasolina-blanco-cat_ma29mo14803-595f2516-9b9a-47bd-99a1-d18008715b61) | 2020 | 68.544 | 13.713 € | 2.702 € | 71.2 | 26.3 | ocasion | hibrido |
-| 5 | [Ford Puma 1.0 EcoBoost Mild-Hybrid ST-Line](https://www.autoscout24.es/anuncios/ford-puma-1-0-ecoboost-mild-hybrid-st-line-electro-gasolina-gris-cat_ma29mo14803-aaf90cf9-fad5-4547-b432-9b4466822196) | 2020 | 66.130 | 13.817 € | 2.708 € | 71.2 | 26.3 | ocasion | hibrido |
+| 1 | [Ford Puma 1.0 EcoBoost Mild-Hybrid ST-Line X](https://www.autoscout24.es/anuncios/ford-puma-1-0-ecoboost-mild-hybrid-st-line-x-electro-gasolina-blanco-cat_ma29mo14803-595f2516-9b9a-47bd-99a1-d18008715b61) | 2020 | 68.544 | 13.713 € | 2.843 € | 71.2 | 25.0 | ocasion | hibrido |
+| 2 | [Ford Puma 1.0 EcoBoost 114kW (155cv) ST-Line MHEV](https://www.autoscout24.es/anuncios/ford-puma-1-0-ecoboost-114kw-155cv-st-line-mhev-electro-gasolina-azul-cat_ma29mo14803-190f9c30-d0f0-42f8-a291-e90637b0e9f4) | 2021 | 69.215 | 13.990 € | 2.846 € | 71.3 | 25.0 | ocasion | hibrido |
+| 3 | [Ford Puma 1.0 EcoBoost Mild-Hybrid ST-Line](https://www.autoscout24.es/anuncios/ford-puma-1-0-ecoboost-mild-hybrid-st-line-electro-gasolina-gris-cat_ma29mo14803-aaf90cf9-fad5-4547-b432-9b4466822196) | 2020 | 66.130 | 13.817 € | 2.850 € | 71.2 | 25.0 | ocasion | hibrido |
+| 4 | [Ford Puma 1.0 EcoBoost 114kW (155cv) ST-Line MHEV](https://www.autoscout24.es/anuncios/ford-puma-1-0-ecoboost-114kw-155cv-st-line-mhev-electro-gasolina-gris-cat_ma29mo14803-ab147d89-16a3-4856-9347-9bc3a3d8055e) | 2021 | 52.200 | 14.990 € | 2.862 € | 71.4 | 25.0 | ocasion | hibrido |
+| 5 | [Kia None Tourer 1.6 MHEV iMT 100kW Drive](https://www.autoscout24.es/anuncios/kia-otros-tourer-1-6-mhev-imt-100kw-drive-electro-gasolina-blanco-cat_ma39mo21016-a0708dfd-e6d2-4fe3-9995-1fd30f0e2bf3) | 2021 | 57.445 | 13.990 € | 2.805 € | 68.9 | 24.6 | ocasion | hibrido |
 
 **suv**
 
 | # | Coche | Año | Km | Precio | Coste anual | Calidad intr. | Calidad/coste | Tipo | Combustible |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | [Hyundai KONA EV Klass 100kW](https://www.autoscout24.es/anuncios/hyundai-kona-ev-klass-100kw-electrico-gris-cat_ma33mo74663-a6705472-8463-4408-9c61-d0557828b634) | 2020 | 97.150 | 12.990 € | 2.486 € | 71.7 | 28.9 | ocasion | electrico |
-| 2 | [Hyundai KONA EV Klass 100kW](https://www.autoscout24.es/anuncios/hyundai-kona-ev-klass-100kw-electrico-azul-cat_ma33mo74663-b1de02b3-1e14-481a-8d51-b9712b455bba) | 2021 | 37.376 | 16.390 € | 2.745 € | 71.6 | 26.1 | ocasion | electrico |
-| 3 | [Hyundai KONA EV Maxx 100kW](https://www.autoscout24.es/anuncios/hyundai-kona-ev-maxx-100kw-electrico-azul-cat_ma33mo74663-b5c38107-af3d-439d-84ca-949ecde51866) | 2022 | 29.691 | 16.490 € | 2.753 € | 71.8 | 26.1 | ocasion | electrico |
-| 4 | [Kia Niro electric drive 100 kW e- Concept](https://www.autoscout24.es/anuncios/kia-niro-electric-drive-100-kw-e-concept-electrico-blanco-cat_ma39mo74327-d86e74fe-021f-4df1-8c05-5907d58e8a01) | 2022 | 59.550 | 16.817 € | 2.778 € | 72.4 | 26.1 | ocasion | electrico |
-| 5 | [SEAT Arona 1.0 TGI Style](https://www.coches.net/seat-arona-10-tgi-66kw-90cv-style-5p-otros-2019-en-valencia-71853897-covo.aspx) | 2019 | 53.893 | 11.490 € | 2.731 € | 70.8 | 25.9 | ocasion | gnc |
+| 1 | [KIA Stonic 1.0 TGDi MHEV iMT Drive](https://www.coches.net/kia-stonic-10-tgdi-74kw-100cv-mhev-imt-drive-5p-electrico-hibrido-2022-en-valencia-71424786-covo.aspx) | 2022 | 38.000 | 15.490 € | 3.141 € | 81.1 | 25.8 | ocasion | hibrido |
+| 2 | [SEAT Arona 1.0 TGI Style](https://www.coches.net/seat-arona-10-tgi-66kw-90cv-style-5p-otros-2019-en-valencia-71853897-covo.aspx) | 2019 | 53.893 | 11.490 € | 2.778 € | 70.8 | 25.5 | ocasion | gnc |
+| 3 | [Hyundai KONA EV Klass 100kW](https://www.autoscout24.es/anuncios/hyundai-kona-ev-klass-100kw-electrico-gris-cat_ma33mo74663-a6705472-8463-4408-9c61-d0557828b634) | 2020 | 97.150 | 12.990 € | 2.835 € | 71.7 | 25.3 | ocasion | electrico |
+| 4 | [SEAT Arona 1.0 TGI S&S Style 90](https://www.autoscout24.es/anuncios/seat-arona-1-0-tgi-ss-style-90-gas-licuado-glp-azul-cat_ma64mo74664-f9c28169-b425-4fca-a716-cc1ddf6ae85e) | 2019 | 53.893 | 10.890 € | 2.827 € | 70.8 | 25.0 | ocasion | glp |
+| 5 | [SEAT Arona 1.0 TGI S&S FR 90](https://www.autoscout24.es/anuncios/seat-arona-1-0-tgi-ss-fr-90-gas-licuado-glp-blanco-cat_ma64mo74664-4f811c0e-44ea-48a7-9292-aafa095d792a) | 2019 | 81.843 | 11.090 € | 2.842 € | 70.5 | 24.8 | ocasion | glp |
+
+## Escenarios de recarga (eléctricos)
+
+Escenario activo: **mixta** (config_mercado.yaml → recarga.escenario). Solo cambia el coste de energía de los eléctricos; precios con fuente y fecha en mercado_supuestos.yaml → recarga.
+
+| Escenario | €/kWh | hasta 5.000 € | 5.000–10.000 € | 10.000–15.000 € | 15.000–25.000 € | más de 25.000 € |
+|---|---|---|---|---|---|---|
+| casa | 0.290 | 12 ef. · 0 eléctr. | 27 ef. · 5 eléctr. | 13 ef. · 1 eléctr. | 10 ef. · 0 eléctr. | 14 ef. · 2 eléctr. |
+| mixta (activo) | 0.338 | 12 ef. · 0 eléctr. | 24 ef. · 2 eléctr. | 12 ef. · 0 eléctr. | 10 ef. · 0 eléctr. | 13 ef. · 0 eléctr. |
+| publica | 0.435 | 12 ef. · 0 eléctr. | 23 ef. · 0 eléctr. | 12 ef. · 0 eléctr. | 10 ef. · 0 eléctr. | 13 ef. · 0 eléctr. |
+
+**Frontera con recarga «casa»** (coste anual de ese escenario)
+
+- hasta 5.000 €: OPEL Corsa 2002 (2.027 €/año); Ford Fiesta 1.4 TDCi Trend 2004 (2.119 €/año); SMART forfour 1.5 CDI Passion 2005 (2.147 €/año); SEAT Arosa 1.0i SELECT 1999 (2.217 €/año); OPEL Corsa Enjoy 1.3 CDTi 2008 (2.239 €/año); Opel Corsa 1.2 16v Silverline Base (80 CV) 2006 (2.345 €/año); KIA Rio 1.5 16v LS 2004 (2.547 €/año); FIAT Punto 1.2 Feel 2007 (2.597 €/año); TOYOTA Yaris 1.3 VVTi Yaris 2007 (2.614 €/año); Opel Corsa 1.2 Enjoy MTA (80 CV) 2007 (2.627 €/año)
+- 5.000–10.000 €: smart forFour Electric Drive 2017 (1.975 €/año); smart forFour Electric Drive 2018 (2.028 €/año); smart forFour EQ 2019 (2.078 €/año); smart forFour 41kW(56CV) electric drive - 5P (2019) 2019 (2.125 €/año); Dacia Spring Electric Expression 45 33kW 2022 (2.137 €/año); Fiat 500 Club 1.0 Hybrid 51KW (70 CV) 2022 (2.152 €/año); Fiat 500 Dolcevita 1.0 Hybrid 52KW (70 CV) 2021 (2.170 €/año); Fiat 500 Dolcevita 1.0 Hybrid 51KW (70 CV) 2022 (2.173 €/año); Fiat 500 Dolcevita 1.0 Hybrid 51KW (70 CV) 2021 (2.198 €/año); Fiat 500 Cult 1.0 Hybrid 51KW (70 CV) 2022 (2.201 €/año)
+- 10.000–15.000 €: Nissan Leaf 40kWh N-Connecta Bitono 2018 (2.319 €/año); FIAT 500 Dolcevita 1.0 Hybrid 70 CV 2022 (2.321 €/año); Fiat 500 1.0 Mild-Hybrid Dolcevita 2021 (2.327 €/año); Fiat 500 1.0 Mild-Hybrid Dolcevita 2022 (2.356 €/año); Ford Fiesta 1.0 EcoBoost MHEV 92kW (125CV) Trend 5p 2021 (2.435 €/año); Hyundai i20 1.0 TGDI 74kW 100CV Essence LX 2021 (2.442 €/año); Suzuki Swift 1.2 GLE Mild Hybrid 2021 (2.447 €/año); Toyota Yaris 1.5 100H Active Ecovan 2020 (2.450 €/año); Toyota Yaris 1.5 Hybrid Feel 2020 (2.694 €/año); TOYOTA Yaris 1.5 100H Active 2020 (2.710 €/año)
+- 15.000–25.000 €: Mazda 2 Hybrid 1.5 Agile CVT 85kW 2022 (2.653 €/año); Toyota Yaris 120H 1.5 Active Tech 2022 (2.695 €/año); Toyota Yaris 1.5 Hybrid Collection 2020 (2.769 €/año); Toyota Yaris 120H 1.5 Active Tech 2022 (2.827 €/año); MAZDA Mazda2 Hybrid 1.5 CVT Agile Comfort 2022 (2.860 €/año); TOYOTA Yaris 1.5 120H Style 2021 (2.986 €/año); KIA Stonic 1.0 TGDi MHEV iMT Drive 2022 (3.141 €/año); PEUGEOT 208 Style HYBRID 110 eDCS6 2026 (3.245 €/año); CITROEN C4 Hybrid 145 eDCS6 Plus 2025 (3.623 €/año); KIA Stonic 1.0 TGDi Concept 2026 (4.278 €/año)
+- más de 25.000 €: Volkswagen Golf Life 1.5 eTSI 85kW (115CV) DSG 2022 (3.432 €/año); Audi A3 Sportback S line 35 TFSI 110kW S tronic 2022 (3.496 €/año); TESLA Model 3 Estandar Plus RWD 2020 (3.634 €/año); Tesla Model 3 Long-Range Dual Motor AWD 2020 (3.643 €/año); PEUGEOT 208 GT HYBRID 145 eDCS6 2026 (3.659 €/año); TOYOTA C-HR 2.0 180H Advance 2022 (3.667 €/año); TOYOTA Yaris Cross 1.5 120H Active Plus 2025 (3.722 €/año); TOYOTA Yaris Cross 1.5 130H Active 2025 (3.886 €/año); TOYOTA Corolla 140H Active 2026 (3.961 €/año); MAZDA CX-30 2.5L eSKYACT G MHEV PrimeLine AT 2026 (4.314 €/año)
+
+**Frontera con recarga «publica»** (coste anual de ese escenario)
+
+- hasta 5.000 €: OPEL Corsa 2002 (2.027 €/año); Ford Fiesta 1.4 TDCi Trend 2004 (2.119 €/año); SMART forfour 1.5 CDI Passion 2005 (2.147 €/año); SEAT Arosa 1.0i SELECT 1999 (2.217 €/año); OPEL Corsa Enjoy 1.3 CDTi 2008 (2.239 €/año); Opel Corsa 1.2 16v Silverline Base (80 CV) 2006 (2.345 €/año); KIA Rio 1.5 16v LS 2004 (2.547 €/año); FIAT Punto 1.2 Feel 2007 (2.597 €/año); TOYOTA Yaris 1.3 VVTi Yaris 2007 (2.614 €/año); Opel Corsa 1.2 Enjoy MTA (80 CV) 2007 (2.627 €/año)
+- 5.000–10.000 €: Fiat Panda Hybrid 1.0 Gse 51kw (70CV) 2022 (2.145 €/año); Fiat 500 Club 1.0 Hybrid 51KW (70 CV) 2022 (2.152 €/año); Fiat 500 Dolcevita 1.0 Hybrid 52KW (70 CV) 2021 (2.170 €/año); Fiat 500 Dolcevita 1.0 Hybrid 51KW (70 CV) 2022 (2.173 €/año); Fiat 500 Dolcevita 1.0 Hybrid 51KW (70 CV) 2021 (2.198 €/año); Fiat 500 Cult 1.0 Hybrid 51KW (70 CV) 2022 (2.201 €/año); Fiat 500 Club 1.0 Hybrid 51KW (70 CV) 2022 (2.210 €/año); Fiat 500 1.0 Mild-Hybrid Cult 2022 (2.212 €/año); Fiat 500 Connect 1.0 Hybrid 51KW (70 CV) 2021 (2.296 €/año); Ford Fiesta 1.5TDCi Titanium 85 2017 (2.475 €/año)
+- 10.000–15.000 €: FIAT 500 Dolcevita 1.0 Hybrid 70 CV 2022 (2.321 €/año); Fiat 500 1.0 Mild-Hybrid Dolcevita 2021 (2.327 €/año); Fiat 500 1.0 Mild-Hybrid Dolcevita 2022 (2.356 €/año); Ford Fiesta 1.0 EcoBoost MHEV 92kW (125CV) Trend 5p 2021 (2.435 €/año); Hyundai i20 1.0 TGDI 74kW 100CV Essence LX 2021 (2.442 €/año); Suzuki Swift 1.2 GLE Mild Hybrid 2021 (2.447 €/año); Toyota Yaris 1.5 100H Active Ecovan 2020 (2.450 €/año); Toyota Yaris 1.5 Hybrid Feel 2020 (2.694 €/año); TOYOTA Yaris 1.5 100H Active 2020 (2.710 €/año); KIA Stonic 1.0 TGDi MHEV iMT Drive 2022 (3.105 €/año)
+- 15.000–25.000 €: Mazda 2 Hybrid 1.5 Agile CVT 85kW 2022 (2.653 €/año); Toyota Yaris 120H 1.5 Active Tech 2022 (2.695 €/año); Toyota Yaris 1.5 Hybrid Collection 2020 (2.769 €/año); Toyota Yaris 120H 1.5 Active Tech 2022 (2.827 €/año); MAZDA Mazda2 Hybrid 1.5 CVT Agile Comfort 2022 (2.860 €/año); TOYOTA Yaris 1.5 120H Style 2021 (2.986 €/año); KIA Stonic 1.0 TGDi MHEV iMT Drive 2022 (3.141 €/año); PEUGEOT 208 Style HYBRID 110 eDCS6 2026 (3.245 €/año); CITROEN C4 Hybrid 145 eDCS6 Plus 2025 (3.623 €/año); KIA Stonic 1.0 TGDi Concept 2026 (4.278 €/año)
+- más de 25.000 €: Volkswagen Golf Life 1.5 eTSI 85kW (115CV) DSG 2022 (3.432 €/año); Audi A3 Sportback S line 35 TFSI 110kW S tronic 2022 (3.496 €/año); Toyota Yaris Cross 130H Active 2026 (3.652 €/año); PEUGEOT 208 GT HYBRID 145 eDCS6 2026 (3.659 €/año); TOYOTA C-HR 2.0 180H Advance 2022 (3.667 €/año); TOYOTA Yaris Cross 1.5 120H Active Plus 2025 (3.722 €/año); TOYOTA Yaris Cross 1.5 130H Active 2025 (3.886 €/año); TOYOTA Corolla 140H Active 2026 (3.961 €/año); MAZDA CX-30 2.5L eSKYACT G MHEV PrimeLine AT 2026 (4.314 €/año); KIA Sportage 1.6 CRDi MHEV Drive 4x2 2024 (4.332 €/año)
+
+## Eléctricos: batería, autonomía y alquiler (Valencia)
+
+- 646 eléctricos; SOH estimado para todos (mediana 92%); autonomía real estimada para 305 (47%); 104 con penalización por autonomía < 200 km.
+- Modelos con batería que pudo venderse en alquiler: 9 anuncios (no consta 9); si es de alquiler o no consta se suma la cuota del modelo y año × 12 (Nissan Leaf 79 €/mes, Renault Fluence 82 €/mes, Renault Zoe 79 €/mes, smart fortwo 65 €/mes).
+
+## Vida útil restante
+
+- La depreciación se eleva a la parte de vida útil que consumen los 5 años del cálculo en 18217 anuncios de Valencia (55%): los muy usados ya no salen baratos solo porque se deprecien poco. Vida útil por combustible y segmento en mercado_supuestos.yaml → vida_util.
+
+## Sensibilidad del Top 5 (±20% en energía, seguro y depreciación)
+
+| Caso | hasta 5.000 € | 5.000–10.000 € | 10.000–15.000 € | 15.000–25.000 € | más de 25.000 € |
+|---|---|---|---|---|---|
+| energia +20 % | 1 cambios | 1 cambios | 0 cambios | 1 cambios | 0 cambios |
+| energia −20 % | 0 cambios | 0 cambios | 0 cambios | 0 cambios | 0 cambios |
+| seguro +20 % | 1 cambios | 0 cambios | 0 cambios | 0 cambios | 1 cambios |
+| seguro −20 % | 0 cambios | 0 cambios | 0 cambios | 0 cambios | 0 cambios |
+| depreciacion +20 % | 0 cambios | 0 cambios | 0 cambios | 0 cambios | 0 cambios |
+| depreciacion −20 % | 1 cambios | 1 cambios | 0 cambios | 1 cambios | 0 cambios |
+
+- **energia +20 %**: hasta 5.000 €: entra OPEL Corsa Enjoy 1.2 2007 · sale SUZUKI Alto 1.0 GL 2009; 5.000–10.000 €: entra Fiat 500 Cult 1.0 Hybrid 51KW (70 CV) 2022 · sale Fiat 500 Dolcevita 1.0 Hybrid 52KW (70 CV) 2021; 15.000–25.000 €: entra MAZDA Mazda2 Hybrid 1.5 CVT Agile Comfort 2022 · sale Toyota Yaris 120H 1.5 Active Tech 2021
+- **seguro +20 %**: hasta 5.000 €: entra OPEL Corsa Enjoy 1.2 2007 · sale SUZUKI Alto 1.0 GL 2009; más de 25.000 €: entra Audi A3 Sportback S line 35 TFSI 110kW S tronic 2022 · sale PEUGEOT 208 GT HYBRID 145 eDCS6 2026
+- **depreciacion −20 %**: hasta 5.000 €: entra OPEL Corsa Enjoy 1.2 2007 · sale SUZUKI Alto 1.0 GL 2009; 5.000–10.000 €: entra Fiat 500 Cult 1.0 Hybrid 51KW (70 CV) 2022 · sale Fiat 500 Dolcevita 1.0 Hybrid 52KW (70 CV) 2021; 15.000–25.000 €: entra MAZDA Mazda2 Hybrid 1.5 CVT Agile Comfort 2022 · sale Toyota Yaris 120H 1.5 Active Tech 2021
 
 ## Modelos infravalorados
 
-| Modelo | Anuncios | Por debajo de lo previsto | Calidad intr. | Precio mediano |
-|---|---|---|---|---|
-| Mg Mg3 | 51 | 55% | 62.7 | 13.900 € |
-| Citroën C-Elysée | 24 | 52% | 55.6 | 7.740 € |
-| Fiat 500C | 15 | 50% | 63.1 | 9.990 € |
-| Dacia Logan | 17 | 49% | 64.4 | 7.900 € |
-| Opel Frontera | 21 | 49% | 64.8 | 19.590 € |
-| Lancia Ypsilon | 32 | 48% | 69.1 | 17.990 € |
-| Fiat 600 | 60 | 47% | 66.3 | 17.490 € |
-| Dacia Lodgy | 23 | 45% | 59.4 | 10.990 € |
-| Dacia Dokker | 20 | 45% | 58.0 | 8.990 € |
-| Jeep Avenger | 155 | 44% | 66.0 | 17.295 € |
-| Ssangyong Tivoli | 83 | 43% | 52.7 | 12.490 € |
-| Opel Crossland | 108 | 40% | 64.5 | 9.618 € |
-| Opel Grandland X | 89 | 40% | 59.7 | 11.900 € |
-| Ford Ecosport | 94 | 40% | 64.0 | 10.990 € |
-| Citroën C5 Aircross Hybrid | 12 | 40% | 62.5 | 18.240 € |
+Nueva especificación: log(precio) = FE(marca) + b·calidad intrínseca + edad + edad² + km + segmento + combustible + tipo; MCO within, errores agrupados por modelo (CR1). Anterior: log(precio) = a + b·calidad intrínseca + edad + edad² + km + segmento + combustible + tipo; MCO con errores HC1 (sin efectos fijos).
+
+| # | Modelo (nueva) | Anuncios | Por debajo de lo previsto | Puesto anterior | | Modelo (anterior) | Por debajo | Puesto nuevo |
+|---|---|---|---|---|---|---|---|---|
+| 1 | Mercedes-Benz Citan | 20 | 52% | 51 | | Mg Mg3 | 55% | 26 |
+| 2 | BMW 225 | 9 | 39% | 36 | | Citroën C-Elysée | 51% | 30 |
+| 3 | BMW 216 | 22 | 39% | 35 | | Opel Frontera | 50% | 64 |
+| 4 | BMW 120 | 44 | 35% | 72 | | Fiat 500C | 50% | 44 |
+| 5 | Volkswagen Taigo | 75 | 35% | 90 | | Dacia Logan | 49% | 20 |
+| 6 | BMW 116 | 90 | 35% | 48 | | Lancia Ypsilon | 48% | 45 |
+| 7 | Hyundai Bayon | 75 | 34% | 19 | | Fiat 600 | 47% | 47 |
+| 8 | Volvo V40 | 17 | 33% | 45 | | Dacia Lodgy | 45% | 63 |
+| 9 | Volkswagen T-Cross | 143 | 33% | 81 | | Dacia Dokker | 45% | 60 |
+| 10 | Land Rover Discovery Sport | 26 | 32% | 181 | | Jeep Avenger | 44% | 19 |
+| 11 | Mercedes-Benz Cle | 14 | 32% | 49 | | Ssangyong Tivoli | 43% | 33 |
+| 12 | Mercedes-Benz Gla 180 | 17 | 30% | 167 | | Opel Crossland | 40% | 43 |
+| 13 | BMW 118 | 77 | 30% | 67 | | Opel Grandland X | 40% | 156 |
+| 14 | Mazda Mx-30 | 13 | 29% | 20 | | Ford Ecosport | 40% | 16 |
+| 15 | Mercedes-Benz A 250 | 17 | 29% | 171 | | Citroën C5 Aircross Hybrid | 40% | 103 |
 
 ## Primas
 
-log(precio) = FE(modelo) + FE(año) + km + km² + automático + etiqueta (base B) + combustible + zona; MCO con efectos fijos por modelo (within) y errores HC1 · n = 27375 · 1001 modelos · R² within 0.730
+| Prima | Anterior: FE modelo + HC1 | FE modelo + agrupados por modelo | Nueva: FE marca + agrupados por modelo |
+|---|---|---|---|
+| Etiqueta C frente a B | +5.9% [+3.1%; +8.7%] | +5.9% [+2.4%; +9.5%] | +9.7% [+3.7%; +16.1%] |
+| Etiqueta ECO frente a C | -2.1% [-12.2%; +9.2%] | -2.1% [-13.5%; +10.9%] | +11.9% [-8.4%; +36.6%] |
+| Cambio automático frente a manual | +15.0% [+14.3%; +15.7%] | +15.0% [+12.9%; +17.2%] | +22.8% [+19.7%; +25.9%] |
 
-| Prima | Estimación | IC 95 % |
-|---|---|---|
-| Etiqueta C frente a B | +5.9% | +3.1% a +8.7% |
-| Etiqueta ECO frente a C | -2.1% | -12.2% a +9.2% |
-| Cambio automático frente a manual | +15.0% | +14.3% a +15.7% |
+- FE(modelo), errores HC1: n = 27375 · 1001 grupos de FE · — clústeres · R² within 0.730
+
+- FE(modelo), errores agrupados por modelo: n = 27375 · 1001 grupos de FE · 1001 clústeres · R² within 0.730
+
+- FE(marca) + segmento, errores agrupados por modelo: n = 27375 · 71 grupos de FE · 1001 clústeres · R² within 0.624
 
 ## Cobertura de los datos y pendientes
 
