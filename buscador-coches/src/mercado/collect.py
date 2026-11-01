@@ -188,7 +188,18 @@ def autoscout24(c: Counter, cfg: dict, zona: str, z: dict) -> Iterator[dict]:
     maxpg = sc["paginas_max"] if base else sc["paginas_referencia"]
     marcas = sorted({AS_SLUGS.get(m, slug(m)) for m in MODELS} | set(cfg["marcas_cochesnet"]))
     seen: set[str] = set()
+    desde = sc.get("desde_marca")
     for ms in marcas:
+        if desde and ms < desde:
+            continue
+        try:
+            yield from _as_marca(c, cfg, sc, z, zona, ms, base, maxpg, seen)
+        except requests.HTTPError as e:      # un 502 puntual no debe cortar el resto de marcas
+            log.warning("autoscout24 %s %s: %s; se salta la marca", zona, ms, e)
+
+
+def _as_marca(c, cfg, sc, z, zona, ms, base, maxpg, seen):
+    if True:
         params = {"atype": "C", "cy": "E", "ustate": "N,U", "zip": z["as24_zip"], "zipr": z["as24_radio_km"], "sort": "standard"}
         total, ads = as_query(c, ms, params, zona, 1)
         tramos = [(None, None)]

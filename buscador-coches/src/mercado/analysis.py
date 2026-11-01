@@ -169,6 +169,13 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
                 ops = opciones_regla(fuel, a["anio"], None, zbe)
                 a["etiqueta"] = ops[0] if ops else None
             a["etiqueta_fuente"] = "regla" if a["etiqueta"] else None
+        fl = cfg["filtros"]
+        if a["km"] > fl["km_max_creible"] or (a["edad"] >= 1 and a["km"] / a["edad"] > fl["km_anio_max_creible"]):
+            descartes["km no creíbles"] += 1
+            continue
+        if a["edad"] <= fl["precio_min_reciente"]["anios"] and a["precio"] < fl["precio_min_reciente"]["eur"]:
+            descartes["precio no creíble para su edad (cuota, reserva o error)"] += 1
+            continue
         res = analizar(a.get("titulo") or "", "", False)
         if res.descartes:
             descartes[f"avería/estado: {res.descartes[0][0]}"] += 1
@@ -206,7 +213,7 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
                 med, niv, n = st.median(g[k]), nv, len(g[k])
                 break
         a["mediana"], a["nivel_mediana"], a["n_mediana"] = med, niv, n
-        if med and a["precio"] < med * (1 - cfg["filtros"]["fraude"]["descuento_max_vs_mediana"]) and niv != "modelo+tramo de 3 años":
+        if med and a["precio"] < med * (1 - cfg["filtros"]["fraude"]["descuento_max_vs_mediana"]):
             descartes["fraude: precio > 45 % bajo la mediana"] += 1
             continue
         limpios.append(a)
@@ -391,8 +398,10 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
     for a in base_ads:
         gm[a["modelo_key"]].append(a)
     infra = []
+    ci = cfg.get("infravalorados") or {}
     for mk, lst in gm.items():
-        if len(lst) >= mn:
+        lst = [x for x in lst if x["edad"] <= ci.get("edad_max", 99) and x["segmento"] not in (ci.get("excluir_segmentos") or [])]
+        if len(lst) >= ci.get("min_anuncios", mn):
             med_r = st.median(x["resid_valor"] for x in lst)
             infra.append({"modelo": mk, "n": len(lst), "resid": med_r, "pct": math.exp(med_r) - 1,
                           "calidad_intr": st.median(x["calidad_intr"] for x in lst), "precio_mediano": st.median(x["precio"] for x in lst),

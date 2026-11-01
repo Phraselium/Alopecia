@@ -75,6 +75,13 @@ filtros:
   fraude: {descuento_max_vs_mediana: 0.45, palabras: ["solo envío", "solo envio", "estoy fuera", "estoy en el extranjero",
                                                       "pago por adelantado", "pago adelantado", "western union"]}
   precio_min_creible: 500      # por debajo: casi siempre despiece, cuota mensual o error
+  km_max_creible: 600000       # más km: error del anuncio
+  km_anio_max_creible: 70000   # más km/año (con 1 año o más): error del anuncio (p. ej. 3.850.000 km)
+  precio_min_reciente: {anios: 3, eur: 3000}   # coche de <= 3 años por menos: cuota, reserva o error
+infravalorados:
+  edad_max: 15                 # el modelo de valor ajusta mal los coches muy viejos
+  min_anuncios: 8
+  excluir_segmentos: [furgoneta, pickup]
 
 salida:
   db: data/mercado.sqlite
