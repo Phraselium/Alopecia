@@ -123,6 +123,7 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
     rec = _load(base, "mercado_fiabilidad.yaml")
     fiscal, rel, zbe = _load(base, "fiscal.yaml"), _load(base, "reliability.yaml"), _load(base, "zbe.yaml")
     perso = _load(base, "config.yaml")
+    clases = _load(base, "mercado_clases.yaml")
     anio_actual = fiscal["anio_actual"]
     neutro = cfg["calidad"]["neutro"]
     el = cfg.get("electricos") or {}
@@ -142,6 +143,7 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
             descartes["sin año"] += 1
             continue
         a["marca"] = norm_brand(a.get("marca"), a.get("titulo") or "") or (a.get("marca") or "").title()
+        a["marca"] = {"Land-Rover": "Land Rover"}.get(a["marca"], a["marca"])
         mod, _ = norm_model(a["marca"], a.get("modelo"), a.get("titulo") or "")
         a["modelo"] = mod or (a.get("modelo") or "").strip()
         a["modelo_key"] = f"{a['marca']} {a['modelo']}".strip()
@@ -154,6 +156,13 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
             cam = "automatico"
         a["cambio"] = cam
         a["segmento"] = M.segmento(a["marca"], a["modelo"], a.get("titulo") or "", a.get("carroceria_raw"), sup) or "otros"
+        car, cl = M.clase_modelo(a, clases)
+        if a["segmento"] == "otros" and car:          # el listado no trae carrocería (AutoScout24): tabla de clases
+            a["segmento"] = M.SEG_DE_CLASE.get((car, cl)) or M.SEG_DE_CLASE.get(car) or "otros"
+            a["segmento_fuente"] = "mercado_clases.yaml"
+        fb = M.CLASE_DE_SEG.get(a["segmento"], (None, None))
+        a["carroceria"], a["clase"] = car or fb[0], cl or fb[1]
+        a["comercial"] = M.es_comercial(a, clases, a["segmento"])
         a["tipo_m"] = M.tipo_anuncio(a, cfg, anio_actual)
         a["edad"] = max(0, anio_actual - a["anio"])
         if a["tipo_m"] in ("nuevo",):
@@ -217,6 +226,9 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
                 med, niv, n = st.median(g[k]), nv, len(g[k])
                 break
         a["mediana"], a["nivel_mediana"], a["n_mediana"] = med, niv, n
+        k1 = g1[(a["modelo_key"], a["anio"], kb)]
+        a["mediana_mak"] = st.median(k1) if len(k1) >= mn else None
+        a["n_mak"] = len(k1)
         if med and a["precio"] < med * (1 - cfg["filtros"]["fraude"]["descuento_max_vs_mediana"]):
             descartes["fraude: precio > 45 % bajo la mediana"] += 1
             continue
@@ -390,7 +402,7 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
                 out["Etiqueta ECO frente a C"] = {"b": d, "se": sd, "pct": pct(d), "lo": pct(d - 1.96 * sd), "hi": pct(d + 1.96 * sd),
                                                   "n_con": int(Xa[:, i].sum())}
             primas[sk] = out
-        primas["principal"] = "marca_cl"
+        primas["principal"] = "modelo_cl"
 
     # 10. frontera eficiente, top y infravalorados (zona base: Valencia)
     cortes = cfg["analisis"]["franjas_precio"]
@@ -442,50 +454,96 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
                     "entran": [a["uid"] for a in v if a["uid"] not in sens["base"][f]],
                     "salen": [u for u in sens["base"][f] if u not in {a["uid"] for a in v}]} for f, v in t.items()}
 
-    # infravalorados: log precio frente a calidad intrínseca + edad + km + segmento + combustible + tipo.
-    #   anterior: sin efectos fijos, errores HC1;  nueva: FE(marca), errores agrupados por modelo.
-    segs = sorted({a["segmento"] for a in base_ads})[1:]
-    fus = sorted({a["combustible"] or "sin" for a in base_ads})[1:]
-    tps = sorted({a["tipo_m"] for a in base_ads})[1:]
-    names_i = ["calidad_intr", "edad", "edad2", "km10k"] + [f"seg_{s_}" for s_ in segs] + [f"fuel_{f}" for f in fus] + [f"tipo_{t}" for t in tps]
-    Xi = [[a["calidad_intr"], a["edad"], a["edad"] ** 2, a["km"] / 10000] + [a["segmento"] == s_ for s_ in segs] +
-          [(a["combustible"] or "sin") == f for f in fus] + [a["tipo_m"] == t for t in tps] for a in base_ads]
-    yi = [math.log(a["precio"]) for a in base_ads]
-    ri_ant = ols(yi, [[1] + row for row in Xi], ["const"] + names_i)
-    ri = ols(yi, Xi, names_i, [a["marca"] for a in base_ads], cluster=[a["modelo_key"] for a in base_ads])
-    for a, e0, e1 in zip(base_ads, ri_ant["resid"], ri["resid"]):
-        a["resid_valor_ant"], a["resid_valor"] = float(e0), float(e1)
-    gm = defaultdict(list)
-    for a in base_ads:
-        if a.get("modelo") and a["modelo_key"] != a["marca"]:     # sin modelo identificado no se agrupa
-            gm[a["modelo_key"]].append(a)
+    # infravalorados: modelo HEDÓNICO log precio = FE(marca) + segmento + clase de tamaño + carrocería + log(CV) + calidad
+    #   intrínseca + edad + edad² + km + combustible + tipo + cambio; errores agrupados por modelo. Sin comerciales ni pick-ups.
+    #   Además, cada anuncio se compara con la mediana de su modelo + año + tramo de 25.000 km (si hay >= min_anuncios_grupo).
     ci = cfg.get("infravalorados") or {}
+    cv_mod = defaultdict(list)
+    cv_cls = defaultdict(list)
+    for a in ads:
+        if a.get("cv"):
+            cv_mod[a["modelo_key"]].append(a["cv"])
+            cv_cls[(a["carroceria"], a["clase"])].append(a["cv"])
+    for a in ads:
+        a["cv_imputado"] = not a.get("cv")
+        a["cv_h"] = a.get("cv") or (st.median(cv_mod[a["modelo_key"]]) if cv_mod[a["modelo_key"]] else
+                                    (st.median(cv_cls[(a["carroceria"], a["clase"])]) if cv_cls[(a["carroceria"], a["clase"])] else None))
+        a["desc_mak"] = a["precio"] / a["mediana_mak"] - 1 if a.get("mediana_mak") else None
+    hed = [a for a in base_ads if not a["comercial"] and a["segmento"] not in (ci.get("excluir_segmentos") or [])]
+    cvs = sorted(a["cv_h"] for a in hed if a["cv_h"])
+    cv_med = cvs[len(cvs) // 2] if cvs else 100
+    segs = sorted({a["segmento"] for a in hed})[1:]
+    clss = sorted({a["clase"] or "?" for a in hed})[1:]
+    cars = sorted({a["carroceria"] or "?" for a in hed})[1:]
+    fus = sorted({a["combustible"] or "sin" for a in hed})[1:]
+    tps = sorted({a["tipo_m"] for a in hed})[1:]
+    names_i = (["log_cv", "log_cv2", "cv_sin_dato", "calidad_intr", "edad", "edad2", "km10k", "auto", "cambio_sin_dato"] +
+               [f"seg_{x}" for x in segs] + [f"clase_{x}" for x in clss] + [f"carroceria_{x}" for x in cars] +
+               [f"fuel_{x}" for x in fus] + [f"tipo_{x}" for x in tps])
+    lcv0 = math.log(cv_med)
+    Xi = [[math.log(a["cv_h"] or cv_med) - lcv0, (math.log(a["cv_h"] or cv_med) - lcv0) ** 2, a["cv_h"] is None, a["calidad_intr"], a["edad"], a["edad"] ** 2, a["km"] / 10000,
+           a["cambio"] == "automatico", not a["cambio"]] + [a["segmento"] == x for x in segs] + [(a["clase"] or "?") == x for x in clss] +
+          [(a["carroceria"] or "?") == x for x in cars] + [(a["combustible"] or "sin") == x for x in fus] + [a["tipo_m"] == x for x in tps]
+          for a in hed]
+    keep = [j for j in range(len(names_i)) if any(row[j] for row in Xi)]
+    Xi = [[row[j] for j in keep] for row in Xi]
+    names_i = [names_i[j] for j in keep]
+    yi = [math.log(a["precio"]) for a in hed]
+    ri = ols(yi, Xi, names_i, [a["marca"] for a in hed], cluster=[a["modelo_key"] for a in hed])
+    for a, e1 in zip(hed, ri["resid"]):
+        a["resid_valor"] = float(e1)
+    # especificación de la versión anterior (FE de marca + calidad, edad, km, segmento, combustible, tipo; con comerciales)
+    segs0 = sorted({a["segmento"] for a in base_ads})[1:]
+    fus0 = sorted({a["combustible"] or "sin" for a in base_ads})[1:]
+    tps0 = sorted({a["tipo_m"] for a in base_ads})[1:]
+    X0 = [[a["calidad_intr"], a["edad"], a["edad"] ** 2, a["km"] / 10000] + [a["segmento"] == x for x in segs0] +
+          [(a["combustible"] or "sin") == x for x in fus0] + [a["tipo_m"] == x for x in tps0] for a in base_ads]
+    ri_ant = ols([math.log(a["precio"]) for a in base_ads], X0,
+                 ["calidad_intr", "edad", "edad2", "km10k"] + [f"seg_{x}" for x in segs0] + [f"fuel_{x}" for x in fus0] + [f"tipo_{x}" for x in tps0],
+                 [a["marca"] for a in base_ads], cluster=[a["modelo_key"] for a in base_ads])
+    for a, e0 in zip(base_ads, ri_ant["resid"]):
+        a["resid_valor_ant"] = float(e0)
 
-    def lista_infra(campo):
+    def lista_infra(sub, campo):
+        gm = defaultdict(list)
+        for a in sub:
+            if a.get("modelo") and a["modelo_key"] != a["marca"]:     # sin modelo identificado no se agrupa
+                gm[a["modelo_key"]].append(a)
         out = []
         for mk, lst in gm.items():
             lst = [x for x in lst if x["edad"] <= ci.get("edad_max", 99) and x["segmento"] not in (ci.get("excluir_segmentos") or [])]
             if len(lst) >= ci.get("min_anuncios", mn):
                 med_r = st.median(x[campo] for x in lst)
+                dm = [x["desc_mak"] for x in lst if x.get("desc_mak") is not None]
+                th_ = ci.get("anuncio_umbral", 0.15)
                 out.append({"modelo": mk, "marca": lst[0]["marca"], "n": len(lst), "resid": med_r, "pct": math.exp(med_r) - 1,
                             "calidad_intr": st.median(x["calidad_intr"] for x in lst), "precio_mediano": st.median(x["precio"] for x in lst),
-                            "segmento": Counter(x["segmento"] for x in lst).most_common(1)[0][0]})
+                            "segmento": Counter(x["segmento"] for x in lst).most_common(1)[0][0],
+                            "clase": Counter(x["clase"] or "?" for x in lst).most_common(1)[0][0],
+                            "cv": st.median(x["cv_h"] for x in lst if x["cv_h"]) if any(x["cv_h"] for x in lst) else None,
+                            "n_mak": len(dm), "n_bajo_mak": sum(1 for v in dm if v <= -th_)})
         out.sort(key=lambda d: d["resid"])
         return out
-    infra, infra_ant = lista_infra("resid_valor"), lista_infra("resid_valor_ant")
+    infra, infra_ant = lista_infra(hed, "resid_valor"), lista_infra(base_ads, "resid_valor_ant")
     pos_ant = {d["modelo"]: i for i, d in enumerate(infra_ant, 1)}
     pos_new = {d["modelo"]: i for i, d in enumerate(infra, 1)}
-    for i, d in enumerate(infra, 1):
+    for d in infra:
         d["pos_ant"] = pos_ant.get(d["modelo"])
     for d in infra_ant:
         d["pos_nueva"] = pos_new.get(d["modelo"])
+    # anuncios concretos: por debajo de su modelo+año+km Y del valor hedónico
+    th = ci.get("anuncio_umbral", 0.15)
+    infra_ads = sorted([a for a in hed if a.get("desc_mak") is not None and a["desc_mak"] <= -th and a["resid_valor"] <= -th
+                        and a["edad"] <= ci.get("edad_max", 99)], key=lambda a: a["desc_mak"])[:25]
     reg_infra = {"n": ri["n"], "k": ri["k"], "r2": ri["r2_within"], "b_calidad": coef(ri, "calidad_intr"), "marcas": ri["grupos"],
-                 "clusters": ri["clusters"],
-                 "especificacion": "log(precio) = FE(marca) + b·calidad intrínseca + edad + edad² + km + segmento + combustible + tipo; "
-                                   "MCO within, errores agrupados por modelo (CR1)"}
-    reg_infra_ant = {"n": ri_ant["n"], "k": ri_ant["k"], "r2": ri_ant["r2"], "b_calidad": coef(ri_ant, "calidad_intr"),
-                     "especificacion": "log(precio) = a + b·calidad intrínseca + edad + edad² + km + segmento + combustible + tipo; "
-                                       "MCO con errores HC1 (sin efectos fijos)"}
+                 "clusters": ri["clusters"], "b_log_cv": coef(ri, "log_cv") if "log_cv" in names_i else None,
+                 "n_excluidos_comerciales": sum(1 for a in base_ads if a["comercial"]),
+                 "especificacion": "log(precio) = FE(marca) + segmento + clase de tamaño (A–F/S) + carrocería + log(CV) + log(CV)² + calidad intrínseca "
+                                   "+ edad + edad² + km + cambio + combustible + tipo; MCO within, errores agrupados por modelo (CR1); "
+                                   "sin vehículos comerciales ni pick-ups"}
+    reg_infra_ant = {"n": ri_ant["n"], "k": ri_ant["k"], "r2": ri_ant["r2_within"], "b_calidad": coef(ri_ant, "calidad_intr"),
+                     "especificacion": "versión anterior: log(precio) = FE(marca) + calidad intrínseca + edad + edad² + km + segmento + "
+                                       "combustible + tipo; errores agrupados por modelo; con comerciales"}
 
     resumen = (f"anuncios={len(rows)} limpios={len(ads)} valencia={len(base_ads)} "
                f"descartados={sum(descartes.values())}")
@@ -494,6 +552,6 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
             "precios": precios, "oferta": oferta, "med_seg": med_seg, "liquidez": liq, "primas": primas,
             "frontera": front, "top_franja": top_fr, "top_segmento": top_seg, "infravalorados": infra, "reg_infra": reg_infra,
             "infravalorados_ant": infra_ant, "reg_infra_ant": reg_infra_ant, "escenarios": escenarios, "escenario_defecto": esc_def,
-            "sensibilidad": sens, "electricos": el, "base_ads": base_ads,
+            "sensibilidad": sens, "electricos": el, "base_ads": base_ads, "infra_anuncios": infra_ads,
             "refs": refs, "pesos": (glob, intr), "resumen": resumen, "n_total": len(rows), "etq_pts": etq_pts}
 

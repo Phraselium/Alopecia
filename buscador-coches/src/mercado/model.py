@@ -66,6 +66,46 @@ def segmento(marca, modelo, titulo, carroceria_raw, sup) -> Optional[str]:
     return None
 
 
+# ------------------------------------------------------------------ clase de tamaño, carrocería y comerciales (mercado_clases.yaml)
+SEG_DE_CLASE = {("turismo", "A"): "utilitario", ("turismo", "B"): "utilitario", ("turismo", "C"): "compacto",
+                ("turismo", "D"): "berlina", ("turismo", "E"): "berlina", ("turismo", "F"): "berlina", ("turismo", "S"): "coupe",
+                "familiar": "familiar", "suv": "suv", "monovolumen": "monovolumen", "coupe": "coupe", "cabrio": "cabrio",
+                "comercial": "furgoneta", "pickup": "pickup"}
+CLASE_DE_SEG = {"utilitario": ("turismo", "B"), "compacto": ("turismo", "C"), "berlina": ("turismo", "D"),
+                "familiar": ("familiar", None), "suv": ("suv", None), "monovolumen": ("monovolumen", None), "coupe": ("coupe", None),
+                "cabrio": ("cabrio", None), "furgoneta": ("comercial", None), "pickup": ("pickup", None)}
+
+
+def _clave_modelo(a: dict) -> str:
+    return re.sub(r"[^a-z0-9#+]+", " ", norm_text(a.get("modelo_key") or "")).strip()
+
+
+def clase_modelo(a: dict, clases: dict) -> tuple[Optional[str], Optional[str]]:
+    """(carrocería, clase de tamaño A–F/S) según la primera regla de mercado_clases.yaml que encaja; (None, None) si ninguna."""
+    k = _clave_modelo(a)
+    for pat, car, cl in clases.get("reglas") or []:
+        if re.search(pat, k):
+            return car, cl
+    return None, None
+
+
+def es_comercial(a: dict, clases: dict, seg: Optional[str]) -> bool:
+    """Vehículo comercial: furgoneta/pick-up por segmento, modelo siempre comercial (Citan, Kangoo, Vito…) o modelo mixto
+    (Berlingo, Combo, Caddy…) cuyo título dice furgón, van, carga…"""
+    if seg in ("furgoneta", "pickup"):
+        return True
+    co = clases.get("comerciales") or {}
+    k = _clave_modelo(a)
+    if not a.get("modelo"):        # sin modelo identificado: se mira el título (con modelo no, por acabados como «500 Connect»)
+        k = re.sub(r"[^a-z0-9#+]+", " ", norm_text(a.get("titulo") or "")).strip()
+    if any(re.search(p, k) for p in co.get("siempre") or []):
+        return True
+    if any(re.search(p, k) for p in co.get("mixtos") or []):
+        t = norm_text(f"{a.get('titulo') or ''} {a.get('version') or ''}")
+        return any(re.search(p, t) for p in co.get("palabras_furgon") or [])
+    return False
+
+
 def tipo_anuncio(a: dict, cfg: dict, anio_actual: int) -> str:
     t = a.get("tipo") or "ocasion"
     cl = cfg["clasificacion"]
@@ -238,7 +278,11 @@ def bateria_estado(a: dict, fuel: Optional[str], sup: dict) -> tuple[Optional[st
 
 
 def cuota_bateria(estado: Optional[str], cuota_mes: float) -> float:
-    return 12 * float(cuota_mes or 0) if estado in ("alquiler", "no consta") else 0.0
+    """Solo se suma si el anuncio dice que la batería es de alquiler; si no consta, se avisa y se muestra aparte."""
+    return 12 * float(cuota_mes or 0) if estado == "alquiler" else 0.0
+
+
+AVISO_BAT = "confirmar si la batería es en propiedad"
 
 
 def pen_autonomia(aut: Optional[float], el: dict) -> float:
@@ -286,7 +330,8 @@ def tco(a: dict, seg, fuel, edad, cc, cv_f, cons, sup, fiscal, dep, uso, el: Opt
     cuota_bat = cuota_bateria(bat, cuota_mes)
     uso_anual = energia + seg_e + mant + neum + imp_circ + cuota_bat
     total = impuestos + deprec + anios * uso_anual
-    return {"itp": i_tp, "tasa": tasa, "energia": energia, "seguro": seg_e, "mant": mant, "neum": neum, "ivtm": imp_circ, "impuestos": impuestos,
+    cuota_si = 12 * float(cuota_mes or 0) if bat == "no consta" else 0.0
+    return {"coste_anual_alq": total / anios + cuota_si, "aviso_bat": AVISO_BAT if bat == "no consta" else None,"itp": i_tp, "tasa": tasa, "energia": energia, "seguro": seg_e, "mant": mant, "neum": neum, "ivtm": imp_circ, "impuestos": impuestos,
             "dep_factor": fac, "soh_grupo": grp, "soh": s_hoy, "soh_fin": s_fin, "deprec_mkt": deprec_mkt, "vida_clave": vc, "frac_vida": fv,
             "bat_estado": bat, "cuota_bat_mes": cuota_mes if bat else None, "cuota_bat": cuota_bat,
             "depreciacion": deprec, "uso_anual": uso_anual, "tco": total, "coste_anual": total / anios}

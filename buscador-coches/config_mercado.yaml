@@ -91,6 +91,8 @@ sensibilidad:
 infravalorados:
   edad_max: 15                 # el modelo de valor ajusta mal los coches muy viejos
   min_anuncios: 8
+  anuncio_umbral: 0.15         # anuncios concretos: al menos este % bajo la mediana de modelo+año+km Y bajo el valor hedónico
+  # comerciales (Citan, Kangoo, Berlingo furgón…) y pick-ups excluidos: mercado_clases.yaml → comerciales
   excluir_segmentos: [furgoneta, pickup]
 
 salida:

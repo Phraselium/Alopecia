@@ -6,6 +6,7 @@ hoja o de Supuestos. Sin paneles inmovilizados.
 """
 from __future__ import annotations
 
+import math
 import re
 from pathlib import Path
 
@@ -189,7 +190,8 @@ COLUMNS = [
     ("tipo", "Tipo de anuncio", "data", None), ("marca", "Marca", "data", None), ("modelo_key", "Modelo", "data", None),
     ("titulo", "Título", "data", None), ("anio", "Año", "data", None), ("km", "Km", "data", None), ("precio", "Precio al contado (€)", "data", None),
     ("combustible", "Combustible", "data", None), ("cambio", "Cambio", "data", None), ("cv", "Potencia (CV)", "data", None),
-    ("cc_est", "Cilindrada (cc)", "data", None), ("segmento", "Segmento", "data", None), ("etiqueta", "Etiqueta", "data", None),
+    ("cc_est", "Cilindrada (cc)", "data", None), ("segmento", "Segmento", "data", None),
+    ("carroceria", "Carrocería", "data", None), ("clase", "Clase de tamaño (A–F, S)", "data", None), ("etiqueta", "Etiqueta", "data", None),
     ("etq_fuente", "Fuente etiqueta", "data", None), ("vendedor", "Vendedor", "data", None), ("gar_anuncio", "Garantía del anuncio (meses)", "data", None),
     ("consumo_wltp", "Consumo WLTP del anuncio (l/100)", "data", None), ("ncap", "Euro NCAP (estrellas)", "data", None),
     ("ncap_vig", "Euro NCAP vigente", "data", None), ("ncap_asist", "Ayudas a la conducción (Euro NCAP, % safety assist)", "data", None),
@@ -233,10 +235,12 @@ COLUMNS = [
     ("frac_vida", "Vida útil restante que se consume", "calc",
      "=MIN(1,MAX(ANIOS*KM_ANIO/MAX(VLOOKUP({vida_clave},VIDA_TBL,2,0)-{km},1),ANIOS/MAX(VLOOKUP({vida_clave},VIDA_TBL,3,0)-{edad},0.1)))"),
     ("deprec", "Depreciación 5 años (€)", "calc", "=IF(VIDA_ACTIVO=1,MAX({deprec_mkt},{precio}*{frac_vida}),{deprec_mkt})"),
-    ("cuota_bat", "Alquiler de batería €/año", "calc", '=IF(OR({bat_estado}="alquiler",{bat_estado}="no consta"),12*{cuota_bat_mes},0)'),
+    ("cuota_bat", "Alquiler de batería €/año", "calc", '=IF({bat_estado}="alquiler",12*{cuota_bat_mes},0)'),
     ("uso_anual", "Coste de uso €/año", "calc", "={energia}+{seguro}+{mant}+{neum}+{ivtm}+{cuota_bat}"),
     ("tco", "COSTE TOTAL 5 AÑOS (€)", "calc", "={itp}+{tasa}+{deprec}+ANIOS*{uso_anual}"),
     ("coste_anual", "Coste anual (€)", "calc", "={tco}/ANIOS"),
+    ("coste_anual_alq", "Coste anual si la batería es de alquiler (€)", "calc", '={coste_anual}+IF({bat_estado}="no consta",12*{cuota_bat_mes},0)'),
+    ("aviso_bat", "Aviso batería", "calc", '=IF({bat_estado}="no consta","confirmar si la batería es en propiedad","")'),
     # ---- calidad
     ("s_fiab", "P. Fiabilidad", "calc", "={fiab}"),
     ("s_precio", "P. Precio", "calc", '=IF({mediana}="",50,MAX(0,MIN(100,50+({mediana}-{precio})/{mediana}*PRECIO_PEND)))'),
@@ -271,7 +275,8 @@ CHECKS = {"edad": lambda a: a["edad"], "cons": lambda a: a["consumo"] or 0, "ene
           "itp": lambda a: a["itp"], "deprec": lambda a: a["depreciacion"], "soh": lambda a: a["soh"], "soh_fin": lambda a: a["soh_fin"],
           "autonomia": lambda a: a["autonomia"], "pen_aut": lambda a: a["pen_aut"], "deprec_mkt": lambda a: a["deprec_mkt"],
           "frac_vida": lambda a: a["frac_vida"], "cuota_bat": lambda a: a["cuota_bat"], "uso_anual": lambda a: a["uso_anual"],
-          "tco": lambda a: a["tco"], "coste_anual": lambda a: a["coste_anual"], "s_precio": lambda a: a["s"]["precio"],
+          "tco": lambda a: a["tco"], "coste_anual": lambda a: a["coste_anual"], "coste_anual_alq": lambda a: a["coste_anual_alq"],
+          "aviso_bat": lambda a: a["aviso_bat"], "s_precio": lambda a: a["s"]["precio"],
           "s_segvial": lambda a: a["s"]["seguridad_vial"], "s_compra": lambda a: a["s"]["seguridad_compra"],
           "s_uso": lambda a: a["s"]["coste_uso"], "s_kmedad": lambda a: a["s"]["km_edad"], "s_reventa": lambda a: a["s"]["reventa"],
           "calidad": lambda a: a["calidad"], "calidad_intr": lambda a: a["calidad_intr"], "ratio": lambda a: a["ratio"],
@@ -292,7 +297,10 @@ NOTES = {
     "aut_nueva": "Solo eléctricos: autonomía real con la batería nueva de la versión (año; patrón o kWh del título): real de ev-database o WLTP × AUT_FACTOR "
                  "(NEDC × 0,68 si solo hay NEDC). Fuente en la nota de cada celda. Vacío = PENDIENTE (modelo sin dato).",
     "bat_estado": "Solo modelos vendidos con batería en alquiler (Renault ZE…): 'alquiler' o 'propiedad' si el título lo dice; si no, "
-                  "'no consta' y se suma la cuota (criterio prudente). A nivel de listado no hay descripción completa.",
+                  "'no consta': NO se suma la cuota al coste anual, se avisa ('confirmar si la batería es en propiedad') y la columna "
+                  "'Coste anual si la batería es de alquiler' da el coste con la cuota. A nivel de listado no hay descripción completa.",
+    "carroceria": "Carrocería y clase de tamaño (segmento europeo A–F; S = deportivo) según mercado_clases.yaml (criterio de "
+                  "clasificación por modelo) o, si no está, deducidas del segmento. Se usan en el modelo hedónico de infravalorados.",
     "cuota_bat_mes": "Cuota mensual del alquiler de batería del modelo y año con 12.000 km/año (mercado_supuestos.yaml → bateria.alquiler, "
                      "con fuente y fecha). Se suma × 12 al coste de uso si la batería es de alquiler o no consta.",
     "vida_clave": "Clave de VIDA_TBL (Supuestos): vida útil esperada por combustible y segmento.",
@@ -308,7 +316,7 @@ def row_data(a: dict) -> dict:
     return {"uid": a["uid"], "plataforma": a["plataforma"], "zona": a["zona"], "tipo": a["tipo_m"], "marca": a["marca"],
             "modelo_key": a["modelo_key"], "titulo": a.get("titulo"), "anio": a["anio"], "km": a["km"], "precio": a["precio"],
             "combustible": a["combustible"], "cambio": a["cambio"], "cv": a.get("cv"), "cc_est": a["cc_est"], "segmento": a["segmento"],
-            "etiqueta": a["etiqueta"], "etq_fuente": a.get("etiqueta_fuente"), "vendedor": a.get("vendedor"),
+            "carroceria": a.get("carroceria"), "clase": a.get("clase"), "etiqueta": a["etiqueta"], "etq_fuente": a.get("etiqueta_fuente"), "vendedor": a.get("vendedor"),
             "gar_anuncio": a.get("garantia_meses"), "consumo_wltp": a.get("consumo_wltp"), "ncap": a["ncap"], "ncap_vig": a["ncap_vigencia"] or None, "ncap_asist": a.get("ncap_asist"),
             "esp": a["esp"], "fiab": a["fiab"], "mediana": a["mediana"], "nivel_med": a["nivel_mediana"] or None,
             "n_modelo": a["n_modelo"], "dep_clave": a["dep_clave"], "soh_grupo": a.get("soh_grupo"),
@@ -443,10 +451,10 @@ PRIMAS = ("Etiqueta C frente a B", "Etiqueta ECO frente a C", "Cambio automátic
 def build_primas(wb, res):
     ws = wb.create_sheet("Primas")
     pr = res["primas"]
-    ws.cell(1, 1, "Primas de precio por etiqueta y por cambio automático: especificación nueva (FE de marca, errores agrupados por "
-                  "modelo) frente a la anterior (FE de modelo, errores HC1)").font = SEC_FONT
+    ws.cell(1, 1, "Primas de precio por etiqueta y por cambio automático: especificación PRINCIPAL con efecto fijo de modelo y errores "
+                  "agrupados por modelo; la de efecto fijo de marca y la anterior (HC1), como comparación").font = SEC_FONT
     r = 3
-    for sk, titulo in (("marca_cl", "NUEVA (principal)"), ("modelo_cl", "Robustez"), ("anterior", "ANTERIOR")):
+    for sk, titulo in (("modelo_cl", "PRINCIPAL"), ("marca_cl", "Comparación: efecto fijo de marca"), ("anterior", "Anterior (HC1)")):
         m = pr.get(sk)
         if not m:
             ws.cell(r, 1, f"{titulo}: sin datos suficientes")
@@ -479,11 +487,11 @@ def build_primas(wb, res):
     # comparación compacta
     ws.cell(r, 1, "Comparación (prima % [IC 95 %])").font = SEC_FONT
     r += 1
-    hdr(ws, r, ["Prima", "Anterior: FE modelo + HC1", "FE modelo + agrupados", "Nueva: FE marca + agrupados"])
+    hdr(ws, r, ["Prima", "PRINCIPAL: FE modelo + agrupados por modelo", "Comparación: FE marca + agrupados", "Anterior: FE modelo + HC1"])
     r += 1
     for lab in PRIMAS:
         ws.cell(r, 1, lab)
-        for j, sk in enumerate(("anterior", "modelo_cl", "marca_cl"), 2):
+        for j, sk in enumerate(("modelo_cl", "marca_cl", "anterior"), 2):
             d = (pr.get(sk) or {}).get(lab)
             ws.cell(r, j, f"{d['pct'] * 100:+.1f} % [{d['lo'] * 100:+.1f} ; {d['hi'] * 100:+.1f}]" if d else "—").font = _font(BLUE)
         r += 1
@@ -501,7 +509,7 @@ def build_primas(wb, res):
     r += 1
     ws.cell(r, 1, "Modelo de valor para detectar infravalorados").font = SEC_FONT
     r += 1
-    for lab, ri in (("Nueva", res["reg_infra"]), ("Anterior", res["reg_infra_ant"])):
+    for lab, ri in (("Hedónico (actual)", res["reg_infra"]), ("Versión anterior", res["reg_infra_ant"])):
         ws.cell(r, 1, f"{lab}: " + ri["especificacion"] + f" · n = {ri['n']} · R² = {ri['r2']:.3f} · b(calidad intrínseca) = "
                 f"{ri['b_calidad'][0]:.4f} (EE {ri['b_calidad'][1]:.4f})")
         r += 1
@@ -560,10 +568,11 @@ def _fila_listado(ws, r, a, n_last, rank=None):
             c.number_format = "0.0"
     if a.get("url"):
         ws.cell(r, 12).hyperlink = a["url"]
+    ws.cell(r, 13, f"=INDEX({_rng('aviso_bat', n_last)},{m})").font = _font(GREEN)
 
 
 LIST_HDR = ["Nº", "ID", "Coche", "Año", "Km", "Precio (€)", "Coste anual (€)", "Calidad intrínseca", "Calidad / coste (por 1.000 €)",
-            "Segmento", "Combustible", "Enlace"]
+            "Segmento", "Combustible", "Enlace", "Aviso batería"]
 
 
 def build_frontera(wb, res, n_last):
@@ -635,27 +644,45 @@ def build_top(wb, res, n_last):
                 _fila_listado(ws, r, a, n_last, i)
                 r += 1
             r += 1
-    ws.cell(r, 1, "Modelos infravalorados: cotizan por debajo de lo que predice el modelo de valor para su calidad, edad, km, "
-                  "segmento, combustible y tipo (mediana del residuo del modelo; mín. 5 anuncios)").font = SEC_FONT
+    ri = res["reg_infra"]
+    ws.cell(r, 1, "Modelos infravalorados (modelo hedónico): cotizan por debajo de lo que predicen su marca, segmento, clase de tamaño, "
+                  "carrocería, potencia, calidad, edad, km, cambio, combustible y tipo (mediana del residuo; mín. 8 anuncios; sin "
+                  "comerciales ni pick-ups; hasta 15 años)").font = SEC_FONT
     r += 1
-    ws.cell(r, 1, "Nueva especificación: efecto fijo de marca (se compara con modelos de su misma marca) y errores agrupados por modelo. "
-                  "'Puesto anterior' = puesto con la especificación anterior (sin efectos fijos).")
+    ws.cell(r, 1, ri["especificacion"] + f" · n = {ri['n']} · {ri['marcas']} marcas · {ri['clusters']} modelos (clústeres) · "
+                  f"R² within = {ri['r2']:.3f} · comerciales excluidos: {ri['n_excluidos_comerciales']}")
     r += 1
-    hdr(ws, r, ["Nº", "Modelo", "Anuncios", "Por debajo de lo previsto (%)", "Calidad intrínseca mediana", "Precio mediano (€)", "Segmento",
-                "Puesto anterior"])
+    hdr(ws, r, ["Nº", "Modelo", "Anuncios", "Por debajo del valor hedónico (%)", "Anuncios con mediana de modelo + año + km",
+                "De ellos, ≥ 15 % por debajo de esa mediana", "Clase", "CV (mediana)", "Calidad intrínseca", "Precio mediano (€)",
+                "Segmento", "Puesto anterior"])
     r += 1
-    for i, d in enumerate(res["infravalorados"][:20], 1):
-        for j, v in enumerate([i, d["modelo"], d["n"], d["pct"], d["calidad_intr"], d["precio_mediano"], d["segmento"], d.get("pos_ant")], 1):
+    for i, d in enumerate(res["infravalorados"][:25], 1):
+        vals = [i, d["modelo"], d["n"], d["pct"], d["n_mak"], d["n_bajo_mak"], d["clase"], d["cv"],
+                d["calidad_intr"], d["precio_mediano"], d["segmento"], d.get("pos_ant")]
+        for j, v in enumerate(vals, 1):
             c = ws.cell(r, j, v)
             c.font = _font(BLUE)
             if j == 4:
                 c.number_format = "0.0%"
         r += 1
     r += 1
-    ws.cell(r, 1, "Especificación anterior (sin efectos fijos, errores HC1), para comparar").font = SEC_FONT
+    ws.cell(r, 1, "Anuncios concretos: al menos un 15 % por debajo de la mediana de su modelo + año + tramo de 25.000 km Y del valor "
+                  "hedónico. Precios tan bajos pueden ser errores, daños no declarados o fraude: verificar antes de nada.").font = SEC_FONT
+    r += 1
+    hdr(ws, r, LIST_HDR + ["Frente a mediana modelo+año+km", "Frente al valor hedónico"])
+    r += 1
+    for i, a in enumerate(res["infra_anuncios"], 1):
+        _fila_listado(ws, r, a, n_last, i)
+        for j, v in ((14, a["desc_mak"]), (15, math.exp(a["resid_valor"]) - 1)):
+            c = ws.cell(r, j, v)
+            c.font = _font(BLUE)
+            c.number_format = "0.0%"
+        r += 1
+    r += 1
+    ws.cell(r, 1, "Para comparar: versión anterior (sin modelo hedónico, con comerciales)").font = SEC_FONT
     r += 1
     hdr(ws, r, ["Nº", "Modelo", "Anuncios", "Por debajo de lo previsto (%)", "Calidad intrínseca mediana", "Precio mediano (€)", "Segmento",
-                "Puesto nuevo"])
+                "Puesto actual"])
     r += 1
     for i, d in enumerate(res["infravalorados_ant"][:20], 1):
         for j, v in enumerate([i, d["modelo"], d["n"], d["pct"], d["calidad_intr"], d["precio_mediano"], d["segmento"], d.get("pos_nueva")], 1):

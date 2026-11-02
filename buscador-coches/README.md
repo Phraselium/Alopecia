@@ -220,7 +220,7 @@ python tools/verify_mercado.py           # recalcula mercado.xlsx con LibreOffic
 - Estado de salud de la batería (SOH) por edad y km, con un grupo más rápido para las baterías refrigeradas por aire (Leaf, Zoe…): Geotab, P3/Aviloo y ADAC.
 - Autonomía real = autonomía con la batería nueva de la versión (ev-database, WLTP o NEDC) × SOH. Por debajo de 200 km se resta calidad (hasta 15 puntos con 100 km o menos).
 - Valor residual × (SOH final / SOH hoy).
-- Batería en alquiler (Renault ZE, smart ED 451, Leaf 2013-2017): si el título no dice que la batería es en propiedad, se suma la cuota con fuente al coste de uso y se marca.
+- Batería en alquiler (Renault ZE, smart ED 451, Leaf 2013-2017): la cuota con fuente solo se suma si el anuncio dice que es de alquiler. Si no consta, se marca «confirmar si la batería es en propiedad» y se dan el coste anual con y sin alquiler.
 
 **Calidad**
 - Mismos criterios y pesos que el perfil personal, sin estética ni color, renormalizados.
@@ -230,7 +230,11 @@ python tools/verify_mercado.py           # recalcula mercado.xlsx con LibreOffic
 - Medianas por modelo, generación, año y km.
 - Depreciación por segmento, combustible y marca: MCO con efectos fijos de modelo y errores HC1.
 - Oferta y liquidez.
-- Primas de etiqueta y de cambio automático: especificación nueva con efecto fijo de marca y errores agrupados por modelo (CR1), comparada con la anterior (efecto fijo de modelo y errores HC1) y con efecto fijo de modelo y errores agrupados.
+- Primas de etiqueta y de cambio automático: especificación principal con efecto fijo de modelo y errores agrupados por modelo (CR1). Como comparación, la de efecto fijo de marca y la anterior (errores HC1).
 - Frontera eficiente y top 5 por franja y por segmento, en los tres escenarios de recarga.
 - Sensibilidad del Top 5 a ±20 % en energía, seguro y depreciación (hoja Sensibilidad).
-- Infravalorados: residuo de un modelo de valor con efecto fijo de marca y errores agrupados por modelo, comparado con la especificación anterior (sin efectos fijos).
+- Infravalorados:
+  - Modelo hedónico: efecto fijo de marca, segmento, clase de tamaño (A–F, S), carrocería, potencia (log CV y su cuadrado), calidad, edad, km, cambio, combustible y tipo. Errores agrupados por modelo.
+  - Sin vehículos comerciales (Citan, Kangoo, Vito, Transit, Berlingo furgón…) ni pick-ups.
+  - Cada anuncio se compara además con la mediana de su modelo, año y tramo de 25.000 km. Se listan los anuncios que quedan al menos un 15 % por debajo de esa mediana y del valor hedónico.
+  - Carrocería, clase y comerciales en `mercado_clases.yaml`, que también asigna el segmento cuando el listado no lo trae (AutoScout24). Con ello, el grupo «otros» baja del 20 % al 3 %.

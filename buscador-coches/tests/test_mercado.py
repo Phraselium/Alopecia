@@ -181,7 +181,7 @@ def test_bateria_vida_recarga(mcfg):
     assert M.bateria_estado(dict(zoe, titulo="Renault Zoe con alquiler de batería"), "electrico", sup)[0] == "alquiler"
     assert M.bateria_estado(dict(zoe, titulo="RENAULT ZOE Intens R135 Bateria 50kWh Flex", anio=2020), "electrico", sup)[0] == "alquiler"
     assert M.bateria_estado(dict(zoe, anio=2025), "electrico", sup) == (None, 0.0)
-    assert M.cuota_bateria("no consta", 79) == 948 and M.cuota_bateria("propiedad", 79) == 0
+    assert M.cuota_bateria("alquiler", 79) == 948 and M.cuota_bateria("no consta", 79) == 0 and M.cuota_bateria("propiedad", 79) == 0
     # autonomía: Tesla Long Range por patrón; Leaf por kWh del título; modelo sin dato -> PENDIENTE
     m3 = {"modelo_key": "Tesla Model 3", "anio": 2021, "titulo": "Tesla Model 3 Long Range AWD"}
     assert M.autonomia_nueva(m3, "electrico", sup)[0] == 470
@@ -205,6 +205,22 @@ def test_bateria_vida_recarga(mcfg):
     assert M.precio_recarga(sup, "casa") < M.precio_recarga(sup, "publica")
 
 
+def test_clases_y_comerciales():
+    from src.mercado import model as M
+    C = yaml.safe_load((BASE / "mercado_clases.yaml").read_text(encoding="utf-8"))
+    cl = lambda mk, t="": M.clase_modelo({"modelo_key": mk, "titulo": t}, C)  # noqa: E731
+    assert cl("BMW X1") == ("suv", "C") and cl("BMW 320") == ("turismo", "D") and cl("Toyota C-Hr") == ("suv", "C")
+    assert cl("Mercedes-Benz Gla 200") == ("suv", "C") and cl("Mercedes-Benz C 220") == ("turismo", "D")
+    assert cl("Renault R 5")[1] != "C" and cl("Mazda 3") == ("turismo", "C") and cl("Lancia Ypsilon") == ("turismo", "B")
+    com = lambda mk, t="", seg="otros": M.es_comercial({"modelo_key": mk, "modelo": mk.split(" ", 1)[-1], "titulo": t}, C, seg)  # noqa: E731
+    assert com("Mercedes-Benz Citan") and com("Renault Kangoo Combi") and com("Ford Transit Custom")
+    assert com("Citroën Berlingo", "Citroën Berlingo Furgón 1.5 BlueHDi") and not com("Citroën Berlingo", "Citroën Berlingo Feel M")
+    assert not com("Seat León") and com("Toyota Hilux", seg="pickup")
+    # sin modelo identificado se mira el título; con modelo, un acabado como «Connect» no lo convierte en comercial
+    assert M.es_comercial({"modelo_key": "Ford", "modelo": None, "titulo": "Ford None Transit Custom Van 2.0"}, C, "otros")
+    assert not com("Fiat 500", "Fiat 500 Connect 1.0 Hybrid")
+
+
 def test_analisis_sintetico(mcfg):
     res = run_analysis(synthetic(), mcfg, BASE)
     assert res["ads"] and res["dep"]["*|*"]["b_edad"] < 0              # el valor cae con la edad
@@ -222,7 +238,12 @@ def test_analisis_sintetico(mcfg):
     assert ev and all(0.6 <= a["soh"] <= 1 for a in ev)
     zoe = [a for a in res["ads"] if a["modelo_key"] == "Renault Zoe"]
     assert {a["bat_estado"] for a in zoe} == {"propiedad", "no consta"}
-    assert all((a["cuota_bat"] > 0) == (a["bat_estado"] == "no consta") for a in zoe)
+    assert all(a["cuota_bat"] == 0 for a in zoe)                       # sin dato no se suma: se avisa
+    assert all((a["aviso_bat"] is not None) == (a["bat_estado"] == "no consta") for a in zoe)
+    assert all((a["coste_anual_alq"] > a["coste_anual"]) == (a["bat_estado"] == "no consta") for a in zoe)
+    assert res["primas"]["principal"] == "modelo_cl"
+    # infravalorados: sin comerciales; cada fila con su comparación con la mediana de modelo+año+km
+    assert all(not any(w in d["modelo"].lower() for w in ("citan", "kangoo", "vito")) for d in res["infravalorados"])
     # vida útil: la depreciación nunca es menor que la de mercado
     assert all(a["depreciacion"] >= a["deprec_mkt"] - 1e-9 for a in res["ads"])
     for f, lst in res["frontera"].items():

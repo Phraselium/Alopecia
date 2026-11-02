@@ -11,7 +11,8 @@ FR_TXT = {"0-5000": "hasta 5.000 €", "5000-10000": "5.000–10.000 €", "1000
 
 
 def _coche(a):
-    return f"[{a.get('titulo') or a['modelo_key']}]({a.get('url')})"
+    av = f" ⚠ {a['aviso_bat']} (con alquiler: {n(a['coste_anual_alq'])} €/año)" if a.get("aviso_bat") else ""
+    return f"[{a.get('titulo') or a['modelo_key']}]({a.get('url')}){av}"
 
 
 def _tabla(lst):
@@ -86,7 +87,8 @@ def write_report(path: Path, res: dict, store) -> None:
               f"{res['electricos']['autonomia_umbral_km']} km.",
               f"- Modelos con batería que pudo venderse en alquiler: {len(alq)} anuncios (" +
               ", ".join(f"{k} {v}" for k, v in sorted(__import__('collections').Counter(a['bat_estado'] for a in alq).items())) +
-              "); si es de alquiler o no consta se suma la cuota del modelo y año × 12 (" +
+              "); la cuota (modelo y año × 12) solo se suma si el anuncio dice que es de alquiler; si no consta se marca «confirmar si la "
+              "batería es en propiedad» y se da el coste con y sin alquiler (" +
               ", ".join(sorted({f"{a['modelo_key']} {n(a['cuota_bat_mes'])} €/mes" for a in alq})) + ").", ""]
     # vida útil
     vu = [a for a in res.get("base_ads", []) if a["depreciacion"] > a["deprec_mkt"] + 0.5]
@@ -110,25 +112,38 @@ def write_report(path: Path, res: dict, store) -> None:
                 " · sale " + ", ".join(f"{ixs[u].get('titulo') or ixs[u]['modelo_key']} {ixs[u]['anio']}" for u in x["salen"])
                 for f, x in cambios))
     L.append("")
-    # infravalorados: nueva y anterior
-    L += ["## Modelos infravalorados", "",
-          "Nueva especificación: " + res["reg_infra"]["especificacion"] + ". Anterior: " + res["reg_infra_ant"]["especificacion"] + ".", "",
-          "| # | Modelo (nueva) | Anuncios | Por debajo de lo previsto | Puesto anterior | | Modelo (anterior) | Por debajo | Puesto nuevo |",
+    # infravalorados: hedónico
+    ri = res["reg_infra"]
+    L += ["## Modelos infravalorados (modelo hedónico)", "",
+          "Especificación: " + ri["especificacion"] + f". n = {ri['n']}, {ri['marcas']} marcas, {ri['clusters']} modelos, R² within "
+          f"{ri['r2']:.3f}; {ri['n_excluidos_comerciales']} anuncios comerciales excluidos. «≥ 15 % bajo su mediana» = anuncios del "
+          "modelo al menos un 15 % por debajo de la mediana de su modelo + año + tramo de 25.000 km (de los que tienen esa mediana).", "",
+          "| # | Modelo | Anuncios | Bajo el valor hedónico | ≥ 15 % bajo su mediana | Clase | CV | Precio mediano | Puesto anterior |",
           "|---|---|---|---|---|---|---|---|---|"]
-    for i in range(15):
-        d = res["infravalorados"][i] if i < len(res["infravalorados"]) else None
-        o = res["infravalorados_ant"][i] if i < len(res["infravalorados_ant"]) else None
-        L.append(f"| {i + 1} | {d['modelo'] if d else ''} | {d['n'] if d else ''} | {(-d['pct']):.0%} | {d.get('pos_ant') or '—'} | | "
-                 f"{o['modelo'] if o else ''} | {(-o['pct']):.0%} | {o.get('pos_nueva') or '—'} |" if d and o else "")
-    L += ["", "## Primas", "", "| Prima | Anterior: FE modelo + HC1 | FE modelo + agrupados por modelo | Nueva: FE marca + agrupados por modelo |",
+    for i, d in enumerate(res["infravalorados"][:20], 1):
+        dm = f"{d['n_bajo_mak']} de {d['n_mak']}" if d["n_mak"] else "sin mediana"
+        L.append(f"| {i} | {d['modelo']} | {d['n']} | {-d['pct']:.0%} | {dm} | {d['clase']} | "
+                 f"{n(d['cv']) if d['cv'] else '—'} | {n(d['precio_mediano'])} € | {d.get('pos_ant') or '—'} |")
+    L += ["", "**Anuncios concretos** (≥ 15 % bajo la mediana de su modelo + año + km y bajo el valor hedónico; precios tan bajos "
+          "pueden ser errores, daños no declarados o fraude: verificar)", "",
+          "| # | Coche | Año | Km | Precio | Mediana modelo+año+km | Frente a la mediana | Frente al hedónico |", "|---|---|---|---|---|---|---|---|"]
+    import math as _m
+    for i, a in enumerate(res["infra_anuncios"][:15], 1):
+        L.append(f"| {i} | {_coche(a)} | {a['anio']} | {n(a['km'])} | {n(a['precio'])} € | {n(a['mediana_mak'])} € | {a['desc_mak']:+.0%} | "
+                 f"{_m.exp(a['resid_valor']) - 1:+.0%} |")
+    L += ["", "Versión anterior (sin hedónico, con comerciales), para comparar: " +
+          ", ".join(f"{d['modelo']} ({-d['pct']:.0%})" for d in res["infravalorados_ant"][:10]) + "."]
+    L += ["", "## Primas", "", "Principal: efecto fijo de modelo con errores agrupados por modelo. La de efecto fijo de marca y la anterior (HC1) "
+          "se muestran como comparación.", "",
+          "| Prima | PRINCIPAL: FE modelo + agrupados | Comparación: FE marca + agrupados | Anterior: FE modelo + HC1 |",
           "|---|---|---|---|"]
     for lab in ("Etiqueta C frente a B", "Etiqueta ECO frente a C", "Cambio automático frente a manual"):
         cells = []
-        for sk in ("anterior", "modelo_cl", "marca_cl"):
+        for sk in ("modelo_cl", "marca_cl", "anterior"):
             d = (res["primas"].get(sk) or {}).get(lab)
             cells.append(f"{d['pct']:+.1%} [{d['lo']:+.1%}; {d['hi']:+.1%}]" if d else "—")
         L.append(f"| {lab} | " + " | ".join(cells) + " |")
-    for sk in ("anterior", "modelo_cl", "marca_cl"):
+    for sk in ("modelo_cl", "marca_cl", "anterior"):
         m = res["primas"].get(sk) or {}
         if m:
             L.append(f"\n- {m['descripcion']}: n = {m['n']} · {m['grupos']} grupos de FE · {m['clusters'] or '—'} clústeres · R² within {m['r2_within']:.3f}")
