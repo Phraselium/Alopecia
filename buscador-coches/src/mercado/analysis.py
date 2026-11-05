@@ -420,6 +420,17 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
     fr_tags = [franja(lo, cortes) for lo in cortes[:-1]]
     # sin combustible conocido el coste de energía no se puede calcular: fuera de frontera, top e infravalorados
     base_ads = [a for a in ads if a["zona"] == "valencia" and a["combustible"] and not a["comercial"]]
+    # revisión de fichas (src/mercado/fichas.py): los descartados (vendidos, averías, sin aire) no entran en frontera, top ni sensibilidad
+    from .fichas import cargar as _cargar_fichas
+    fichas = _cargar_fichas(base / cfg["salida"].get("fichas", "data/mercado_fichas.json"))
+    for a in ads:
+        fi = fichas.get(a["uid"])
+        a["ficha"] = fi
+        a["descartado_ficha"] = bool(fi and fi.get("descartar"))
+        a["ficha_txt"] = ("DESCARTADO: " + "; ".join(fi["motivos"]) if fi.get("descartar") else
+                          ("revisada" + (" · avisos: " + "; ".join(fi["avisos"]) if fi.get("avisos") else " sin incidencias"))) if fi else "sin revisar"
+    todos_base = base_ads
+    base_ads = [a for a in base_ads if not a["descartado_ficha"]]
 
     def fronteras(coste):
         ids_g = set(frontera([(coste(a), a["calidad_exp"], a["uid"]) for a in base_ads]))
@@ -563,6 +574,6 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
             "precios": precios, "oferta": oferta, "med_seg": med_seg, "liquidez": liq, "primas": primas,
             "frontera": front, "top_franja": top_fr, "top_segmento": top_seg, "infravalorados": infra, "reg_infra": reg_infra,
             "infravalorados_ant": infra_ant, "reg_infra_ant": reg_infra_ant, "escenarios": escenarios, "escenario_defecto": esc_def,
-            "sensibilidad": sens, "electricos": el, "base_ads": base_ads, "infra_anuncios": infra_ads,
+            "sensibilidad": sens, "electricos": el, "base_ads": base_ads, "fichas": fichas, "todos_base": todos_base, "infra_anuncios": infra_ads,
             "refs": refs, "pesos": (glob, intr), "pesos_exp": w_exp, "resumen": resumen, "n_total": len(rows), "etq_pts": etq_pts}
 

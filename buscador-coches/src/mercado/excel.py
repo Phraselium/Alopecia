@@ -585,10 +585,12 @@ def _fila_listado(ws, r, a, n_last, rank=None):
     if a.get("url"):
         ws.cell(r, 12).hyperlink = a["url"]
     ws.cell(r, 13, f"=INDEX({_rng('aviso_bat', n_last)},{m})").font = _font(GREEN)
+    c = ws.cell(r, 14, a.get("ficha_txt") or "sin revisar")
+    c.font = _font(BLUE)
 
 
 LIST_HDR = ["Nº", "ID", "Coche", "Año", "Km", "Precio (€)", "Coste anual (€)", "Calidad experta", "Calidad / coste (por 1.000 €)",
-            "Segmento", "Combustible", "Enlace", "Aviso batería"]
+            "Segmento", "Combustible", "Enlace", "Aviso batería", "Revisión de la ficha"]
 
 
 def build_frontera(wb, res, n_last):
@@ -685,7 +687,7 @@ def build_top(wb, res, n_last):
     ws.cell(r, 1, "Anuncios concretos: al menos un 15 % por debajo de la mediana de su modelo + año + tramo de 25.000 km Y del valor "
                   "hedónico. Precios tan bajos pueden ser errores, daños no declarados o fraude: verificar antes de nada.").font = SEC_FONT
     r += 1
-    hdr(ws, r, LIST_HDR + ["Frente a mediana modelo+año+km", "Frente al valor hedónico"])
+    hdr(ws, r, LIST_HDR[:13] + ["Frente a mediana modelo+año+km", "Frente al valor hedónico"])
     r += 1
     for i, a in enumerate(res["infra_anuncios"], 1):
         _fila_listado(ws, r, a, n_last, i)
@@ -711,6 +713,26 @@ def build_top(wb, res, n_last):
         ws.column_dimensions[col].width = w
 
 
+def build_fichas(wb, res):
+    ws = wb.create_sheet("Revisión de fichas")
+    ws.cell(1, 1, "Revisión de las fichas de los mejores candidatos (descripción, equipamiento y disponibilidad)").font = SEC_FONT
+    ws.cell(2, 1, "Se abre la ficha de los 8 mejores de cada franja, segmento y frontera (src/mercado/fichas.py). DESCARTADO: retirado o vendido, "
+                  "avería declarada (src/averias.py, con negaciones), sin aire acondicionado o problema de cambio; quedan fuera de frontera, top y "
+                  "sensibilidad. Avisos: ITV caducada, fuera de la provincia, carrocería a reparar, otros puntos a revisar. Valores de Python (azul).")
+    hdr(ws, 4, ["Revisada", "ID", "Coche", "Estado", "¿Descartado?", "Motivos", "Avisos", "Provincia", "Extracto de la descripción", "Enlace"])
+    r = 5
+    for uid, f in sorted((res.get("fichas") or {}).items(), key=lambda kv: (not kv[1]["descartar"], kv[1]["fecha"])):
+        vals = [f["fecha"], uid, f.get("titulo"), f["estado"], "sí" if f["descartar"] else "no", "; ".join(f["motivos"]), "; ".join(f["avisos"]),
+                f.get("provincia"), (f.get("descripcion") or "")[:300], f.get("url")]
+        for j, v in enumerate(vals, 1):
+            ws.cell(r, j, v).font = _font(BLUE)
+        if f.get("url"):
+            ws.cell(r, 10).hyperlink = f["url"]
+        r += 1
+    for col, w in zip("ABCDEFGHIJ", [19, 22, 36, 11, 11, 45, 45, 14, 60, 40]):
+        ws.column_dimensions[col].width = w
+
+
 def write_workbook(path: Path, res: dict) -> None:
     wb = Workbook()
     wb.remove(wb.active)
@@ -724,7 +746,8 @@ def write_workbook(path: Path, res: dict) -> None:
     build_frontera(wb, res, n_last)
     build_top(wb, res, n_last)
     build_sensibilidad(wb, res)
-    order = ["Anuncios", "Precios por modelo", "Depreciación", "Oferta", "Primas", "Frontera", "Top por franja", "Sensibilidad", "Supuestos"]
+    build_fichas(wb, res)
+    order = ["Anuncios", "Precios por modelo", "Depreciación", "Oferta", "Primas", "Frontera", "Top por franja", "Sensibilidad", "Revisión de fichas", "Supuestos"]
     wb._sheets = [wb[n] for n in order]
     for ws in wb.worksheets:
         ws.freeze_panes = None

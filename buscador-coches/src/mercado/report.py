@@ -12,6 +12,11 @@ FR_TXT = {"0-5000": "hasta 5.000 €", "5000-10000": "5.000–10.000 €", "1000
 
 def _coche(a):
     av = f" ⚠ {a['aviso_bat']} (con alquiler: {n(a['coste_anual_alq'])} €/año)" if a.get("aviso_bat") else ""
+    fi = a.get("ficha")
+    if fi and fi.get("avisos"):
+        av += " ⚠ " + "; ".join(fi["avisos"][:2])
+    elif not fi:
+        av += " (ficha sin revisar)"
     return f"[{a.get('titulo') or a['modelo_key']}]({a.get('url')}){av}"
 
 
@@ -147,6 +152,15 @@ def write_report(path: Path, res: dict, store) -> None:
         m = res["primas"].get(sk) or {}
         if m:
             L.append(f"\n- {m['descripcion']}: n = {m['n']} · {m['grupos']} grupos de FE · {m['clusters'] or '—'} clústeres · R² within {m['r2_within']:.3f}")
+    fic = res.get("fichas") or {}
+    if fic:
+        desc = [f for f in fic.values() if f["descartar"]]
+        L += ["", "## Revisión de fichas de los mejores candidatos", "",
+              f"Fichas leídas: {len(fic)}; descartadas: {len(desc)} (quedan fuera de frontera, top y sensibilidad). Detalle en la hoja «Revisión de fichas».", "",
+              "| Coche | Motivo | Enlace |", "|---|---|---|"]
+        for f in desc[:40]:
+            L.append(f"| {f.get('titulo')} | {'; '.join(f['motivos'])} | [anuncio]({f.get('url')}) |")
+        L.append("")
     cov = lambda f: sum(1 for a in ads if f(a)) / max(len(ads), 1)  # noqa: E731
     L += ["", "## Cobertura de los datos y pendientes", "",
           f"- Euro NCAP de la generación: {cov(lambda a: a['ncap'] is not None):.0%} de los anuncios; "

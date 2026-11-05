@@ -7,6 +7,8 @@ Uso:
   python run_mercado.py --zonas valencia      # solo la zona base
   python run_mercado.py --sin-red             # no pide nada: regenera las salidas con lo guardado
   python run_mercado.py --watch               # repite cada 24 h (mide los días hasta que desaparece cada anuncio)
+  python run_mercado.py --sin-red --revisar-fichas   # abre solo las fichas de los mejores candidatos (avería, aire, ITV, vendido)
+Tras cada recogida se revisan las fichas de los mejores candidatos por franja (config_mercado.yaml → analisis.revisar_fichas).
 """
 from __future__ import annotations
 
@@ -30,6 +32,19 @@ def load(name: str) -> dict:
     return yaml.safe_load((BASE / name).read_text(encoding="utf-8"))
 
 
+def revisar_fichas(cfg: dict, store: MercadoStore, client) -> None:
+    """Rondas: analiza, abre las fichas de los mejores candidatos aún sin revisar y repite hasta que el top esté revisado."""
+    from src.mercado.analysis import run_analysis
+    from src.mercado.fichas import revisar
+    rf = cfg["analisis"].get("revisar_fichas", {"por_grupo": 8, "rondas": 4})
+    for i in range(rf["rondas"]):
+        res = run_analysis(store.all(), cfg, BASE)
+        n = revisar(client, res, BASE / cfg["salida"]["fichas"], rf["por_grupo"])
+        print(f"  revisión de fichas, ronda {i + 1}: {n} fichas leídas")
+        if n == 0:
+            break
+
+
 def build(cfg: dict, store: MercadoStore) -> dict:
     from src.mercado.analysis import run_analysis
     from src.mercado.excel import write_workbook
@@ -47,6 +62,7 @@ def main() -> int:
     ap.add_argument("--sin-red", action="store_true")
     ap.add_argument("--sin-salidas", action="store_true", help="solo recoger (útil al lanzar fuentes en paralelo)")
     ap.add_argument("--watch", action="store_true")
+    ap.add_argument("--revisar-fichas", action="store_true", help="con --sin-red: abre solo las fichas de los mejores candidatos")
     a = ap.parse_args()
     cfg = load("config_mercado.yaml")
     (BASE / "logs").mkdir(exist_ok=True)
@@ -62,6 +78,8 @@ def main() -> int:
                     continue
                 for z, (estado, n, req, det) in collect_one(f, client, cfg, store, zonas).items():
                     print(f"  {f:12s} {z:10s} {estado:9s} anuncios={n:<6d} peticiones={req:<5d} {det[:80]}")
+        if not a.sin_salidas and (not a.sin_red or a.revisar_fichas):
+            revisar_fichas(cfg, store, PoliteClient(cfg["http"], BASE))
         if not a.sin_salidas:
             res = build(cfg, store)
             print(f"Salidas regeneradas: {res['resumen']}")

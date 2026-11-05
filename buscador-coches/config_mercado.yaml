@@ -68,7 +68,8 @@ analisis:
   min_anuncios_grupo: 5        # mínimo de anuncios para publicar una mediana
   franjas_precio: [0, 5000, 10000, 15000, 25000, 1000000000]
   segmentos_top: [utilitario, compacto, berlina, familiar, suv]
-  dep_factor5_defecto: 0.6     # solo si no hay datos para estimar la depreciación (supuesto)
+  dep_factor5_defecto: 0.6    # solo si no hay datos para estimar la depreciación (supuesto)
+  revisar_fichas: {por_grupo: 8, rondas: 4}   # fichas abiertas: los 8 mejores de cada franja, segmento y frontera; se repite si alguno se descarta
 
 filtros:
   averias: {activo: true, revisar_si_no_menciona_itv: false}
@@ -100,6 +101,7 @@ salida:
   excel: mercado.xlsx
   informe: informe_mercado.md
   log: logs/mercado.log
+  fichas: data/mercado_fichas.json     # revisión de fichas de los mejores candidatos (src/mercado/fichas.py)
 
 calidad_experta:               # criterio insesgado de calidad (sin preferencias personales, sin precio, garantía ni reventa)
   # Fuentes de los apartados: Consumer Reports (fiabilidad, seguridad, prueba en carretera), ADAC Autotest (7 apartados; seguridad y

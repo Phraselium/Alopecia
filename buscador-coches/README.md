@@ -186,6 +186,7 @@ python run_mercado.py --solo cochesnet --sin-salidas   # una fuente (se pueden l
 python run_mercado.py --sin-red          # regenera con lo guardado
 python run_mercado.py --watch            # una vez al día: mide los días hasta que desaparece cada anuncio
 python tools/verify_mercado.py           # recalcula mercado.xlsx con LibreOffice y lo compara con Python
+python run_mercado.py --sin-red --revisar-fichas   # abre solo las fichas de los mejores candidatos y regenera
 ```
 
 **Alcance**
@@ -221,6 +222,13 @@ python tools/verify_mercado.py           # recalcula mercado.xlsx con LibreOffic
 - Autonomía real = autonomía con la batería nueva de la versión (ev-database, WLTP o NEDC) × SOH. Por debajo de 200 km se resta calidad (hasta 15 puntos con 100 km o menos).
 - Valor residual × (SOH final / SOH hoy).
 - Batería en alquiler (Renault ZE, smart ED 451, Leaf 2013-2017): la cuota con fuente solo se suma si el anuncio dice que es de alquiler. Si no consta, se marca «confirmar si la batería es en propiedad» y se dan el coste anual con y sin alquiler.
+
+**Revisión de fichas** (`src/mercado/fichas.py`): tras cada recogida se abren las fichas de los 8 mejores de cada franja, segmento,
+frontera y de los coches polivalentes de cada franja, en rondas hasta que el top esté revisado.
+- Se descartan de frontera, top y sensibilidad los anuncios retirados o vendidos, con avería declarada (con negaciones), sin aire
+  acondicionado o con problemas de cambio.
+- Se avisa de ITV caducada, coche fuera de la provincia o carrocería a reparar.
+- Hoja «Revisión de fichas» y columna «Revisión de la ficha» en las listas; datos en `data/mercado_fichas.json`.
 
 **Calidad experta** (criterio de la frontera, el Top, la sensibilidad y los infravalorados; `src/mercado/experta.py`, `config_mercado.yaml → calidad_experta`)
 - Criterio insesgado: sin preferencias personales, sin precio, sin garantía del vendedor y sin reventa.

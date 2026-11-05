@@ -238,6 +238,21 @@ def test_calidad_experta(mcfg):
     assert M.es_comercial({"modelo_key": "Toyota Yaris", "modelo": "Yaris", "titulo": "Toyota Yaris 1.5 100H Active Ecovan"}, C, "utilitario")
 
 
+def test_revision_fichas():
+    from src.mercado.fichas import evaluar
+    a = {"titulo": "Mazda2 1.3 Active", "uid": "x"}
+    ok = {"estado": "disponible", "descripcion": "", "equipamiento": "", "provincia": "Valencia"}
+    assert evaluar(a, dict(ok, descripcion="LEER BIEN, SIN AIRE ACONDICIONADO DE ORIGEN"))["descartar"]
+    assert evaluar(a, dict(ok, descripcion="El aire acondicionado funciona correctamente"))["descartar"] is False
+    assert evaluar(a, dict(ok, descripcion="En ocasiones cuesta que entre correctamente la segunda marcha"))["descartar"]
+    assert evaluar(a, dict(ok, estado="retirado"))["descartar"]
+    r = evaluar(a, dict(ok, descripcion="No tiene itv en vigor sin embargo la pasa sin problema"))
+    assert not r["descartar"] and any("ITV" in x for x in r["avisos"])
+    r = evaluar(a, dict(ok, provincia="CP 28939 (Arroyomolinos)"))
+    assert any("fuera de la provincia" in x for x in r["avisos"])
+    assert evaluar({"titulo": "Hyundai i20 1.2 Classic AA"}, dict(ok, descripcion="sin aire"))["descartar"] is False   # AA en el título
+
+
 def test_analisis_sintetico(mcfg):
     res = run_analysis(synthetic(), mcfg, BASE)
     assert res["ads"] and res["dep"]["*|*"]["b_edad"] < 0              # el valor cae con la edad
