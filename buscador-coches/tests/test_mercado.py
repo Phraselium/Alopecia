@@ -221,6 +221,23 @@ def test_clases_y_comerciales():
     assert not com("Fiat 500", "Fiat 500 Connect 1.0 Hybrid")
 
 
+def test_calidad_experta(mcfg):
+    from src.mercado import experta as X
+    w = X.pesos(mcfg["calidad_experta"])
+    assert abs(sum(w.values()) - 1) < 1e-6 and w["seguridad"] > w["desgaste"]
+    for e in mcfg["calidad_experta"]["esquemas"].values():
+        assert abs(sum(e.values()) - 1) < 1e-4
+    assert X._pct_ref([1, 5, 10, None], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) == [5.0, 45.0, 95.0, None]
+    rec = yaml.safe_load((BASE / "mercado_fiabilidad.yaml").read_text(encoding="utf-8"))
+    yh = {"modelo_key": "Mazda 2", "anio": 2022, "titulo": "Mazda 2 Hybrid 1.5 Agile CVT"}
+    assert X.ncap_verificado(yh, rec)["estrellas"] == 5
+    assert X.ncap_verificado(dict(yh, titulo="Mazda 2 e-SKYACTIV G 1.5 Hybrid"), rec) is None
+    assert X.ncap_verificado({"modelo_key": "Dacia Spring", "anio": 2022, "titulo": ""}, rec)["estrellas"] == 1
+    from src.mercado import model as M
+    C = yaml.safe_load((BASE / "mercado_clases.yaml").read_text(encoding="utf-8"))
+    assert M.es_comercial({"modelo_key": "Toyota Yaris", "modelo": "Yaris", "titulo": "Toyota Yaris 1.5 100H Active Ecovan"}, C, "utilitario")
+
+
 def test_analisis_sintetico(mcfg):
     res = run_analysis(synthetic(), mcfg, BASE)
     assert res["ads"] and res["dep"]["*|*"]["b_edad"] < 0              # el valor cae con la edad
@@ -246,10 +263,15 @@ def test_analisis_sintetico(mcfg):
     assert all(not any(w in d["modelo"].lower() for w in ("citan", "kangoo", "vito")) for d in res["infravalorados"])
     # vida útil: la depreciación nunca es menor que la de mercado
     assert all(a["depreciacion"] >= a["deprec_mkt"] - 1e-9 for a in res["ads"])
+    # calidad experta: 5 apartados en 0-100 y combinación con los pesos medios
+    for a in res["ads"]:
+        assert all(0 <= a[f"e_{k}"] <= 100 for k in ("fiabilidad", "seguridad", "desgaste", "ambiente", "uso"))
+        assert abs(a["calidad_exp"] - sum(res["pesos_exp"][k] * a[f"e_{k}"] for k in res["pesos_exp"])) < 1e-9
+    assert not any(a["comercial"] for f in res["top_franja"].values() for a in f)
     for f, lst in res["frontera"].items():
         if f == "global":
             continue
-        cal = [a["calidad_intr"] for a in lst]
+        cal = [a["calidad_exp"] for a in lst]
         assert cal == sorted(cal) and len(set(a["uid"] for a in lst)) == len(lst)   # por coste creciente, calidad creciente
     for f, lst in res["top_franja"].items():
         assert [a["ratio"] for a in lst] == sorted([a["ratio"] for a in lst], reverse=True)

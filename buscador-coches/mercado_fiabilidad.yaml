@@ -1560,3 +1560,18 @@ ocu_fuentes:
   - Skoda
   - Volkswagen
   - Volvo
+
+# Ensayos Euro NCAP verificados (consulta 05-11-2026) para modelos que no estaban en euroncap_recientes. Se aplican por modelo, años y,
+# si se indica, un patrón obligatorio o excluyente en el título (p. ej., solo el Mazda2 Hybrid, gemelo del Yaris).
+euroncap_verificados:
+  - {modelo: "Dacia Spring", desde: 2021, hasta: 2026, estrellas: 1, ensayo: 2021, fuente: "https://euroncap.newsmarket.com/latest-release/renault-laguna-s-legacy-ruined-as-zoe-and-spring-debase-electric-car-safety/s/7b157f99-83e7-42b3-a18e-54102dde0bdb"}
+  - {modelo: "Toyota Yaris", desde: 2020, hasta: 2026, estrellas: 5, ensayo: 2020, fuente: "https://www.motoringresearch.com/car-news/2020-toyota-yaris-euro-ncap-safety"}
+  - {modelo: "Mazda 2", desde: 2022, hasta: 2026, estrellas: 5, ensayo: 2020, titulo_requiere: "hybrid", titulo_excluye: "skyactiv", fuente: "https://euroncap.newsmarket.com/FIND-A-CAR/mazda-2-hybrid---euro-ncap-2020-results---5-stars/s/4cfc591b-1c14-4c7b-8c5a-28ca17d3e1a8"}
+  - {modelo: "Suzuki Swift", desde: 2024, hasta: 2026, estrellas: 3, ensayo: 2024, fuente: "https://www.expressandstar.com/news/motors/2024/07/10/euro-ncap-awards-new-dacia-duster-and-suzuki-swift-a-3-star-safety-rating-as-recent-results-announced"}
+  - {modelo: "Suzuki Swift", desde: 2017, hasta: 2023, estrellas: 3, ensayo: 2017, fuente: "https://www.expressandstar.com/news/motors/2024/07/10/euro-ncap-awards-new-dacia-duster-and-suzuki-swift-a-3-star-safety-rating-as-recent-results-announced (mantiene el resultado de 2017)"}
+  - {modelo: "smart fortwo", desde: 2014, hasta: 2026, estrellas: 4, ensayo: 2014, fuente: "https://mercedesblog.com/smart-fortwo-forfour-awarded-4-stars-euro-ncap-safety-tests/"}
+  - {modelo: "smart forfour", desde: 2014, hasta: 2026, estrellas: 4, ensayo: 2014, fuente: "https://mercedesblog.com/smart-fortwo-forfour-awarded-4-stars-euro-ncap-safety-tests/"}
+  - {modelo: "Kia Rio", desde: 2017, hasta: 2023, estrellas: 3, ensayo: 2017, fuente: "https://news.euroncap.com/safercars/kia-rio---euro-ncap-results-2017/s/5fc4356a-8f21-461d-8500-31dad82ec06c (3 estrellas de serie; 5 con pack opcional)"}
+  - {modelo: "Fiat Panda", desde: 2018, hasta: 2026, estrellas: 0, ensayo: 2018, fuente: "https://www.autoexpress.co.uk/fiat/panda/105415/fiat-panda-gets-shocking-zero-star-ncap-crash-test-rating"}
+  - {modelo: "Fiat Pandina", desde: 2024, hasta: 2026, estrellas: 0, ensayo: 2018, fuente: "Pandina = actualización del Panda (misma estructura); ensayo 2018: https://www.autoexpress.co.uk/fiat/panda/105415/fiat-panda-gets-shocking-zero-star-ncap-crash-test-rating"}
+  - {modelo: "Lancia Ypsilon", desde: 2011, hasta: 2023, estrellas: 2, ensayo: 2015, fuente: "https://www.motorpoint.com/adjuntos/4488/euroncap-2015-lancia-ypsilon-datasheet.pdf"}

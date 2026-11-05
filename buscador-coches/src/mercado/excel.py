@@ -68,6 +68,10 @@ def build_supuestos(wb, res, names: Names):
         param(f"WG_{k.upper()}", f"Calidad global: peso {k}", v, "criterio", "config_mercado.yaml → calidad.pesos_origen ÷ 0,86")
     for k, v in intr.items():
         param(f"WI_{k.upper()}", f"Calidad intrínseca (sin precio ni coste de uso): peso {k}", v, "criterio", "config_mercado.yaml")
+    we = res["pesos_exp"]
+    for k, v in we.items():
+        param(f"WE_{k.upper()}", f"Calidad EXPERTA (criterio de frontera, top y ratio): peso {k}", v, "criterio",
+              "config_mercado.yaml → calidad_experta: media de los esquemas iguales, ADAC (seguridad y ambiente ×2) y Consumer Reports")
     q = cfg["calidad"]
     param("NEUTRO", "Puntuación neutra si falta el dato", q["neutro"], "criterio", "config_mercado.yaml")
     param("PRECIO_PEND", "Precio: puntos por unidad de descuento frente a la mediana (50 + d·k)", q["precio"]["pendiente"], "criterio")
@@ -201,6 +205,9 @@ COLUMNS = [
     ("soh_grupo", "Grupo de batería (SOH)", "data", None), ("aut_nueva", "Autonomía real con batería nueva (km)", "data", None),
     ("bat_estado", "Batería (propiedad / alquiler / no consta)", "data", None),
     ("cuota_bat_mes", "Cuota alquiler batería (€/mes)", "data", None), ("vida_clave", "Clave de vida útil", "data", None),
+    ("e_fiabilidad", "Exp. fiabilidad (percentil)", "data", None), ("e_seguridad", "Exp. seguridad (percentil)", "data", None),
+    ("e_desgaste", "Exp. desgaste (percentil)", "data", None), ("e_ambiente", "Exp. medio ambiente (percentil)", "data", None),
+    ("e_uso", "Exp. espacio y uso (percentil)", "data", None), ("comercial", "Vehículo comercial", "data", None),
     ("url", "Enlace", "data", None),
     # ---- coste total de propiedad
     ("edad", "Edad (años)", "calc", "=MAX(0,ANIO_ACTUAL-{anio})"),
@@ -263,7 +270,9 @@ COLUMNS = [
     ("calidad_intr", "Calidad intrínseca", "calc",
      "=MAX(0,WI_FIABILIDAD*{s_fiab}+WI_ESTADO*{s_estado}+WI_SEGURIDAD_VIAL*{s_segvial}+WI_SEGURIDAD_COMPRA*{s_compra}"
      "+WI_KM_EDAD*{s_kmedad}+WI_REVENTA*{s_reventa}-{pen_aut})"),
-    ("ratio", "Calidad / coste anual (por 1.000 €)", "calc", "=IF({coste_anual}>0,{calidad_intr}/({coste_anual}/1000),0)"),
+    ("calidad_exp", "CALIDAD EXPERTA", "calc",
+     "=WE_FIABILIDAD*{e_fiabilidad}+WE_SEGURIDAD*{e_seguridad}+WE_DESGASTE*{e_desgaste}+WE_AMBIENTE*{e_ambiente}+WE_USO*{e_uso}"),
+    ("ratio", "Calidad experta / coste anual (por 1.000 €)", "calc", "=IF({coste_anual}>0,{calidad_exp}/({coste_anual}/1000),0)"),
     ("franja", "Franja de precio", "calc",
      '=IF({precio}<5000,"0-5000",IF({precio}<10000,"5000-10000",IF({precio}<15000,"10000-15000",IF({precio}<25000,"15000-25000",">25000"))))'),
 ]
@@ -279,7 +288,7 @@ CHECKS = {"edad": lambda a: a["edad"], "cons": lambda a: a["consumo"] or 0, "ene
           "aviso_bat": lambda a: a["aviso_bat"], "s_precio": lambda a: a["s"]["precio"],
           "s_segvial": lambda a: a["s"]["seguridad_vial"], "s_compra": lambda a: a["s"]["seguridad_compra"],
           "s_uso": lambda a: a["s"]["coste_uso"], "s_kmedad": lambda a: a["s"]["km_edad"], "s_reventa": lambda a: a["s"]["reventa"],
-          "calidad": lambda a: a["calidad"], "calidad_intr": lambda a: a["calidad_intr"], "ratio": lambda a: a["ratio"],
+          "calidad": lambda a: a["calidad"], "calidad_intr": lambda a: a["calidad_intr"], "calidad_exp": lambda a: a["calidad_exp"], "ratio": lambda a: a["ratio"],
           "franja": lambda a: a["franja"]}
 
 NOTES = {
@@ -304,6 +313,11 @@ NOTES = {
     "cuota_bat_mes": "Cuota mensual del alquiler de batería del modelo y año con 12.000 km/año (mercado_supuestos.yaml → bateria.alquiler, "
                      "con fuente y fecha). Se suma × 12 al coste de uso si la batería es de alquiler o no consta.",
     "vida_clave": "Clave de VIDA_TBL (Supuestos): vida útil esperada por combustible y segmento.",
+    "e_fiabilidad": "CALIDAD EXPERTA (criterio insesgado, src/mercado/experta.py): cinco apartados calculados en Python, cada uno en percentil 0-100 "
+                    "respecto a los anuncios de Valencia sin comerciales. Fiabilidad: TÜV/OCU/ajustes de motor (sin fuente: media de su segmento y edad). "
+                    "Seguridad: estrellas Euro NCAP (−1 si caducado; ensayos verificados en mercado_fiabilidad.yaml) y año del modelo. Desgaste: vida útil "
+                    "restante. Medio ambiente: distintivo DGT y CO2 del consumo real. Espacio y uso: clase, carrocería y autonomía en eléctricos. Pesos WE_* en Supuestos.",
+    "comercial": "Furgonetas, pick-ups, derivados comerciales y versiones comerciales de turismos (p. ej., Yaris Ecovan): fuera de frontera, top e infravalorados.",
     "etiqueta": "Etiqueta del anuncio o, si no la trae, la regla de la DGT por combustible y año (la peor posible).",
 }
 
@@ -321,7 +335,9 @@ def row_data(a: dict) -> dict:
             "esp": a["esp"], "fiab": a["fiab"], "mediana": a["mediana"], "nivel_med": a["nivel_mediana"] or None,
             "n_modelo": a["n_modelo"], "dep_clave": a["dep_clave"], "soh_grupo": a.get("soh_grupo"),
             "aut_nueva": round(a["aut_nueva"], 6) if a.get("aut_nueva") else None, "bat_estado": a.get("bat_estado"), "cuota_bat_mes": a.get("cuota_bat_mes"),
-            "vida_clave": a["vida_clave"], "url": a.get("url")}
+            "vida_clave": a["vida_clave"], "e_fiabilidad": a["e_fiabilidad"], "e_seguridad": a["e_seguridad"],
+            "e_desgaste": a["e_desgaste"], "e_ambiente": a["e_ambiente"], "e_uso": a["e_uso"], "comercial": "sí" if a.get("comercial") else "no",
+            "url": a.get("url")}
 
 
 def build_anuncios(wb, ads: list[dict], names: Names) -> int:
@@ -510,7 +526,7 @@ def build_primas(wb, res):
     ws.cell(r, 1, "Modelo de valor para detectar infravalorados").font = SEC_FONT
     r += 1
     for lab, ri in (("Hedónico (actual)", res["reg_infra"]), ("Versión anterior", res["reg_infra_ant"])):
-        ws.cell(r, 1, f"{lab}: " + ri["especificacion"] + f" · n = {ri['n']} · R² = {ri['r2']:.3f} · b(calidad intrínseca) = "
+        ws.cell(r, 1, f"{lab}: " + ri["especificacion"] + f" · n = {ri['n']} · R² = {ri['r2']:.3f} · b(calidad experta) = "
                 f"{ri['b_calidad'][0]:.4f} (EE {ri['b_calidad'][1]:.4f})")
         r += 1
     for col, w in zip("ABCDEFG", [40, 26, 26, 28, 14, 14, 18]):
@@ -525,10 +541,10 @@ def build_sensibilidad(wb, res):
     def nom(u):
         a = ix[u]
         return f"{a['titulo'] or a['modelo_key']} ({a['anio']}, {a['km']:,} km, {a['precio']:,.0f} €)".replace(",", ".")
-    ws.cell(1, 1, f"Sensibilidad del Top 5 por franja (calidad intrínseca / coste anual) a ±{int(sn['variacion'] * 100)} % en el precio de "
+    ws.cell(1, 1, f"Sensibilidad del Top 5 por franja (calidad experta / coste anual) a ±{int(sn['variacion'] * 100)} % en el precio de "
                   "la energía, el seguro y la depreciación (Valencia; escenario de recarga " + res["escenario_defecto"] + ")").font = SEC_FONT
     ws.cell(2, 1, "Azul: calculado en Python (src/mercado/analysis.py) moviendo un componente cada vez sobre el coste anual de la hoja "
-                  "Anuncios; la calidad no cambia. 'Cambios' = coches que entran en el Top 5 respecto al caso base.")
+                  "Anuncios; la calidad experta no cambia. 'Cambios' = coches que entran en el Top 5 respecto al caso base.")
     r = 4
     casos = list(sn["casos"])
     for f in FRANJAS:
@@ -559,25 +575,25 @@ def _fila_listado(ws, r, a, n_last, rank=None):
     ws.cell(r, 1, rank).font = _font(BLUE)
     ws.cell(r, 2, a["uid"]).font = _font(BLUE)
     m = f"MATCH($B{r},{_rng('uid', n_last)},0)"
-    for j, key in enumerate(("titulo", "anio", "km", "precio", "coste_anual", "calidad_intr", "ratio", "segmento", "combustible", "url"), 3):
+    for j, key in enumerate(("titulo", "anio", "km", "precio", "coste_anual", "calidad_exp", "ratio", "segmento", "combustible", "url"), 3):
         c = ws.cell(r, j, f"=INDEX({_rng(key, n_last)},{m})")
         c.font = _font(GREEN)
         if key in ("precio", "coste_anual", "km"):
             c.number_format = "#,##0"
-        if key in ("calidad_intr", "ratio"):
+        if key in ("calidad_exp", "ratio"):
             c.number_format = "0.0"
     if a.get("url"):
         ws.cell(r, 12).hyperlink = a["url"]
     ws.cell(r, 13, f"=INDEX({_rng('aviso_bat', n_last)},{m})").font = _font(GREEN)
 
 
-LIST_HDR = ["Nº", "ID", "Coche", "Año", "Km", "Precio (€)", "Coste anual (€)", "Calidad intrínseca", "Calidad / coste (por 1.000 €)",
+LIST_HDR = ["Nº", "ID", "Coche", "Año", "Km", "Precio (€)", "Coste anual (€)", "Calidad experta", "Calidad / coste (por 1.000 €)",
             "Segmento", "Combustible", "Enlace", "Aviso batería"]
 
 
 def build_frontera(wb, res, n_last):
     ws = wb.create_sheet("Frontera")
-    ws.cell(1, 1, "Frontera eficiente calidad intrínseca frente a coste anual (Valencia). Un coche es eficiente si ningún otro de su "
+    ws.cell(1, 1, "Frontera eficiente calidad experta frente a coste anual (Valencia). Un coche es eficiente si ningún otro de su "
                   "franja cuesta lo mismo o menos al año con más calidad.").font = SEC_FONT
     r = 3
     chart_rows = []
@@ -614,7 +630,7 @@ def build_frontera(wb, res, n_last):
     ch = ScatterChart()
     ch.title = "Frontera eficiente por franja de precio (Valencia)"
     ch.x_axis.title = "Coste anual (€)"
-    ch.y_axis.title = "Calidad intrínseca"
+    ch.y_axis.title = "Calidad experta"
     ch.style = 13
     for f, a, b in chart_rows:
         s = Series(Reference(ws, min_col=8, min_row=a, max_row=b), Reference(ws, min_col=7, min_row=a, max_row=b), title=f"{f} €")
@@ -630,7 +646,7 @@ def build_frontera(wb, res, n_last):
 def build_top(wb, res, n_last):
     ws = wb.create_sheet("Top por franja")
     r = 1
-    ws.cell(r, 1, "Top 5 por calidad intrínseca / coste anual (Valencia)").font = SEC_FONT
+    ws.cell(r, 1, "Top 5 por calidad experta / coste anual (Valencia, sin vehículos comerciales)").font = SEC_FONT
     r += 2
     for titulo, grupos in (("Por franja de precio", res["top_franja"]), ("Por segmento", res["top_segmento"])):
         ws.cell(r, 1, titulo).font = SEC_FONT
@@ -653,12 +669,12 @@ def build_top(wb, res, n_last):
                   f"R² within = {ri['r2']:.3f} · comerciales excluidos: {ri['n_excluidos_comerciales']}")
     r += 1
     hdr(ws, r, ["Nº", "Modelo", "Anuncios", "Por debajo del valor hedónico (%)", "Anuncios con mediana de modelo + año + km",
-                "De ellos, ≥ 15 % por debajo de esa mediana", "Clase", "CV (mediana)", "Calidad intrínseca", "Precio mediano (€)",
+                "De ellos, ≥ 15 % por debajo de esa mediana", "Clase", "CV (mediana)", "Calidad experta", "Precio mediano (€)",
                 "Segmento", "Puesto anterior"])
     r += 1
     for i, d in enumerate(res["infravalorados"][:25], 1):
         vals = [i, d["modelo"], d["n"], d["pct"], d["n_mak"], d["n_bajo_mak"], d["clase"], d["cv"],
-                d["calidad_intr"], d["precio_mediano"], d["segmento"], d.get("pos_ant")]
+                d["calidad_exp"], d["precio_mediano"], d["segmento"], d.get("pos_ant")]
         for j, v in enumerate(vals, 1):
             c = ws.cell(r, j, v)
             c.font = _font(BLUE)
@@ -681,11 +697,11 @@ def build_top(wb, res, n_last):
     r += 1
     ws.cell(r, 1, "Para comparar: versión anterior (sin modelo hedónico, con comerciales)").font = SEC_FONT
     r += 1
-    hdr(ws, r, ["Nº", "Modelo", "Anuncios", "Por debajo de lo previsto (%)", "Calidad intrínseca mediana", "Precio mediano (€)", "Segmento",
+    hdr(ws, r, ["Nº", "Modelo", "Anuncios", "Por debajo de lo previsto (%)", "Calidad experta mediana", "Precio mediano (€)", "Segmento",
                 "Puesto actual"])
     r += 1
     for i, d in enumerate(res["infravalorados_ant"][:20], 1):
-        for j, v in enumerate([i, d["modelo"], d["n"], d["pct"], d["calidad_intr"], d["precio_mediano"], d["segmento"], d.get("pos_nueva")], 1):
+        for j, v in enumerate([i, d["modelo"], d["n"], d["pct"], d["calidad_exp"], d["precio_mediano"], d["segmento"], d.get("pos_nueva")], 1):
             c = ws.cell(r, j, v)
             c.font = _font(BLUE)
             if j == 4:

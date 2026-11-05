@@ -100,3 +100,26 @@ salida:
   excel: mercado.xlsx
   informe: informe_mercado.md
   log: logs/mercado.log
+
+calidad_experta:               # criterio insesgado de calidad (sin preferencias personales, sin precio, garantía ni reventa)
+  # Fuentes de los apartados: Consumer Reports (fiabilidad, seguridad, prueba en carretera), ADAC Autotest (7 apartados; seguridad y
+  # medio ambiente cuentan doble; precio fuera), Folksam/SWOV (la protección real mejora con el año del modelo; estrellas Euro NCAP
+  # de protocolos distintos no son comparables). Ningún organismo publica pesos numéricos: se promedian tres esquemas.
+  esquemas:
+    iguales:          {fiabilidad: 0.20, seguridad: 0.20, desgaste: 0.20, ambiente: 0.20, uso: 0.20}
+    adac:             {fiabilidad: 0.142857, seguridad: 0.285714, desgaste: 0.142857, ambiente: 0.285714, uso: 0.142857}
+    consumer_reports: {fiabilidad: 0.30, seguridad: 0.30, desgaste: 0.15, ambiente: 0.10, uso: 0.15}
+  seguridad: {peso_ncap: 0.5, peso_anio: 0.5, estrellas_menos_si_caducada: 1, factor_sin_esp: 0.8}
+  ambiente:
+    peso_etiqueta: 0.5           # distintivo DGT (clasificación oficial de emisiones), escala ordinal
+    escala_etiqueta: {A: 0, B: 25, C: 50, ECO: 75, CERO: 100}
+    co2_kg_por_unidad: {gasolina: 2.31, hibrido: 2.31, phev: 2.31, diesel: 2.64, glp: 1.63, gnc: 2.0, electrico: 0.10}
+    # kg CO2 por litro (kg de GNC; kWh en eléctricos). Gasolina/diésel/GLP: factores de combustión habituales (IPCC/MITECO);
+    # GNC y electricidad (mix español): SUPUESTOS redondeados
+  uso:
+    espacio_por_clase: {A: 20, B: 40, C: 60, D: 80, E: 100, F: 100, S: 30}
+    espacio_sin_clase: 50
+    extra_carroceria: {monovolumen: 15, familiar: 15, suv: 5}
+    dos_plazas: ["fortwo", "\\byoyo\\b", "\\bt03\\b", "\\btwizy\\b", "\\bami\\b"]
+    peso_espacio: 0.7            # el resto: autonomía (100 en térmicos; eléctricos = autonomía real / 400 km)
+    autonomia_plena_km: 400

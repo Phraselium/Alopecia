@@ -16,11 +16,11 @@ def _coche(a):
 
 
 def _tabla(lst):
-    out = ["| # | Coche | Año | Km | Precio | Coste anual | Calidad intr. | Calidad/coste | Tipo | Combustible |",
+    out = ["| # | Coche | Año | Km | Precio | Coste anual | Calidad experta | Calidad/coste | Tipo | Combustible |",
            "|---|---|---|---|---|---|---|---|---|---|"]
     for i, a in enumerate(lst, 1):
         out.append(f"| {i} | {_coche(a)} | {a['anio']} | {n(a['km'])} | {n(a['precio'])} € | {n(a['coste_anual'])} € | "
-                   f"{a['calidad_intr']:.1f} | {a['ratio']:.1f} | {a['tipo_m']} | {a['combustible'] or '?'} |")
+                   f"{a['calidad_exp']:.1f} | {a['ratio']:.1f} | {a['tipo_m']} | {a['combustible'] or '?'} |")
     return out + [""]
 
 

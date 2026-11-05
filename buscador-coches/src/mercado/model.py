@@ -95,6 +95,9 @@ def es_comercial(a: dict, clases: dict, seg: Optional[str]) -> bool:
     if seg in ("furgoneta", "pickup"):
         return True
     co = clases.get("comerciales") or {}
+    tt = norm_text(f"{a.get('titulo') or ''} {a.get('version') or ''}")
+    if any(re.search(p, tt) for p in co.get("titulo_siempre") or []):
+        return True
     k = _clave_modelo(a)
     if not a.get("modelo"):        # sin modelo identificado: se mira el título (con modelo no, por acabados como «500 Connect»)
         k = re.sub(r"[^a-z0-9#+]+", " ", norm_text(a.get("titulo") or "")).strip()

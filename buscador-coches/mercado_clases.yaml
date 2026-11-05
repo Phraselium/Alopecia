@@ -15,6 +15,8 @@ comerciales:
             "\\bpartner\\b", "\\bcaddy\\b(?! life)", "\\bscudo\\b", "\\bhiace\\b", "\\bcanter\\b", "\\bmaxus\\b"]
   # mixtos (hay versión de pasajeros): comerciales solo si el título dice furgón, van, carga…
   mixtos: ["\\bberlingo\\b", "\\bcombo\\b", "\\brifter\\b", "\\btourneo courier\\b", "\\bcaddy\\b", "\\bproace\\b", "\\bvivaro\\b"]
+  # en el título, con cualquier modelo: versiones comerciales de turismos (p. ej., Toyota Yaris Ecovan, 2 plazas)
+  titulo_siempre: ["\\becovan\\b", "\\bvan\\b", "\\bcomercial\\b", "\\b2 plazas\\b", "\\bisotermo\\b"]
   palabras_furgon: ["furgon", "\\bvan\\b", "\\bcargo\\b", "\\bcarga\\b", "isotermo", "frigorific", "chasis", "\\bcaja\\b", "2 plazas",
                     "3 plazas", "\\bn1\\b", "furgoneta", "\\bl1h1\\b", "\\bl2h1\\b", "\\bl2h2\\b", "kombi(?! pasajeros)"]
 reglas:

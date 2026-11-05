@@ -15,15 +15,15 @@ from src.mercado.analysis import run_analysis  # noqa: E402
 from src.mercado.store import MercadoStore  # noqa: E402
 
 COLS = [("Puesto", None), ("Coche", "titulo"), ("Año", "anio"), ("Km", "km"), ("Precio (€)", "precio"),
-        ("Calidad / coste (por 1.000 €)", "ratio"), ("Calidad intrínseca", "calidad_intr"), ("Calidad global", "calidad"),
+        ("Calidad / coste (por 1.000 €)", "ratio"), ("Calidad experta", "calidad_exp"), ("Calidad global", "calidad"),
         ("Coste anual (€)", "coste_anual"), ("Coste total 5 años (€)", "tco"), ("Franja", "franja"), ("Segmento", "segmento"),
         ("Combustible", "combustible"), ("Cambio", "cambio"), ("Etiqueta", "etiqueta"), ("Tipo", "tipo_m"), ("Vendedor", "vendedor"),
         ("Plataforma", "plataforma"), ("Fiabilidad", "fiab"), ("Autonomía real (km)", "autonomia"), ("Aviso batería", "aviso_bat"),
         ("Enlace", "url")]
-FMT = {"km": "#,##0", "precio": "#,##0", "coste_anual": "#,##0", "tco": "#,##0", "ratio": "0.00", "calidad_intr": "0.0",
+FMT = {"km": "#,##0", "precio": "#,##0", "coste_anual": "#,##0", "tco": "#,##0", "ratio": "0.00", "calidad_exp": "0.0",
        "calidad": "0.0", "fiab": "0", "autonomia": "0"}
 NOTA = ("Valores calculados con src/mercado/analysis.py (los mismos que las fórmulas de mercado.xlsx, verificadas con LibreOffice). "
-        "Calidad / coste = calidad intrínseca / (coste anual / 1.000); coste anual con recarga «mixta» para eléctricos.")
+        "Calidad / coste = calidad experta / (coste anual / 1.000); calidad experta = criterio insesgado de cinco apartados (ver Supuestos de mercado.xlsx); coste anual con recarga «mixta» para eléctricos.")
 
 
 def hoja(wb, titulo, ads, clave):
@@ -55,7 +55,7 @@ def hoja(wb, titulo, ads, clave):
 if __name__ == "__main__":
     cfg = yaml.safe_load((BASE / "config_mercado.yaml").read_text(encoding="utf-8"))
     res = run_analysis(MercadoStore(BASE / cfg["salida"]["db"]).all(), cfg, BASE)
-    ads = res["base_ads"]
+    ads = res["base_ads"]   # Valencia, sin vehículos comerciales
     wb = Workbook()
     wb.remove(wb.active)
     hoja(wb, "Por calidad-coste", ads, "ratio")

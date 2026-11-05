@@ -15,6 +15,7 @@ from ..averias import analizar
 from ..etiqueta import norm_label, opciones_regla, rank
 from ..normalize import norm_brand, norm_engine, norm_gearbox, norm_model, norm_text
 from . import model as M
+from . import experta as EXP
 from .stats import coef, frontera, ols, pct
 
 ETQ_ORDEN = ["A", "B", "C", "ECO", "CERO"]
@@ -288,6 +289,12 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
         a["pen_aut"] = M.pen_autonomia(a["autonomia"], el) if el else 0.0
         a["fiab"], a["fiab_fuente"] = fiabilidad(a, rel, rec, neutro, ix)
         a["ncap"], a["ncap_vigencia"], a["ncap_ref"], a["ncap_asist"] = ncap(a, rel, rec, anio_actual, ix)
+        if a["ncap"] is None:
+            ev = EXP.ncap_verificado(a, rec)
+            if ev:
+                vg = "vigente" if anio_actual - ev["ensayo"] <= 6 else "caducada (> 6 años)"
+                a["ncap"], a["ncap_vigencia"] = float(ev["estrellas"]), vg
+                a["ncap_ref"] = f"Euro NCAP {ev['ensayo']}: {ev['estrellas']}★ ({vg}); {ev['fuente']}"
         a["esp"] = esp(a, rel, cfg)
         a["n_modelo"] = n_mod[a["modelo_key"]]
     usos = sorted(a["uso_anual"] for a in ads)
@@ -313,8 +320,12 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
         a["s"] = s
         a["calidad"] = max(0.0, sum(glob[k] * s[k] for k in glob) - a["pen_aut"])
         a["calidad_intr"] = max(0.0, sum(intr[k] * s[k] for k in intr) - a["pen_aut"])
-        a["ratio"] = a["calidad_intr"] / (a["coste_anual"] / 1000) if a["coste_anual"] > 0 else 0
         a["franja"] = franja(a["precio"], cfg["analisis"]["franjas_precio"])
+    # calidad experta e insesgada (src/mercado/experta.py): criterio de frontera, top, sensibilidad e infravalorados
+    ref_e = [a for a in ads if a["zona"] == "valencia" and a["combustible"] and not a["comercial"]] or ads
+    w_exp = EXP.calcular(ads, ref_e, cfg, sup, rec, anio_actual)
+    for a in ads:
+        a["ratio"] = a["calidad_exp"] / (a["coste_anual"] / 1000) if a["coste_anual"] > 0 else 0
 
     # 6. precios por modelo
     precios = []
@@ -408,19 +419,19 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
     cortes = cfg["analisis"]["franjas_precio"]
     fr_tags = [franja(lo, cortes) for lo in cortes[:-1]]
     # sin combustible conocido el coste de energía no se puede calcular: fuera de frontera, top e infravalorados
-    base_ads = [a for a in ads if a["zona"] == "valencia" and a["combustible"]]
+    base_ads = [a for a in ads if a["zona"] == "valencia" and a["combustible"] and not a["comercial"]]
 
     def fronteras(coste):
-        ids_g = set(frontera([(coste(a), a["calidad_intr"], a["uid"]) for a in base_ads]))
+        ids_g = set(frontera([(coste(a), a["calidad_exp"], a["uid"]) for a in base_ads]))
         out = {"global": [a for a in base_ads if a["uid"] in ids_g]}
         for f in fr_tags:
             sub_f = [a for a in base_ads if a["franja"] == f]
-            ids = set(frontera([(coste(a), a["calidad_intr"], a["uid"]) for a in sub_f]))
+            ids = set(frontera([(coste(a), a["calidad_exp"], a["uid"]) for a in sub_f]))
             out[f] = sorted([a for a in sub_f if a["uid"] in ids], key=coste)
         return out
 
     def tops(coste, n=5):
-        return {f: sorted([a for a in base_ads if a["franja"] == f], key=lambda a: -(a["calidad_intr"] / (coste(a) / 1000)))[:n]
+        return {f: sorted([a for a in base_ads if a["franja"] == f], key=lambda a: -(a["calidad_exp"] / (coste(a) / 1000)))[:n]
                 for f in fr_tags}
 
     front = fronteras(lambda a: a["coste_anual"])
@@ -477,11 +488,11 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
     cars = sorted({a["carroceria"] or "?" for a in hed})[1:]
     fus = sorted({a["combustible"] or "sin" for a in hed})[1:]
     tps = sorted({a["tipo_m"] for a in hed})[1:]
-    names_i = (["log_cv", "log_cv2", "cv_sin_dato", "calidad_intr", "edad", "edad2", "km10k", "auto", "cambio_sin_dato"] +
+    names_i = (["log_cv", "log_cv2", "cv_sin_dato", "calidad_exp", "edad", "edad2", "km10k", "auto", "cambio_sin_dato"] +
                [f"seg_{x}" for x in segs] + [f"clase_{x}" for x in clss] + [f"carroceria_{x}" for x in cars] +
                [f"fuel_{x}" for x in fus] + [f"tipo_{x}" for x in tps])
     lcv0 = math.log(cv_med)
-    Xi = [[math.log(a["cv_h"] or cv_med) - lcv0, (math.log(a["cv_h"] or cv_med) - lcv0) ** 2, a["cv_h"] is None, a["calidad_intr"], a["edad"], a["edad"] ** 2, a["km"] / 10000,
+    Xi = [[math.log(a["cv_h"] or cv_med) - lcv0, (math.log(a["cv_h"] or cv_med) - lcv0) ** 2, a["cv_h"] is None, a["calidad_exp"], a["edad"], a["edad"] ** 2, a["km"] / 10000,
            a["cambio"] == "automatico", not a["cambio"]] + [a["segmento"] == x for x in segs] + [(a["clase"] or "?") == x for x in clss] +
           [(a["carroceria"] or "?") == x for x in cars] + [(a["combustible"] or "sin") == x for x in fus] + [a["tipo_m"] == x for x in tps]
           for a in hed]
@@ -496,10 +507,10 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
     segs0 = sorted({a["segmento"] for a in base_ads})[1:]
     fus0 = sorted({a["combustible"] or "sin" for a in base_ads})[1:]
     tps0 = sorted({a["tipo_m"] for a in base_ads})[1:]
-    X0 = [[a["calidad_intr"], a["edad"], a["edad"] ** 2, a["km"] / 10000] + [a["segmento"] == x for x in segs0] +
+    X0 = [[a["calidad_exp"], a["edad"], a["edad"] ** 2, a["km"] / 10000] + [a["segmento"] == x for x in segs0] +
           [(a["combustible"] or "sin") == x for x in fus0] + [a["tipo_m"] == x for x in tps0] for a in base_ads]
     ri_ant = ols([math.log(a["precio"]) for a in base_ads], X0,
-                 ["calidad_intr", "edad", "edad2", "km10k"] + [f"seg_{x}" for x in segs0] + [f"fuel_{x}" for x in fus0] + [f"tipo_{x}" for x in tps0],
+                 ["calidad_exp", "edad", "edad2", "km10k"] + [f"seg_{x}" for x in segs0] + [f"fuel_{x}" for x in fus0] + [f"tipo_{x}" for x in tps0],
                  [a["marca"] for a in base_ads], cluster=[a["modelo_key"] for a in base_ads])
     for a, e0 in zip(base_ads, ri_ant["resid"]):
         a["resid_valor_ant"] = float(e0)
@@ -517,7 +528,7 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
                 dm = [x["desc_mak"] for x in lst if x.get("desc_mak") is not None]
                 th_ = ci.get("anuncio_umbral", 0.15)
                 out.append({"modelo": mk, "marca": lst[0]["marca"], "n": len(lst), "resid": med_r, "pct": math.exp(med_r) - 1,
-                            "calidad_intr": st.median(x["calidad_intr"] for x in lst), "precio_mediano": st.median(x["precio"] for x in lst),
+                            "calidad_exp": st.median(x["calidad_exp"] for x in lst), "precio_mediano": st.median(x["precio"] for x in lst),
                             "segmento": Counter(x["segmento"] for x in lst).most_common(1)[0][0],
                             "clase": Counter(x["clase"] or "?" for x in lst).most_common(1)[0][0],
                             "cv": st.median(x["cv_h"] for x in lst if x["cv_h"]) if any(x["cv_h"] for x in lst) else None,
@@ -535,14 +546,14 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
     th = ci.get("anuncio_umbral", 0.15)
     infra_ads = sorted([a for a in hed if a.get("desc_mak") is not None and a["desc_mak"] <= -th and a["resid_valor"] <= -th
                         and a["edad"] <= ci.get("edad_max", 99)], key=lambda a: a["desc_mak"])[:25]
-    reg_infra = {"n": ri["n"], "k": ri["k"], "r2": ri["r2_within"], "b_calidad": coef(ri, "calidad_intr"), "marcas": ri["grupos"],
+    reg_infra = {"n": ri["n"], "k": ri["k"], "r2": ri["r2_within"], "b_calidad": coef(ri, "calidad_exp"), "marcas": ri["grupos"],
                  "clusters": ri["clusters"], "b_log_cv": coef(ri, "log_cv") if "log_cv" in names_i else None,
                  "n_excluidos_comerciales": sum(1 for a in base_ads if a["comercial"]),
-                 "especificacion": "log(precio) = FE(marca) + segmento + clase de tamaño (A–F/S) + carrocería + log(CV) + log(CV)² + calidad intrínseca "
+                 "especificacion": "log(precio) = FE(marca) + segmento + clase de tamaño (A–F/S) + carrocería + log(CV) + log(CV)² + calidad experta "
                                    "+ edad + edad² + km + cambio + combustible + tipo; MCO within, errores agrupados por modelo (CR1); "
                                    "sin vehículos comerciales ni pick-ups"}
-    reg_infra_ant = {"n": ri_ant["n"], "k": ri_ant["k"], "r2": ri_ant["r2_within"], "b_calidad": coef(ri_ant, "calidad_intr"),
-                     "especificacion": "versión anterior: log(precio) = FE(marca) + calidad intrínseca + edad + edad² + km + segmento + "
+    reg_infra_ant = {"n": ri_ant["n"], "k": ri_ant["k"], "r2": ri_ant["r2_within"], "b_calidad": coef(ri_ant, "calidad_exp"),
+                     "especificacion": "versión anterior: log(precio) = FE(marca) + calidad experta + edad + edad² + km + segmento + "
                                        "combustible + tipo; errores agrupados por modelo; con comerciales"}
 
     resumen = (f"anuncios={len(rows)} limpios={len(ads)} valencia={len(base_ads)} "
@@ -553,5 +564,5 @@ def run_analysis(rows: list[dict], cfg: dict, base: Path) -> dict:
             "frontera": front, "top_franja": top_fr, "top_segmento": top_seg, "infravalorados": infra, "reg_infra": reg_infra,
             "infravalorados_ant": infra_ant, "reg_infra_ant": reg_infra_ant, "escenarios": escenarios, "escenario_defecto": esc_def,
             "sensibilidad": sens, "electricos": el, "base_ads": base_ads, "infra_anuncios": infra_ads,
-            "refs": refs, "pesos": (glob, intr), "resumen": resumen, "n_total": len(rows), "etq_pts": etq_pts}
+            "refs": refs, "pesos": (glob, intr), "pesos_exp": w_exp, "resumen": resumen, "n_total": len(rows), "etq_pts": etq_pts}
 

@@ -222,9 +222,17 @@ python tools/verify_mercado.py           # recalcula mercado.xlsx con LibreOffic
 - Valor residual × (SOH final / SOH hoy).
 - Batería en alquiler (Renault ZE, smart ED 451, Leaf 2013-2017): la cuota con fuente solo se suma si el anuncio dice que es de alquiler. Si no consta, se marca «confirmar si la batería es en propiedad» y se dan el coste anual con y sin alquiler.
 
-**Calidad**
-- Mismos criterios y pesos que el perfil personal, sin estética ni color, renormalizados.
-- La «calidad intrínseca» (sin precio ni coste de uso) es el eje de la frontera eficiente y del ratio calidad/coste.
+**Calidad experta** (criterio de la frontera, el Top, la sensibilidad y los infravalorados; `src/mercado/experta.py`, `config_mercado.yaml → calidad_experta`)
+- Criterio insesgado: sin preferencias personales, sin precio, sin garantía del vendedor y sin reventa.
+- Cinco apartados, cada uno en percentil 0-100 frente al mercado de Valencia (sin vehículos comerciales):
+  - **Fiabilidad**: TÜV, OCU y defectos de motor documentados.
+  - **Seguridad**: estrellas Euro NCAP, con −1 si el ensayo está caducado, más el año del modelo. Incluye la tabla `euroncap_verificados` con fuentes.
+  - **Desgaste**: vida útil restante.
+  - **Medio ambiente**: distintivo DGT y CO₂ del consumo real.
+  - **Espacio y uso**: clase, carrocería y autonomía real en eléctricos.
+- Pesos: media de tres esquemas (iguales, ADAC y Consumer Reports). Ningún organismo publica pesos numéricos.
+- Las versiones comerciales de turismos (Yaris Ecovan, «van», «2 plazas») cuentan como comerciales y quedan fuera.
+- La calidad global e intrínseca anterior (pesos del perfil personal) se mantiene en el Excel solo como referencia.
 
 **Análisis**
 - Medianas por modelo, generación, año y km.
