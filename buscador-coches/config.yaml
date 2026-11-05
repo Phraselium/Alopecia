@@ -1,0 +1,204 @@
+# Configuración del buscador de coches de segunda mano (Valencia)
+# Todo lo editable está aquí. Los datos con fuente (fiabilidad, fiscalidad, ZBE)
+# viven en reliability.yaml y fiscal.yaml.
+
+ubicacion:
+  ciudad: "València"
+  lat: 39.4699
+  lon: -0.3763
+  radio_km: 70                 # antes 50; con 70 km entra el sur de Castellón
+  provincias_cochesnet: [valencia, castellon]   # rutas por provincia en Coches.net (las que toca el radio)
+  municipios_wallapop: [valencia, torrent, paterna, sagunto, gandia, burjassot, manises]
+  provincia: "Valencia"
+
+presupuesto:
+  # Límite suave (02-11-2026). Coste total = al contado + gestión del vendedor + transferencia o ITP + informe DGT.
+  total_max_eur: 5000          # objetivo: hasta aquí, sin penalización
+  techo_eur: 6000              # por encima: excluido
+  penal_por_100_eur: 2         # entre objetivo y techo: -2 puntos en la PUNTUACIÓN por cada 100 € (proporcional) y "negociar"
+  precio_anuncio_max_eur: 6000 # tope del anuncio para recoger (= techo)
+  precio_anuncio_min_eur: 800  # por debajo casi siempre es despiece/fraude
+
+filtros:
+  anio_min: 2002               # 2008 → 2006 → 2002 (01-11-2026): los modelos prioritarios empiezan en 2002-2003
+  km_max: 220000
+  km_min_creible: 1000         # menos km en un coche de más de 2 años = dato erróneo del anuncio
+  # Combustible: gasolina, híbrido, GLP y diésel entran. Excluidos:
+  combustibles_excluidos: [electrico, gnc]
+  # Distintivo ambiental (ver zbe.yaml): se descartan los que tengan una etiqueta peor que la mínima.
+  # Las etiquetas "dudosas" (año frontera sin mes) NO se descartan: entran con aviso.
+  etiqueta_minima: B
+  # La etiqueta final es la PEOR de las posibles (todas las fechas posibles del año, y el año de la URL/título).
+  # 02-11-2026: dudosa y deducida por regla ya no descartan por sí solas; descartan si la peor opción < mínima.
+  etiqueta_dudosa: si_todas_cumplen   # no = fuera siempre · si_todas_cumplen = entra si todas las opciones >= mínima
+  etiqueta_regla: si_todas_cumplen    # no = solo DGT/anuncio · si_todas_cumplen = la regla vale si todas cumplen
+  solo_profesionales: true         # solo vendedores profesionales (concesionarios, compraventas)...
+  particulares:
+    admitir_modelos_estetica: true # ...salvo los modelos de estetica.yaml con puntos >= min_estetica (Audi A3 8P, A4 B7...)
+    min_estetica: 4
+  color:
+    excluir_activo: true           # descartar los colores de 'excluidos'
+    excluidos: [negro, marron_oscuro]
+  averias:
+    activo: true                   # filtro estricto de averías/estado en título y descripción (src/averias.py)
+    revisar_si_no_menciona_itv: true
+  diesel:
+    excluir_todos: true            # 02-11-2026: uso principal en trayectos urbanos cortos (filtro de partículas) -> ningún diésel
+    # Diésel B o C: entran salvo que su motor tenga una penalización conocida en reliability.yaml (excluir_si_penalizacion_motor)
+    excluir_si_penalizacion_motor: true
+    # Diésel cuyo motor no tiene fuente de fiabilidad en reliability.yaml:
+    #   penalizar -> entra con la fiabilidad "pendiente" (tope en la puntuación neutra) ; excluir -> fuera
+    sin_fuente: penalizar
+  # Carrocerías: admitidas sin penalización / admitidas con penalización (puntos en scoring.penalizaciones) / el resto fuera
+  # Berlinas de segmento C (berlina) y D (berlina_d) sin penalización (01-11-2026: prioridad a berlinas medianas sobrias)
+  carrocerias: [utilitario, compacto, berlina, berlina_d]
+  carrocerias_penalizadas: [familiar, monovolumen_pequeno]
+  # Modelos excluidos siempre (aunque pasen el resto de filtros)
+  modelos_excluidos: [Peugeot 107, Toyota Aygo, Citroën C1]
+  # Cajas de cambio excluidas (detectadas en título/versión); ver reliability.yaml -> cajas_excluidas
+  excluir_multitronic: true
+  excluir_cajas_robotizadas: true  # 02-11-2026: antes solo -10 en fiabilidad; ahora fuera (Easytronic/MTA, Dualogic, MMT, ETG, ASG…)
+  # Fuera: suv, cabrio, monovolumen (grande), furgoneta y desconocidas
+  cambio: indiferente          # se marcan los automáticos en la columna "automatico"
+
+fuentes:
+  # orden = orden de ejecución; enabled=false para saltar una plataforma. Ver RECONOCIMIENTO.md
+  # Profesionales con garantía (prioridad)
+  ocasionplus: {enabled: true,  max_paginas: 60}
+  flexicar:    {enabled: true}     # vigilancia: sin stock <= precio máx. a 31-10-2026
+  clicars:     {enabled: true}     # vigilancia
+  autohero:    {enabled: true}     # vigilancia
+  renew:       {enabled: true}     # vigilancia
+  # Portales
+  autoscout24: {enabled: true,  max_paginas: 10}
+  cochesnet:   {enabled: true,  max_paginas: 6}    # robots.txt prohíbe pg>=7
+  wallapop:    {enabled: true, saturacion: 75}   # opción A: solo rutas permitidas; municipios si la página viene llena
+  # Bloqueadas en el reconocimiento (31-10-2026): no se insiste
+  milanuncios: {enabled: false}    # HTTP 405 + página antibots
+  autocasion:  {enabled: false}    # desafío Cloudflare
+
+dgt:
+  fichero_distintivos: true    # descargar (máx. 1 vez al día) e indexar el fichero oficial de distintivos de la DGT
+  max_edad_horas: 24
+
+http:
+  pausa_min_s: 2.0
+  pausa_max_s: 5.0
+  timeout_s: 30
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
+  accept_language: "es-ES,es;q=0.9"
+  cache_dir: raw
+  cache_ttl_horas: 3           # listados: menos que el intervalo de --watch (4 h) para ver anuncios nuevos
+  respetar_robots: true
+
+limpieza:
+  dedupe:
+    km_tolerancia: 0.02
+    precio_tolerancia: 0.05
+    similitud_texto_min: 60    # rapidfuzz token_set_ratio 0-100
+  fraude:
+    descuento_max_vs_mediana: 0.35
+    min_fotos: 1
+    # Señales de fraude. Las de avería/estado (para piezas, sin ITV, embargo, sin papeles…) las trata
+    # filtros.averias con negaciones (src/averias.py).
+    palabras: ["solo envío", "solo envio", "estoy fuera", "estoy en el extranjero",
+               "pago por adelantado", "pago adelantado", "señal por transferencia", "western union"]
+
+segmentos:
+  anio_tramo: 3                # años por tramo para la mediana
+  km_tramo: 50000
+  min_muestras: 4              # si hay menos, se sube de nivel (modelo+año, luego modelo)
+
+scoring:
+  # Pesos (suman 1). 02-11-2026: nuevo reparto pedido por el usuario. Desaparecen "Anuncio" (pasa a "Estado y
+  # mantenimiento"), "Etiqueta y ZBE" (pasa a "Reventa": C por encima de B) y "Preferencia de estilo" (pasa a "Estética").
+  pesos:
+    fiabilidad: 0.22          # fiabilidad y durabilidad (modelo, motor, plataforma gemela, cajas)
+    precio: 0.15              # precio frente al mercado
+    estado: 0.12              # estado y mantenimiento (ITV, libro, propietarios, correa, facturas)
+    estetica: 0.12            # modelo (estetica.yaml) + atributos del anuncio
+    seguridad_vial: 0.10      # Euro NCAP de la generación + ESP/ESC
+    seguridad_compra: 0.10    # garantía, km certificados, revisión, devolución, historial; particular sin garantía penaliza
+    coste_uso: 0.09           # consumo + seguro + mantenimiento (recambios y distribución)
+    km_edad: 0.05
+    reventa: 0.03             # liquidez del modelo en el mercado + días hasta venderse + etiqueta
+    color: 0.02
+  precio:
+    pendiente: 250             # puntos por unidad de descuento: -20% => 100, +20% => 0
+    km_tope_desde: 180000      # a partir de aquí la nota de precio tiene un tope decreciente
+    km_tope_puntos_1000: 2     # puntos de tope que se pierden por cada 1.000 km (220.000 km -> tope 20)
+  km_edad:
+    km_anio_ideal_max: 18000
+    km_anio_cero: 35000        # a partir de aquí 0 puntos en km/año
+    km_anio_sospechoso: 4000   # por debajo, penaliza si no está justificado
+    penaliza_sospechoso: 40    # puntuación km/año si es sospechosamente bajo
+    peso_km_total: 0.4
+    peso_km_anio: 0.3
+    peso_edad: 0.3
+  estado:                      # "Estado y mantenimiento": puntos que suman 100
+    itv: 20                    # ITV en vigor / recién pasada
+    libro: 25                  # libro de mantenimiento o historial
+    propietario_unico: 15      # 1 propietario = 15; 2 = la mitad
+    correa: 25                 # correa cambiada con fecha o km = 25; sin fecha/km = la mitad; motor de cadena = 25
+    facturas: 15
+  seguridad_compra:            # "Seguridad de compra": puntos que suman 100
+    garantia: 35               # proporcional a meses incluidos, hasta garantia_meses_full
+    garantia_meses_full: 24
+    ampliable: 10
+    km_certificados: 15
+    revision: 15               # revisión/inspección documentada (nº de puntos > 0)
+    devolucion: 15             # proporcional a días, hasta devolucion_dias_full
+    devolucion_dias_full: 15
+    historial: 10              # libro/historial de mantenimiento
+    # Vendedor profesional sin garantía declarada: se le asigna el mínimo legal (TRLGDCU art. 120,
+    # ver fiscal.yaml → garantia_legal) y se marca el aviso.
+    aplicar_minimo_legal_profesional: true
+    penal_particular_sin_garantia: 25   # puntos menos (sobre 100) si es particular y no hay garantía
+  seguridad_vial:              # "Seguridad": Euro NCAP (estrellas de la generación) + ESP/ESC
+    peso_ncap: 0.7
+    peso_esp: 0.3
+    esp_obligatorio_desde: 2015  # todos los turismos nuevos con ESC desde 1-11-2014 (Reglamento CE 661/2009): año >= 2015 -> sí
+  penalizaciones:              # puntos que se restan a la PUNTUACIÓN total
+    carroceria: {familiar: 3, monovolumen_pequeno: 6}   # berlina (C) y berlina_d: sin penalización
+    caja_robotizada: 10        # puntos menos en Fiabilidad (Easytronic/MTA, Dualogic, MMT, 2-Tronic/ETG, ASG…)
+    # Diésel sin fuente de fiabilidad del motor: la fiabilidad del modelo se limita a la puntuación neutra
+    # (coste_uso.neutro_si_pendiente), igual que un dato "pendiente"; además se aplica el ajuste DPF.
+  etiqueta:                    # puntos de etiqueta (dentro de "Reventa")
+    puntos: {B: 40, C: 70, ECO: 100, CERO: 100, A: 0}   # B = base, C = +, ECO/CERO = ++
+    penal_dudosa: 15           # etiqueta dudosa (año frontera sin mes): confirmar con la DGT
+    penal_regla: 5             # etiqueta deducida solo por la regla (sin dato DGT ni del anuncio)
+  coste_uso:                   # consumo + seguro + mantenimiento (recambios por marca y distribución)
+    peso_etiqueta: 0
+    peso_consumo: 0.4
+    peso_seguro: 0.3
+    peso_mantenimiento: 0.3
+    neutro_si_pendiente: 50
+
+  reventa:                     # "Reventa y liquidez" (0-100)
+    peso_liquidez: 0.4         # nº de anuncios del modelo en el mercado recogido
+    liquidez_n_full: 60        # con 60 o más anuncios del modelo -> 100
+    peso_dias: 0.2             # días medianos hasta desaparecer (solo con >= dias_min_muestras ventas observadas)
+    dias_full: 15              # <= 15 días -> 100
+    dias_cero: 90              # >= 90 días -> 0
+    dias_min_muestras: 3
+    peso_etiqueta: 0.4         # puntos de etiqueta (C por encima de B), con las penalizaciones de dudosa/regla
+
+alertas:
+  activas: true
+  intervalo_horas: 24          # para python run.py --watch: una ejecución al día
+  umbral_puntuacion: 62        # alto: avisa solo de anuncios NUEVOS muy buenos (ya pasan todos los filtros:
+                               # profesional, etiqueta confirmada, averías, diésel, fraude)
+  incluir_negociar: true       # también los que solo caben negociando (marcados en el mensaje)
+  etiqueta_minima: B           # solo se avisa de etiqueta >= B (confirmada o deducida); no de las dudosas A
+  # Telegram: TELEGRAM_BOT_TOKEN y TELEGRAM_CHAT_ID en .env (ver .env.example). Sin .env: solo logs/alertas.log
+
+seguimiento:
+  ejecuciones_para_desaparecido: 2   # nº de ejecuciones correctas seguidas sin verlo para fijar la fecha de desaparición
+
+salida:
+  excel: ranking.xlsx
+  informe: informe.md
+  top_n: 20
+  informe_n: 10
+  db: data/listings.sqlite
+  log: logs/run.log

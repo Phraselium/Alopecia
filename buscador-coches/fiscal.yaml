@@ -1,0 +1,150 @@
+# Parámetros fiscales y de tráfico. Cada valor lleva fuente, fecha de consulta y estado:
+#   confirmado = leído en la fuente oficial
+#   probable   = visto en fragmentos de la fuente oficial (la web no se pudo abrir entera desde este entorno)
+#   PENDIENTE  = sin fuente; no se usa como dato cierto
+# Consultado: 2026-10-31. Antes de comprar, abrir los enlaces y pasar los "probable" a "confirmado".
+
+anio_actual: 2026
+
+itp:
+  descripcion: "ITP por compraventa de vehículo usado entre particulares (Comunitat Valenciana, modelo 620)"
+  tipo: 0.06
+  tipo_estado: "confirmado (cuadro resumen art. 13.Tres Ley 13/1997 en atv.gva.es/es/vehiculos-faq, leído 31-10-2026: 6 % hasta 5 años y <= 2.000 cc)"
+  tipo_fuente: "https://atv.gva.es/es/tarifes-itpajd ; https://atv.gva.es/es/compraventa-de-vehiculos"
+  tipo_incrementado: 0.08
+  tipo_incrementado_condicion: "turismos de hasta 5 años y más de 2.000 cc, o valor >= 20.000 €"
+  tipo_incrementado_estado: confirmado
+  exento_si_profesional: true   # compra a profesional: IVA o REBU incluido en precio, no ITP
+  exento_si_profesional_estado: "PENDIENTE de cita oficial (práctica habitual; confirmar en la factura)"
+  # Cuota fija que sustituye al porcentaje (vehículos de valor < 20.000 €, no históricos).
+  # Orden: primero el tramo de más antigüedad.
+  cuota_fija_valor_max_eur: 20000
+  cuotas_fijas_estado: "confirmado (cuadro resumen de la ATV, https://atv.gva.es/es/vehiculos-faq, leído 31-10-2026)"
+  cuotas_fijas_fuente: "https://atv.gva.es/es/vehiculos-faq ; Ley 13/1997 consolidada https://www.boe.es/buscar/act.php?id=BOE-A-1998-8202"
+  cuotas_fijas:
+    - {antiguedad_mas_de_anios: 12, cc_min: 0,    cc_max: 1500, cuota_eur: 40,  descripcion: ">12 años, hasta 1.500 cc"}
+    - {antiguedad_mas_de_anios: 12, cc_min: 1501, cc_max: 2000, cuota_eur: 60,  descripcion: ">12 años, 1.501-2.000 cc"}
+    - {antiguedad_mas_de_anios: 12, cc_min: 2001, cc_max: null, cuota_eur: 140, descripcion: ">12 años, más de 2.000 cc"}
+    - {antiguedad_mas_de_anios: 5,  cc_min: 0,    cc_max: 1500, cuota_eur: 120, descripcion: ">5 y <=12 años, hasta 1.500 cc"}
+    - {antiguedad_mas_de_anios: 5,  cc_min: 1501, cc_max: 2000, cuota_eur: 180, descripcion: ">5 y <=12 años, 1.501-2.000 cc"}
+    - {antiguedad_mas_de_anios: 5,  cc_min: 2001, cc_max: null, cuota_eur: 280, descripcion: ">5 y <=12 años, más de 2.000 cc"}
+  nota_ley_5_2025: "Ley 5/2025 de 30 de mayo modifica tipos de ITP; parece afectar a inmuebles. Efecto sobre vehículos PENDIENTE de verificar."
+
+# Base imponible por porcentaje (solo aplica a coches de <=5 años, poco probable con 4.600 €)
+precios_medios:
+  norma: "Orden HAC/1501/2025, de 17 de diciembre (BOE núm. 308, 23-12-2025), vigente desde 01-01-2026"
+  fuente: "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-26357"
+  estado: confirmado (datos de publicación); valores por modelo PENDIENTES (PDF no accesible desde este entorno)
+  aplica_en_cv: PENDIENTE   # no hay cita expresa de la ATV
+  valores: {}               # "Marca Modelo|motor": precio medio nuevo en €
+
+tabla_depreciacion:
+  fuente: "Anexo de la Orden HAC/1501/2025 (PDF https://www.boe.es/boe/dias/2025/12/23/pdfs/BOE-A-2025-26357.pdf)"
+  estado: "PENDIENTE (solo se han visto primeros tramos y el último en fuentes secundarias)"
+  tramos: []                # [{hasta_anios: 1, pct: 100}, ...] — rellenar al leer el BOE
+
+dgt:
+  tasa_transferencia_eur: 55.70
+  tasa_transferencia_estado: "probable: la sede web DGT indica 55,70 €; el PDF oficial de importes (creado 21-12-2020) da 55,15 €, desactualizado. Se usa el más reciente."
+  tasa_transferencia_fuente: "https://sede.dgt.gob.es/es/vehiculos/transferencias-de-vehiculos/"
+  informe_vehiculo_eur: 8.67
+  informe_vehiculo_estado: "probable: sede web DGT 8,67 €; el PDF de 2020 da 8,59 € (tasa 4.1)"
+  informe_vehiculo_fuente: "https://sede.dgt.gob.es/es/vehiculos/informacion-de-vehiculos/informe-de-un-vehiculo/"
+
+etiqueta_dgt:
+  # SUSTITUIDO desde 01-11-2026 por zbe.yaml (criterios por fecha de matriculación con mes, fichero oficial DGT y
+  # calendario de la ZBE). Se conserva solo como referencia histórica; el código ya no lo usa.
+  # Reglas de asignación por combustible y año de matriculación (aproximación por año; la etiqueta
+  # real depende de la norma Euro y de la fecha exacta: comprobar con la matrícula en la sede DGT).
+  fuente: "https://www.dgt.es/nuestros-servicios/tu-vehiculo/tus-vehiculos/distintivo-ambiental/"
+  estado: "confirmado (leído 31-10-2026): C = gasolina desde 01-2006, diésel desde 09-2015; B = gasolina desde 01-2001, diésel desde 2006. Con solo el año, el diésel de 2015 se trata como B (conservador)"
+  gasolina_C_desde: 2006
+  gasolina_B_desde: 2001
+  diesel_C_desde: 2016      # Euro 6 obligatorio en matriculaciones desde 09/2015; 2015 es dudoso
+  diesel_B_desde: 2006
+  hibrido: ECO
+  glp: ECO
+
+zbe_valencia:
+  # Ver zbe.yaml (fuente vigente para el buscador desde 01-11-2026).
+  verificado: "Leído en valencia.es el 31-10-2026: solo etiqueta A; sanciones desde 01-12-2025 para los de fuera de la provincia (todo 2026); desde 01-01-2027 también los de la provincia salvo los matriculados en la ciudad; desde 01-01-2028 todos. Moratoria para afectados por la DANA y pedanías hasta 31-12-2028."
+  fuente: "https://www.valencia.es/cas/actualidad/-/content/zona-bajas-emisiones-val%C3%A8ncia.-aprobaci%C3%B3n-por-el-pleno ; https://www.valencia.es/-/c%C3%A1maras-zbe"
+  estado: confirmado
+  resumen: >
+    Solo restringe vehículos SIN etiqueta (A). Desde dic-2025/ene-2026 los de fuera de la provincia;
+    desde 01-01-2027 también los de la provincia salvo los de la ciudad; desde 01-01-2028 todos.
+    B, C, ECO y CERO sin restricción en el calendario aprobado. Perímetro y posible moratoria PENDIENTES.
+  restringidas_hasta_2028: [A]
+
+garantia_legal:
+  norma: "TRLGDCU (RDLeg. 1/2007), art. 120.1, en la redacción del Real Decreto-ley 7/2021, de 27 de abril"
+  fuente: "https://www.boe.es/buscar/act.php?id=BOE-A-2007-20555"
+  estado: confirmado   # texto consolidado leído en el BOE el 31-10-2026
+  texto: >
+    El empresario responde de las faltas de conformidad que se manifiesten en tres años desde la entrega.
+    En bienes de segunda mano puede pactarse un plazo menor, que no podrá ser inferior a un año desde la entrega.
+  minimo_meses_segunda_mano: 12
+  nota: "La norma vigente es el RDL 7/2021, no el RDL 24/2021. Entre particulares no aplica: rige el Código Civil (vicios ocultos)."
+
+compra_profesional:
+  # Compra a vendedor profesional: no hay ITP (IVA o REBU incluidos en el precio). Los gastos de
+  # gestión/preparación/transferencia del concesionario se suman al precio. Si no constan, se suma
+  # la tasa DGT de transferencia (supuesto conservador) y se marca para preguntar.
+  itp: 0
+  estado_itp: "PENDIENTE de cita oficial (práctica habitual: la venta del empresario tributa por IVA/REBU, no por ITP)"
+  sumar_tasa_si_gastos_desconocidos: true
+
+seguro_estimado:
+  descripcion: "Terceros ampliado, conductor de 29 años, Mislata (46920), sin siniestros, coche en la calle, valor < 5.000 €"
+  estado: "aproximado (estimación por segmento; no se han pedido presupuestos con datos personales)"
+  fecha_consulta: 2026-10-31
+  fuentes:
+    - "Rastreator, Índice mayo 2026 (vía Europa Press/Bolsamanía 14-05-2026): terceros ampliado 25-34 años 378 €/año; 35-44 años 302 €/año. https://www.bolsamania.com/noticias/mercados/economiafinanzas--el-seguro-de-coche-sube-un-3-en-2026-segun-el-comparador-rastreator--22488948.html"
+    - "Roams, abril 2026: terceros ampliado medio en Valencia 296,65 €. https://roams.es/seguros/seguro-coche/mejor-seguro-coche-valencia/"
+    - "Rankia, octubre 2026: ofertas en Valencia desde 157 € (Prima) y 179 € (Tuio). https://www.rankia.com/blog/mejores-seguros/7530927-precio-seguro-valencia"
+  notas: >
+    A los 29 años el precio debería quedar entre la media de 25-34 (378 €, que incluye recargos de
+    jóvenes) y la de 35-44 (302 €): inferencia, no cifra publicada. La diferencia utilitario/compacto
+    y el efecto de aparcar en la calle no están cuantificados en ninguna fuente encontrada (PENDIENTE):
+    el +40 € del compacto es un supuesto. Cifras por modelo: no fiables/antiguas, no se usan.
+  segmentos:
+    utilitario: {min: 170, central: 300, max: 420}
+    compacto:   {min: 190, central: 340, max: 480}
+    berlina:    {min: 190, central: 350, max: 500}
+    berlina_d:  {min: 200, central: 380, max: 540}
+  notas_berlina_d: >
+    01-11-2026: ninguna fuente cuantifica la diferencia del segmento D frente a un compacto para 29 años
+    (PENDIENTE). Referencias: Rastreator Audi A4 (37 años, Madrid) terceros ampliado desde 153-188 €/año
+    https://www.rastreator.com/seguros-de-coche/asegurar-coche/seguro-audi/a4 ; Tuio 2026 A4 ampliado 179 €/año
+    https://blog.tuio.com/coche/seguro-audi-a4-cual-es-el-mejor-seguro-para-un-audi-a4-en-espana-2026/ ;
+    RapidSecur Avensis 26-35 años 375 € (antigua, poco fiable) https://rapidsecur.com/toyota-avensis.
+    Los +10 € (berlina C) y +40 € (berlina D) sobre el compacto son un supuesto, no una cifra publicada.
+
+consumo_estimado:
+  descripcion: "Consumo real de gasolina (l/100 km), uso mixto"
+  estado: "aproximado (registros individuales de Spritmonitor/Autokostencheck vistos en resúmenes de búsqueda; no hay media oficial por modelo). IDAE: PENDIENTE"
+  fecha_consulta: 2026-11-01
+  ref_min: 5.5          # 100 puntos
+  ref_max: 9.0          # 0 puntos
+  segmentos:            # gasolina; si el modelo no está en 'modelos'
+    utilitario: {valor: 6.3, fuente: "Spritmonitor Ibiza 1.4 16V 5,93-6,41 (https://www.spritmonitor.de/en/detail/957697.html); Yaris 1.3 6,56-7,61 (https://www.spritmonitor.de/de/detailansicht/628459.html)"}
+    compacto:   {valor: 7.4, fuente: "Spritmonitor León 1P 1.6 6,99-7,72; Autokostencheck 7,90 (https://www.autokostencheck.de/Seat/Seat-Leon/Leon/leon-1-6-1p_20752/verbrauch/)"}
+    berlina:    {valor: 7.4, fuente: "Igual que compacto (misma mecánica en versión de 4 puertas): supuesto"}
+    berlina_d:  {valor: 8.0, fuente: "Media aproximada de Avensis 1.8 (~6,5-7,4), Mazda 6 2.0 (7,6-8,2), Accord 2.0 (8,2-8,4) y A4 2.0 TFSI (7,9-8,9), ver 'modelos'"}
+    familiar:   {valor: 7.6, fuente: "Supuesto: compacto + 0,2"}
+    monovolumen_pequeno: {valor: 7.6, fuente: "Supuesto: compacto + 0,2"}
+  modelos:
+    "Toyota Avensis": {valor: 7.0, fuente: "Spritmonitor 1.8 2003-06: 6,52 (177.281 km) y 7,38 https://www.spritmonitor.de/de/detailansicht/712367.html"}
+    "Mazda 6": {valor: 7.8, fuente: "Spritmonitor 2.0 GG/GY: 7,74 / 8,18 / 7,62 https://www.spritmonitor.de/de/detailansicht/532407.html"}
+    "Honda Accord": {valor: 8.3, fuente: "Spritmonitor 2.0 manual 2005-07: 8,23-8,42 (automático 8,65-10,0) https://www.spritmonitor.de/de/detailansicht/1417606.html"}
+    "Audi A4": {valor: 8.4, fuente: "Spritmonitor 2.0 TFSI B7: 7,91 / 8,86 / 8,39 https://www.spritmonitor.de/de/detailansicht/655121.html (2.0 atmosférico 130 CV: PENDIENTE)"}
+    "Skoda Octavia": {valor: 6.9, fuente: "Spritmonitor 1.6 MPI: 6,41 / 6,92 / 7,41 https://www.spritmonitor.de/de/detailansicht/669392.html"}
+
+reserva_puesta_a_punto:
+  # Solo para el "coste real estimado" de particulares (informativo, no entra en el coste total ni en la puntuación)
+  estado: "aproximado"
+  correa_eur: 550          # kit de distribución + bomba de agua, media de Valencia (Tallerator, más de 3.000 presupuestos, 2014; sin actualizar por IPC)
+  fuente_correa: "https://www.autofacil.es/cuesta-cambiar-kit-distribucion/ (Valencia: 550,22 € kit + bomba; España 481 €)"
+  neumaticos_eur: 300      # juego de 4 (205/55 R16 ~170-460 € sin montaje según marca): supuesto central con montaje
+  neumaticos_edad_min: 5   # Michelin: revisión anual desde el 5.º año; cambio como máximo a los 10 años de la fabricación
+  fuente_neumaticos: "https://www.michelin.es/auto/consejos/cambiar-neumaticos/cuanto-duran-los-neumaticos ; precio: https://www.muchoneumatico.com/comprar-neumaticos/neumaticos-205-55-r16 (probable, no verificado)"
